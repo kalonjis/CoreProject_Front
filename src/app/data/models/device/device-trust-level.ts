@@ -1,0 +1,6 @@
+export enum DeviceTrustLevel {
+  UNTRUSTED = 'UNTRUSTED',
+  BASIC = 'BASIC',
+  TRUSTED = 'TRUSTED',
+  HIGHLY_TRUSTED = 'HIGHLY_TRUSTED'
+}
