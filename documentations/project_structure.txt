@@ -1,0 +1,36 @@
+src/
+├── app/
+│   ├── core/                 # Services et fonctionnalités centrales qui sont instanciés une seule fois
+│   │   ├── auth/             # Services d'authentification
+│   │   │   ├── guards/       # Guards pour protéger les routes
+│   │   │   ├── interceptors/ # Intercepteurs HTTP
+│   │   │   ├── models/       # Modèles liés à l'authentification
+│   │   │   └── services/     # Services d'authentification
+│   │   ├── http/             # Configuration HTTP globale
+│   │   └── services/         # Services globaux (logs, erreurs, etc.)
+│   ├── data/                 # Couche d'accès aux données
+│   │   ├── models/           # Modèles de données (DTOs)
+│   │   └── services/         # Services d'API
+│   ├── features/             # Modules fonctionnels de l'application
+│   │   ├── admin/            # Fonctionnalités administrateur
+│   │   ├── auth/             # Pages d'authentification (login, register, etc.)
+│   │   ├── devices/          # Gestion des appareils
+│   │   ├── home/             # Page d'accueil
+│   │   ├── profile/          # Profil utilisateur
+│   │   └── users/            # Gestion des utilisateurs
+│   ├── shared/               # Composants, directives et pipes réutilisables
+│   │   ├── components/       # Composants réutilisables
+│   │   ├── directives/       # Directives personnalisées
+│   │   ├── pipes/            # Pipes personnalisés
+│   │   └── utils/            # Fonctions utilitaires
+│   ├── app.component.ts      # Composant racine
+│   ├── app.config.ts         # Configuration de l'application
+│   ├── app.routes.ts         # Routes principales
+│   └── index.html            # Point d'entrée HTML
+├── assets/                   # Ressources statiques
+│   ├── i18n/                 # Fichiers de traduction
+│   ├── icons/                # Icônes
+│   └── images/               # Images
+└── environments/             # Configurations d'environnement
+    ├── environment.ts        # Environnement de développement
+    └── environment.prod.ts   # Environnement de production
