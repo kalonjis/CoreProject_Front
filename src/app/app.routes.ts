@@ -4,16 +4,16 @@ import {adminGuard} from './core/auth/guards/admin.guard';
 
 export const routes: Routes = [
   // Public routes
-  /*{
-    path: '',
-    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
-  },
-
   // Authentication routes
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(r => r.AUTH_ROUTES)
   },
+  /*{
+    path: '',
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+  },
+
 
   // Protected routes
   {
