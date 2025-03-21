@@ -2,7 +2,7 @@ import {CanActivateFn, Router} from '@angular/router';
 import {inject} from '@angular/core';
 import {map} from 'rxjs';
 import {UserRole} from '../../../data/models/user/user-role';
-import {provideAuthService} from '../services/auth-service.service';
+import {provideAuthService} from '../services/auth.service';
 
 export const superAdminGuard: CanActivateFn = (route, state) => {
   const authService = provideAuthService();

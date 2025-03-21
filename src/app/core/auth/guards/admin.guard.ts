@@ -1,6 +1,6 @@
 import {CanActivateFn, Router} from '@angular/router';
 import {inject} from '@angular/core';
-import {provideAuthService} from '../services/auth-service.service';
+import {provideAuthService} from '../services/auth.service';
 import {map} from 'rxjs';
 import {UserRole} from '../../../data/models/user/user-role';
 
