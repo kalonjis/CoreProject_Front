@@ -2,7 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import {provideAuthService} from '../../../../core/auth/services/auth.service';
+import {provideAuthService} from '../../../core/auth/services/auth.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 
 @Component({
@@ -48,21 +49,31 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null;
 
     this.auth.login(this.loginForm.value).subscribe({
-      next: (success) => {
-        if (success) {
-          this.router.navigateByUrl(this.returnUrl);
-        } else {
-          this.errorMessage = 'Login failed. Please check your credentials.';
-          this.isSubmitting = false;
-        }
+      next: (response) => {
+        this.auth.defineAuthenticated(true);
+        this.auth.loadCurrentUser().subscribe({
+          next: (user) => {
+            this.auth.defineUser(user);
+            console.log(user);
+           // this.router.navigateByUrl(this.returnUrl);
+          },
+          error: (error:HttpErrorResponse) => {
+            this.auth.defineAuthenticated(false);
+            if (error.error.error) {
+              this.errorMessage = error.error.error;
+            } else {
+              this.errorMessage = "Impossible de charger les informations utilisateur.";
+            }
+            this.isSubmitting = false;
+          }
+        });
       },
-      error: (error) => {
-        if (error.status === 403) {
-          this.errorMessage = 'Account is locked or disabled.';
-        } else if (error.error?.message) {
-          this.errorMessage = error.error.message;
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+        if (error.error.error) {
+          this.errorMessage = error.error.error;
         } else {
-          this.errorMessage = 'An unexpected error occurred. Please try again later.';
+          this.errorMessage = 'Une erreur s\'est produite lors de la connexion.';
         }
         this.isSubmitting = false;
       }
