@@ -1,7 +1,7 @@
 import { inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import {Observable, catchError, map, of, tap, throwError, switchMap} from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {User} from '../../../data/models/user/user';
 import {LoginForm} from '../../../data/models/auth/login-form';
@@ -39,32 +39,21 @@ export function provideAuthService() {
 
   // Charger les données de l'utilisateur actuel
   function loadCurrentUser(): Observable<User | null> {
-    return http.get<User>('/api/auth/me').pipe(
-      tap(user => {
-        currentUser.set(user);
-        isAuthenticated.set(true);
-      }),
-      catchError(() => {
-        logout();
-        return of(null);
-      })
-    );
+    return http.get<User>('/api/auth/me');
   }
 
-  // Connexion utilisateur
-  function login(credentials: LoginForm): Observable<boolean> {
-    return http.post<ApiResponse>('/api/auth/login', credentials).pipe(
-      tap(() => {
-        isAuthenticated.set(true);
-        loadCurrentUser().subscribe();
-      }),
-      map(() => true),
-      catchError(error => {
-        console.error('Login error', error);
-        return of(false);
-      })
-    );
+  function login(credentials: LoginForm): Observable<ApiResponse> {
+     return http.post<ApiResponse>('/api/auth/login', credentials)
   }
+
+  function defineAuthenticated(isAuth: boolean): void {
+    isAuthenticated.set(isAuth);
+  }
+
+  function defineUser(user: User | null): void {
+    currentUser.set(user);
+  }
+
 
   // Inscription utilisateur
   function signup(userData: UserSignupForm): Observable<boolean> {
@@ -140,6 +129,8 @@ export function provideAuthService() {
     // Méthodes
     loadCurrentUser,
     login,
+    defineAuthenticated,
+    defineUser,
     signup,
     logout,
     requestPasswordReset,
