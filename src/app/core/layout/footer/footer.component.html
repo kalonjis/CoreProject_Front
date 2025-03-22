@@ -25,7 +25,8 @@
         </div>
       </div>
 
-      <div class="footer-section links">
+      <!-- This section will be hidden on mobile screens -->
+      <div class="footer-section links d-mobile-none">
         <h3 class="footer-title">Quick Links</h3>
         <ul class="footer-links">
           <li><a routerLink="/">Home</a></li>
@@ -35,7 +36,8 @@
         </ul>
       </div>
 
-      <div class="footer-section contact">
+      <!-- This section will be hidden on mobile screens -->
+      <div class="footer-section contact d-mobile-none">
         <h3 class="footer-title">Contact Us</h3>
         <ul class="contact-list">
           <li>
@@ -65,8 +67,8 @@
     <div class="footer-bottom">
       <p>&copy; {{ currentYear }} CoreProject. All rights reserved.</p>
       <ul class="footer-bottom-links">
-        <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
-        <li><a routerLink="/terms-of-service">Terms of Service</a></li>
+        <li><a routerLink="/privacy-policy">Privacy</a></li>
+        <li><a routerLink="/terms-of-service">Terms</a></li>
       </ul>
     </div>
   </div>

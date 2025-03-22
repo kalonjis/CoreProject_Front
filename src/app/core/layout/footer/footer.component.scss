@@ -16,6 +16,23 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
   width: 100%;
   z-index: 900;
 
+  // Responsive adjustments for footer height
+  @media (max-width: $breakpoint-large) {
+    padding: 2.5rem 0 1.25rem;
+  }
+
+  @media (max-width: $breakpoint-medium) {
+    padding: 2rem 0 1rem;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 1.5rem 0 1rem;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 1.25rem 0 0.75rem;
+  }
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -40,6 +57,14 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
   justify-content: space-between;
   margin-bottom: 2rem;
 
+  @media (max-width: $breakpoint-medium) {
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-bottom: 1rem;
+  }
+
   .footer-section {
     flex: 1;
     min-width: 230px;
@@ -48,10 +73,17 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
 
     @media (max-width: $breakpoint-tablet) {
       flex: 0 0 50%;
+      padding-right: 1rem;
+      margin-bottom: 1.25rem;
+
+      // Reduce text size on smaller screens
+      font-size: 0.9rem;
     }
 
     @media (max-width: $breakpoint-mobile) {
       flex: 0 0 100%;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
     }
 
     &.about {
@@ -69,6 +101,16 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
     margin-bottom: 1rem;
     position: relative;
 
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
     &::after {
       content: '';
       position: absolute;
@@ -77,6 +119,11 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
       height: 2px;
       width: 50px;
       background-color: $primary-color;
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 40px;
+        bottom: -0.35rem;
+      }
     }
   }
 }
@@ -85,6 +132,10 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
 .social-links {
   display: flex;
   margin-top: 1rem;
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-top: 0.75rem;
+  }
 
   .social-link {
     display: flex;
@@ -97,6 +148,18 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
     margin-right: 0.75rem;
     transition: background-color 0.3s ease;
 
+    @media (max-width: $breakpoint-tablet) {
+      width: 32px;
+      height: 32px;
+      margin-right: 0.6rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      width: 28px;
+      height: 28px;
+      margin-right: 0.5rem;
+    }
+
     &:hover {
       background-color: $primary-color;
     }
@@ -104,6 +167,11 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
     svg {
       width: 16px;
       height: 16px;
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 14px;
+        height: 14px;
+      }
     }
   }
 }
@@ -116,6 +184,14 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
 
   li {
     margin-bottom: 0.75rem;
+
+    @media (max-width: $breakpoint-tablet) {
+      margin-bottom: 0.6rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      margin-bottom: 0.5rem;
+    }
 
     a {
       display: inline-block;
@@ -136,6 +212,10 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
     svg {
       margin-right: 0.75rem;
       flex-shrink: 0;
+
+      @media (max-width: $breakpoint-mobile) {
+        margin-right: 0.5rem;
+      }
     }
   }
 }
@@ -149,6 +229,16 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
   align-items: center;
   flex-wrap: wrap;
 
+  @media (max-width: $breakpoint-tablet) {
+    padding-top: 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding-top: 1rem;
+    font-size: 0.8rem;
+  }
+
   p {
     margin: 0;
   }
@@ -161,6 +251,10 @@ $footer-text: #ffffff; // Already defined in variables but could be overridden h
 
     li {
       margin-left: 1.5rem;
+
+      @media (max-width: $breakpoint-tablet) {
+        margin-left: 1.25rem;
+      }
 
       @media (max-width: $breakpoint-mobile) {
         margin-left: 1rem;
