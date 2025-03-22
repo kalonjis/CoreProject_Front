@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -30,12 +30,20 @@ export class FooterComponent implements OnInit {
 
   /**
    * Add padding to the bottom of the body to account for the footer height
+   * This ensures the footer doesn't overlap content on small screens
    */
   addBodyPadding(): void {
     const footer = document.querySelector('.app-footer') as HTMLElement;
     if (footer) {
       const footerHeight = footer.offsetHeight;
-      document.body.style.paddingBottom = `${footerHeight}px`;
+
+      // Add some extra padding on mobile for better UX
+      const extraPadding = window.innerWidth <= 576 ? 20 : 0;
+
+      document.body.style.paddingBottom = `${footerHeight + extraPadding}px`;
+
+      // For debugging purposes - you can remove this later
+      console.log(`Adjusted footer padding: ${footerHeight + extraPadding}px`);
     }
   }
 }

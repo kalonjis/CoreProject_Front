@@ -239,7 +239,7 @@
   .d-mobile-flex { display: flex !important; }
 }
 
-@media (max-width: $breakpoint-tablet) and (min-width: $breakpoint-mobile + 0.02) {
+@media (min-width: $breakpoint-mobile + 0.02) and (max-width: $breakpoint-tablet) {
   .d-tablet-none { display: none !important; }
   .d-tablet-block { display: block !important; }
   .d-tablet-flex { display: flex !important; }
