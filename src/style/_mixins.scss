@@ -1,0 +1,115 @@
+// _mixins.scss - Reusable style functions
+//
+// This file contains SCSS mixins that can be reused across the application
+// Import this file in your component's SCSS using: @import 'mixins';
+
+// Import variables to use them in mixins
+@import 'variables';
+
+// Flexbox mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Responsive mixins
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == "mobile" {
+    @media (max-width: $breakpoint-mobile) { @content; }
+  }
+  @else if $breakpoint == "tablet" {
+    @media (max-width: $breakpoint-tablet) { @content; }
+  }
+  @else if $breakpoint == "medium" {
+    @media (max-width: $breakpoint-medium) { @content; }
+  }
+  @else if $breakpoint == "large" {
+    @media (max-width: $breakpoint-large) { @content; }
+  }
+}
+
+// Typography mixins
+@mixin heading-1 {
+  font-size: 2.5rem;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  color: $dark-color;
+}
+
+@mixin heading-2 {
+  font-size: 2rem;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  color: $dark-color;
+}
+
+@mixin heading-3 {
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  line-height: 1.3;
+  color: $dark-color;
+}
+
+// Button mixins
+@mixin button-primary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: $transition-base;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+@mixin button-secondary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: $primary-color;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: $transition-base;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+// Card mixins
+@mixin card {
+  background-color: white;
+  border-radius: $border-radius;
+  padding: 1.5rem;
+  box-shadow: $box-shadow;
+}
+
+// Truncate text with ellipsis
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
