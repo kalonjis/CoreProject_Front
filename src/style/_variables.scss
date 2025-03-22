@@ -1,0 +1,74 @@
+/ _variables.scss - Centralized styling variables
+//
+// This file contains all the variables used across the application's styles.
+// Import this file in your component's SCSS using: @import 'variables';
+
+// Core colors
+$primary-color: #4a90e2;
+$secondary-color: #2c3e50;
+$accent-color: #e74c3c;
+$success-color: #2ecc71;
+$warning-color: #f39c12;
+$danger-color: #e74c3c;
+$info-color: #3498db;
+
+// Neutral colors
+$light-color: #f8f9fa;
+$gray-light: #f8f9fa;
+$gray-medium: #e9ecef;
+$gray-dark: #6c757d;
+$dark-color: #343a40;
+$text-color: #333;
+$border-color: #dee2e6;
+
+// Specific elements
+$body-bg: #f8f9fa;
+$header-bg: #ffffff;
+$footer-bg: $secondary-color;
+$footer-text: #ffffff;
+
+// Layout sizes
+$header-height: 70px;
+$footer-height: 300px; // Approx value, will be calculated dynamically
+
+// Breakpoints
+$breakpoint-large: 1200px;
+$breakpoint-medium: 992px;
+$breakpoint-tablet: 768px;
+$breakpoint-mobile: 576px;
+
+// Spacing
+$spacer: 1rem;
+$spacer-1: $spacer * 0.25;
+$spacer-2: $spacer * 0.5;
+$spacer-3: $spacer;
+$spacer-4: $spacer * 1.5;
+$spacer-5: $spacer * 3;
+
+// Typography
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$font-size-base: 16px;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$line-height-base: 1.5;
+
+// Border radius
+$border-radius: 4px;
+$border-radius-lg: 8px;
+$border-radius-sm: 2px;
+
+// Box shadows
+$box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+// Z-index levels
+$z-index-dropdown: 1000;
+$z-index-fixed: 1030;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// Animation
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.15s ease;
