@@ -1,0 +1,26 @@
+src/
+├── app/
+│   ├── core/
+│   │   ├── auth/
+│   │   │   ├── guards/
+│   │   │   │   ├── auth.guard.ts (mis à jour)
+│   │   │   │   └── admin.guard.ts (mis à jour)
+│   │   │   ├── providers/
+│   │   │   │   └── auth.provider.ts (nouveau)
+│   │   │   ├── store/
+│   │   │   │   └── auth.store.ts (nouveau)
+│   │   │   └── services/
+│   │   │       └── auth.service.ts (supprimé/remplacé par store)
+│   │   ├── http/
+│   │   │   └── http-error-interceptor.ts (mis à jour)
+│   │   └── layout/
+│   │       └── header/
+│   │           └── header.component.ts (mis à jour)
+│   ├── features/
+│   │   └── auth/
+│   │       ├── login/
+│   │       │   └── login.component.ts (mis à jour)
+│   │       └── signup/
+│   │           └── signup.component.ts (mis à jour)
+│   └── root/
+│       └── app.config.ts (mis à jour)
