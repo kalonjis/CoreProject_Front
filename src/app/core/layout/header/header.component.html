@@ -34,7 +34,7 @@
       <ng-template #userMenu>
         <div class="user-menu dropdown">
           <button class="dropdown-toggle user-button">
-            {{ currentUser?.username || 'User' }}
+            {{ username() || 'User' }}
           </button>
           <ul class="dropdown-menu dropdown-menu-right">
             <li><a routerLink="/profile">Profile</a></li>
