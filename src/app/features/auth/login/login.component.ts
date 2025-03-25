@@ -1,9 +1,8 @@
-// src/app/features/auth/login/login.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { provideAuthStore } from '../../../core/auth/providers/auth.provider';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { SessionService } from '../../../core/auth/services/session.service';
 
 @Component({
   selector: 'app-login',
@@ -13,59 +12,69 @@ import { provideAuthStore } from '../../../core/auth/providers/auth.provider';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-  private authStore = provideAuthStore();
   private fb = inject(FormBuilder);
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private sessionService = inject(SessionService);
 
   loginForm!: FormGroup;
-  isSubmitting = false;
-  returnUrl: string = '/';
+  isSubmitting = signal(false);
 
-  // Expose the error from the store
-  get errorMessage() {
-    return this.authStore.error();
-  }
+  // Signaux pour afficher les messages à l'utilisateur
+  showSuccessMessage = signal(false);
+  successMessage = signal('');
+
+  // Signal calculé à partir de l'état du service de session
+  errorMessage = computed(() => this.sessionService.error());
 
   ngOnInit(): void {
-    // Clear any previous errors
-    this.authStore.clearErrors();
-
-    // Initialize the form
+    // Initialiser le formulaire
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Get return URL from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // Vérifier les query params pour afficher des messages
+    const params = this.route.snapshot.queryParams;
+    if (params['registered'] === 'true') {
+      this.showSuccessMessage.set(true);
+      this.successMessage.set('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+    }
+    if (params['reset'] === 'true') {
+      this.showSuccessMessage.set(true);
+      this.successMessage.set('Votre mot de passe a été réinitialisé avec succès.');
+    }
+    if (params['session-expired'] === 'true') {
+      // Pas besoin d'utiliser errorMessage ici car c'est propre à l'URL et non à une erreur d'API
+      this.showSuccessMessage.set(false);
+      this.successMessage.set('');
+    }
   }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      // Mark all fields as touched to display errors
+      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.loginForm.controls).forEach(key => {
-        const control = this.loginForm.get(key);
-        control?.markAsTouched();
+        this.loginForm.get(key)?.markAsTouched();
       });
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
-    this.authStore.login(this.loginForm.value).subscribe({
+    this.sessionService.login(this.loginForm.value).subscribe({
       next: () => {
-        // Navigation is handled in the store
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
+        // La redirection est gérée par le service de session
       },
       error: () => {
-        this.isSubmitting = false;
-        // Error is handled in the store
+        this.isSubmitting.set(false);
+        // Les erreurs sont gérées par le service de session
       }
     });
   }
 
-  // Getters for easy access to form controls in the template
+  // Getters pour un accès facile aux contrôles du formulaire dans le template
   get usernameControl() { return this.loginForm.get('username'); }
   get passwordControl() { return this.loginForm.get('password'); }
 }

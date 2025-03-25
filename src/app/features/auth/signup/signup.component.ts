@@ -3,7 +3,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { provideAuthStore } from '../../../core/auth/providers/auth.provider';
 
 @Component({
   selector: 'app-signup',
@@ -13,7 +12,6 @@ import { provideAuthStore } from '../../../core/auth/providers/auth.provider';
   styleUrl: './signup.component.scss'
 })
 export class SignupComponent implements OnInit {
-  private authStore = provideAuthStore();
   private fb = inject(FormBuilder);
 
   signupForm!: FormGroup;
@@ -24,12 +22,10 @@ export class SignupComponent implements OnInit {
 
   // Expose the error from the store
   get errorMessage() {
-    return this.authStore.error();
   }
 
   ngOnInit(): void {
     // Clear any previous errors
-    this.authStore.clearErrors();
 
     // Initialize the form
     this.signupForm = this.fb.group({

@@ -1,8 +1,7 @@
-// src/app/core/layout/header/header.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthStore } from '../../auth/store/auth.store';
+import { SessionService } from '../../auth/services/session.service';
 
 @Component({
   selector: 'app-header',
@@ -11,32 +10,28 @@ import { AuthStore } from '../../auth/store/auth.store';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
-  private authStore = inject(AuthStore);
+export class HeaderComponent {
+  private sessionService = inject(SessionService);
 
-  // Exposer directement les signaux du store
-  isLoggedIn = this.authStore.isAuthenticated;
-  currentUser = this.authStore.user;
-  isAdmin = this.authStore.isAdmin;
-  username = this.authStore.username;
+  // Utiliser directement les signaux exposés par le service
+  isLoggedIn = this.sessionService.isAuthenticated;
+  username = this.sessionService.username;
+  isAdmin = this.sessionService.isAdmin;
 
-  mobileMenuActive = false;
-
-  ngOnInit(): void {
-    // Pas besoin de s'abonner, les signaux sont actualisés automatiquement
-  }
+  // État local du composant
+  mobileMenuActive = signal(false);
 
   logout(): void {
-    this.authStore.logout().subscribe();
+    this.sessionService.logout().subscribe();
   }
 
   toggleMobileMenu(): void {
-    this.mobileMenuActive = !this.mobileMenuActive;
-    document.body.style.overflow = this.mobileMenuActive ? 'hidden' : '';
+    this.mobileMenuActive.update(value => !value);
+    document.body.style.overflow = this.mobileMenuActive() ? 'hidden' : '';
   }
 
   closeMobileMenu(): void {
-    this.mobileMenuActive = false;
+    this.mobileMenuActive.set(false);
     document.body.style.overflow = '';
   }
 }
