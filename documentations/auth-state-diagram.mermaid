@@ -1,0 +1,90 @@
+stateDiagram-v2
+  [*] --> NonAuthentifié: Lancement de l'App
+
+  state "Non Authentifié" as NonAuthentifié {
+[*] --> VérificationCookies
+VérificationCookies --> TokenValide: Présence de cookies
+VérificationCookies --> PasDeToken: Pas de cookies
+
+TokenValide --> VérificationSession: Charger profil utilisateur
+PasDeToken --> AfficherLogin
+
+VérificationSession --> SessionValide: API /me réussie
+VérificationSession --> SessionInvalide: Erreur API
+
+SessionInvalide --> AfficherLogin
+}
+
+state "Authentifié" as Authentifié {
+[*] --> NiveauConfiance
+
+state "Niveau de Confiance" as NiveauConfiance {
+UNTRUSTED --> BASIC: Confirmation par email
+BASIC --> TRUSTED: Utilisation régulière
+TRUSTED --> HIGHLY_TRUSTED: 2FA activé
+}
+
+NiveauConfiance --> ControleAutorisation: Contrôle d'accès
+
+state "Contrôle d'Autorisation" as ControleAutorisation {
+state "Vérification des Rôles" as VerificationRoles {
+[*] --> ExtractionRoles: Récupérer rôles de l'utilisateur
+ExtractionRoles --> VerificationAcces: Comparer avec rôles requis
+VerificationAcces --> AccesAutorise: Rôle suffisant
+VerificationAcces --> AccesRefuse: Rôle insuffisant
+AccesRefuse --> [*]: Redirection Access Denied
+}
+
+state "Matrice de Rôles" as MatriceRoles {
+SUPER_ADMIN --> Ressources_Admin
+ADMIN --> Ressources_Admin
+MODERATOR --> Ressources_Moderateur
+USER --> Ressources_User
+GUEST --> Ressources_Public
+            }
+
+VerificationRoles --> MatriceRoles
+}
+
+ControleAutorisation --> AccesRessources: Si autorisé
+
+state "Accès aux Ressources" as AccesRessources {
+Resources_Public --> [*]
+
+state "Ressources avec Niveau de Confiance" as RessourcesConfiance {
+Resources_Basic: Nécessite BASIC
+Resources_Trusted: Nécessite TRUSTED
+Resources_Secure: Nécessite HIGHLY_TRUSTED
+}
+
+RessourcesConfiance --> VérifierNiveau
+VérifierNiveau --> AccèsAutorisé: Niveau suffisant
+VérifierNiveau --> DemandVérification: Niveau insuffisant
+
+DemandVérification --> NiveauConfiance: Augmentation du niveau
+}
+    }
+
+NonAuthentifié --> Authentifié: Login Réussi
+Authentifié --> NonAuthentifié: Déconnexion/Expiration
+
+SessionValide --> Authentifié
+
+state "Gestion Session" as GestionSession {
+[*] --> VérifierExpiration
+VérifierExpiration --> TokenFrais: > 5 min restantes
+VérifierExpiration --> TokenExpirant: < 5 min restantes
+
+TokenExpirant --> RafraîchirToken
+RafraîchirToken --> TokenRafraîchi: Succès
+RafraîchirToken --> ÉchecRafraîchissement: Échec
+
+TokenRafraîchi --> TokenFrais
+ÉchecRafraîchissement --> SessionExpirée
+
+SessionExpirée --> [*]: Redirection Login
+    }
+
+Authentifié --> GestionSession: Avant chaque requête API
+GestionSession --> Authentifié: Token valide
+GestionSession --> NonAuthentifié: Session expirée
