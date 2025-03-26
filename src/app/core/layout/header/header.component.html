@@ -1,68 +1,77 @@
+@if (isInitialized()) {
+  <!-- Contenu normal du header -->
 <header class="app-header">
-<div class="container">
-  <div class="logo">
-    <a routerLink="/">CoreProject</a>
-  </div>
+  <div class="container">
+    <div class="logo">
+      <a routerLink="/">CoreProject</a>
+    </div>
 
-  <nav class="main-nav">
-    <ul class="nav-list">
-      <li class="nav-item"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+    <!-- N'affiche le contenu que lorsque la session est initialisée -->
+    @if (isInitialized()) {
+      <nav class="main-nav">
+        <ul class="nav-list">
+          <li class="nav-item"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
 
-      <!-- Dropdown example -->
-      <li class="nav-item dropdown">
-        <a class="dropdown-toggle">Services</a>
-        <ul class="dropdown-menu">
-          <li><a routerLink="/services/service1">Service 1</a></li>
-          <li><a routerLink="/services/service2">Service 2</a></li>
-          <li><a routerLink="/services/service3">Service 3</a></li>
-        </ul>
-      </li>
+          <!-- Dropdown example -->
+          <li class="nav-item dropdown">
+            <a class="dropdown-toggle">Services</a>
+            <ul class="dropdown-menu">
+              <li><a routerLink="/services/service1">Service 1</a></li>
+              <li><a routerLink="/services/service2">Service 2</a></li>
+              <li><a routerLink="/services/service3">Service 3</a></li>
+            </ul>
+          </li>
 
-      <li class="nav-item"><a routerLink="/about" routerLinkActive="active">About</a></li>
-      <li class="nav-item"><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
+          <li class="nav-item"><a routerLink="/about" routerLinkActive="active">About</a></li>
+          <li class="nav-item"><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
 
-      <!-- Option affichée uniquement pour les administrateurs -->
-      @if (isAdmin()) {
-        <li class="nav-item"><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
-      }
-    </ul>
-  </nav>
-
-  <div class="auth-section">
-    <!-- Utilisation directe des signaux avec @if/@else -->
-    @if (!isLoggedIn()) {
-      <a routerLink="/auth/login" class="btn btn-login">Log In</a>
-      <a routerLink="/auth/signup" class="btn btn-signup">Sign Up</a>
-    } @else {
-      <div class="user-menu dropdown">
-        <button class="dropdown-toggle user-button">
-          {{ username() || 'User' }}
-        </button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li><a routerLink="/profile">Profile</a></li>
-          <li><a routerLink="/devices">My Devices</a></li>
-          <li><a routerLink="/preferences">Preferences</a></li>
+          <!-- Option affichée uniquement pour les administrateurs -->
           @if (isAdmin()) {
-            <li><a routerLink="/admin">Admin</a></li>
+            <li class="nav-item"><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
           }
-          <li class="divider"></li>
-          <li><a (click)="logout()" class="logout-btn">Logout</a></li>
         </ul>
+      </nav>
+
+      <div class="auth-section">
+        @if (!isLoggedIn()) {
+          <a routerLink="/auth/login" class="btn btn-login">Log In</a>
+          <a routerLink="/auth/signup" class="btn btn-signup">Sign Up</a>
+        } @else {
+          <div class="user-menu dropdown">
+            <button class="dropdown-toggle user-button">
+              {{ username() || 'User' }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a routerLink="/profile">Profile</a></li>
+              <li><a routerLink="/devices">My Devices</a></li>
+              <li><a routerLink="/preferences">Preferences</a></li>
+              @if (isAdmin()) {
+                <li><a routerLink="/admin">Admin</a></li>
+              }
+              <li class="divider"></li>
+              <li><a (click)="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Spinner or loading indicator when session is initializing -->
+      <div class="loading-indicator">
+        <span>Loading...</span>
       </div>
     }
-  </div>
 
-  <!-- Mobile menu button -->
-  <button class="mobile-menu-toggle" [class.active]="mobileMenuActive()" (click)="toggleMobileMenu()">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-  </button>
-</div>
+    <!-- Mobile menu button -->
+    <button class="mobile-menu-toggle" [class.active]="mobileMenuActive" (click)="toggleMobileMenu()">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
 </header>
 
 <!-- Mobile navigation menu (shown when mobile menu is active) -->
-<div class="mobile-nav" [class.active]="mobileMenuActive()">
+<div class="mobile-nav" [class.active]="mobileMenuActive">
   <ul class="mobile-nav-list">
     <li class="mobile-nav-item"><a routerLink="/" (click)="closeMobileMenu()">Home</a></li>
     <li class="mobile-nav-item"><a routerLink="/services" (click)="closeMobileMenu()">Services</a></li>
@@ -70,17 +79,24 @@
     <li class="mobile-nav-item"><a routerLink="/contact" (click)="closeMobileMenu()">Contact</a></li>
 
     <!-- Auth links for mobile -->
-    @if (!isLoggedIn()) {
-      <li class="mobile-nav-item"><a routerLink="/auth/login" (click)="closeMobileMenu()">Log In</a></li>
-      <li class="mobile-nav-item"><a routerLink="/auth/signup" (click)="closeMobileMenu()">Sign Up</a></li>
-    } @else {
-      <li class="mobile-nav-item"><a routerLink="/profile" (click)="closeMobileMenu()">Profile</a></li>
-      <li class="mobile-nav-item"><a routerLink="/devices" (click)="closeMobileMenu()">My Devices</a></li>
-      <li class="mobile-nav-item"><a routerLink="/preferences" (click)="closeMobileMenu()">Preferences</a></li>
-      @if (isAdmin()) {
-        <li class="mobile-nav-item"><a routerLink="/admin" (click)="closeMobileMenu()">Admin</a></li>
+    @if (isInitialized()) {
+      @if (!isLoggedIn()) {
+        <li class="mobile-nav-item"><a routerLink="/auth/login" (click)="closeMobileMenu()">Log In</a></li>
+        <li class="mobile-nav-item"><a routerLink="/auth/signup" (click)="closeMobileMenu()">Sign Up</a></li>
+      } @else {
+        <li class="mobile-nav-item"><a routerLink="/profile" (click)="closeMobileMenu()">Profile</a></li>
+        <li class="mobile-nav-item"><a routerLink="/devices" (click)="closeMobileMenu()">My Devices</a></li>
+        <li class="mobile-nav-item"><a routerLink="/preferences" (click)="closeMobileMenu()">Preferences</a></li>
+        @if (isAdmin()) {
+          <li class="mobile-nav-item"><a routerLink="/admin" (click)="closeMobileMenu()">Admin</a></li>
+        }
+        <li class="mobile-nav-item"><a (click)="logout(); closeMobileMenu()" class="logout-btn">Logout</a></li>
       }
-      <li class="mobile-nav-item"><a (click)="logout(); closeMobileMenu()" class="logout-btn">Logout</a></li>
     }
   </ul>
 </div>
+
+} @else {
+  <!-- Spinner ou indicateur de chargement -->
+  <div class="loading-spinner">Chargement...</div>
+}

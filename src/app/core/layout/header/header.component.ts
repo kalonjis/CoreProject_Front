@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SessionService } from '../../auth/services/session.service';
@@ -8,30 +8,42 @@ import { SessionService } from '../../auth/services/session.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   private sessionService = inject(SessionService);
+  private _mobileMenuActive = false;
 
-  // Utiliser directement les signaux exposés par le service
-  isLoggedIn = this.sessionService.isAuthenticated;
-  username = this.sessionService.username;
-  isAdmin = this.sessionService.isAdmin;
+  // Signaux pour l'état d'authentification et l'utilisateur
+  isLoggedIn = computed(() => this.sessionService.isAuthenticated());
+  username = computed(() => this.sessionService.username());
+  isAdmin = computed(() => this.sessionService.isAdmin());
+  isInitialized = computed(() => this.sessionService.isInitialized());
 
-  // État local du composant
-  mobileMenuActive = signal(false);
+  // Propriété pour l'état du menu mobile
+  get mobileMenuActive(): boolean {
+    return this._mobileMenuActive;
+  }
+
+  ngOnInit(): void {
+    // Si pas encore initialisé, on attend...
+    if (!this.isInitialized()) {
+      // On pourrait ajouter un spinner ici
+      console.log('Waiting for session to initialize...');
+    }
+  }
 
   logout(): void {
     this.sessionService.logout().subscribe();
   }
 
   toggleMobileMenu(): void {
-    this.mobileMenuActive.update(value => !value);
-    document.body.style.overflow = this.mobileMenuActive() ? 'hidden' : '';
+    this._mobileMenuActive = !this._mobileMenuActive;
+    document.body.style.overflow = this._mobileMenuActive ? 'hidden' : '';
   }
 
   closeMobileMenu(): void {
-    this.mobileMenuActive.set(false);
+    this._mobileMenuActive = false;
     document.body.style.overflow = '';
   }
 }

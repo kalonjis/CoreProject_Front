@@ -2,9 +2,9 @@
   <div class="signup-card">
     <h2>Inscription</h2>
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="error-message">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
     }
 
@@ -103,9 +103,9 @@
         <button
           type="submit"
           class="btn-primary"
-          [disabled]="isSubmitting"
+          [disabled]="isSubmitting()"
         >
-          @if (isSubmitting) {
+          @if (isSubmitting()) {
             <span>Inscription en cours...</span>
           } @else {
             <span>S'inscrire</span>

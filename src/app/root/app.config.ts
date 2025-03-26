@@ -7,7 +7,9 @@ import { httpErrorInterceptor } from '../core/http/http-error-interceptor';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { SessionService } from '../core/auth/services/session.service';
 import { authInterceptor } from '../core/http/auth-interceptor';
-import {environment} from '../../environment/environment';
+import { environment } from '../../environment/environment';
+import { GlobalErrorHandler } from '../core/error/global-error-handler';
+import { ContentSecurityService } from '../core/security/content-security.service';
 
 // Fonction d'initialisation de la sécurité
 function initSecurityFeatures(contentSecurityService: ContentSecurityService) {
@@ -22,7 +24,13 @@ function initSecurityFeatures(contentSecurityService: ContentSecurityService) {
 
 // Fonction d'initialisation de la session
 function initializeApp(sessionService: SessionService) {
-  return () => sessionService.initialize();
+  return () => {
+    console.log("Initializing session...");
+    return sessionService.initialize().then(() => {
+      console.log("Session initialized, auth state:",
+        sessionService.isAuthenticated() ? "Authenticated" : "Not authenticated");
+    });
+  };
 }
 
 export const appConfig: ApplicationConfig = {

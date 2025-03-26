@@ -1,8 +1,8 @@
-// src/app/features/auth/signup/signup.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { SessionService } from '../../../core/auth/services/session.service';
 
 @Component({
   selector: 'app-signup',
@@ -13,20 +13,17 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class SignupComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private sessionService = inject(SessionService);
 
   signupForm!: FormGroup;
-  isSubmitting = false;
+  isSubmitting = signal(false);
+  errorMessage = signal<string | null>(null);
 
   // Regex for strong password validation
   private passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  // Expose the error from the store
-  get errorMessage() {
-  }
-
   ngOnInit(): void {
-    // Clear any previous errors
-
     // Initialize the form
     this.signupForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
@@ -65,16 +62,17 @@ export class SignupComponent implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
+    this.errorMessage.set(null);
 
-    this.authStore.signup(this.signupForm.value).subscribe({
+    this.sessionService.signup(this.signupForm.value).subscribe({
       next: () => {
-        // Navigation is handled in the store
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
+        // Navigation is handled in the service
       },
-      error: () => {
-        this.isSubmitting = false;
-        // Error is handled in the store
+      error: (error) => {
+        this.isSubmitting.set(false);
+        this.errorMessage.set(error.error?.message || 'An error occurred during signup');
       }
     });
   }

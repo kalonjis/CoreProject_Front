@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { User } from '../../../data/models/user/user';
 import { LoginForm } from '../../../data/models/auth/login-form';
 import { UserSignupForm } from '../../../data/models/user/user-signup-form';
@@ -82,68 +82,107 @@ export class SessionService {
   public readonly state = this._state.asReadonly();
 
   /**
+   * Vérifie l'état de l'authentification en faisant une requête API
+   * Cette méthode est plus fiable que la vérification des cookies
+   * car elle fonctionne même avec des cookies HTTPOnly
+   */
+  public checkAuthStatus(): Promise<boolean> {
+    console.log("[SessionService] Vérification de l'état d'authentification via API");
+
+    // Marquer comme en cours de chargement
+    this.updateState({ isLoading: true });
+
+    return new Promise<boolean>((resolve) => {
+      this.http.get<{isAuthenticated: boolean}>('/api/auth/status').subscribe({
+        next: (response) => {
+          console.log("[SessionService] Réponse du statut d'authentification:", response.isAuthenticated);
+          this.updateState({ isLoading: false });
+
+          if (response.isAuthenticated) {
+            // Si authentifié, charger le profil utilisateur
+            this.loadUserProfile().then(() => {
+              resolve(true);
+            });
+          } else {
+            // Sinon, mettre à jour l'état
+            this.updateState({
+              isAuthenticated: false,
+              isInitialized: true,
+              user: null
+            });
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error("[SessionService] Erreur lors de la vérification de l'authentification:", error);
+          this.updateState({
+            isLoading: false,
+            isAuthenticated: false,
+            isInitialized: true,
+            user: null
+          });
+          resolve(false);
+        }
+      });
+    });
+  }
+
+
+
+  /**
    * Initialise la session utilisateur au démarrage de l'application
    */
   public initialize(): Promise<void> {
-    // Vérifier la présence d'un token dans les cookies
-    const hasToken = this.cookieService.hasCookie('access_token');
+    console.log("[SessionService] Initialisation de la session");
 
-    if (!hasToken) {
-      this.updateState({
-        isAuthenticated: false,
-        isInitialized: true,
-        isLoading: false
+    return new Promise<void>((resolve) => {
+      // Tentons de restaurer l'état depuis localStorage (pour une meilleure UX)
+      const restoredFromStorage = this.restoreAuthStateFromStorage();
+
+      // Peu importe, on vérifie toujours avec le serveur
+      this.checkAuthStatus().then(() => {
+        console.log("[SessionService] Initialisation terminée, état:",
+          this.isAuthenticated() ? "authentifié" : "non authentifié");
+        resolve();
       });
-      return Promise.resolve();
-    }
-
-    // Essayer de récupérer les informations du token
-    try {
-      const tokenInfo = this.getTokenInfo();
-      if (tokenInfo) {
-        this.updateState({
-          tokenExpiry: tokenInfo.exp * 1000, // Convertir en millisecondes
-          deviceId: tokenInfo.deviceId,
-          deviceTrustLevel: tokenInfo.deviceTrustLevel
-        });
-      }
-    } catch (error) {
-      console.warn('Erreur lors du décodage du token', error);
-    }
-
-    // Charger les informations utilisateur
-    return this.loadUserProfile().toPromise();
+    });
   }
 
   /**
    * Charge le profil utilisateur depuis l'API
    */
-  public loadUserProfile(): Observable<void> {
+  public loadUserProfile(): Promise<void> {
     this.updateState({ isLoading: true });
 
-    return this.http.get<User>('/api/auth/me').pipe(
-      tap(user => {
-        this.updateState({
-          user,
-          isAuthenticated: true,
-          isInitialized: true,
-          isLoading: false,
-          error: null,
-          lastRefreshed: Date.now()
-        });
-      }),
-      catchError(error => {
-        console.error('Erreur lors du chargement du profil', error);
-        this.updateState({
-          user: null,
-          isAuthenticated: false,
-          isInitialized: true,
-          isLoading: false,
-          error: 'Session expirée ou invalide'
-        });
-        return of(void 0);
-      })
-    );
+    return new Promise<void>((resolve) => {
+      this.http.get<User>('/api/auth/me').pipe(
+        tap(user => {
+          this.updateState({
+            user,
+            isAuthenticated: true,
+            isInitialized: true,
+            isLoading: false,
+            error: null,
+            lastRefreshed: Date.now()
+          });
+          this.saveAuthStateToStorage(user, true);
+        }),
+        catchError(error => {
+          console.error('Erreur lors du chargement du profil', error);
+          this.updateState({
+            user: null,
+            isAuthenticated: false,
+            isInitialized: true,
+            isLoading: false,
+            error: 'Session expirée ou invalide'
+          });
+          return of(undefined);
+        })
+      ).subscribe({
+        next: () => resolve(),
+        error: () => resolve()
+      });
+    });
   }
 
   /**
@@ -172,7 +211,8 @@ export class SessionService {
         }
 
         // Charger le profil utilisateur
-        this.loadUserProfile().subscribe(() => {
+        this.loadUserProfile().then((user) => {
+
           // Redirection après login réussi
           const returnUrl = this.getReturnUrl();
           this.router.navigateByUrl(returnUrl);
@@ -185,6 +225,7 @@ export class SessionService {
         });
         throw error;
       })
+
     );
   }
 
@@ -197,6 +238,7 @@ export class SessionService {
     return this.http.post<void>('/api/auth/logout', {}).pipe(
       tap(() => {
         this.clearSession();
+        this.saveAuthStateToStorage(null, false);
         this.router.navigate(['/auth/login']);
       }),
       catchError(error => {
@@ -245,7 +287,7 @@ export class SessionService {
     }
 
     return this.http.post<void>('/api/auth/refresh-token', {}).pipe(
-      tap(() => {
+      map(() => {
         // Mettre à jour les informations du token après rafraîchissement
         try {
           const tokenInfo = this.getTokenInfo();
@@ -258,8 +300,8 @@ export class SessionService {
         } catch (error) {
           console.warn('Erreur lors du décodage du token après rafraîchissement', error);
         }
+        return true;
       }),
-      tap(() => true),
       catchError(error => {
         console.error('Erreur lors du rafraîchissement du token', error);
         if (error.status === 401 || error.status === 403) {
@@ -279,14 +321,14 @@ export class SessionService {
     if (!deviceTrustLevel) return false;
 
     // Mapping des niveaux de confiance pour comparaison
-    const trustLevels = {
+    const trustLevels: Record<string, number> = {
       'UNTRUSTED': 0,
       'BASIC': 1,
       'TRUSTED': 2,
       'HIGHLY_TRUSTED': 3
     };
 
-    return trustLevels[deviceTrustLevel] >= trustLevels[requiredLevel];
+    return (trustLevels[deviceTrustLevel] ?? 0) >= (trustLevels[requiredLevel] ?? 0);
   }
 
   /**
@@ -354,4 +396,66 @@ export class SessionService {
     }
     return '/';
   }
+
+  /**
+   * Sauvegarde l'état d'authentification dans localStorage
+   * Cela permet de conserver l'état même si les cookies sont HTTPOnly
+   */
+  private saveAuthStateToStorage(user: User | null, isAuthenticated: boolean): void {
+    if (isAuthenticated && user) {
+      localStorage.setItem('auth_state', JSON.stringify({
+        isAuthenticated: true,
+        username: user.username,
+        lastLogin: Date.now(),            // Timestamp
+        hasSeenWelcomeMessage: true,      // Préférences UI non sensibles
+        theme: 'dark',                    // Préférences UI
+        language: 'fr'                    // Préférences UI
+
+      }));
+      console.log("État d'authentification sauvegardé dans localStorage");
+    } else {
+      localStorage.removeItem('auth_state');
+      console.log("État d'authentification supprimé de localStorage");
+    }
+  }
+
+  /**
+   * Restaure l'état d'authentification depuis localStorage
+   * Utile pour le chargement initial si les cookies sont HTTPOnly
+   */
+  private restoreAuthStateFromStorage(): boolean {
+    const savedState = localStorage.getItem('auth_state');
+    console.log("Tentative de restauration depuis localStorage:", savedState ? "données trouvées" : "aucune donnée");
+
+    if (!savedState) return false;
+
+    try {
+      const parsedState = JSON.parse(savedState);
+      const timestamp = parsedState.lastSaved || 0;
+      const now = Date.now();
+      const fourHoursAgo = now - (4 * 60 * 60 * 1000); // 4 heures
+
+      // Si l'état sauvegardé est trop ancien, ne pas l'utiliser
+      if (timestamp < fourHoursAgo) {
+        console.log("État d'authentification trop ancien, ignoré");
+        localStorage.removeItem('auth_state');
+        return false;
+      }
+
+      console.log("État d'authentification restauré depuis localStorage");
+      // On ne restaure qu'un état partiel - on vérifiera toujours avec l'API
+      this.updateState({
+        isAuthenticated: true,
+        isLoading: true
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de la restauration de l'état:", error);
+      localStorage.removeItem('auth_state');
+      return false;
+    }
+  }
 }
+
+
