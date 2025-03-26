@@ -4,14 +4,15 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthStore } from '../auth/store/auth.store';
+import {SessionService} from '../auth/services/session.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (
   request: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<any> => {
   const router = inject(Router);
-  const authStore = inject(AuthStore);
+  const sessionService = inject(SessionService);
+
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -20,7 +21,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (
         console.error('Network error or server not responding', error);
       } else if (error.status === 401) {
         // Unauthorized - update auth state and redirect to login
-        authStore.logout().subscribe();
+        sessionService.logout().subscribe();
       } else if (error.status === 403) {
         // Forbidden
         console.error('Forbidden access', error);
