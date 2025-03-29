@@ -1,8 +1,9 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+// login.component.ts
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { SessionService } from '../../../core/auth/services/session.service';
+import {AuthService} from '../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,47 +14,31 @@ import { SessionService } from '../../../core/auth/services/session.service';
 })
 export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private sessionService = inject(SessionService);
+  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
 
-  loginForm!: FormGroup;
+  // État local du composant
   isSubmitting = signal(false);
+  loginError = signal<string | null>(null);
 
-  // Signaux pour afficher les messages à l'utilisateur
-  showSuccessMessage = signal(false);
-  successMessage = signal('');
-
-  // Signal calculé à partir de l'état du service de session
-  errorMessage = computed(() => this.sessionService.error());
+  // Formulaire
+  loginForm = this.fb.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
+  });
 
   ngOnInit(): void {
-    // Initialiser le formulaire
-    this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-
-    // Vérifier les query params pour afficher des messages
+    // Vérifier les messages depuis l'URL (redirection)
     const params = this.route.snapshot.queryParams;
-    if (params['registered'] === 'true') {
-      this.showSuccessMessage.set(true);
-      this.successMessage.set('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-    }
-    if (params['reset'] === 'true') {
-      this.showSuccessMessage.set(true);
-      this.successMessage.set('Votre mot de passe a été réinitialisé avec succès.');
-    }
-    if (params['session-expired'] === 'true') {
-      // Pas besoin d'utiliser errorMessage ici car c'est propre à l'URL et non à une erreur d'API
-      this.showSuccessMessage.set(false);
-      this.successMessage.set('');
+    if (params['expired'] === 'true') {
+      this.loginError.set('Votre session a expiré. Veuillez vous reconnecter.');
     }
   }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
+      // Marque tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
@@ -61,20 +46,21 @@ export class LoginComponent implements OnInit {
     }
 
     this.isSubmitting.set(true);
+    this.loginError.set(null);
 
-    this.sessionService.login(this.loginForm.value).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        // La redirection est gérée par le service de session
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        // Les erreurs sont gérées par le service de session
-      }
-    });
+    this.authService.login(this.loginForm.value as {username: string, password: string})
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+
+          // Rediriger vers la page demandée ou l'accueil
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigateByUrl(returnUrl);
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          this.loginError.set(err.error?.message || 'Échec de connexion');
+        }
+      });
   }
-
-  // Getters pour un accès facile aux contrôles du formulaire dans le template
-  get usernameControl() { return this.loginForm.get('username'); }
-  get passwordControl() { return this.loginForm.get('password'); }
 }

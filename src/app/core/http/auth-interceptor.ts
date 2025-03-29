@@ -1,47 +1,85 @@
-import { HttpInterceptorFn, HttpHandlerFn, HttpRequest } from '@angular/common/http';
+// src/app/core/http/auth-interceptor.ts
+import { HttpInterceptorFn, HttpHandlerFn, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable, from, switchMap } from 'rxjs';
-import { SessionService } from '../auth/services/session.service';
+import { Router } from '@angular/router';
+import { catchError, switchMap, throwError, Observable, BehaviorSubject, of } from 'rxjs';
+import { AuthService } from '../auth/services/auth.service';
 
-/**
- * Intercepteur HTTP qui rafraîchit automatiquement le token JWT si nécessaire
- * avant chaque requête API
- */
+// Un sujet pour suivre si un refresh est en cours
+let isRefreshing = false;
+
+// File d'attente pour stocker les requêtes en attente de refresh
+const pendingRequests: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
-): Observable<any> => {
-  const sessionService = inject(SessionService);
+) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
 
-  // Ne pas traiter les requêtes non-API ou les requêtes d'authentification
-  const isAuthEndpoint = req.url.includes('/api/auth/login') ||
-    req.url.includes('/api/auth/refresh-token') ||
-    req.url.includes('/api/auth/logout');
+  // Ajouter withCredentials à toutes les requêtes pour envoyer les cookies
+  const authReq = req.clone({
+    withCredentials: true
+  });
 
-  // Vérifier l'authenticité de la session pour le débogage
-  console.log(`[AuthInterceptor] Requête vers ${req.url}, authentifié: ${sessionService.isAuthenticated()}`);
-
-  // Pour les requêtes vers /api/auth/me, on ne veut pas de comportement spécial
-  if (req.url.includes('/api/auth/me')) {
-    console.log("[AuthInterceptor] Requête vers /api/auth/me, passage direct");
-    return next(req);
+  // Ne pas intercepter les requêtes de refresh token pour éviter les boucles
+  if (req.url.includes('/api/auth/refresh-token')) {
+    return next(authReq);
   }
 
-  // Passer directement les requêtes d'authentification
-  if (isAuthEndpoint) {
-    console.log("[AuthInterceptor] Requête d'authentification, passage direct");
-    return next(req);
-  }
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // Si l'erreur est 401 ou 403 (token expiré ou invalide)
+      if ((error.status === 401 || error.status === 403) && !req.url.includes('/api/auth/login')) {
+        // Si un refresh token est déjà en cours
+        if (isRefreshing) {
+          // Attendre la fin du refresh et réessayer la requête
+          return pendingRequests.pipe(
+            switchMap(success => {
+              if (success) {
+                // Réessayer la requête originale
+                return next(authReq);
+              }
+              // Si le refresh a échoué, rediriger vers login
+              return throwError(() => error);
+            })
+          );
+        }
 
-  // Si l'utilisateur est authentifié, vérifier et rafraîchir le token si nécessaire
-  if (sessionService.isAuthenticated()) {
-    console.log("[AuthInterceptor] Utilisateur authentifié, vérification du token");
-    return from(sessionService.refreshTokenIfNeeded()).pipe(
-      switchMap(() => next(req))
-    );
-  }
+        // Marquer le début d'un refresh
+        isRefreshing = true;
+        // Réinitialiser le sujet pour les requêtes en attente
+        pendingRequests.next(false);
 
-  // Sinon, continuer normalement
-  console.log("[AuthInterceptor] Utilisateur non authentifié, passage de la requête sans modification");
-  return next(req);
+        // Appeler le service pour rafraîchir le token
+        return authService.refreshToken().pipe(
+          switchMap(() => {
+            // Le refresh a réussi
+            isRefreshing = false;
+            pendingRequests.next(true);
+
+            // Réessayer la requête originale
+            return next(authReq);
+          }),
+          catchError(refreshError => {
+            // Le refresh a échoué
+            isRefreshing = false;
+            pendingRequests.next(false);
+
+            // Déconnecter l'utilisateur et rediriger
+            authService.clearSession();
+            router.navigate(['/auth/login'], {
+              queryParams: { expired: 'true' }
+            });
+
+            return throwError(() => refreshError);
+          })
+        );
+      }
+
+      // Pour les autres erreurs, les propager normalement
+      return throwError(() => error);
+    })
+  );
 };

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { sessionGuard, adminGuard } from '../core/auth/guards/session.guard';
 
 export const routes: Routes = [
   // Routes publiques
@@ -10,6 +9,11 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('../features/home/home.component').then(m => m.HomeComponent)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('../features/profile/profile.component')
+      .then(m => m.ProfileComponent)
   },
 /*
   // Routes authentifiées standard
