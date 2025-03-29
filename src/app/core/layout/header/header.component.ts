@@ -1,49 +1,31 @@
-import { Component, OnInit, inject, computed } from '@angular/core';
+// header.component.ts
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { SessionService } from '../../auth/services/session.service';
+import {RouterLink, RouterLinkActive} from '@angular/router';
+import {AuthService} from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
-  private sessionService = inject(SessionService);
-  private _mobileMenuActive = false;
-
-  // Signaux pour l'état d'authentification et l'utilisateur
-  isLoggedIn = computed(() => this.sessionService.isAuthenticated());
-  username = computed(() => this.sessionService.username());
-  isAdmin = computed(() => this.sessionService.isAdmin());
-  isInitialized = computed(() => this.sessionService.isInitialized());
-
-  // Propriété pour l'état du menu mobile
-  get mobileMenuActive(): boolean {
-    return this._mobileMenuActive;
-  }
-
-  ngOnInit(): void {
-    // Si pas encore initialisé, on attend...
-    if (!this.isInitialized()) {
-      // On pourrait ajouter un spinner ici
-      console.log('Waiting for session to initialize...');
-    }
-  }
-
-  logout(): void {
-    this.sessionService.logout().subscribe();
-  }
+export class HeaderComponent {
+  authService = inject(AuthService);
+  mobileMenuActive = false;
 
   toggleMobileMenu(): void {
-    this._mobileMenuActive = !this._mobileMenuActive;
-    document.body.style.overflow = this._mobileMenuActive ? 'hidden' : '';
+    this.mobileMenuActive = !this.mobileMenuActive;
+    document.body.style.overflow = this.mobileMenuActive ? 'hidden' : '';
   }
 
   closeMobileMenu(): void {
-    this._mobileMenuActive = false;
+    this.mobileMenuActive = false;
     document.body.style.overflow = '';
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe();
   }
 }

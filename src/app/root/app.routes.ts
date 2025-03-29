@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { sessionGuard, adminGuard } from '../core/auth/guards/session.guard';
 
 export const routes: Routes = [
   // Routes publiques
