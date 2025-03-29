@@ -1,0 +1,10 @@
+<div class="toast" [ngClass]="isSuccess ? 'success' : 'error'">
+  <h3 class="toast-title">{{ isSuccess ? 'Succès' : 'Erreur' }}</h3>
+  <p class="toast-message">{{ message }}</p>
+  <button
+    class="toast-button"
+    [ngClass]="isSuccess ? 'success-button' : 'error-button'"
+    (click)="onButtonClick()">
+    {{ buttonText }}
+  </button>
+</div>
