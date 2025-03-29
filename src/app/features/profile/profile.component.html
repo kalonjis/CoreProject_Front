@@ -1,0 +1,200 @@
+<div class="profile-container">
+  <div class="container">
+    <div class="profile-header">
+      <h1>My Profile</h1>
+      <p class="text-muted">Manage your account information and settings</p>
+    </div>
+
+    <!-- Loading State - Affiche un loader tant que les données ne sont pas chargées -->
+    @if (isLoading()) {
+      <div class="loading-container">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading your profile information...</p>
+        </div>
+      </div>
+    } @else {
+      <!-- Alert Messages -->
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          {{ successMessage() }}
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          <div class="alert-content">
+            <span>{{ errorMessage() }}</span>
+            <button class="btn-retry" (click)="retryLoading()">Retry</button>
+          </div>
+        </div>
+      }
+
+      <!-- Profile Content - Affiché seulement si userInfo existe -->
+      @if (userInfo()) {
+        <div class="profile-card">
+          <div class="profile-section account-info">
+            <div class="section-header">
+              <h2>Account Information</h2>
+              <div class="actions">
+                @if (!editMode()) {
+                  <button class="btn-outline" (click)="toggleEditMode()">Edit Profile</button>
+                }
+              </div>
+            </div>
+
+            @if (editMode()) {
+              <!-- Edit Profile Form -->
+              <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" formControlName="firstname" class="form-control">
+                    @if (profileForm.get('firstname')?.invalid && profileForm.get('firstname')?.touched) {
+                      <div class="error-message">First name is required</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" formControlName="lastname" class="form-control">
+                    @if (profileForm.get('lastname')?.invalid && profileForm.get('lastname')?.touched) {
+                      <div class="error-message">Last name is required</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="phoneNumber">Phone Number</label>
+                  <input type="text" id="phoneNumber" formControlName="phoneNumber" class="form-control">
+                  @if (profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched) {
+                    <div class="error-message">Please enter a valid phone number</div>
+                  }
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary" [disabled]="profileForm.invalid">Save Changes</button>
+                  <button type="button" class="btn-outline" (click)="toggleEditMode()">Cancel</button>
+                </div>
+              </form>
+            } @else {
+              <!-- Profile Display -->
+              <div class="profile-info">
+                <div class="info-item">
+                  <span class="label">Username:</span>
+                  <span class="value">{{ userInfo()?.username }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Full Name:</span>
+                  <span class="value">{{ userInfo()?.firstname }} {{ userInfo()?.lastname }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Email:</span>
+                  <span class="value">{{ userInfo()?.email }}</span>
+                  <button class="btn-link" (click)="toggleChangeEmailMode()">Change Email</button>
+                </div>
+                <div class="info-item">
+                  <span class="label">Phone:</span>
+                  <span class="value">{{ userInfo()?.phoneNumber || 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Member Since:</span>
+                  <span class="value">{{ formatDate(userInfo()?.createdAt) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Email Change Form -->
+          @if (changeEmailMode()) {
+            <div class="profile-section email-change">
+              <div class="section-header">
+                <h2>Change Email Address</h2>
+              </div>
+              <form [formGroup]="emailForm" (ngSubmit)="requestEmailChange()">
+                <div class="form-group">
+                  <label for="email">New Email Address</label>
+                  <input type="email" id="email" formControlName="email" class="form-control">
+                  @if (emailForm.get('email')?.invalid && emailForm.get('email')?.touched) {
+                    <div class="error-message">Please enter a valid email address</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmEmail">Confirm Email Address</label>
+                  <input type="email" id="confirmEmail" formControlName="confirmEmail" class="form-control">
+                  @if (emailForm.get('confirmEmail')?.invalid && emailForm.get('confirmEmail')?.touched) {
+                    <div class="error-message">Please confirm your email address</div>
+                  }
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary" [disabled]="emailForm.invalid">Request Change</button>
+                  <button type="button" class="btn-outline" (click)="toggleChangeEmailMode()">Cancel</button>
+                </div>
+              </form>
+            </div>
+          }
+
+          <!-- Security Section -->
+          <div class="profile-section security">
+            <div class="section-header">
+              <h2>Security</h2>
+            </div>
+            <div class="security-actions">
+              <button class="btn-outline" (click)="initiatePasswordChange()">
+                <span class="icon">🔒</span>
+                Change Password
+              </button>
+              <a routerLink="/devices" class="btn-outline">
+                <span class="icon">💻</span>
+                Manage Devices
+              </a>
+            </div>
+          </div>
+
+          <!-- Recent Activities (Devices) -->
+          <div class="profile-section recent-devices">
+            <div class="section-header">
+              <h2>Recent Devices</h2>
+              <a routerLink="/devices" class="link-primary">View All</a>
+            </div>
+
+            @if (isLoadingDevices()) {
+              <div class="loading-indicator">Loading devices...</div>
+            } @else if (devices().length === 0) {
+              <p class="no-data">No recent device activity</p>
+            } @else {
+              <div class="devices-list">
+                @for (device of getRecentDevices(); track device.id) {
+                  <div class="device-item">
+                    <div class="device-icon">
+                      @if (device.deviceType === 'MOBILE') {
+                        <span>📱</span>
+                      } @else if (device.deviceType === 'TABLET') {
+                        <span>📱</span>
+                      } @else if (device.deviceType === 'DESKTOP') {
+                        <span>💻</span>
+                      } @else {
+                        <span>🖥️</span>
+                      }
+                    </div>
+                    <div class="device-info">
+                      <div class="device-name">
+                        {{ device.browser }} on {{ device.operatingSystem }}
+                      </div>
+                      <div class="device-meta">
+                        <span class="trust-level">{{ device.level }}</span>
+                        <span class="last-seen">Last seen: {{ formatDate(device.lastSeen) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
