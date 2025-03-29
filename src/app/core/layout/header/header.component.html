@@ -19,7 +19,6 @@
     <div class="auth-section">
       @if (!authService.isAuthenticated()) {
         <a routerLink="/auth/login" class="btn btn-login">Connexion</a>
-        <a routerLink="/auth/signup" class="btn btn-signup">Inscription</a>
       } @else {
         <div class="user-dropdown">
           <button class="user-dropdown-btn" (click)="toggleDropdown()">
