@@ -120,7 +120,7 @@ export class AuthService {
           }));
 
           this.clearUserStorage();
-          this.router.navigate(['/login']);
+          this.router.navigate(['/auth/login']);
         }),
         catchError(err => {
           // Même en cas d'erreur, nettoyage local
