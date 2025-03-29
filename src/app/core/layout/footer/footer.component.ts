@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -12,38 +12,66 @@ import { RouterModule } from '@angular/router';
 export class FooterComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
 
+  // État des sections dépliables
+  expandedSections = {
+    links: false,
+    contact: false
+  };
+
   constructor() { }
 
   ngOnInit(): void {
-    // Add some padding to the bottom of the main content
-    // to prevent the footer from overlapping content
+    // Calculer la hauteur du footer pour le padding du body
     this.addBodyPadding();
 
-    // Listen for window resize to adjust padding if needed
+    // Écouteur d'événement pour mise à jour en cas de redimensionnement
     window.addEventListener('resize', this.addBodyPadding);
   }
 
   ngOnDestroy(): void {
-    // Remove event listener on component destruction
+    // Supprimer l'écouteur d'événement
     window.removeEventListener('resize', this.addBodyPadding);
   }
 
   /**
-   * Add padding to the bottom of the body to account for the footer height
-   * This ensures the footer doesn't overlap content on small screens
+   * Ajoute le padding au body pour éviter que le footer ne chevauche le contenu
    */
   addBodyPadding(): void {
     const footer = document.querySelector('.app-footer') as HTMLElement;
     if (footer) {
       const footerHeight = footer.offsetHeight;
+      document.body.style.paddingBottom = `${footerHeight}px`;
+    }
+  }
 
-      // Add some extra padding on mobile for better UX
-      const extraPadding = window.innerWidth <= 576 ? 20 : 0;
+  /**
+   * Bascule l'état d'expansion d'une section
+   */
+  toggleSection(section: 'links' | 'contact'): void {
+    // Fermer les autres sections
+    if (section !== 'links') {
+      this.expandedSections.links = false;
+    }
+    if (section !== 'contact') {
+      this.expandedSections.contact = false;
+    }
 
-      document.body.style.paddingBottom = `${footerHeight + extraPadding}px`;
+    // Basculer la section actuelle
+    this.expandedSections[section] = !this.expandedSections[section];
 
-      // For debugging purposes - you can remove this later
-      console.log(`Adjusted footer padding: ${footerHeight + extraPadding}px`);
+    // Mettre à jour le padding après un court délai pour tenir compte de l'animation
+    setTimeout(() => this.addBodyPadding(), 300);
+  }
+
+  /**
+   * Ferme toutes les sections quand on clique en dehors du footer
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.footer-collapsible-sections')) {
+      this.expandedSections.links = false;
+      this.expandedSections.contact = false;
     }
   }
 }
