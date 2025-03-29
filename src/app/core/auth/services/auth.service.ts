@@ -2,7 +2,7 @@
 import { Injectable, inject, signal, computed, Signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
 
 export interface User {
   id: number;
@@ -194,5 +194,62 @@ export class AuthService {
   // Vérification des rôles
   hasRole(role: string): boolean {
     return this._state().user?.roles?.includes(role) || false;
+  }
+
+  /**
+   * Efface les données de session côté client sans faire d'appel API
+   * Utile en cas d'erreur d'authentification ou de refresh token échoué
+   */
+  clearSession(): void {
+    // Mettre à jour l'état d'authentification
+    this._state.update(state => ({
+      ...state,
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null
+    }));
+
+    // Supprimer les données locales
+    this.clearUserStorage();
+  }
+
+
+  // À ajouter à votre AuthService
+
+  /**
+   * Rafraîchit le token d'accès à l'aide du refresh token
+   * @returns Un observable qui émet quand le token est rafraîchi
+   */
+  refreshToken(): Observable<any> {
+    this._state.update(state => ({...state, isLoading: true}));
+
+    return this.http.post<void>('/api/auth/refresh-token', {}, { withCredentials: true })
+      .pipe(
+        tap(() => {
+          // Marquer l'authentification comme réussie
+          this._state.update(state => ({
+            ...state,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null
+          }));
+        }),
+        catchError(err => {
+          this._state.update(state => ({
+            ...state,
+            isLoading: false,
+            isAuthenticated: false,
+            user: null,
+            error: 'Failed to refresh session'
+          }));
+
+          // Nettoyer le stockage local
+          this.clearUserStorage();
+
+          // Propager l'erreur pour que l'intercepteur puisse la gérer
+          return throwError(() => err);
+        })
+      );
   }
 }
