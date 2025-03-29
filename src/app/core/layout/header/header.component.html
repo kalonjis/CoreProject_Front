@@ -21,16 +21,19 @@
         <a routerLink="/auth/login" class="btn btn-login">Connexion</a>
         <a routerLink="/auth/signup" class="btn btn-signup">Inscription</a>
       } @else {
-        <div class="user-menu dropdown">
-          <button class="dropdown-toggle user-button">
+        <div class="user-dropdown">
+          <button class="user-dropdown-btn" (click)="toggleDropdown()">
             {{ authService.username() || 'Utilisateur' }}
+            <span class="dropdown-icon"></span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-right">
-            <li><a routerLink="/profile">Profil</a></li>
-            <li><a routerLink="/devices">Mes appareils</a></li>
-            <li class="divider"></li>
-            <li><a (click)="logout()" class="logout-btn">Déconnexion</a></li>
-          </ul>
+          @if (isDropdownOpen) {
+            <div class="dropdown-menu">
+              <a routerLink="/profile" class="dropdown-item">Profil</a>
+              <a routerLink="/devices" class="dropdown-item">Mes appareils</a>
+              <div class="dropdown-divider"></div>
+              <a (click)="logout()" class="dropdown-item logout-item">Déconnexion</a>
+            </div>
+          }
         </div>
       }
     </div>
