@@ -1,5 +1,6 @@
 // src/app/shared/feedback/tools/feedback.base.ts
 import { signal } from '@angular/core';
+import { FeedbackType } from './feedback.model';
 
 /**
  * Classe utilitaire qui peut être étendue par un composant pour intégrer
@@ -8,7 +9,7 @@ import { signal } from '@angular/core';
 export class FeedbackBase {
   // Signaux pour gérer l'état du feedback
   feedbackMessage = signal<string>('');
-  isFeedbackSuccess = signal<boolean>(true);
+  feedbackType = signal<FeedbackType>('info');
   showFeedback = signal<boolean>(false);
   buttonText = signal<string>('');
   feedbackTimeout = signal<number | null>(null);
@@ -18,14 +19,14 @@ export class FeedbackBase {
 
   /**
    * Affiche un message de feedback
-   * @param isSuccess Indique si c'est un message de succès ou d'erreur
+   * @param type Type de feedback (success, error, warning, info)
    * @param message Le message à afficher
    * @param buttonText Texte du bouton (optionnel)
    * @param timeout Délai avant disparition automatique (optionnel)
    */
-  displayFeedback(isSuccess: boolean, message: string, buttonText: string = '', timeout: number | null = null) {
+  displayFeedback(type: FeedbackType, message: string, buttonText: string = '', timeout: number | null = null) {
     this.showFeedback.set(true);
-    this.isFeedbackSuccess.set(isSuccess);
+    this.feedbackType.set(type);
     this.feedbackMessage.set(message);
     this.buttonText.set(buttonText);
     this.feedbackTimeout.set(timeout);
@@ -35,14 +36,28 @@ export class FeedbackBase {
    * Affiche un message de succès
    */
   displaySuccess(message: string, buttonText: string = '', timeout: number | null = 5000) {
-    this.displayFeedback(true, message, buttonText, timeout);
+    this.displayFeedback('success', message, buttonText, timeout);
   }
 
   /**
    * Affiche un message d'erreur
    */
   displayError(message: string, buttonText: string = '', timeout: number | null = null) {
-    this.displayFeedback(false, message, buttonText, timeout);
+    this.displayFeedback('error', message, buttonText, timeout);
+  }
+
+  /**
+   * Affiche un message d'information
+   */
+  displayInfo(message: string, buttonText: string = '', timeout: number | null = 5000) {
+    this.displayFeedback('info', message, buttonText, timeout);
+  }
+
+  /**
+   * Affiche un message d'avertissement
+   */
+  displayWarning(message: string, buttonText: string = '', timeout: number | null = 7000) {
+    this.displayFeedback('warning', message, buttonText, timeout);
   }
 
   /**
