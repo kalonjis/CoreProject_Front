@@ -1,0 +1,41 @@
+<!-- src/app/features/device/confirm-device/confirm-device.component.html -->
+<div class="confirm-device-container">
+  <div class="confirm-device-card">
+    <h1 class="title">Vérification de l'appareil</h1>
+
+    @if (isProcessing) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Traitement en cours, veuillez patienter...</p>
+      </div>
+    } @else {
+      @if (showFeedback()) {
+        <app-feedback
+          [message]="feedbackMessage()"
+          [type]="feedbackType()"
+          [buttonText]="buttonText()"
+          [timeout]="feedbackTimeout()"
+          (buttonClicked)="handleFeedbackButtonClick()">
+        </app-feedback>
+      } @else {
+        <div class="confirmation-info">
+          <p>
+            Cette page vous permet de confirmer ou rejeter un nouvel appareil
+            pour accéder à votre compte.
+          </p>
+          <p>
+            Si vous avez cliqué sur un lien dans un e-mail de sécurité, le processus
+            devrait démarrer automatiquement.
+          </p>
+        </div>
+      }
+    }
+
+    <div class="security-message">
+      <p>
+        <strong>Note de sécurité:</strong> La confirmation d'un appareil l'autorise
+        à accéder à votre compte. Ne confirmez que les appareils que vous reconnaissez.
+      </p>
+    </div>
+  </div>
+</div>
