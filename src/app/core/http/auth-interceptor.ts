@@ -11,6 +11,20 @@ let isRefreshing = false;
 // File d'attente pour stocker les requêtes en attente de refresh
 const pendingRequests: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+/**
+ * Récupère le token CSRF à partir des cookies
+ */
+function getCsrfToken(): string | null {
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'XSRF-TOKEN') {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
+
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
@@ -18,10 +32,20 @@ export const authInterceptor: HttpInterceptorFn = (
   const router = inject(Router);
   const authService = inject(AuthService);
 
-  // Ajouter withCredentials à toutes les requêtes pour envoyer les cookies
-  const authReq = req.clone({
+  // Récupérer le token CSRF
+  const csrfToken = getCsrfToken();
+
+  // Ajouter withCredentials et éventuellement l'en-tête CSRF
+  let authReq = req.clone({
     withCredentials: true
   });
+
+  // Ajouter le token CSRF pour les requêtes non GET
+  if (csrfToken && req.method !== 'GET') {
+    authReq = authReq.clone({
+      headers: authReq.headers.set('X-XSRF-TOKEN', csrfToken)
+    });
+  }
 
   // Ne pas intercepter les requêtes de refresh token pour éviter les boucles
   if (req.url.includes('/api/auth/refresh-token')) {
@@ -38,8 +62,17 @@ export const authInterceptor: HttpInterceptorFn = (
           return pendingRequests.pipe(
             switchMap(success => {
               if (success) {
-                // Réessayer la requête originale
-                return next(authReq);
+                // Réessayer la requête originale avec potentiellement un nouveau token CSRF
+                const newCsrfToken = getCsrfToken();
+                let newReq = req.clone({ withCredentials: true });
+
+                if (newCsrfToken && req.method !== 'GET') {
+                  newReq = newReq.clone({
+                    headers: newReq.headers.set('X-XSRF-TOKEN', newCsrfToken)
+                  });
+                }
+
+                return next(newReq);
               }
               // Si le refresh a échoué, rediriger vers login
               return throwError(() => error);
@@ -59,8 +92,17 @@ export const authInterceptor: HttpInterceptorFn = (
             isRefreshing = false;
             pendingRequests.next(true);
 
-            // Réessayer la requête originale
-            return next(authReq);
+            // Réessayer la requête originale avec le nouveau token CSRF
+            const newCsrfToken = getCsrfToken();
+            let newReq = req.clone({ withCredentials: true });
+
+            if (newCsrfToken && req.method !== 'GET') {
+              newReq = newReq.clone({
+                headers: newReq.headers.set('X-XSRF-TOKEN', newCsrfToken)
+              });
+            }
+
+            return next(newReq);
           }),
           catchError(refreshError => {
             // Le refresh a échoué
