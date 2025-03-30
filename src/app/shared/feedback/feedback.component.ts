@@ -1,7 +1,7 @@
 // src/app/shared/feedback/feedback.component.ts
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FeedbackType} from './tools/feedback.model';
+import { FeedbackType } from './tools/feedback.model';
 
 @Component({
   selector: 'app-feedback',
