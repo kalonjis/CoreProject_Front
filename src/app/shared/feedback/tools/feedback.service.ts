@@ -1,6 +1,6 @@
-// src/app/shared/feedback/services/feedback.service.ts
+// src/app/shared/feedback/tools/feedback.service.ts
 import { Injectable, signal } from '@angular/core';
-import {FeedbackOptions} from './feedback.model';
+import { FeedbackOptions, FeedbackType } from './feedback.model';
 
 @Injectable({
   providedIn: 'root'
