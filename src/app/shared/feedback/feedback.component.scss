@@ -1,65 +1,132 @@
-.toast {
+// src/app/shared/feedback/feedback.component.scss
+@import 'variables';
+@import 'mixins';
+
+.feedback {
   position: fixed;
-  top: 20px; /* Ajuste pour un affichage en haut */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 300px;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-  text-align: center;
-  animation: slide-down 0.5s ease-out, fade-out 0.5s ease-in 5s forwards;
-  font-family: Arial, sans-serif;
+  width: 320px;
+  padding: 1rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  animation: slide-down 0.3s ease-out;
 
-  &.success {
-    border: 5px solid #28a745; /* Vert pour succès */
+  // Types de feedback
+  &.feedback-success {
+    border-left: 4px solid $success-color;
   }
 
-  &.error {
-    border: 5px solid #dc3545; /* Rouge pour erreur */
+  &.feedback-error {
+    border-left: 4px solid $danger-color;
   }
 
-  .toast-title {
-    font-size: 1.25rem;
+  &.feedback-warning {
+    border-left: 4px solid $warning-color;
+  }
+
+  &.feedback-info {
+    border-left: 4px solid $info-color;
+  }
+
+  .feedback-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .feedback-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
     font-weight: bold;
-    margin-bottom: 8px;
-    color: #333;
+    flex-shrink: 0;
   }
 
-  .toast-message {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 12px;
+  // Couleurs des icônes selon le type
+  &.feedback-success .feedback-icon {
+    background-color: rgba($success-color, 0.2);
+    color: $success-color;
   }
 
-  .toast-button {
-    padding: 8px 16px;
+  &.feedback-error .feedback-icon {
+    background-color: rgba($danger-color, 0.2);
+    color: $danger-color;
+  }
+
+  &.feedback-warning .feedback-icon {
+    background-color: rgba($warning-color, 0.2);
+    color: $warning-color;
+  }
+
+  &.feedback-info .feedback-icon {
+    background-color: rgba($info-color, 0.2);
+    color: $info-color;
+  }
+
+  .feedback-message {
+    font-size: 0.95rem;
+    color: $text-color;
+  }
+
+  .feedback-button {
+    align-self: flex-end;
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: $border-radius;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
+
+  // Couleurs des boutons selon le type
+  .button-success {
+    background-color: $success-color;
     color: white;
 
-    &.success-button {
-      background-color: #28a745; /* Vert */
-      &:hover {
-        background-color: #218838;
-      }
+    &:hover {
+      background-color: darken($success-color, 5%);
     }
+  }
 
-    &.error-button {
-      background-color: #dc3545; /* Rouge */
-      &:hover {
-        background-color: #c82333;
-      }
+  .button-error {
+    background-color: $danger-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($danger-color, 5%);
+    }
+  }
+
+  .button-warning {
+    background-color: $warning-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($warning-color, 5%);
+    }
+  }
+
+  .button-info {
+    background-color: $info-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($info-color, 5%);
     }
   }
 }
 
-  /* Animations */
-/*@keyframes slide-down {
+@keyframes slide-down {
   from {
     opacity: 0;
     transform: translateX(-50%) translateY(-20px);
@@ -69,10 +136,3 @@
     transform: translateX(-50%) translateY(0);
   }
 }
-
-@keyframes fade-out {
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-}*/
