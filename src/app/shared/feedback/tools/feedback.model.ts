@@ -1,4 +1,3 @@
-// src/app/shared/feedback/models/feedback.model.ts
 export type FeedbackType = 'success' | 'error' | 'info' | 'warning';
 
 export interface FeedbackOptions {
