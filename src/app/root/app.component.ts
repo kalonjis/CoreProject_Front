@@ -1,14 +1,15 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {AuthService} from '../core/auth/services/auth.service';
-import {FooterComponent} from '../core/layout/footer/footer.component';
-import {RouterOutlet} from '@angular/router';
-import {HeaderComponent} from '../core/layout/header/header.component';
+import { AuthService } from '../core/auth/services/auth.service';
+import { FooterComponent } from '../core/layout/footer/footer.component';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from '../core/layout/header/header.component';
+import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent],
+  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
