@@ -4,7 +4,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError, Observable, BehaviorSubject, of } from 'rxjs';
 import { AuthService } from '../auth/services/auth.service';
-import { isPublicApiRoute } from '../auth/config/public-routes.config';
+import { isPublicApiRoute, isPublicFrontendRoute } from '../auth/config/public-routes.config';
 
 // Un sujet pour suivre si un refresh est en cours
 let isRefreshing = false;
@@ -46,31 +46,46 @@ export const authInterceptor: HttpInterceptorFn = (
     return next(cleanedReq);
   }
 
-  // 2. Récupérer le token CSRF
+  // 2. Récupérer l'URL actuelle et vérifier si c'est une route publique
+  const currentUrl = router.url;
+  const isPublicRoute = isPublicFrontendRoute(currentUrl);
+  const isAuthStatusCheck = req.url.includes('/api/auth/me') || req.url.includes('/api/auth/status');
+
+  // 3. Récupérer le token CSRF
   const csrfToken = getCsrfToken();
 
-  // 3. Ajouter withCredentials et éventuellement l'en-tête CSRF
+  // 4. Ajouter withCredentials et éventuellement l'en-tête CSRF
   let authReq = req.clone({
     withCredentials: true
   });
 
-  // 4. Ajouter le token CSRF pour les requêtes non GET
+  // 5. Ajouter le token CSRF pour les requêtes non GET
   if (csrfToken && req.method !== 'GET') {
     authReq = authReq.clone({
       headers: authReq.headers.set('X-XSRF-TOKEN', csrfToken)
     });
   }
 
-  // 5. Ne pas intercepter les requêtes de refresh token pour éviter les boucles
+  // 6. Ne pas appliquer la logique de refresh token pour les routes publiques
+  if (isPublicRoute && !isAuthStatusCheck) {
+    return next(authReq);
+  }
+
+  // 7. Ne pas intercepter les requêtes de refresh token pour éviter les boucles
   if (req.url.includes('/api/auth/refresh-token')) {
     return next(authReq);
   }
 
-  // 6. Traitement de la requête avec gestion d'erreur
+  // 8. Traitement de la requête avec gestion d'erreur
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       // Vérifier si c'est une erreur d'authentification et si la route n'est pas publique
       if ((error.status === 401 || error.status === 403) && !isPublicApiRoute(req.url)) {
+        // Si on est sur une route publique frontend, ne pas tenter de refresh
+        if (isPublicRoute && !isAuthStatusCheck) {
+          return throwError(() => error);
+        }
+
         console.log(`Erreur d'authentification sur ${req.url}, tentative de refresh token`);
 
         // Si un refresh token est déjà en cours
@@ -125,6 +140,11 @@ export const authInterceptor: HttpInterceptorFn = (
             // Le refresh a échoué
             isRefreshing = false;
             pendingRequests.next(false);
+
+            // Ne pas rediriger si on est sur une route publique
+            if (isPublicRoute) {
+              return throwError(() => refreshError);
+            }
 
             // Déconnecter l'utilisateur et rediriger
             authService.clearSession();
