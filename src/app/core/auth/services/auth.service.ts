@@ -1,4 +1,3 @@
-// auth.service.ts
 import { Injectable, inject, signal, computed, Signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -289,6 +288,17 @@ export class AuthService {
           return throwError(() => err);
         })
       );
+  }
+
+
+  // Méthode pour confirmer un compte
+  confirmAccount(token: string): Observable<any> {
+    return this.http.get<any>(`/api/account-confirmation/activation?token=${token}`);
+  }
+
+  // Méthode pour demander un nouveau token de confirmation
+  requestNewConfirmationToken(token: string): Observable<any> {
+    return this.http.get<any>(`/api/account-confirmation/request-activation?token=${token}`);
   }
 
   /**
