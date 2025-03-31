@@ -3,6 +3,7 @@ import { Injectable, inject, signal, computed, Signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
+import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 
 export interface User {
   id: number;
@@ -251,5 +252,63 @@ export class AuthService {
           return throwError(() => err);
         })
       );
+  }
+
+
+  /**
+   * Inscription d'un nouvel utilisateur
+   * @param userData Les données d'inscription de l'utilisateur
+   * @returns Observable indiquant que l'inscription a réussi
+   */
+  signup(userData: UserSignupForm): Observable<any> {
+    // Mettre à jour l'état pour indiquer le chargement
+    this._state.update(state => ({...state, isLoading: true, error: null}));
+
+    // Faire la requête POST vers l'API d'inscription
+    return this.http.post<any>('/api/auth/signup', userData)
+      .pipe(
+        tap(response => {
+          // Mettre à jour l'état après une inscription réussie
+          this._state.update(state => ({...state, isLoading: false}));
+
+          // Log de confirmation (optionnel, pour debug)
+          console.log('Inscription réussie', response);
+        }),
+        catchError(err => {
+          // Mettre à jour l'état en cas d'erreur d'inscription
+          this._state.update(state => ({
+            ...state,
+            isLoading: false,
+            error: this.extractErrorMessage(err)
+          }));
+
+          // Log d'erreur (optionnel, pour debug)
+          console.error('Erreur d\'inscription:', err);
+
+          // Propager l'erreur pour que le composant puisse la gérer
+          return throwError(() => err);
+        })
+      );
+  }
+
+  /**
+   * Extrait un message d'erreur lisible à partir d'une réponse d'erreur HTTP
+   * @param err L'erreur HTTP
+   * @returns Un message d'erreur formaté
+   */
+  private extractErrorMessage(err: any): string {
+    if (err.error?.message) {
+      return err.error.message;
+    } else if (err.error?.errors && Array.isArray(err.error.errors)) {
+      return err.error.errors.join('\n');
+    } else if (err.error?.globalErrors && Array.isArray(err.error.globalErrors)) {
+      return err.error.globalErrors.join('\n');
+    } else if (err.status === 0) {
+      return 'Le serveur est inaccessible. Veuillez vérifier votre connexion internet.';
+    } else if (err.status === 500) {
+      return 'Une erreur interne est survenue. Veuillez réessayer plus tard.';
+    } else {
+      return 'Échec de l\'inscription. Veuillez réessayer.';
+    }
   }
 }
