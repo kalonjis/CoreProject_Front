@@ -10,11 +10,12 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('./device-confirmation/device-confirmation.component')
       .then(m => m.ConfirmDeviceComponent)
   },
-  /*
   {
     path: 'signup',
     loadComponent: () => import('./signup/signup.component').then(m => m.SignupComponent)
   },
+  /*
+
   {
     path: 'forgot-password',
     loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
