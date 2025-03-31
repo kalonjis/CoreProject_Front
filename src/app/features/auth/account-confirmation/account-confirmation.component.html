@@ -1,0 +1,52 @@
+<div class="account-confirmation-container">
+  <div class="account-confirmation-card">
+    <h1 class="title">Confirmation de compte</h1>
+
+    @if (isProcessing) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Traitement en cours, veuillez patienter...</p>
+      </div>
+    } @else {
+      @if (showFeedback()) {
+        <app-feedback
+          [message]="feedbackMessage()"
+          [type]="feedbackType()"
+          [buttonText]="buttonText()"
+          [timeout]="feedbackTimeout()"
+          (buttonClicked)="handleFeedbackButtonClick()">
+        </app-feedback>
+      } @else {
+        <div class="confirmation-info">
+          <p>
+            Cette page vous permet de confirmer votre compte.
+          </p>
+
+          @if (showConfirmationButton) {
+            <p>
+              Veuillez cliquer sur le bouton ci-dessous pour finaliser l'activation de votre compte.
+            </p>
+
+            <div class="confirmation-action">
+              <button class="btn-primary" (click)="confirmAccount()">
+                Activer mon compte
+              </button>
+            </div>
+          } @else {
+            <p>
+              Si vous avez cliqué sur un lien dans un e-mail de confirmation, cliquez sur le bouton de confirmation
+              pour activer votre compte.
+            </p>
+          }
+        </div>
+      }
+    }
+
+    <div class="security-message">
+      <p>
+        <strong>Note:</strong> La confirmation de votre compte est nécessaire pour
+        activer toutes les fonctionnalités de l'application.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<!-- src/app/shared/feedback/feedback.component.html -->
+@if (visible) {
+  <div class="feedback" [ngClass]="feedbackClass">
+    <div class="feedback-content">
+      <div class="feedback-icon">
+        <span>{{ icon }}</span>
+      </div>
+      <div class="feedback-message">{{ message }}</div>
+    </div>
+
+    @if (buttonText) {
+      <button
+        class="feedback-button"
+        [ngClass]="buttonClass"
+        (click)="onButtonClick()">
+        {{ buttonText }}
+      </button>
+    }
+  </div>
+}

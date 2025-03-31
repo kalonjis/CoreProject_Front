@@ -1,0 +1,39 @@
+flowchart TB
+    subgraph "Couche Service"
+        FS[FeedbackService]
+    end
+    
+    subgraph "Composants Feedback"
+        GFC[GlobalFeedbackComponent]
+        FC[FeedbackComponent]
+    end
+    
+    subgraph "Modèles et Types"
+        FT[FeedbackType]
+        FO[FeedbackOptions]
+    end
+    
+    subgraph "Composants d'Application"
+        UC1[Composant Utilisateur 1]
+        UC2[Composant Utilisateur 2]
+        UC3[Composant Utilisateur 3]
+    end
+    
+    FS -- "Fournit l'état" --> GFC
+    GFC -- "Utilise" --> FC
+    FS -- "Utilise" --> FT
+    FS -- "Crée" --> FO
+    
+    UC1 -- "Injecte" --> FS
+    UC2 -- "Injecte" --> FS
+    UC3 -- "Utilise directement" --> FC
+    
+    classDef service fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef component fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef model fill:#bfb,stroke:#333,stroke-width:2px;
+    classDef user fill:#fbb,stroke:#333,stroke-width:2px;
+    
+    class FS service;
+    class GFC,FC component;
+    class FT,FO model;
+    class UC1,UC2,UC3 user;

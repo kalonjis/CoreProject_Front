@@ -1,0 +1,69 @@
+sequenceDiagram
+    title Authentication System Flow
+    
+    actor User
+    participant UI as Frontend (Angular)
+    participant Auth as Auth Service & Interceptor
+    participant API as Backend API
+    participant DB as Database
+    participant Email as Email Service
+    
+    %% Login Flow
+    rect rgba(191, 223, 255, 0.5)
+    note right of User: Login Flow
+    User->>UI: Enter credentials
+    UI->>API: POST /api/auth/login
+    API->>DB: Validate credentials
+    API->>DB: Check/register device
+    API->>DB: Create refresh token
+    API->>UI: Set cookies (access & refresh tokens)
+    UI->>UI: Update auth state
+    UI->>User: Redirect to app
+    
+    alt New Device Detected
+        API->>Email: Send device confirmation email
+        Email->>User: Receive confirmation link
+    end
+    end
+    
+    %% Token Refresh Flow
+    rect rgba(255, 222, 173, 0.5)
+    note right of User: Token Refresh Flow
+    User->>UI: Access protected page
+    UI->>Auth: Request to protected API
+    Auth->>API: HTTP request with access token
+    API->>Auth: Return 401 (expired token)
+    Auth->>API: POST /api/auth/refresh-token
+    API->>DB: Validate refresh token
+    API->>Auth: New access token
+    Auth->>API: Retry original request
+    API->>Auth: Return data
+    Auth->>UI: Update view
+    end
+    
+    %% Device Confirmation Flow
+    rect rgba(204, 255, 204, 0.5)
+    note right of User: Device Confirmation Flow
+    User->>UI: Click link in email
+    UI->>UI: Route to /auth/device-confirmation
+    UI->>API: GET /api/device/confirm?token=xyz
+    API->>DB: Verify token
+    API->>DB: Update device trust level
+    API->>UI: Confirmation success
+    UI->>User: Show success message
+    end
+    
+    %% Account Registration Flow
+    rect rgba(255, 204, 204, 0.5)
+    note right of User: Registration Flow
+    User->>UI: Fill registration form
+    UI->>API: POST /api/auth/signup
+    API->>DB: Create user (not activated)
+    API->>Email: Send confirmation email
+    Email->>User: Receive confirmation link
+    User->>UI: Click confirmation link
+    UI->>API: GET /api/account-confirmation/activation
+    API->>DB: Activate user account
+    API->>UI: Confirmation success
+    UI->>User: Show success & login prompt
+    end

@@ -1,0 +1,146 @@
+// src/app/shared/feedback/feedback.component.scss
+@import 'variables';
+@import 'mixins';
+
+.feedback {
+  position: fixed;
+  top: 90px; /* Ajustée pour être en-dessous de la navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 320px;
+  padding: 1rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  animation: slide-down 0.3s ease-out;
+
+  // Types de feedback
+  &.feedback-success {
+    border-left: 4px solid $success-color;
+  }
+
+  &.feedback-error {
+    border-left: 4px solid $danger-color;
+  }
+
+  &.feedback-warning {
+    border-left: 4px solid $warning-color;
+  }
+
+  &.feedback-info {
+    border-left: 4px solid $info-color;
+  }
+
+  .feedback-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .feedback-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  // Couleurs des icônes selon le type
+  &.feedback-success .feedback-icon {
+    background-color: rgba($success-color, 0.2);
+    color: $success-color;
+  }
+
+  &.feedback-error .feedback-icon {
+    background-color: rgba($danger-color, 0.2);
+    color: $danger-color;
+  }
+
+  &.feedback-warning .feedback-icon {
+    background-color: rgba($warning-color, 0.2);
+    color: $warning-color;
+  }
+
+  &.feedback-info .feedback-icon {
+    background-color: rgba($info-color, 0.2);
+    color: $info-color;
+  }
+
+  .feedback-message {
+    font-size: 0.95rem;
+    color: $text-color;
+  }
+
+  .feedback-button {
+    align-self: flex-end;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  // Couleurs des boutons selon le type
+  .button-success {
+    background-color: $success-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($success-color, 5%);
+    }
+  }
+
+  .button-error {
+    background-color: $danger-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($danger-color, 5%);
+    }
+  }
+
+  .button-warning {
+    background-color: $warning-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($warning-color, 5%);
+    }
+  }
+
+  .button-info {
+    background-color: $info-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($info-color, 5%);
+    }
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: $breakpoint-mobile) {
+  .feedback {
+    width: 90%;
+    max-width: 320px;
+  }
+}

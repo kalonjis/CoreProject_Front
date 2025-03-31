@@ -1,0 +1,61 @@
+flowchart TD
+    start[HTTP Request] --> skipCheck{Skip\nInterceptor?}
+    
+    skipCheck -- Yes --> cleanReq[Remove header & proceed]
+    skipCheck -- No --> routeCheck{Is current route\na public route?}
+    
+    routeCheck -- Yes --> authCheck{Is request for\nauth status check?}
+    routeCheck -- No --> addCsrf[Add CSRF token]
+    
+    authCheck -- Yes --> addCsrf
+    authCheck -- No --> simpleReq[Simple request with\ncredentials]
+    
+    addCsrf --> refreshCheck{Is request for\nrefresh token?}
+    
+    refreshCheck -- Yes --> proceed[Proceed with request]
+    refreshCheck -- No --> sendReq[Send request]
+    
+    simpleReq --> proceed
+    
+    sendReq --> errorCheck{Response has\n401/403 error?}
+    
+    errorCheck -- Yes --> publicApiCheck{Is API endpoint\npublic?}
+    errorCheck -- No --> returnResp[Return response]
+    
+    publicApiCheck -- Yes --> returnError[Return error]
+    publicApiCheck -- No --> publicRouteCheck2{Is current route\na public route?}
+    
+    publicRouteCheck2 -- Yes --> returnError
+    publicRouteCheck2 -- No --> refreshingCheck{Is refresh\nalready in progress?}
+    
+    refreshingCheck -- Yes --> waitRefresh[Wait for refresh\ncompletion]
+    refreshingCheck -- No --> startRefresh[Start token refresh]
+    
+    waitRefresh --> refreshSuccess{Refresh\nsuccessful?}
+    
+    refreshSuccess -- Yes --> retryRequest[Retry original request]
+    refreshSuccess -- No --> redirectLogin[Redirect to login]
+    
+    startRefresh --> attemptRefresh[Call refreshToken]
+    
+    attemptRefresh --> refreshResult{Refresh\nsuccessful?}
+    
+    refreshResult -- Yes --> retryRequest
+    refreshResult -- No --> publicCheck3{Is current route\na public route?}
+    
+    publicCheck3 -- Yes --> returnError
+    publicCheck3 -- No --> clearAndRedirect[Clear session &\nredirect to login]
+    
+    cleanReq --> returnResp
+    proceed --> returnResp
+    retryRequest --> returnResp
+    returnError --> endFlow[End]
+    redirectLogin --> endFlow
+    clearAndRedirect --> endFlow
+    returnResp --> endFlow
+    
+    class start,endFlow fill:#bbbbbb,stroke:#999999,color:black;
+    class skipCheck,routeCheck,authCheck,refreshCheck,errorCheck,publicApiCheck,publicRouteCheck2,refreshingCheck,refreshSuccess,refreshResult,publicCheck3 fill:#ffcc66,stroke:#ff9900,color:black;
+    class cleanReq,simpleReq,addCsrf,sendReq,proceed,waitRefresh,startRefresh,attemptRefresh,retryRequest fill:#99cc99,stroke:#669966,color:black;
+    class returnError,redirectLogin,clearAndRedirect fill:#ff9999,stroke:#cc6666,color:black;
+    class returnResp fill:#9999ff,stroke:#6666cc,color:black;
