@@ -1,0 +1,153 @@
+<!-- src/app/features/auth/signup/signup.component.html -->
+<div class="signup-container">
+  <div class="signup-card">
+    <h2>Créez votre compte</h2>
+
+    <!-- Erreurs locales spécifiques au formulaire -->
+    @if (signupError()) {
+      <div class="error-message">
+        {{ signupError() }}
+      </div>
+    }
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          placeholder="Choisissez un nom d'utilisateur"
+          autocomplete="username"
+        >
+        @if (signupForm.get('username')?.invalid && signupForm.get('username')?.touched) {
+          <div class="validation-error">
+            @if (signupForm.get('username')?.errors?.['required']) {
+              Le nom d'utilisateur est requis
+            } @else if (signupForm.get('username')?.errors?.['minlength']) {
+              Le nom d'utilisateur doit avoir au moins 2 caractères
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="Votre adresse email"
+          autocomplete="email"
+        >
+        @if (signupForm.get('email')?.invalid && signupForm.get('email')?.touched) {
+          <div class="validation-error">
+            @if (signupForm.get('email')?.errors?.['required']) {
+              L'adresse email est requise
+            } @else if (signupForm.get('email')?.errors?.['email']) {
+              Veuillez entrer une adresse email valide
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="Créez un mot de passe sécurisé"
+            autocomplete="new-password"
+          >
+          <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        @if (signupForm.get('password')?.invalid && signupForm.get('password')?.touched) {
+          <div class="validation-error">
+            @if (signupForm.get('password')?.errors?.['required']) {
+              Le mot de passe est requis
+            } @else if (signupForm.get('password')?.errors?.['minlength']) {
+              Le mot de passe doit contenir au moins 8 caractères
+            }
+            <!-- Les erreurs spécifiques du validateur StrongPassword seront affichées via le serveur -->
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmez le mot de passe</label>
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            placeholder="Retapez votre mot de passe"
+            autocomplete="new-password"
+          >
+        </div>
+        @if (signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched) {
+          <div class="validation-error">
+            Le mot de passe de confirmation est requis
+          </div>
+        }
+        @if (signupForm.hasError('passwordMismatch') && signupForm.get('confirmPassword')?.touched) {
+          <div class="validation-error">
+            Les mots de passe ne correspondent pas
+          </div>
+        }
+      </div>
+
+      <div class="password-requirements">
+        <h4>Votre mot de passe doit contenir :</h4>
+        <ul>
+          <li [class.valid]="passwordHasMinLength">Au moins 8 caractères</li>
+          <li [class.valid]="passwordHasUppercase">Au moins une lettre majuscule</li>
+          <li [class.valid]="passwordHasLowercase">Au moins une lettre minuscule</li>
+          <li [class.valid]="passwordHasNumber">Au moins un chiffre</li>
+          <li [class.valid]="passwordHasSpecialChar">Au moins un caractère spécial</li>
+        </ul>
+      </div>
+
+      <div class="form-group terms-checkbox">
+        <div class="checkbox-container">
+          <input
+            type="checkbox"
+            id="acceptTerms"
+            formControlName="acceptTerms"
+          >
+          <label for="acceptTerms">
+            J'accepte les <a href="/terms" target="_blank">conditions d'utilisation</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a>
+          </label>
+        </div>
+        @if (signupForm.get('acceptTerms')?.invalid && signupForm.get('acceptTerms')?.touched) {
+          <div class="validation-error">
+            Vous devez accepter les conditions d'utilisation
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="signupForm.invalid || isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span>Création en cours...</span>
+          } @else {
+            <span>Créer mon compte</span>
+          }
+        </button>
+      </div>
+
+      <div class="form-links">
+        <div class="login-link">
+          Déjà inscrit ? <a routerLink="/auth/login">Connectez-vous</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
