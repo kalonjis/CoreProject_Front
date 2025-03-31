@@ -21,10 +21,23 @@
           <p>
             Cette page vous permet de confirmer votre compte.
           </p>
-          <p>
-            Si vous avez cliqué sur un lien dans un e-mail de confirmation, le processus
-            devrait démarrer automatiquement.
-          </p>
+
+          @if (showConfirmationButton) {
+            <p>
+              Veuillez cliquer sur le bouton ci-dessous pour finaliser l'activation de votre compte.
+            </p>
+
+            <div class="confirmation-action">
+              <button class="btn-primary" (click)="confirmAccount()">
+                Activer mon compte
+              </button>
+            </div>
+          } @else {
+            <p>
+              Si vous avez cliqué sur un lien dans un e-mail de confirmation, cliquez sur le bouton de confirmation
+              pour activer votre compte.
+            </p>
+          }
         </div>
       }
     }

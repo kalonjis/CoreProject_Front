@@ -51,6 +51,32 @@
   }
 }
 
+.confirmation-action {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.btn-primary {
+  padding: 0.75rem 2rem;
+  background-color: $primary-color;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-size: 1.1rem;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 .confirmation-info {
   margin-bottom: 2rem;
 

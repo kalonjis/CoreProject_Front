@@ -17,7 +17,12 @@ export const AUTH_ROUTES: Routes = [
   {
     path: 'account-confirmation',
     loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
-  }
+  },
+  {
+    path: 'test',
+    loadComponent:() => import('./test/test.component').then(m => m.TestComponent)
+  },
+
   /*
 
   {
