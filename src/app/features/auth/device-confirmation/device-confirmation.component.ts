@@ -73,15 +73,8 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
         };
       },
       error: (error: HttpErrorResponse) => {
-        this.isProcessing = false;
-        console.log("rejecterror :", error);
-
-        /*
-        const errorMessage = error.error?.error || 'Une erreur est survenue lors de la confirmation de l\'appareil.';
-        this.displayError(errorMessage, 'Retour à l\'accueil');
-        this.buttonAction = () => this.router.navigate(['/']);
-
-         */
+        const alternateMessage: string = 'Une erreur est survenue lors de la confirmation de l\'appareil.';
+        this.handleError(error, alternateMessage );
       }
     });
   }
@@ -100,15 +93,17 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
         this.buttonAction = () => this.router.navigate(['/']);
       },
       error: (error: HttpErrorResponse) => {
-        this.isProcessing = false;
-        console.log("rejecterror :", error);
-        /*
-        const errorMessage = error.error?.error || 'Une erreur est survenue lors du rejet de l\'appareil.';
-        this.displayError(errorMessage, 'Retour à l\'accueil');
-        this.buttonAction = () => this.router.navigate(['/']);
-
-         */
+        const alternateMessage: string = "Une erreur est survenue lors du rejet de l\\'appareil.";
+        this.handleError(error, alternateMessage );
       }
     });
+  }
+
+  private handleError(error: HttpErrorResponse, alternateMessage: string ) {
+    this.isProcessing = false;
+    console.log("rejecterror :", error);
+    const errorMessage = error.error.error || alternateMessage;
+    this.displayError(errorMessage, 'Retour à l\'accueil');
+    this.buttonAction = () => this.router.navigate(['/']);
   }
 }
