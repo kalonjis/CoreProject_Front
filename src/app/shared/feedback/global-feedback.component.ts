@@ -20,9 +20,20 @@ import { FeedbackService } from './tools/feedback.service';
         [buttonText]="feedbackService.feedback()?.buttonText ?? ''"
         [timeout]="feedbackService.feedback()?.timeout ?? null"
         (buttonClicked)="onButtonClicked()"
+        class="navbar-adjusted-feedback"
       ></app-feedback>
     }
-  `
+  `,
+  styles: [`
+    .navbar-adjusted-feedback {
+      margin-top: 80px; /* Ajustez cette valeur selon la hauteur de votre navbar */
+      position: fixed;
+      z-index: 999;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+    }
+  `]
 })
 export class GlobalFeedbackComponent {
   feedbackService = inject(FeedbackService);
