@@ -301,6 +301,29 @@ export class AuthService {
     return this.http.get<any>(`/api/account-confirmation/request-activation?token=${token}`);
   }
 
+
+  /**
+   * Méthode pour demander la réinitialisation du mot de passe
+   * @param email Adresse email pour laquelle réinitialiser le mot de passe
+   */
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post<any>('/api/password/request-password-reset', { email });
+  }
+
+  /**
+   * Méthode pour réinitialiser le mot de passe avec un token
+   * @param token Token de réinitialisation
+   * @param password Nouveau mot de passe
+   * @param confirmPassword Confirmation du nouveau mot de passe
+   */
+  resetPassword(token: string, password: string, confirmPassword: string): Observable<any> {
+    return this.http.put<any>(`/api/password/reset-password?token=${token}`, {
+      password,
+      confirmPassword
+    });
+  }
+
+
   /**
    * Extrait un message d'erreur lisible à partir d'une réponse d'erreur HTTP
    * @param err L'erreur HTTP
