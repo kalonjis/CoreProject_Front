@@ -18,12 +18,7 @@ export const AUTH_ROUTES: Routes = [
     path: 'account-confirmation',
     loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
   },
-  {
-    path: 'test',
-    loadComponent:() => import('./test/test.component').then(m => m.TestComponent)
-  },
 
-  /*
 
   {
     path: 'forgot-password',
@@ -33,6 +28,7 @@ export const AUTH_ROUTES: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
+  /*
   {
     path: 'account-confirmation',
     loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
