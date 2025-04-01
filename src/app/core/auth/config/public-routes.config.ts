@@ -12,7 +12,7 @@ export const PUBLIC_API_ROUTES = [
   '/api/account-confirmation/',  // Activation du compte
   '/api/device/confirm',         // Confirmation d'appareil
   '/api/device/reject',          // Rejet d'appareil
-  '/api/password/'               // Gestion des mots de passe publics
+  '/api/password/',              // Gestion des mots de passe publics
 ];
 
 /**
@@ -26,7 +26,6 @@ export const PUBLIC_FRONTEND_ROUTES = [
   '/auth/reset-password',
   '/auth/account-confirmation',
   '/auth/device-confirmation',
-  '/auth/test',
   '/'  // Page d'accueil
 ];
 
