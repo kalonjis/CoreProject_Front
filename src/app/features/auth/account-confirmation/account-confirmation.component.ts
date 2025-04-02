@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
+import {AuthService} from '../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-account-confirmation',
@@ -18,7 +19,7 @@ import { CommonModule } from '@angular/common';
 export class AccountConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
+  private authService: AuthService = inject(AuthService);
 
   isProcessing = false;
   token: string | null = null;
@@ -49,11 +50,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
     this.isProcessing = true;
     this.showConfirmationButton = false;
 
-    // Créer des en-têtes spéciaux pour contourner l'intercepteur
-    const headers = new HttpHeaders().set('X-Skip-Interceptor', 'true');
-
-    // Appel direct à l'API
-    this.http.get(`/api/account-confirmation/activation?token=${this.token}`, { headers })
+    this.authService.confirmAccount(this.token)
       .subscribe({
         next: (response: any) => {
           console.log('Activation réussie', response);
@@ -74,15 +71,12 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
           if (error.status === 498) {
             // Token expiré
             this.displayError(
-              'Ce lien de confirmation a expiré. Nous pouvons vous en envoyer un nouveau.',
+              error.error?.error || 'Ce lien de confirmation a expiré. Nous pouvons vous en envoyer un nouveau.',
               'Demander un nouveau lien'
             );
             this.buttonAction = () => this.requestNewToken();
           } else {
-            // Autres erreurs
-            const errorMessage = error.error?.message || 'Une erreur est survenue lors de la confirmation du compte.';
-            this.displayError(errorMessage, 'Retour à l\'accueil');
-            this.buttonAction = () => this.router.navigate(['/']);
+              this.handleError(error, 'Une erreur est survenue lors de la confirmation du compte.');
           }
         }
       });
@@ -96,11 +90,8 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
 
     this.isProcessing = true;
 
-    // Créer des en-têtes spéciaux pour contourner l'intercepteur
-    const headers = new HttpHeaders().set('X-Skip-Interceptor', 'true');
-
     // Appel direct à l'API
-    this.http.get(`/api/account-confirmation/request-activation?token=${this.token}`, { headers })
+    this.authService.requestNewConfirmationToken(this.token)
       .subscribe({
         next: (response: any) => {
           console.log('Demande de nouveau token réussie', response);
@@ -113,12 +104,17 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
           this.buttonAction = () => this.router.navigate(['/']);
         },
         error: (error: HttpErrorResponse) => {
-          console.error('Erreur de demande de nouveau token:', error);
-          this.isProcessing = false;
-          const errorMessage = error.error?.message || 'Une erreur est survenue lors de la demande d\'un nouveau lien.';
-          this.displayError(errorMessage, 'Retour à l\'accueil');
-          this.buttonAction = () => this.router.navigate(['/']);
+          this.handleError(error, 'Une erreur est survenue lors de la demande d\'un nouveau lien.' );
         }
       });
+  }
+
+
+  private handleError(error: HttpErrorResponse, alternateMessage: string) {
+    console.error(alternateMessage + ': ', error);
+    this.isProcessing = false;
+    const errorMessage = error.error?.error || alternateMessage;
+    this.displayError(errorMessage, 'Retour à l\'accueil');
+    this.buttonAction = () => this.router.navigate(['/']);
   }
 }

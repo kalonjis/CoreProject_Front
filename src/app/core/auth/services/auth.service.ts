@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
+import {HttpUtilService} from '../../http/http-util.service';
 
 export interface User {
   id: number;
@@ -26,6 +27,7 @@ export interface AuthState {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private httpUtil = inject(HttpUtilService);
 
   // État d'authentification avec signals
   private _state = signal<AuthState>({
@@ -173,23 +175,7 @@ export class AuthService {
     });
   }
 
-  // Stockage local des infos non sensibles
-  private saveUserToStorage(user: User): void {
-    // N'enregistrez PAS le token ou d'autres infos sensibles
-    localStorage.setItem('user', JSON.stringify({
-      id: user.id,
-      username: user.username,
-      lastLogin: new Date().toISOString(),
-      // Préférences UI
-      theme: localStorage.getItem('theme') || 'light',
-      language: localStorage.getItem('language') || 'fr'
-    }));
-  }
 
-  // Nettoyage du stockage
-  private clearUserStorage(): void {
-    localStorage.removeItem('user');
-  }
 
   // Vérification des rôles
   hasRole(role: string): boolean {
@@ -293,12 +279,12 @@ export class AuthService {
 
   // Méthode pour confirmer un compte
   confirmAccount(token: string): Observable<any> {
-    return this.http.get<any>(`/api/account-confirmation/activation?token=${token}`);
+    return this.httpUtil.get<any>(`/api/account-confirmation/activation?token=${token}`, true);
   }
 
   // Méthode pour demander un nouveau token de confirmation
   requestNewConfirmationToken(token: string): Observable<any> {
-    return this.http.get<any>(`/api/account-confirmation/request-activation?token=${token}`);
+    return this.httpUtil.get<any>(`/api/account-confirmation/request-activation?token=${token}`, true);
   }
 
 
@@ -307,7 +293,7 @@ export class AuthService {
    * @param email Adresse email pour laquelle réinitialiser le mot de passe
    */
   requestPasswordReset(email: string): Observable<any> {
-    return this.http.post<any>('/api/password/request-password-reset', { email });
+    return this.httpUtil.post<any>('/api/password/request-password-reset', { email }, true);
   }
 
   /**
@@ -317,11 +303,12 @@ export class AuthService {
    * @param confirmPassword Confirmation du nouveau mot de passe
    */
   resetPassword(token: string, password: string, confirmPassword: string): Observable<any> {
-    return this.http.put<any>(`/api/password/reset-password?token=${token}`, {
+    return this.httpUtil.put<any>(`/api/password/reset-password?token=${token}`, {
       password,
       confirmPassword
-    });
+    }, true);
   }
+
 
 
   /**
@@ -343,5 +330,24 @@ export class AuthService {
     } else {
       return 'Échec de l\'inscription. Veuillez réessayer.';
     }
+  }
+
+
+  // Stockage local des infos non sensibles
+  private saveUserToStorage(user: User): void {
+    // N'enregistrez PAS le token ou d'autres infos sensibles
+    localStorage.setItem('user', JSON.stringify({
+      id: user.id,
+      username: user.username,
+      lastLogin: new Date().toISOString(),
+      // Préférences UI
+      theme: localStorage.getItem('theme') || 'light',
+      language: localStorage.getItem('language') || 'fr'
+    }));
+  }
+
+  // Nettoyage du stockage
+  private clearUserStorage(): void {
+    localStorage.removeItem('user');
   }
 }
