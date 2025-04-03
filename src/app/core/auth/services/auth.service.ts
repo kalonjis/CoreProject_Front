@@ -289,6 +289,19 @@ export class AuthService {
 
 
   /**
+   * Demande un nouveau lien d'activation pour un compte non activé par son nom d'utilisateur
+   * @param username Le nom d'utilisateur pour lequel demander une activation
+   * @returns Observable de la réponse de l'API
+   */
+  requestNewActivationByUsername(username: string): Observable<any> {
+    return this.httpUtil.get<any>(
+      `/api/account-confirmation/request-confirmation-by-username?username=${encodeURIComponent(username)}`,
+      true
+    );
+  }
+
+
+  /**
    * Méthode pour demander la réinitialisation du mot de passe
    * @param email Adresse email pour laquelle réinitialiser le mot de passe
    */
