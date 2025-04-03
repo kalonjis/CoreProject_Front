@@ -296,6 +296,11 @@ export class AuthService {
     return this.httpUtil.post<any>('/api/password/request-password-reset', { email }, true);
   }
 
+
+  requestNewPasswordToken(token: string): Observable<any> {
+    return this.httpUtil.get<any>(`/api/password/request-password-token?token=${token}`, true);
+  }
+
   /**
    * Méthode pour réinitialiser le mot de passe avec un token
    * @param token Token de réinitialisation
