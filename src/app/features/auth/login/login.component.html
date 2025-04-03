@@ -3,12 +3,25 @@
   <div class="login-card">
     <h2>Connexion</h2>
 
+    <!-- Système de feedback pour les messages d'erreur et les actions -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Affichage d'erreur de connexion classique (pour les erreurs qui ne nécessitent pas d'action) -->
     @if (loginError()) {
       <div class="error-message">
         {{ loginError() }}
       </div>
     }
 
+    <!-- Formulaire de connexion -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">Nom d'utilisateur</label>
