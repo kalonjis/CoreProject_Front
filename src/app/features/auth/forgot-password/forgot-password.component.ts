@@ -73,6 +73,19 @@ export class ForgotPasswordComponent extends FeedbackBase {
         // Par sécurité, on affiche toujours le même message, même en cas d'erreur
         // pour ne pas divulguer d'informations sur l'existence d'un compte
         this.resetRequested.set(true);
+
+        if (error.status === 429) {
+          this.displayWarning(
+            `Pour des raisons de sécurité, le système limite temporairement les tentatives de réinitialisation. Si l'adresse e-mail ${email} correspond à un compte existant mais
+                que vous n'avez pas reçu d'e-mail après plusieurs essais, veuillez réessayer plus tard ou contacter le support.`,
+            "J'ai compris",
+            null
+          );
+          this.buttonAction = () => {
+            this.router.navigate(['/']);
+          };
+          return;
+        }
         this.displaySuccess(
           `Si l'adresse e-mail ${email} correspond à un compte existant, vous recevrez un e-mail avec les instructions pour réinitialiser votre mot de passe.`,
           'Retour à la connexion',

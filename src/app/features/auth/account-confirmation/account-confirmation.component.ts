@@ -104,6 +104,22 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
           this.buttonAction = () => this.router.navigate(['/']);
         },
         error: (error: HttpErrorResponse) => {
+          this.isProcessing = false;
+
+          if (error.status === 429) {
+
+            this.displayWarning(
+              `Pour des raisons de sécurité, le système limite temporairement les tentatives d'activation. Si
+                  vous n'avez pas reçu d'e-mail après plusieurs essais, peut-etre que l'adresse que nous avez fournie ne correspond à aucun utilisateur de notre base de données.
+                  Sinon, veuillez réessayer plus tard ou contacter le support.`,
+              "J'ai compris",
+              null
+            );
+            this.buttonAction = () => {
+              this.router.navigate(['/']);
+            };
+            return;
+          }
           this.handleError(error, 'Une erreur est survenue lors de la demande d\'un nouveau lien.' );
         }
       });
