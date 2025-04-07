@@ -1,4 +1,5 @@
 import {Routes} from '@angular/router';
+import {authGuard} from '../../core/auth/guards/auth.guard';
 
 export const AUTH_ROUTES: Routes = [
   {
@@ -28,11 +29,23 @@ export const AUTH_ROUTES: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
-  /*
   {
-    path: 'account-confirmation',
-    loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
+    path: 'verify-email',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
   },
+  {
+    path: 'confirm-email',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
+  },
+  {
+    path: 'confirm-email',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
+  }
+  /*
+
   {
     path: 'email-confirmation',
     loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
