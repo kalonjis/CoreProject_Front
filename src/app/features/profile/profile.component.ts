@@ -184,6 +184,7 @@ export class ProfileComponent implements OnInit {
       });
   }
 
+
   requestEmailChange(): void {
     if (this.emailForm.invalid) {
       // Mark all fields as touched to trigger validation messages
@@ -195,7 +196,7 @@ export class ProfileComponent implements OnInit {
 
     // Check if emails match
     if (this.emailForm.value.email !== this.emailForm.value.confirmEmail) {
-      this.errorMessage.set('Email addresses do not match');
+      this.errorMessage.set('Les adresses email ne correspondent pas');
       return;
     }
 
@@ -203,26 +204,27 @@ export class ProfileComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.http.post('/api/auth/change-email-request', this.emailForm.value)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(err => {
-          console.error('Failed to request email change', err);
-          this.errorMessage.set(err.error?.message || 'Failed to request email change');
-          return of(null);
-        }),
-        finalize(() => {
-          this.isLoading.set(false);
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          if (response !== null) {
-            this.successMessage.set('Email change request sent. Please check your current email address for confirmation.');
-            this.toggleChangeEmailMode();
-          }
+    this.authService.changeEmailRequest(
+      this.emailForm.value.email || '',
+      this.emailForm.value.confirmEmail || ''
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError(err => {
+        console.error('Failed to request email change', err);
+        this.errorMessage.set(err.error?.message || 'Échec de la demande de changement d\'email');
+        return of(null);
+      }),
+      finalize(() => {
+        this.isLoading.set(false);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response !== null) {
+          this.successMessage.set('Demande de changement d\'email envoyée. Veuillez vérifier votre adresse email actuelle pour confirmer la demande.');
+          this.toggleChangeEmailMode();
         }
-      });
+      }
+    });
   }
 
   initiatePasswordChange(): void {

@@ -368,4 +368,39 @@ export class AuthService {
   private clearUserStorage(): void {
     localStorage.removeItem('user');
   }
+
+
+  /**
+   * Demande un changement d'adresse email
+   */
+  changeEmailRequest(email: string, confirmEmail: string): Observable<any> {
+    return this.http.post('/api/auth/change-email-request', {
+      email,
+      confirmEmail
+    }, { withCredentials: true });
+  }
+
+  /**
+   * Confirme la première étape du changement d'email (vérification de l'ancien email)
+   */
+  verifyEmailChange(token: string): Observable<any> {
+    return this.http.patch(`/api/auth/change-email-verification?token=${token}`, {},
+      { withCredentials: true });
+  }
+
+  /**
+   * Finalise le changement d'email après confirmation de la nouvelle adresse
+   */
+  confirmEmailChange(token: string): Observable<any> {
+    return this.http.put(`/api/auth/change-email-confirmation?token=${token}`, {},
+      { withCredentials: true });
+  }
+
+  /**
+   * Annule le processus de changement d'email
+   */
+  cancelEmailChange(token: string): Observable<any> {
+    return this.http.patch(`/api/auth/cancel-email-change?token=${token}`, {},
+      { withCredentials: true });
+  }
 }
