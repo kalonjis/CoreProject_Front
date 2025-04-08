@@ -29,6 +29,12 @@ export const AUTH_ROUTES: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
+
+  {
+    path: 'change-password',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('./change-password/change-password.component').then(m => m.ChangePasswordComponent)
+  },
   {
     path: 'verify-email',
     canActivate: [() => authGuard()],
@@ -46,10 +52,6 @@ export const AUTH_ROUTES: Routes = [
   }
   /*
 
-  {
-    path: 'email-confirmation',
-    loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
-  },
   {
     path: 'device-confirmation',
     loadComponent: () => import('./device-confirmation/device-confirmation.component').then(m => m.DeviceConfirmationComponent)
