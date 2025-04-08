@@ -328,6 +328,48 @@ export class AuthService {
   }
 
 
+  /**
+   * Change le mot de passe de l'utilisateur connecté
+   * @param data Objet contenant mot de passe actuel, nouveau mot de passe et confirmation
+   * @returns Observable de la réponse de l'API
+   */
+  changePassword(data: {
+    currentPassword: string;
+    password: string;
+    confirmPassword: string;
+  }): Observable<any> {
+    return this.http.put('/api/password/change-password', data, {
+      withCredentials: true
+    }).pipe(
+      tap(() => {
+        // Mettre à jour l'état après un changement de mot de passe réussi
+        this._state.update(state => ({
+          ...state,
+          error: null
+        }));
+      }),
+      catchError(err => {
+        // Mettre à jour l'état en cas d'erreur
+        this._state.update(state => ({
+          ...state,
+          error: this.extractErrorMessage(err)
+        }));
+
+        // Propager l'erreur
+        return throwError(() => err);
+      })
+    );
+  }
+
+  /**
+   * Vérifie si l'utilisateur doit changer son mot de passe (suite à une réinitialisation par un admin)
+   * @returns boolean indiquant si l'utilisateur doit changer son mot de passe
+   */
+  mustChangePassword(): boolean {
+    return this._state().user?.mustChangePassword || false;
+  }
+
+
 
   /**
    * Extrait un message d'erreur lisible à partir d'une réponse d'erreur HTTP
