@@ -93,7 +93,6 @@ export class ChangePasswordComponent extends FeedbackBase {
 
   onSubmit(): void {
     if (this.changePasswordForm.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.changePasswordForm.controls).forEach(key => {
         this.changePasswordForm.get(key)?.markAsTouched();
       });
@@ -115,43 +114,53 @@ export class ChangePasswordComponent extends FeedbackBase {
       next: () => {
         this.isSubmitting.set(false);
 
-        // Afficher un message de succès
+        // Afficher le message de succès
         this.displaySuccess(
-          'Votre mot de passe a été modifié avec succès.',
-          'Retour à mon profil',
-          null
+          'Votre mot de passe a été modifié avec succès. Vous allez être déconnecté pour des raisons de sécurité.',
+          'OK',
+          null // Pas de timeout auto, on le gère ci-dessous
         );
 
+        // Définir l'action du bouton (facultatif car déconnexion auto)
         this.buttonAction = () => {
-          this.router.navigate(['/profile']);
+          this.logoutAndRedirect();
         };
+
+        // Déclencher la déconnexion et redirection après 5 secondes
+        setTimeout(() => {
+          this.logoutAndRedirect();
+        }, 5000);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
 
-        if (error.status === 400) {
-          // Erreur de validation
-          this.displayError(
-            error.error?.message || 'Les données fournies ne sont pas valides. Veuillez vérifier votre saisie.',
-            'Réessayer'
-          );
-        } else if (error.status === 403) {
-          // Mot de passe actuel incorrect
-          this.displayError(
-            error.error?.message || 'Le mot de passe actuel est incorrect.',
-            'Réessayer'
-          );
-        } else {
-          // Autre erreur
-          this.displayError(
-            error.error?.message || 'Une erreur est survenue lors du changement de mot de passe.',
-            'Réessayer'
-          );
-        }
+        // Afficher le message d'erreur
+        this.displayError(
+          error.error?.message || 'Une erreur est survenue lors du changement de mot de passe.',
+          'Réessayer'
+        );
 
         this.buttonAction = () => {
           this.clearFeedback();
         };
+      }
+    });
+  }
+
+// Méthode pour gérer la déconnexion et redirection
+  private logoutAndRedirect(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        // Rediriger vers la page de connexion avec un paramètre indiquant le changement de mot de passe
+        this.router.navigate(['/auth/login'], {
+          queryParams: { passwordChanged: 'true' }
+        });
+      },
+      error: () => {
+        // Même en cas d'erreur, rediriger
+        this.router.navigate(['/auth/login'], {
+          queryParams: { passwordChanged: 'true' }
+        });
       }
     });
   }

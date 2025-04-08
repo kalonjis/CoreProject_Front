@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import {authGuard} from '../core/auth/guards/auth.guard';
 
 export const routes: Routes = [
   // Routes publiques
@@ -12,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
+    canActivate: [() => authGuard()],
     loadComponent: () => import('../features/profile/profile.component')
       .then(m => m.ProfileComponent)
   },
