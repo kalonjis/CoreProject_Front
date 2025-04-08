@@ -32,7 +32,7 @@ export const AUTH_ROUTES: Routes = [
 
   {
     path: 'change-password',
-    canActivate: [() => authGuard()],
+    canActivate: [() => authGuard(true)], // Pass true to indicate this is the password change page
     loadComponent: () => import('./change-password/change-password.component').then(m => m.ChangePasswordComponent)
   },
   {
