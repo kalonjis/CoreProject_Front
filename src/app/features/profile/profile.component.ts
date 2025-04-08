@@ -1,7 +1,7 @@
 // src/app/features/profile/profile.component.ts
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth/services/auth.service';
@@ -21,6 +21,7 @@ export class ProfileComponent implements OnInit {
   private http = inject(HttpClient);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
   authService = inject(AuthService);
   deviceService = inject(DeviceService);
 
@@ -228,8 +229,7 @@ export class ProfileComponent implements OnInit {
   }
 
   initiatePasswordChange(): void {
-    // Navigate to change password page
-    window.location.href = '/auth/change-password';
+    this.router.navigate(['/auth/change-password']);
   }
 
   getRecentDevices(): Device[] {
