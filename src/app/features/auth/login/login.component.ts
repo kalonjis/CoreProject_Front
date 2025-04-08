@@ -34,10 +34,19 @@ export class LoginComponent extends FeedbackBase implements OnInit {
 
   ngOnInit(): void {
     // Vérifier les messages depuis l'URL (redirection)
-    const params = this.route.snapshot.queryParams;
-    if (params['expired'] === 'true') {
-      this.displayWarning('Votre session a expiré. Veuillez vous reconnecter.', '', 5000);
-    }
+    this.route.queryParams.subscribe(params => {
+      if (params['passwordChanged'] === 'true') {
+        this.displaySuccess(
+          'Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter avec votre nouveau mot de passe.',
+          '',
+          5000 // Disparaît après 5 secondes
+        );
+      }
+
+      if (params['expired'] === 'true') {
+        this.displayWarning('Votre session a expiré. Veuillez vous reconnecter.', '', 5000);
+      }
+    });
   }
 
   onSubmit(): void {
