@@ -86,7 +86,7 @@ export class AuthService {
 
           // Rediriger si changement de mot de passe requis
           if (user.mustChangePassword) {
-            this.router.navigate(['/change-password'], {
+            this.router.navigate(['auth/change-password'], {
               queryParams: { forced: 'true' }
             });
           }
