@@ -157,7 +157,12 @@
           <div class="profile-section recent-devices">
             <div class="section-header">
               <h2>Recent Devices</h2>
-              <a routerLink="/devices" class="link-primary">View All</a>
+              <div class="section-actions">
+                <button class="refresh-button" (click)="loadUserDevices()">
+                  <span class="refresh-icon">🔄</span> Rafraîchir
+                </button>
+                <a routerLink="/devices" class="link-primary">View All</a>
+              </div>
             </div>
 
             @if (isLoadingDevices()) {
