@@ -24,7 +24,6 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   authService = inject(AuthService);
   deviceService = inject(DeviceService);
-  private route = inject(ActivatedRoute);
 
   // User profile information
   userInfo = signal<any>(null);
