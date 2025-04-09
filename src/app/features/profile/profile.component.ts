@@ -1,7 +1,7 @@
 // src/app/features/profile/profile.component.ts
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth/services/auth.service';
@@ -24,10 +24,12 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   authService = inject(AuthService);
   deviceService = inject(DeviceService);
+  private route = inject(ActivatedRoute);
 
   // User profile information
   userInfo = signal<any>(null);
   devices = signal<Device[]>([]);
+  private readonly MAX_RECENT_DEVICES = 3;
 
   // UI state signals
   isLoading = signal(true);
@@ -95,7 +97,7 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  private loadUserDevices(): void {
+  protected loadUserDevices(): void {
     this.isLoadingDevices.set(true);
 
     this.deviceService.getMyDevices()
@@ -233,8 +235,13 @@ export class ProfileComponent implements OnInit {
   }
 
   getRecentDevices(): Device[] {
-    // Return the 3 most recent devices
-    return this.devices().slice(0, 3);
+    return [...this.devices()]
+      .sort((a, b) => {
+        const dateA = new Date(a.lastSeen).getTime();
+        const dateB = new Date(b.lastSeen).getTime();
+        return dateB - dateA;
+      })
+      .slice(0, this.MAX_RECENT_DEVICES);
   }
 
   formatDate(date: string): string {
