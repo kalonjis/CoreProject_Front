@@ -434,3 +434,28 @@
   color: $gray-dark;
   font-style: italic;
 }
+
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  color: $primary-color;
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  .refresh-icon {
+    font-size: 1.1rem;
+    margin-right: 4px;
+  }
+}
