@@ -46,7 +46,6 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
     if (this.action === 'reject') {
       this.rejectDevice();
     } else {
-      // Par défaut, confirmer l'appareil
       this.confirmDevice();
     }
   }
@@ -59,17 +58,11 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
         this.isProcessing = false;
         this.displaySuccess(
           'Appareil confirmé avec succès ! Vous pouvez maintenant utiliser votre compte en toute sécurité.',
-          'Continuer vers l\'application',
+          'Continuer vers mon profil',
           null
         );
         this.buttonAction = () => {
-          // Si l'utilisateur est déjà connecté, aller au tableau de bord
-          // Sinon, aller à la page de connexion
-          if (this.authService.isAuthenticated()) {
-            this.router.navigate(['/']);
-          } else {
-            this.router.navigate(['/auth/login']);
-          }
+          this.router.navigate(['/profile'])
         };
       },
       error: (error: HttpErrorResponse) => {
@@ -87,10 +80,12 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
         this.isProcessing = false;
         this.displayWarning(
           'Vous avez rejeté cet appareil. Si vous n\'avez pas tenté de vous connecter, votre compte est sécurisé.',
-          'Retour à l\'accueil',
+          'Aller à mon profil',
           null
         );
-        this.buttonAction = () => this.router.navigate(['/']);
+        this.buttonAction = () => {
+          this.router.navigate(['/profile'])
+        };
       },
       error: (error: HttpErrorResponse) => {
         const alternateMessage: string = "Une erreur est survenue lors du rejet de l\\'appareil.";
