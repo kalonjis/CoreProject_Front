@@ -1,0 +1,90 @@
+<!-- src/app/features/devices/device-list/device-list.component.html -->
+<div class="devices-container">
+  <div class="devices-header">
+    <h1>Gérer mes appareils</h1>
+    <p class="devices-description">
+      Les appareils suivants ont été utilisés récemment pour se connecter à votre compte.
+      Vous pouvez déconnecter tout appareil qui vous est inconnu ou que vous n'utilisez plus.
+    </p>
+  </div>
+
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (buttonClicked)="handleFeedbackButtonClick()">
+    </app-feedback>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement de vos appareils...</p>
+    </div>
+  } @else {
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="loadDevices()">
+        <i class="refresh-icon">↻</i> Rafraîchir la liste
+      </button>
+      <button class="btn btn-secondary" (click)="disconnectAllDevices()">
+        Déconnecter tous les autres appareils
+      </button>
+    </div>
+
+    @if (devices().length === 0) {
+      <div class="no-devices">
+        <p>Aucun appareil trouvé. C'est étrange car vous devriez au moins voir votre appareil actuel.</p>
+      </div>
+    } @else {
+      <div class="devices-grid">
+        @for (device of devices(); track device.id) {
+          <div class="device-card" [class.current-device]="isCurrentDevice(device.id)">
+            <div class="device-header">
+              <div class="device-icon">{{ getDeviceIcon(device.deviceType) }}</div>
+              <div class="device-info">
+                <h3 class="device-name">{{ device.browser }} sur {{ device.operatingSystem }}</h3>
+                <p class="device-type">{{ device.deviceType }}
+                  @if (device.deviceBrand) {
+                    <span> • {{ device.deviceBrand }}</span>
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div class="device-details">
+              <div class="detail-row">
+                <span class="last-seen">
+                  <i class="icon">🕒</i> {{ formatDate(device.lastSeen) }}
+                </span>
+                <span class="trust-level" [attr.data-level]="device.level.toLowerCase()">
+                  {{ device.level }}
+                </span>
+              </div>
+
+              @if (isCurrentDevice(device.id)) {
+                <div class="current-badge">Appareil actuel</div>
+              }
+            </div>
+
+            <div class="device-actions">
+              @if (!isCurrentDevice(device.id)) {
+                <button class="btn btn-secondary disconnect-btn" (click)="disconnectDevice(device.id)">
+                  Se déconnecter
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <div class="security-note">
+    <p>
+      <strong>Note de sécurité:</strong> Si vous remarquez un appareil que vous ne reconnaissez pas,
+      déconnectez-le immédiatement et envisagez de changer votre mot de passe pour protéger votre compte.
+    </p>
+  </div>
+</div>
