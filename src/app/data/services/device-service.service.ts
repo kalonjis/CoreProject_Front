@@ -56,4 +56,15 @@ export class DeviceService {
   rejectDevice(token: string): Observable<ApiResponse> {
     return this.http.patch<ApiResponse>(`/api/device/reject?token=${token}`, {});
   }
+
+
+// Méthode pour déconnecter un appareil spécifique
+  disconnectDevice(deviceId: number): Observable<any> {
+    return this.http.delete<any>(`/api/device/${deviceId}`, { withCredentials: true });
+  }
+
+// Méthode pour déconnecter tous les appareils sauf celui actuel
+  disconnectAllDevices(): Observable<any> {
+    return this.http.post<any>('/api/device/disconnect-all', {}, { withCredentials: true });
+  }
 }

@@ -17,6 +17,12 @@ export const routes: Routes = [
     loadComponent: () => import('../features/profile/profile.component')
       .then(m => m.ProfileComponent)
   },
+  {
+    path: 'devices',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('../features/devices/device-list/device-list.component')
+      .then(m => m.DeviceListComponent)
+  }
 /*
   // Routes authentifiées standard
   {
