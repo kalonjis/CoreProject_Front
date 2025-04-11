@@ -8,4 +8,5 @@ export interface UserDTO {
   email: string;
   phoneNumber?: string;
   userRoles: UserRole[];
+  enabled: boolean;
 }
