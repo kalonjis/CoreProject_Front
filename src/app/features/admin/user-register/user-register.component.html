@@ -1,0 +1,210 @@
+<div class="admin-container">
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1>Création d'un nouvel utilisateur</h1>
+      <p class="description">Remplissez le formulaire ci-dessous pour créer un nouveau compte utilisateur. Un mot de passe temporaire sera généré et envoyé à l'adresse email indiquée.</p>
+    </div>
+
+    <!-- Système de feedback pour les messages et les actions -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Formulaire d'enregistrement -->
+    <div class="form-card">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-section">
+          <h2>Informations de base</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="username">Nom d'utilisateur*</label>
+              <input
+                type="text"
+                id="username"
+                formControlName="username"
+                placeholder="Nom d'utilisateur unique"
+                autocomplete="off"
+              >
+              @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+                <div class="validation-error">
+                  @if (registerForm.get('username')?.errors?.['required']) {
+                    Le nom d'utilisateur est requis
+                  } @else if (registerForm.get('username')?.errors?.['minlength']) {
+                    Le nom d'utilisateur doit contenir au moins 2 caractères
+                  } @else if (registerForm.get('username')?.errors?.['maxlength']) {
+                    Le nom d'utilisateur ne peut pas dépasser 50 caractères
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstname">Prénom*</label>
+              <input
+                type="text"
+                id="firstname"
+                formControlName="firstname"
+                placeholder="Prénom"
+                autocomplete="off"
+              >
+              @if (registerForm.get('firstname')?.invalid && registerForm.get('firstname')?.touched) {
+                <div class="validation-error">
+                  @if (registerForm.get('firstname')?.errors?.['required']) {
+                    Le prénom est requis
+                  } @else if (registerForm.get('firstname')?.errors?.['minlength']) {
+                    Le prénom doit contenir au moins 2 caractères
+                  } @else if (registerForm.get('firstname')?.errors?.['maxlength']) {
+                    Le prénom ne peut pas dépasser 50 caractères
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="lastname">Nom*</label>
+              <input
+                type="text"
+                id="lastname"
+                formControlName="lastname"
+                placeholder="Nom de famille"
+                autocomplete="off"
+              >
+              @if (registerForm.get('lastname')?.invalid && registerForm.get('lastname')?.touched) {
+                <div class="validation-error">
+                  @if (registerForm.get('lastname')?.errors?.['required']) {
+                    Le nom est requis
+                  } @else if (registerForm.get('lastname')?.errors?.['minlength']) {
+                    Le nom doit contenir au moins 2 caractères
+                  } @else if (registerForm.get('lastname')?.errors?.['maxlength']) {
+                    Le nom ne peut pas dépasser 50 caractères
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Adresse email*</label>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="adresse@example.com"
+                autocomplete="off"
+              >
+              @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+                <div class="validation-error">
+                  @if (registerForm.get('email')?.errors?.['required']) {
+                    L'adresse email est requise
+                  } @else if (registerForm.get('email')?.errors?.['email']) {
+                    Veuillez entrer une adresse email valide
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Numéro de téléphone*</label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                formControlName="phoneNumber"
+                placeholder="Exemple: 0123456789"
+                autocomplete="off"
+              >
+              @if (registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched) {
+                <div class="validation-error">
+                  @if (registerForm.get('phoneNumber')?.errors?.['required']) {
+                    Le numéro de téléphone est requis
+                  } @else if (registerForm.get('phoneNumber')?.errors?.['minlength']) {
+                    Le numéro doit contenir au moins 9 chiffres
+                  } @else if (registerForm.get('phoneNumber')?.errors?.['maxlength']) {
+                    Le numéro ne peut pas dépasser 15 chiffres
+                  } @else if (registerForm.get('phoneNumber')?.errors?.['pattern']) {
+                    Le numéro doit contenir uniquement des chiffres
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Rôles et permissions</h2>
+          <p class="section-info">Sélectionnez au moins un rôle pour cet utilisateur. Les rôles déterminent les permissions et l'accès aux fonctionnalités.</p>
+
+          <div class="roles-grid">
+            @for (role of availableRoles(); track role.value) {
+              <div class="role-card"
+                   [class.selected]="role.selected"
+                   (click)="toggleRole(role.value)">
+                <div class="role-header">
+                  <h3>{{ role.label }}</h3>
+                  <div class="role-checkbox">
+                    <span class="checkmark" [class.checked]="role.selected">
+                      @if (role.selected) {
+                        ✓
+                      }
+                    </span>
+                  </div>
+                </div>
+                <div class="role-description">
+                  @switch (role.value) {
+                    @case (UserRole.SUPER_ADMIN) {
+                      <p>Accès complet à toutes les fonctionnalités et données. Peut gérer les autres administrateurs.</p>
+                    }
+                    @case (UserRole.ADMIN) {
+                      <p>Accès à la gestion des utilisateurs et à la plupart des fonctionnalités d'administration.</p>
+                    }
+                    @case (UserRole.MODERATOR) {
+                      <p>Peut modérer le contenu et les interactions entre utilisateurs.</p>
+                    }
+                    @case (UserRole.USER) {
+                      <p>Accès standard aux fonctionnalités de base de l'application.</p>
+                    }
+                    @case (UserRole.GUEST) {
+                      <p>Accès limité en consultation uniquement.</p>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="isSubmitting()"
+          >
+            @if (isSubmitting()) {
+              <span class="spinner"></span>
+              <span>Création en cours...</span>
+            } @else {
+              <span>Créer l'utilisateur</span>
+            }
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            [disabled]="isSubmitting()"
+            (click)="cancel()"
+          >
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
