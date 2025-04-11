@@ -1,0 +1,260 @@
+// Import variables and mixins
+@import 'variables';
+@import 'mixins';
+
+.admin-container {
+  padding: 2rem 1rem;
+  margin-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  background-color: $gray-light;
+}
+
+.admin-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    color: $secondary-color;
+    margin-bottom: 0.5rem;
+    font-weight: $font-weight-bold;
+  }
+
+  .description {
+    color: $gray-dark;
+    font-size: 1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+.form-card {
+  background-color: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  animation: fadeInUp 0.4s ease-out;
+  padding: 0;
+}
+
+.form-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    font-size: 1.25rem;
+    color: $secondary-color;
+    margin-bottom: 1rem;
+  }
+
+  .section-info {
+    color: $gray-dark;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: $dark-color;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &.ng-invalid.ng-touched {
+      border-color: $danger-color;
+    }
+  }
+}
+
+.validation-error {
+  color: $danger-color;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-card {
+  background-color: $light-color;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.5);
+    background-color: rgba($primary-color, 0.05);
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+
+  .role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      color: $secondary-color;
+    }
+
+    .role-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkmark {
+      width: 22px;
+      height: 22px;
+      border: 2px solid $border-color;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+
+      &.checked {
+        background-color: $primary-color;
+        border-color: $primary-color;
+      }
+    }
+  }
+
+  .role-description {
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: $gray-dark;
+      line-height: 1.4;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: $light-color;
+  justify-content: flex-end;
+
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+  }
+
+  button {
+    min-width: 150px;
+    padding: 0.75rem 1.25rem;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-primary {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  .btn-secondary {
+    background-color: white;
+    color: $gray-dark;
+    border: 1px solid $border-color;
+
+    &:hover:not(:disabled) {
+      background-color: darken(white, 5%);
+    }
+  }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

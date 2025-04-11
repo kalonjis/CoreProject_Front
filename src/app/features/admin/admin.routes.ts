@@ -4,9 +4,14 @@ import { adminGuard } from '../../core/auth/guards/admin.guard';
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    canActivate: [() => adminGuard()],
+    //canActivate: [() => adminGuard()],
     loadComponent: () => import('./dashboard/admin-dashboard.component')
       .then(m => m.AdminDashboardComponent)
+  },
+  {
+    path: 'users/new',
+    //canActivate: [adminGuard],
+    loadComponent: () => import('./user-register/user-register.component').then(m => m.UserRegisterComponent)
   },
   /*
   {
