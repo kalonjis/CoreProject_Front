@@ -5,8 +5,11 @@
   <!-- Header - Fixed at the top -->
   <app-header></app-header>
 
+  <!-- Bannière d'alerte pour les appareils non vérifiés -->
+  <app-device-alert-banner></app-device-alert-banner>
+
   <!-- Main content -->
-  <main class="main-content">
+  <main class="main-content" [class.has-device-banner]="deviceVerificationService.isDeviceVerified() === false">
     <router-outlet></router-outlet>
   </main>
 

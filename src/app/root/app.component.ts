@@ -5,16 +5,19 @@ import { FooterComponent } from '../core/layout/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../core/layout/header/header.component';
 import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
+import { DeviceVerificationService } from '../core/device/device-verification.service';
+import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-alert-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent],
+  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent, DeviceAlertBannerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   authService = inject(AuthService);
+  deviceVerificationService = inject(DeviceVerificationService);
 
   // Utilisation d'un effect pour gérer le thème basé sur les préférences
   themeEffect = effect(() => {
@@ -33,6 +36,12 @@ export class AppComponent implements OnInit {
 
     if (isAuth) {
       console.log('Utilisateur:', this.authService.user()?.username);
+
+      // Vérifier le statut de l'appareil après connexion
+      this.deviceVerificationService.checkCurrentDeviceStatus();
+
+      // Démarrer une vérification périodique en cas de confirmation d'appareil
+      this.deviceVerificationService.startPeriodicCheck();
     }
   });
 
@@ -40,5 +49,9 @@ export class AppComponent implements OnInit {
     // L'initialisation est déjà gérée par APP_INITIALIZER
     // Mais on peut ajouter des actions supplémentaires si nécessaire
     console.log('Application initialisée');
+
+    if (this.authService.isAuthenticated()) {
+      this.deviceVerificationService.startPeriodicCheck();
+    }
   }
 }

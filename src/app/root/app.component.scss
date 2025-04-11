@@ -37,7 +37,17 @@ body {
   width: 100%;
   padding-left: 1rem;
   padding-right: 1rem;
+  transition: padding-top 0.3s ease;
   // Padding bottom for footer will be added dynamically by FooterComponent
+
+  // Ajuster l'espace si la bannière d'alerte d'appareil est visible
+  &.has-device-banner {
+    padding-top: calc(#{$header-height} + 90px); // 90px est la hauteur approximative de la bannière
+
+    @media (max-width: $breakpoint-mobile) {
+      padding-top: calc(#{$header-height} + 140px); // Plus d'espace sur mobile
+    }
+  }
 }
 
 // Optional: Add a class for page sections
