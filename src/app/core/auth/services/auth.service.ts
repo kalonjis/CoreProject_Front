@@ -4,14 +4,8 @@ import { Router } from '@angular/router';
 import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
+import {User} from '../../../data/models/user/user';
 
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  roles: string[];
-  mustChangePassword: boolean;
-}
 
 export interface AuthState {
   user: User | null;
@@ -179,7 +173,7 @@ export class AuthService {
 
   // Vérification des rôles
   hasRole(role: string): boolean {
-    return this._state().user?.roles?.includes(role) || false;
+    return this._state().user?.userRoles?.includes(role as any) || false;
   }
 
   /**

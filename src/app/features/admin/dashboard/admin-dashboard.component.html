@@ -1,0 +1,64 @@
+<div class="admin-dashboard">
+  <header class="dashboard-header">
+    <h1>Tableau de bord administrateur</h1>
+    <p class="subtitle">Vue d'ensemble du système</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-message">
+      {{ error() }}
+      <button class="btn-retry" (click)="loadDashboardStats()">Réessayer</button>
+    </div>
+  } @else {
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon users-icon">👥</div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalUsers() }}</h3>
+          <p class="stat-label">Utilisateurs totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon active-users-icon">✓</div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ activeUsers() }}</h3>
+          <p class="stat-label">Utilisateurs actifs</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon devices-icon">💻</div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalDevices() }}</h3>
+          <p class="stat-label">Appareils enregistrés</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-actions">
+      <h2>Actions rapides</h2>
+      <div class="action-buttons">
+        <a routerLink="/admin/users" class="action-button">
+          <span class="action-icon">👥</span>
+          <span class="action-text">Gérer les utilisateurs</span>
+        </a>
+
+        <a routerLink="/admin/users/create" class="action-button">
+          <span class="action-icon">➕</span>
+          <span class="action-text">Créer un utilisateur</span>
+        </a>
+
+        <button class="action-button" (click)="loadDashboardStats()">
+          <span class="action-icon">🔄</span>
+          <span class="action-text">Actualiser les statistiques</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

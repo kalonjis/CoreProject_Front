@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import {authGuard} from '../core/auth/guards/auth.guard';
+import {adminGuard} from '../core/auth/guards/admin.guard';
 
 export const routes: Routes = [
   // Routes publiques
@@ -22,7 +23,12 @@ export const routes: Routes = [
     canActivate: [() => authGuard()],
     loadComponent: () => import('../features/devices/device-list/device-list.component')
       .then(m => m.DeviceListComponent)
-  }
+  },
+  // Routes d'administration
+  {
+    path: 'admin',
+    loadChildren: () => import('../features/admin/admin.routes').then(r => r.ADMIN_ROUTES)
+  },
 /*
   // Routes authentifiées standard
   {
@@ -48,12 +54,6 @@ export const routes: Routes = [
     loadComponent: () => import('../features/secure/highly-secure-area.component').then(m => m.HighlySecureAreaComponent)
   },
 
-  // Routes d'administration
-  {
-    path: 'admin',
-    canActivate: [adminGuard],
-    loadChildren: () => import('../features/admin/admin.routes').then(r => r.ADMIN_ROUTES)
-  },
 
   // Pages de vérification et d'erreur
   {
