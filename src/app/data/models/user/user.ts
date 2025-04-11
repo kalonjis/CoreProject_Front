@@ -8,4 +8,5 @@ export interface User {
   email: string;
   phoneNumber?: string;
   userRoles: UserRole[];
+  mustChangePassword: boolean;
 }
