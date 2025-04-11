@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,7 +6,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../data/models/user/user-role';
-import {AdminService} from '../../../data/services/admin.service';
+import { AdminService } from '../../../data/services/admin.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-user-register',
@@ -15,23 +16,18 @@ import {AdminService} from '../../../data/services/admin.service';
   templateUrl: './user-register.component.html',
   styleUrl: './user-register.component.scss'
 })
-export class UserRegisterComponent extends FeedbackBase {
+export class UserRegisterComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private http = inject(HttpClient);
+  protected authService: AuthService = inject(AuthService);
   private adminService: AdminService = inject(AdminService);
 
   // État local du composant
   isSubmitting = signal(false);
 
   // Rôles disponibles pour l'attribution
-  availableRoles = signal<{ value: UserRole, label: string, selected: boolean }[]>([
-    { value: UserRole.SUPER_ADMIN, label: 'Super Administrateur', selected: false },
-    { value: UserRole.ADMIN, label: 'Administrateur', selected: false },
-    { value: UserRole.MODERATOR, label: 'Modérateur', selected: false },
-    { value: UserRole.USER, label: 'Utilisateur', selected: true }, // Sélectionné par défaut
-    { value: UserRole.GUEST, label: 'Invité', selected: false }
-  ]);
+  availableRoles = signal<{ value: UserRole, label: string, selected: boolean }[]>([]);
 
   // Formulaire d'enregistrement
   registerForm: FormGroup;
@@ -52,6 +48,29 @@ export class UserRegisterComponent extends FeedbackBase {
         Validators.pattern(/^[0-9]+$/)
       ]]
     });
+  }
+
+  ngOnInit(): void {
+    // Initialiser les rôles disponibles en fonction des droits de l'utilisateur
+    this.initializeAvailableRoles();
+  }
+
+  initializeAvailableRoles(): void {
+    // Définition des rôles de base
+    const rolesList = [
+      { value: UserRole.ADMIN, label: 'Administrateur', selected: false },
+      { value: UserRole.MODERATOR, label: 'Modérateur', selected: false },
+      { value: UserRole.USER, label: 'Utilisateur', selected: true }, // Sélectionné par défaut
+      { value: UserRole.GUEST, label: 'Invité', selected: false }
+    ];
+
+    // Ajouter le rôle SUPER_ADMIN uniquement si l'utilisateur est lui-même SUPER_ADMIN
+    if (this.authService.hasRole('SUPER_ADMIN')) {
+      rolesList.unshift({ value: UserRole.SUPER_ADMIN, label: 'Super Administrateur', selected: false });
+    }
+
+    // Mettre à jour le signal
+    this.availableRoles.set(rolesList);
   }
 
   toggleRole(role: UserRole): void {
@@ -112,14 +131,15 @@ export class UserRegisterComponent extends FeedbackBase {
         },
         error: (err: HttpErrorResponse) => {
           this.isSubmitting.set(false);
+          console.log("error: ", err)
 
           // Gestion des erreurs de validation
           if (err.error?.errors && Array.isArray(err.error.errors)) {
             this.displayError(err.error.errors.join('\n'), 'Réessayer');
           } else if (err.error?.globalErrors && Array.isArray(err.error.globalErrors)) {
             this.displayError(err.error.globalErrors.join('\n'), 'Réessayer');
-          } else if (err.error?.message) {
-            this.displayError(err.error.message, 'Réessayer');
+          } else if (err.error?.error) {
+            this.displayError(err.error.error, 'Réessayer');
           } else {
             this.displayError('Une erreur s\'est produite lors de la création de l\'utilisateur.', 'Réessayer');
           }
@@ -128,13 +148,8 @@ export class UserRegisterComponent extends FeedbackBase {
   }
 
   resetRoleSelection(): void {
-    // Réinitialisation des rôles à leur état par défaut
-    this.availableRoles.update(roles =>
-      roles.map(r => ({
-        ...r,
-        selected: r.value === UserRole.USER // Seul USER est sélectionné par défaut
-      }))
-    );
+    // Réinitialisation des rôles
+    this.initializeAvailableRoles();
   }
 
   cancel(): void {
