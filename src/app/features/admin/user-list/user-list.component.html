@@ -1,0 +1,195 @@
+<div class="admin-container">
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1>Gestion des utilisateurs</h1>
+      <p class="description">Consultez et gérez tous les utilisateurs du système.</p>
+    </div>
+
+    <!-- Feedback pour les messages d'erreur ou de succès -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Actions et recherche -->
+    <div class="actions-bar">
+      <div class="left-actions">
+        <a routerLink="/admin/users/new" class="btn-primary">
+          <span class="icon">+</span> Nouvel utilisateur
+        </a>
+      </div>
+
+      <div class="search-container">
+        <form [formGroup]="searchForm" (ngSubmit)="search()">
+          <div class="search-basic">
+            <input
+              type="text"
+              formControlName="query"
+              placeholder="Rechercher un utilisateur..."
+              class="search-input"
+            >
+            <button type="submit" class="search-btn">
+              <span class="search-icon">🔍</span>
+            </button>
+            <button type="button" class="toggle-advanced" (click)="toggleAdvancedSearch()">
+              {{ showAdvancedSearch() ? 'Recherche simple' : 'Recherche avancée' }}
+            </button>
+          </div>
+
+          @if (showAdvancedSearch()) {
+            <div class="search-advanced">
+              <div class="search-row">
+                <div class="search-field">
+                  <label for="username">Nom d'utilisateur</label>
+                  <input type="text" id="username" formControlName="username">
+                </div>
+
+                <div class="search-field">
+                  <label for="email">Email</label>
+                  <input type="text" id="email" formControlName="email">
+                </div>
+              </div>
+
+              <div class="search-row">
+                <div class="search-field">
+                  <label for="firstname">Prénom</label>
+                  <input type="text" id="firstname" formControlName="firstname">
+                </div>
+
+                <div class="search-field">
+                  <label for="lastname">Nom</label>
+                  <input type="text" id="lastname" formControlName="lastname">
+                </div>
+
+                <div class="search-field">
+                  <label for="phoneNumber">Téléphone</label>
+                  <input type="text" id="phoneNumber" formControlName="phoneNumber">
+                </div>
+              </div>
+
+              <div class="search-actions">
+                <button type="button" class="btn-secondary" (click)="resetSearch()">
+                  Réinitialiser
+                </button>
+                <button type="button" class="btn-primary" (click)="advancedSearch()">
+                  Rechercher
+                </button>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    <div class="users-table-container">
+      @if (isLoading()) {
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <p>Chargement des utilisateurs...</p>
+        </div>
+      } @else if (users().length === 0) {
+        <div class="no-data">
+          <p>Aucun utilisateur trouvé</p>
+        </div>
+      } @else {
+        <table class="users-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Utilisateur</th>
+            <th>Email</th>
+            <th>Nom</th>
+            <th>Rôle principal</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td class="user-id">{{ user.id }}</td>
+                <td class="user-username">{{ user.username }}</td>
+                <td class="user-email">{{ user.email }}</td>
+                <td class="user-name">{{ (user.firstname || '') + ' ' + (user.lastname || '') }}</td>
+                <td class="user-role">
+                  <span class="role-badge" [class]="getRoleClass(getTopRole(user.userRoles))">
+                    {{ getTopRole(user.userRoles) }}
+                  </span>
+                </td>
+                <td class="user-status">
+                  <span class="status-badge" [class.status-active]="user.enabled" [class.status-inactive]="!user.enabled">
+                    {{ user.enabled ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td class="user-actions">
+                  <div class="action-buttons">
+                    <a [routerLink]="['/admin/users', user.id]" class="action-btn view-btn" title="Voir les détails">
+                      👁️
+                    </a>
+                    @if (user.enabled) {
+                      <button class="action-btn deactivate-btn" title="Désactiver" (click)="deactivateUser(user.id, $event)">
+                        🔒
+                      </button>
+                    } @else {
+                      <button class="action-btn activate-btn" title="Activer" (click)="activateUser(user.id, $event)">
+                        🔓
+                      </button>
+                    }
+                    <button class="action-btn reset-btn" title="Réinitialiser le mot de passe" (click)="resetPassword(user.id, $event)">
+                      🔑
+                    </button>
+                    <button class="action-btn delete-btn" title="Supprimer" (click)="deleteUser(user.id, $event)">
+                      ❌
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        @if (pagination().totalPages > 1) {
+          <div class="pagination">
+            <button
+              class="pagination-btn"
+              [disabled]="pagination().pageNumber === 0"
+              (click)="changePage(0)">
+              ⟪
+            </button>
+            <button
+              class="pagination-btn"
+              [disabled]="pagination().pageNumber === 0"
+              (click)="changePage(pagination().pageNumber - 1)">
+              ⟨
+            </button>
+
+            <div class="pagination-info">
+              Page {{ pagination().pageNumber + 1 }} sur {{ pagination().totalPages }}
+              ({{ pagination().totalElements }} utilisateurs)
+            </div>
+
+            <button
+              class="pagination-btn"
+              [disabled]="pagination().pageNumber === pagination().totalPages - 1"
+              (click)="changePage(pagination().pageNumber + 1)">
+              ⟩
+            </button>
+            <button
+              class="pagination-btn"
+              [disabled]="pagination().pageNumber === pagination().totalPages - 1"
+              (click)="changePage(pagination().totalPages - 1)">
+              ⟫
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

@@ -9,6 +9,11 @@ export const ADMIN_ROUTES: Routes = [
       .then(m => m.AdminDashboardComponent)
   },
   {
+    path: 'users',
+    //canActivate: [adminGuard],
+    loadComponent: () => import('./user-list/user-list.component').then(m => m.UserListComponent)
+  },
+  {
     path: 'users/new',
     //canActivate: [adminGuard],
     loadComponent: () => import('./user-register/user-register.component').then(m => m.UserRegisterComponent)
