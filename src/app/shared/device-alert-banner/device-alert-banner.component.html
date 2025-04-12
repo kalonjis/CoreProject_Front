@@ -1,0 +1,12 @@
+<!-- src/app/shared/device-alert-banner/device-alert-banner.component.html -->
+@if (showBanner) {
+  <div class="device-alert-banner">
+    <div class="banner-content">
+      <div class="alert-icon">⚠️</div>
+      <p class="alert-message">
+        Cet appareil n'a pas encore été confirmé. Pour des raisons de sécurité, certaines fonctionnalités peuvent être limitées.
+      </p>
+      <a routerLink="/device/confirm" class="banner-action">Confirmer maintenant</a>
+    </div>
+  </div>
+}

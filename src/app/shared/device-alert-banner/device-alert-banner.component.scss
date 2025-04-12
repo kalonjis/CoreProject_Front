@@ -1,0 +1,57 @@
+// src/app/shared/device-alert-banner/device-alert-banner.component.scss
+@import 'variables';
+@import 'mixins';
+
+.device-alert-banner {
+  position: fixed;
+  top: $header-height; // Positionnement juste en dessous de la navbar
+  left: 0;
+  right: 0;
+  background-color: rgba($warning-color, 0.95);
+  color: darken($warning-color, 35%);
+  z-index: 900; // Z-index plus faible que la navbar (1000)
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  .banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: $breakpoint-mobile) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0.75rem;
+      gap: 0.5rem;
+    }
+  }
+
+  .alert-icon {
+    font-size: 1.25rem;
+  }
+
+  .alert-message {
+    flex: 1;
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .banner-action {
+    background-color: rgba(white, 0.2);
+    color: inherit;
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: $border-radius;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(white, 0.3);
+    }
+  }
+}
