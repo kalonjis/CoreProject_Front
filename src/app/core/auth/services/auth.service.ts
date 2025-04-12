@@ -5,6 +5,7 @@ import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
 import {User} from '../../../data/models/user/user';
+ import {Device} from '../../../data/models/device/device';
 
 
 export interface AuthState {
@@ -13,6 +14,7 @@ export interface AuthState {
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
+  currentDevice: Device | null;
 }
 
 @Injectable({
@@ -29,7 +31,8 @@ export class AuthService {
     isAuthenticated: false,
     isInitialized: false,
     isLoading: false,
-    error: null
+    error: null,
+    currentDevice: null
   });
 
   // Signaux dérivés (computed) pour lecture rapide
@@ -39,6 +42,7 @@ export class AuthService {
   public readonly user = computed(() => this._state().user);
   public readonly error = computed(() => this._state().error);
   public readonly username = computed(() => this._state().user?.username || null);
+  public readonly isDeviceConfirmed = computed(() => this._state().currentDevice?.confirmed || false);
 
   // Pour accéder à l'état complet
   public readonly state = this._state.asReadonly();
@@ -157,7 +161,13 @@ export class AuthService {
     // Toujours vérifier avec le serveur
     return new Promise<void>((resolve) => {
       this.loadUserProfile().subscribe({
-        next: () => resolve(),
+        next: () => {
+          // Si authentifié, charger aussi les infos de l'appareil
+          if (this.isAuthenticated()) {
+            this.loadCurrentDevice();
+          }
+          resolve();
+        },
         error: () => {
           this._state.update(state => ({
             ...state,
@@ -167,6 +177,33 @@ export class AuthService {
         }
       });
     });
+  }
+
+
+  // Méthode pour charger les infos de l'appareil courant
+  loadCurrentDevice(): void {
+    this.http.get<Device>('/api/device/current', { withCredentials: true })
+      .subscribe({
+        next: (device) => {
+          this._state.update(state => ({
+            ...state,
+            currentDevice: device
+          }));
+        },
+        error: (err) => {
+          console.error('Failed to load current device info', err);
+        }
+      });
+  }
+
+// Méthode pour mettre à jour l'état de confirmation de l'appareil
+  updateDeviceConfirmation(confirmed: boolean): void {
+    this._state.update(state => ({
+      ...state,
+      currentDevice: state.currentDevice
+        ? { ...state.currentDevice, confirmed }
+        : null
+    }));
   }
 
 
