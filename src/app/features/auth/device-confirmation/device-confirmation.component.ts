@@ -55,6 +55,8 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
 
     this.deviceService.confirmDevice(this.token).subscribe({
       next: () => {
+        this.authService.updateDeviceConfirmation(true);
+
         this.isProcessing = false;
         this.displaySuccess(
           'Appareil confirmé avec succès ! Vous pouvez maintenant utiliser votre compte en toute sécurité.',
