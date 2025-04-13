@@ -8,16 +8,8 @@ import {User} from '../../../data/models/user/user';
 import {Device} from '../../../data/models/device/device';
 import {DeviceService} from '../../../data/services/device-service.service';
 import {DeviceTrustLevel} from '../../../data/models/device/device-trust-level';
+import {AuthState} from '../../../data/models/auth/auth.state';
 
-
-export interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  isInitialized: boolean;
-  isLoading: boolean;
-  error: string | null;
-  currentDevice: Device | null;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -55,22 +47,49 @@ export class AuthService implements OnDestroy {
   // Pour accéder à l'état complet
   public readonly state = this._state.asReadonly();
 
-
-  // Constructeur modifié pour ajouter la surveillance des changements de route
   constructor() {
-    // Écouter les événements de navigation pour rafraîchir l'état de l'appareil
+    // Écouter les événements de navigation pour détecter les changements importants
+    // qui pourraient nécessiter une vérification de l'appareil (ex: login/logout)
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      // Ne vérifier que lors de navigations vers des pages sécurisées
-      const url = this.router.url;
-      const isPublicRoute = ['/login', '/signup', '/forgot-password'].some(route => url.includes(route));
+    ).subscribe((event: NavigationEnd) => {
+      // Ne vérifier que lors de navigations importantes
+      if (event.url.includes('/auth/login') || event.url.includes('/auth/logout')) {
+        // Ces routes sont déjà gérées par leurs propres méthodes
+        return;
+      }
 
-      if (!isPublicRoute && this.isAuthenticated()) {
-        this.refreshDeviceStatus();
+      // Pour les autres routes, vérifier seulement si l'état est ambigu
+      if (this.isAuthenticated() && this._state().currentDevice === null) {
+        this.getDeviceStatus();
       }
     });
   }
+
+
+  private getDeviceStatus(): void {
+    // Si nous avons un ID d'appareil confirmé, utiliser cette méthode optimisée
+    const deviceId = this._confirmedDeviceId();
+
+    if (deviceId) {
+      this.deviceService.getDevice(deviceId).subscribe({
+        next: (device) => {
+          this._state.update(state => ({
+            ...state,
+            currentDevice: device
+          }));
+        },
+        error: () => {
+          // Fallback en cas d'erreur avec l'ID stocké
+          this.loadCurrentDevice();
+        }
+      });
+    } else {
+      // Si nous n'avons pas d'ID confirmé, charger l'appareil courant
+      this.loadCurrentDevice();
+    }
+  }
+
 
   // Méthode pour gérer le nettoyage des ressources
   ngOnDestroy(): void {
@@ -189,35 +208,36 @@ export class AuthService implements OnDestroy {
     return this.http.post<void>('/api/auth/logout', {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          // Nettoyage côté client
+          // Nettoyage complet
           this._state.update(state => ({
             ...state,
             user: null,
             isAuthenticated: false,
             isLoading: false,
-            currentDevice: null // Ajout pour nettoyer les infos de l'appareil
+            currentDevice: null
           }));
 
-          // Arrêter la vérification périodique
+          // Arrêter le check périodique
           if (this.deviceCheckInterval) {
             clearInterval(this.deviceCheckInterval);
           }
 
+          // Nettoyer le localStorage
           this.clearUserStorage();
           this.clearDeviceStorage();
+
           this.router.navigate(['/auth/login']);
         }),
         catchError(err => {
-          // Même en cas d'erreur, nettoyage local
+          // Même nettoyage en cas d'erreur
           this._state.update(state => ({
             ...state,
             user: null,
             isAuthenticated: false,
             isLoading: false,
-            currentDevice: null // Ajout pour nettoyer les infos de l'appareil
+            currentDevice: null
           }));
 
-          // Arrêter la vérification périodique
           if (this.deviceCheckInterval) {
             clearInterval(this.deviceCheckInterval);
           }
@@ -225,7 +245,7 @@ export class AuthService implements OnDestroy {
           this.clearUserStorage();
           this.clearDeviceStorage();
 
-          this.router.navigate(['/login']);
+          this.router.navigate(['/auth/login']);
           return of(void 0);
         })
       );
@@ -265,8 +285,7 @@ export class AuthService implements OnDestroy {
           if (this.isAuthenticated()) {
             this.loadCurrentDevice();
 
-            // Configurer la vérification périodique des infos de l'appareil (toutes les 5 minutes)
-            this.setupDeviceChecking();
+            this.setupDeviceChecking(10 * 60 * 1000);
           }
           resolve();
         },
@@ -282,34 +301,42 @@ export class AuthService implements OnDestroy {
   }
 
 
-  private setupDeviceChecking(): void {
-    // Nettoyer l'intervalle existant si présent
+  private setupDeviceChecking(interval: number = 5 * 60 * 1000): void {
+    // Nettoyer l'intervalle existant
     if (this.deviceCheckInterval) {
       clearInterval(this.deviceCheckInterval);
     }
 
-    // Créer un nouvel intervalle
+    // Créer un intervalle moins fréquent maintenant que nous avons l'état initial correct
     this.deviceCheckInterval = setInterval(() => {
       if (this.isAuthenticated()) {
-        this.loadCurrentDevice();
+        // Si nous avons un ID confirmé, pas besoin de check périodique
+        if (!this._confirmedDeviceId()) {
+          this.refreshDeviceStatus();
+        }
       } else {
         // Arrêter de vérifier si l'utilisateur n'est plus authentifié
         clearInterval(this.deviceCheckInterval);
       }
-    }, 5 * 60 * 1000); // Vérifier toutes les 5 minutes
+    }, interval);
   }
 
 
   refreshDeviceStatus(): void {
     if (!this.isAuthenticated()) return;
 
+    this.getDeviceStatus();
+  }
+
+
+  // Méthode pour charger les infos de l'appareil courant
+  loadCurrentDevice(): void {
+    // Pas besoin de vérifier le localStorage si nous avons déjà l'ID dans le signal
     const deviceId = this._confirmedDeviceId();
 
     if (deviceId) {
-      // Si nous avons un ID confirmé, récupérer directement cet appareil
       this.deviceService.getDevice(deviceId).subscribe({
         next: (device) => {
-          // Mettre à jour l'état avec l'appareil confirmé
           this._state.update(state => ({
             ...state,
             currentDevice: device
@@ -317,78 +344,42 @@ export class AuthService implements OnDestroy {
         },
         error: () => {
           // En cas d'erreur, revenir à la méthode standard
-          this.loadCurrentDevice();
+          this.fetchCurrentDevice();
         }
       });
     } else {
-      // Sinon, utiliser la méthode standard
-      this.loadCurrentDevice();
+      // Si pas d'ID confirmé, utiliser la méthode standard
+      this.fetchCurrentDevice();
     }
   }
 
 
-  // Méthode pour charger les infos de l'appareil courant
-  loadCurrentDevice(): void {
-    // Vérifier si nous avons un ID d'appareil stocké
-    const storedDeviceId = localStorage.getItem('device_id');
+  private fetchCurrentDevice(): void {
+    this.http.get<Device>('/api/device/current', { withCredentials: true })
+      .subscribe({
+        next: (device) => {
+          this._state.update(state => ({
+            ...state,
+            currentDevice: device
+          }));
 
-    if (storedDeviceId) {
-      const deviceId = parseInt(storedDeviceId, 10);
-
-      // Utiliser getDevice avec l'ID stocké
-      this.http.get<Device>(`/api/device/${deviceId}`, { withCredentials: true })
-        .subscribe({
-          next: (device) => {
-            // Mettre à jour l'état avec l'appareil récupéré
-            this._state.update(state => ({
-              ...state,
-              currentDevice: device
-            }));
-
-            // Si l'appareil est confirmé, mettre à jour confirmedDeviceId
-            if (device.confirmed) {
-              this._confirmedDeviceId.set(device.id);
-              localStorage.setItem('confirmed_device_id', device.id.toString());
-            }
-          },
-          error: () => {
-            // En cas d'erreur, essayer avec getCurrentDevice comme fallback
-            this.http.get<Device>('/api/device/current', { withCredentials: true })
-              .subscribe({
-                next: (device) => {
-                  this._state.update(state => ({
-                    ...state,
-                    currentDevice: device
-                  }));
-
-                  // Mettre à jour l'ID stocké
-                  localStorage.setItem('device_id', device.id.toString());
-
-                  if (device.confirmed) {
-                    this._confirmedDeviceId.set(device.id);
-                    localStorage.setItem('confirmed_device_id', device.id.toString());
-                  }
-                },
-                error: (err) => {
-                  console.error('Failed to load device info', err);
-                }
-              });
+          // Si l'appareil est confirmé, mettre à jour l'ID confirmé
+          if (device.confirmed && device.id) {
+            this._confirmedDeviceId.set(device.id);
+            localStorage.setItem('confirmed_device_id', device.id.toString());
           }
-        });
-    } else {
-      // Comportement actuel si aucun ID n'est stocké
-      this.http.get<Device>('/api/device/current', { withCredentials: true })
-        .subscribe({
-          // Code existant...
-        });
-    }
+        },
+        error: (err) => {
+          console.error('Failed to load device info', err);
+        }
+      });
   }
 
-// Méthode pour mettre à jour l'état de confirmation de l'appareil
+
+  // Méthode pour mettre à jour l'état de confirmation de l'appareil
   updateDeviceConfirmation(confirmed: boolean, deviceId?: number): void {
     if (confirmed && deviceId) {
       this._confirmedDeviceId.set(deviceId);
-      // Stocker aussi dans localStorage pour persister entre les sessions
       localStorage.setItem('confirmed_device_id', deviceId.toString());
     }
 
@@ -399,7 +390,6 @@ export class AuthService implements OnDestroy {
         : null
     }));
   }
-
 
 
   // Vérification des rôles
