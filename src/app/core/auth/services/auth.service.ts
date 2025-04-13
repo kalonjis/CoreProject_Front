@@ -1,12 +1,13 @@
-import {Injectable, inject, signal, computed, Signal, OnDestroy} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {computed, inject, Injectable, OnDestroy, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {NavigationEnd, Router} from '@angular/router';
-import {Observable, catchError, map, of, tap, throwError, filter} from 'rxjs';
+import {catchError, filter, Observable, of, tap, throwError} from 'rxjs';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
 import {User} from '../../../data/models/user/user';
- import {Device} from '../../../data/models/device/device';
+import {Device} from '../../../data/models/device/device';
 import {DeviceService} from '../../../data/services/device-service.service';
+import {DeviceTrustLevel} from '../../../data/models/device/device-trust-level';
 
 
 export interface AuthState {
@@ -79,12 +80,33 @@ export class AuthService implements OnDestroy {
   }
 
   // Connexion utilisateur
-  login(credentials: { username: string; password: string }): Observable<void> {
+  login(credentials: { username: string; password: string }): Observable<any> {
     this._state.update(state => ({...state, isLoading: true, error: null}));
 
-    return this.http.post<void>('/api/auth/login', credentials, { withCredentials: true })
+    return this.http.post<any>('/api/auth/login', credentials, { withCredentials: true })
       .pipe(
-        tap(() => {
+        tap((response) => {
+          // Si la réponse contient des informations sur l'appareil, les stocker
+          if (response && response.deviceId) {
+            const deviceId = response.deviceId;
+            const deviceConfirmed = response.deviceConfirmed || false;
+
+            // Stocker l'ID de l'appareil
+            this._confirmedDeviceId.set(deviceId);
+            localStorage.setItem('device_id', deviceId.toString());
+
+            // Si l'appareil est confirmé, marquer comme tel
+            if (deviceConfirmed) {
+              localStorage.setItem('confirmed_device_id', deviceId.toString());
+
+              // Précharger l'état de l'appareil
+              this._state.update(state => ({
+                ...state,
+                currentDevice: this.createDefaultDevice(deviceId, deviceConfirmed)
+              }));
+            }
+          }
+
           // Après connexion réussie, charger le profil
           this.loadUserProfile().subscribe();
         }),
@@ -94,6 +116,31 @@ export class AuthService implements OnDestroy {
           throw err;
         })
       );
+  }
+
+
+  // Fonction utilitaire pour créer un objet Device par défaut
+  private createDefaultDevice(id?: number, confirmed?: boolean): Device {
+    return {
+      id: id || 0,
+      confirmed: confirmed || false,
+      deviceType: 'Unknown',
+      browser: 'Unknown',
+      browserVersion: '',
+      operatingSystem: '',
+      osVersion: '',
+      device_cpu: '',
+      device_cpu_bits: '',
+      language: '',
+      deviceClass: '',
+      deviceBrand: '',
+      fingerprint: '',
+      firstSeen: new Date().toISOString(),
+      lastSeen: new Date().toISOString(),
+      lastIpAddress: '',
+      level: DeviceTrustLevel.BASIC,
+      blacklisted: false
+    };
   }
 
   // Chargement du profil utilisateur
@@ -157,6 +204,7 @@ export class AuthService implements OnDestroy {
           }
 
           this.clearUserStorage();
+          this.clearDeviceStorage();
           this.router.navigate(['/auth/login']);
         }),
         catchError(err => {
@@ -175,6 +223,8 @@ export class AuthService implements OnDestroy {
           }
 
           this.clearUserStorage();
+          this.clearDeviceStorage();
+
           this.router.navigate(['/login']);
           return of(void 0);
         })
@@ -279,34 +329,59 @@ export class AuthService implements OnDestroy {
 
   // Méthode pour charger les infos de l'appareil courant
   loadCurrentDevice(): void {
-    this.http.get<Device>('/api/device/current', { withCredentials: true })
-      .subscribe({
-        next: (device) => {
+    // Vérifier si nous avons un ID d'appareil stocké
+    const storedDeviceId = localStorage.getItem('device_id');
 
-          console.log("device : ", device);
+    if (storedDeviceId) {
+      const deviceId = parseInt(storedDeviceId, 10);
 
-          const previousDevice = this._state().currentDevice;
-          const wasConfirmed = previousDevice?.confirmed || false;
-          const isNowConfirmed = device?.confirmed || false;
+      // Utiliser getDevice avec l'ID stocké
+      this.http.get<Device>(`/api/device/${deviceId}`, { withCredentials: true })
+        .subscribe({
+          next: (device) => {
+            // Mettre à jour l'état avec l'appareil récupéré
+            this._state.update(state => ({
+              ...state,
+              currentDevice: device
+            }));
 
-          // Mettre à jour l'état
-          this._state.update(state => ({
-            ...state,
-            currentDevice: device
-          }));
+            // Si l'appareil est confirmé, mettre à jour confirmedDeviceId
+            if (device.confirmed) {
+              this._confirmedDeviceId.set(device.id);
+              localStorage.setItem('confirmed_device_id', device.id.toString());
+            }
+          },
+          error: () => {
+            // En cas d'erreur, essayer avec getCurrentDevice comme fallback
+            this.http.get<Device>('/api/device/current', { withCredentials: true })
+              .subscribe({
+                next: (device) => {
+                  this._state.update(state => ({
+                    ...state,
+                    currentDevice: device
+                  }));
 
-          // Si le statut de confirmation a changé, émettre un événement personnalisé
-          if (wasConfirmed !== isNowConfirmed) {
-            const event = new CustomEvent('device-confirmation-changed', {
-              detail: { confirmed: isNowConfirmed }
-            });
-            window.dispatchEvent(event);
+                  // Mettre à jour l'ID stocké
+                  localStorage.setItem('device_id', device.id.toString());
+
+                  if (device.confirmed) {
+                    this._confirmedDeviceId.set(device.id);
+                    localStorage.setItem('confirmed_device_id', device.id.toString());
+                  }
+                },
+                error: (err) => {
+                  console.error('Failed to load device info', err);
+                }
+              });
           }
-        },
-        error: (err) => {
-          console.error('Failed to load current device info', err);
-        }
-      });
+        });
+    } else {
+      // Comportement actuel si aucun ID n'est stocké
+      this.http.get<Device>('/api/device/current', { withCredentials: true })
+        .subscribe({
+          // Code existant...
+        });
+    }
   }
 
 // Méthode pour mettre à jour l'état de confirmation de l'appareil
@@ -348,6 +423,7 @@ export class AuthService implements OnDestroy {
 
     // Supprimer les données locales
     this.clearUserStorage();
+    this.clearDeviceStorage();
   }
 
 
@@ -559,6 +635,13 @@ export class AuthService implements OnDestroy {
   // Nettoyage du stockage
   private clearUserStorage(): void {
     localStorage.removeItem('user');
+  }
+
+
+  private clearDeviceStorage(): void{
+    localStorage.removeItem('device_id');
+    localStorage.removeItem('confirmed_device_id');
+    this._confirmedDeviceId.set(null)
   }
 
 
