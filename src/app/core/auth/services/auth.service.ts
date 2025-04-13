@@ -208,42 +208,22 @@ export class AuthService implements OnDestroy {
     return this.http.post<void>('/api/auth/logout', {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          // Nettoyage complet
-          this._state.update(state => ({
-            ...state,
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            currentDevice: null
-          }));
+          this.clearSession();
+
+          // Arrêter le check périodique (cette partie n'est pas dans clearSession)
+          if (this.deviceCheckInterval) {
+            clearInterval(this.deviceCheckInterval);
+          }
+
+          this.router.navigate(['/auth/login']);
+        }),
+        catchError(err => {
+          this.clearSession();
 
           // Arrêter le check périodique
           if (this.deviceCheckInterval) {
             clearInterval(this.deviceCheckInterval);
           }
-
-          // Nettoyer le localStorage
-          this.clearUserStorage();
-          this.clearDeviceStorage();
-
-          this.router.navigate(['/auth/login']);
-        }),
-        catchError(err => {
-          // Même nettoyage en cas d'erreur
-          this._state.update(state => ({
-            ...state,
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            currentDevice: null
-          }));
-
-          if (this.deviceCheckInterval) {
-            clearInterval(this.deviceCheckInterval);
-          }
-
-          this.clearUserStorage();
-          this.clearDeviceStorage();
 
           this.router.navigate(['/auth/login']);
           return of(void 0);
