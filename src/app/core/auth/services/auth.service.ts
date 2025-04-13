@@ -6,6 +6,7 @@ import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
 import {User} from '../../../data/models/user/user';
  import {Device} from '../../../data/models/device/device';
+import {DeviceService} from '../../../data/services/device-service.service';
 
 
 export interface AuthState {
@@ -25,7 +26,9 @@ export class AuthService implements OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
   private httpUtil = inject(HttpUtilService);
+  private deviceService: DeviceService = inject(DeviceService);
   private deviceCheckInterval: any;
+  private _confirmedDeviceId = signal<number | null>(null);
 
   // État d'authentification avec signals
   private _state = signal<AuthState>({
@@ -45,6 +48,8 @@ export class AuthService implements OnDestroy {
   public readonly error = computed(() => this._state().error);
   public readonly username = computed(() => this._state().user?.username || null);
   public readonly isDeviceConfirmed = computed(() => this._state().currentDevice?.confirmed || false);
+  public readonly confirmedDeviceId = this._confirmedDeviceId.asReadonly();
+
 
   // Pour accéder à l'état complet
   public readonly state = this._state.asReadonly();
@@ -181,6 +186,12 @@ export class AuthService implements OnDestroy {
     // Essayer de restaurer depuis localStorage
     const storedUser = localStorage.getItem('user');
 
+    // Récupérer l'ID de l'appareil confirmé
+    const confirmedDeviceId = localStorage.getItem('confirmed_device_id');
+    if (confirmedDeviceId) {
+      this._confirmedDeviceId.set(parseInt(confirmedDeviceId, 10));
+    }
+
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
@@ -240,7 +251,27 @@ export class AuthService implements OnDestroy {
 
 
   refreshDeviceStatus(): void {
-    if (this.isAuthenticated()) {
+    if (!this.isAuthenticated()) return;
+
+    const deviceId = this._confirmedDeviceId();
+
+    if (deviceId) {
+      // Si nous avons un ID confirmé, récupérer directement cet appareil
+      this.deviceService.getDevice(deviceId).subscribe({
+        next: (device) => {
+          // Mettre à jour l'état avec l'appareil confirmé
+          this._state.update(state => ({
+            ...state,
+            currentDevice: device
+          }));
+        },
+        error: () => {
+          // En cas d'erreur, revenir à la méthode standard
+          this.loadCurrentDevice();
+        }
+      });
+    } else {
+      // Sinon, utiliser la méthode standard
       this.loadCurrentDevice();
     }
   }
@@ -279,7 +310,13 @@ export class AuthService implements OnDestroy {
   }
 
 // Méthode pour mettre à jour l'état de confirmation de l'appareil
-  updateDeviceConfirmation(confirmed: boolean): void {
+  updateDeviceConfirmation(confirmed: boolean, deviceId?: number): void {
+    if (confirmed && deviceId) {
+      this._confirmedDeviceId.set(deviceId);
+      // Stocker aussi dans localStorage pour persister entre les sessions
+      localStorage.setItem('confirmed_device_id', deviceId.toString());
+    }
+
     this._state.update(state => ({
       ...state,
       currentDevice: state.currentDevice
