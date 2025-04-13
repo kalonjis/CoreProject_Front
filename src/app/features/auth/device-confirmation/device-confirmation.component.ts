@@ -54,8 +54,13 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
     if (!this.token) return;
 
     this.deviceService.confirmDevice(this.token).subscribe({
-      next: () => {
-        this.authService.updateDeviceConfirmation(true);
+      next: (response) => {
+        // Obtenez l'ID de l'appareil depuis la réponse (si disponible)
+        const deviceId = response?.['deviceId']; // Assurez-vous que votre API renvoie l'ID
+
+        console.log("device confirmed: ", deviceId)
+        // Mettre à jour le statut de confirmation avec l'ID
+        this.authService.updateDeviceConfirmation(true, deviceId);
 
         this.isProcessing = false;
         this.displaySuccess(
