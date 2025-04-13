@@ -5,11 +5,12 @@ import { FooterComponent } from '../core/layout/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../core/layout/header/header.component';
 import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
+import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-alert-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent],
+  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent, DeviceAlertBannerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

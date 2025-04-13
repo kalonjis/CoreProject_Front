@@ -1,0 +1,18 @@
+@if (showBanner()) {
+  <div class="device-alert-banner">
+    <div class="banner-content">
+      <div class="alert-icon">⚠️</div>
+      <p class="alert-message">
+        Cet appareil n'a pas encore été confirmé. Pour des raisons de sécurité, certaines fonctionnalités peuvent être limitées.
+      </p>
+      <button (click)="requestNewConfirmationLink()" class="banner-action">
+        @if (isRequestingLink()) {
+          <span class="spinner"></span> Envoi en cours...
+        } @else {
+          Demander un nouveau lien
+        }
+      </button>
+    </div>
+    <button class="banner-close" (click)="dismissBanner()" aria-label="Fermer la bannière">×</button>
+  </div>
+}
