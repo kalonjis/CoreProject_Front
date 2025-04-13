@@ -1,7 +1,7 @@
-import { Injectable, inject, signal, computed, Signal } from '@angular/core';
+import {Injectable, inject, signal, computed, Signal, OnDestroy} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import {Observable, catchError, map, of, tap, throwError} from 'rxjs';
+import {NavigationEnd, Router} from '@angular/router';
+import {Observable, catchError, map, of, tap, throwError, filter} from 'rxjs';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
 import {User} from '../../../data/models/user/user';
@@ -20,10 +20,12 @@ export interface AuthState {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
+
   private http = inject(HttpClient);
   private router = inject(Router);
   private httpUtil = inject(HttpUtilService);
+  private deviceCheckInterval: any;
 
   // État d'authentification avec signals
   private _state = signal<AuthState>({
@@ -46,6 +48,30 @@ export class AuthService {
 
   // Pour accéder à l'état complet
   public readonly state = this._state.asReadonly();
+
+
+  // Constructeur modifié pour ajouter la surveillance des changements de route
+  constructor() {
+    // Écouter les événements de navigation pour rafraîchir l'état de l'appareil
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Ne vérifier que lors de navigations vers des pages sécurisées
+      const url = this.router.url;
+      const isPublicRoute = ['/login', '/signup', '/forgot-password'].some(route => url.includes(route));
+
+      if (!isPublicRoute && this.isAuthenticated()) {
+        this.refreshDeviceStatus();
+      }
+    });
+  }
+
+  // Méthode pour gérer le nettoyage des ressources
+  ngOnDestroy(): void {
+    if (this.deviceCheckInterval) {
+      clearInterval(this.deviceCheckInterval);
+    }
+  }
 
   // Connexion utilisateur
   login(credentials: { username: string; password: string }): Observable<void> {
@@ -116,8 +142,14 @@ export class AuthService {
             ...state,
             user: null,
             isAuthenticated: false,
-            isLoading: false
+            isLoading: false,
+            currentDevice: null // Ajout pour nettoyer les infos de l'appareil
           }));
+
+          // Arrêter la vérification périodique
+          if (this.deviceCheckInterval) {
+            clearInterval(this.deviceCheckInterval);
+          }
 
           this.clearUserStorage();
           this.router.navigate(['/auth/login']);
@@ -128,8 +160,14 @@ export class AuthService {
             ...state,
             user: null,
             isAuthenticated: false,
-            isLoading: false
+            isLoading: false,
+            currentDevice: null // Ajout pour nettoyer les infos de l'appareil
           }));
+
+          // Arrêter la vérification périodique
+          if (this.deviceCheckInterval) {
+            clearInterval(this.deviceCheckInterval);
+          }
 
           this.clearUserStorage();
           this.router.navigate(['/login']);
@@ -165,6 +203,9 @@ export class AuthService {
           // Si authentifié, charger aussi les infos de l'appareil
           if (this.isAuthenticated()) {
             this.loadCurrentDevice();
+
+            // Configurer la vérification périodique des infos de l'appareil (toutes les 5 minutes)
+            this.setupDeviceChecking();
           }
           resolve();
         },
@@ -180,15 +221,56 @@ export class AuthService {
   }
 
 
+  private setupDeviceChecking(): void {
+    // Nettoyer l'intervalle existant si présent
+    if (this.deviceCheckInterval) {
+      clearInterval(this.deviceCheckInterval);
+    }
+
+    // Créer un nouvel intervalle
+    this.deviceCheckInterval = setInterval(() => {
+      if (this.isAuthenticated()) {
+        this.loadCurrentDevice();
+      } else {
+        // Arrêter de vérifier si l'utilisateur n'est plus authentifié
+        clearInterval(this.deviceCheckInterval);
+      }
+    }, 5 * 60 * 1000); // Vérifier toutes les 5 minutes
+  }
+
+
+  refreshDeviceStatus(): void {
+    if (this.isAuthenticated()) {
+      this.loadCurrentDevice();
+    }
+  }
+
+
   // Méthode pour charger les infos de l'appareil courant
   loadCurrentDevice(): void {
     this.http.get<Device>('/api/device/current', { withCredentials: true })
       .subscribe({
         next: (device) => {
+
+          console.log("device : ", device);
+
+          const previousDevice = this._state().currentDevice;
+          const wasConfirmed = previousDevice?.confirmed || false;
+          const isNowConfirmed = device?.confirmed || false;
+
+          // Mettre à jour l'état
           this._state.update(state => ({
             ...state,
             currentDevice: device
           }));
+
+          // Si le statut de confirmation a changé, émettre un événement personnalisé
+          if (wasConfirmed !== isNowConfirmed) {
+            const event = new CustomEvent('device-confirmation-changed', {
+              detail: { confirmed: isNowConfirmed }
+            });
+            window.dispatchEvent(event);
+          }
         },
         error: (err) => {
           console.error('Failed to load current device info', err);

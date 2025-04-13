@@ -58,6 +58,15 @@ export class DeviceService {
   }
 
 
+  /**
+   * Demande un nouveau lien de confirmation pour l'appareil actuel
+   * Cette méthode doit correspondre à un nouvel endpoint côté backend
+   */
+  requestDeviceConfirmationLink(): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>('/api/device/request-confirmation', {}, { withCredentials: true });
+  }
+
+
 // Méthode pour déconnecter un appareil spécifique
   disconnectDevice(deviceId: number): Observable<any> {
     return this.http.delete<any>(`/api/device/${deviceId}`, { withCredentials: true });
