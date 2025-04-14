@@ -1,0 +1,564 @@
+<div class="admin-user-dashboard">
+  <div class="dashboard-header">
+    @if (isLoading()) {
+      <div class="skeleton-header"></div>
+    } @else if (user()) {
+      <div class="user-info">
+        <div class="user-avatar">
+          <div class="avatar-placeholder">
+            {{ user()!.username.charAt(0).toUpperCase() }}
+          </div>
+        </div>
+        <div class="user-details">
+          <h1>{{ user()!.username }}</h1>
+          <div class="user-meta">
+            <span class="role-badge" [ngClass]="'role-' + getTopRole(user()!.userRoles).toLowerCase()">
+              {{ getTopRole(user()!.userRoles) }}
+            </span>
+            <span class="status-badge" [ngClass]="user()!.enabled ? 'status-active' : 'status-inactive'">
+              {{ user()!.enabled ? 'Actif' : 'Inactif' }}
+            </span>
+            <span class="user-email">{{ user()!.email }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-actions">
+        <button class="btn-reset" (click)="resetUserPassword()">
+          <span class="icon">🔑</span>
+          Réinitialiser le mot de passe
+        </button>
+        <button
+          class="btn-status"
+          [ngClass]="user()!.enabled ? 'btn-deactivate' : 'btn-activate'"
+          (click)="toggleUserStatus()">
+          <span class="icon">{{ user()!.enabled ? '🔒' : '🔓' }}</span>
+          {{ user()!.enabled ? 'Désactiver' : 'Activer' }}
+        </button>
+        <button class="btn-delete" (click)="deleteUser()">
+          <span class="icon">❌</span>
+          Supprimer
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des données utilisateur...</p>
+    </div>
+  } @else if (user()) {
+    <!-- Navigation par onglets -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button
+          class="tab-button"
+          [class.active]="activeTab() === 'overview'"
+          (click)="setActiveTab('overview')">
+          Aperçu
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab() === 'activity'"
+          (click)="setActiveTab('activity')">
+          Activité
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab() === 'devices'"
+          (click)="setActiveTab('devices')">
+          Appareils
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab() === 'security'"
+          (click)="setActiveTab('security')">
+          Sécurité
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div class="tab-content">
+      <!-- ONGLET APERÇU -->
+      @if (activeTab() === 'overview') {
+        <div class="overview-tab">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon login-icon">🔑</div>
+              <div class="stat-content">
+                <span class="stat-value">{{ userStats().totalLogins || 0 }}</span>
+                <span class="stat-label">Connexions</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon devices-icon">💻</div>
+              <div class="stat-content">
+                <span class="stat-value">{{ devices().length || 0 }}</span>
+                <span class="stat-label">Appareils</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon failed-icon">⚠️</div>
+              <div class="stat-content">
+                <span class="stat-value">{{ userStats().failedLogins || 0 }}</span>
+                <span class="stat-label">Échecs de connexion</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon password-icon">🔒</div>
+              <div class="stat-content">
+                <span class="stat-value">{{ userStats().passwordChanges || 0 }}</span>
+                <span class="stat-label">Changements de mot de passe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h2>Informations utilisateur</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">ID</span>
+                <span class="info-value">{{ user()!.id }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Nom d'utilisateur</span>
+                <span class="info-value">{{ user()!.username }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ user()!.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Téléphone</span>
+                <span class="info-value">{{ user()!.phoneNumber || 'Non renseigné' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Nom complet</span>
+                <span class="info-value">
+                  {{ (user()!.firstname || '') + ' ' + (user()!.lastname || '') || 'Non renseigné' }}
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Statut du compte</span>
+                <span class="info-value status-badge" [ngClass]="user()!.enabled ? 'status-active' : 'status-inactive'">
+                  {{ user()!.enabled ? 'Actif' : 'Inactif' }}
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Rôles</span>
+                <span class="info-value">
+                  @for (role of user()!.userRoles; track role) {
+                    <span class="role-badge role-pill" [ngClass]="'role-' + role.toLowerCase()">{{ role }}</span>
+                  }
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Dernière connexion</span>
+                <span class="info-value">{{ formatDate(userStats().lastLoginTime) }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Dernière localisation</span>
+                <span class="info-value">{{ userStats().lastLoginLocation || 'Inconnue' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="recent-activity">
+            <h2>Activité récente</h2>
+            @if (recentLogs().length === 0) {
+              <div class="no-data">
+                <p>Aucune activité récente enregistrée</p>
+              </div>
+            } @else {
+              <div class="activity-list">
+                @for (log of recentLogs().slice(0, 5); track log.id) {
+                  <div class="activity-item">
+                    <div class="activity-icon" [ngClass]="log.actionCategory?.toLowerCase()">
+                      @switch (log.actionCategory) {
+                        @case ('AUTH') {
+                          <span>🔑</span>
+                        }
+                        @case ('PASSWORD') {
+                          <span>🔒</span>
+                        }
+                        @case ('ACCOUNT') {
+                          <span>👤</span>
+                        }
+                        @case ('DEVICE') {
+                          <span>💻</span>
+                        }
+                        @case ('EMAIL') {
+                          <span>📧</span>
+                        }
+                        @case ('SECURITY') {
+                          <span>🛡️</span>
+                        }
+                        @default {
+                          <span>📝</span>
+                        }
+                      }
+                    </div>
+                    <div class="activity-details">
+                      <div class="activity-description">{{ log.actionDescription || log.actionType }}</div>
+                      <div class="activity-meta">
+                        <span class="activity-time">{{ formatRelativeTime(log.timestamp) }}</span>
+                        <span class="activity-location">{{ log.location || 'Lieu inconnu' }}</span>
+                        @if (log.deviceInfo) {
+                          <span class="activity-device">{{ log.deviceInfo }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+              <div class="view-all">
+                <button class="btn-text" (click)="setActiveTab('activity')">Voir toute l'activité</button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ONGLET ACTIVITÉ -->
+      @if (activeTab() === 'activity') {
+        <div class="activity-tab">
+          <div class="filter-section">
+            <form [formGroup]="filterForm" class="filter-form">
+              <div class="form-group">
+                <label>Période</label>
+                <div class="period-buttons">
+                  @for (period of timePeriods; track period.value) {
+                    <button
+                      type="button"
+                      class="period-button"
+                      [class.active]="filterForm.get('period')?.value === period.value"
+                      (click)="updatePeriod(period.value)">
+                      {{ period.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+              <div class="date-range">
+                <div class="form-group">
+                  <label for="fromDate">Du</label>
+                  <input
+                    type="date"
+                    id="fromDate"
+                    formControlName="fromDate"
+                    class="date-input">
+                </div>
+                <div class="form-group">
+                  <label for="toDate">Au</label>
+                  <input
+                    type="date"
+                    id="toDate"
+                    formControlName="toDate"
+                    class="date-input">
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="activity-list-container">
+            <h2>Journal d'activité</h2>
+            @if (recentLogs().length === 0) {
+              <div class="no-data">
+                <p>Aucune activité enregistrée pour cette période</p>
+              </div>
+            } @else {
+              <table class="activity-table">
+                <thead>
+                <tr>
+                  <th class="col-icon"></th>
+                  <th class="col-timestamp">Date</th>
+                  <th class="col-action">Action</th>
+                  <th class="col-status">Statut</th>
+                  <th class="col-location">Localisation</th>
+                  <th class="col-device">Appareil</th>
+                  <th class="col-details">Détails</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (log of recentLogs(); track log.id) {
+                    <tr>
+                      <td class="col-icon">
+                        <div class="activity-icon" [ngClass]="log.actionCategory?.toLowerCase()">
+                          @switch (log.actionCategory) {
+                            @case ('AUTH') {
+                              <span>🔑</span>
+                            }
+                            @case ('PASSWORD') {
+                              <span>🔒</span>
+                            }
+                            @case ('ACCOUNT') {
+                              <span>👤</span>
+                            }
+                            @case ('DEVICE') {
+                              <span>💻</span>
+                            }
+                            @case ('EMAIL') {
+                              <span>📧</span>
+                            }
+                            @case ('SECURITY') {
+                              <span>🛡️</span>
+                            }
+                            @default {
+                              <span>📝</span>
+                            }
+                          }
+                        </div>
+                      </td>
+                      <td class="col-timestamp">{{ formatDate(log.timestamp) }}</td>
+                      <td class="col-action">{{ log.actionDescription || log.actionType }}</td>
+                      <td class="col-status">
+                        <span class="status-indicator" [class.success]="log.successful" [class.failure]="!log.successful">
+                          {{ log.successful ? 'Succès' : 'Échec' }}
+                        </span>
+                      </td>
+                      <td class="col-location">{{ log.location || 'Inconnu' }}</td>
+                      <td class="col-device">{{ log.deviceInfo || 'Inconnu' }}</td>
+                      <td class="col-details">{{ log.actionDetails || '-' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ONGLET APPAREILS -->
+      @if (activeTab() === 'devices') {
+        <div class="devices-tab">
+          <h2>Appareils enregistrés</h2>
+          @if (devices().length === 0) {
+            <div class="no-data">
+              <p>Aucun appareil enregistré pour cet utilisateur</p>
+            </div>
+          } @else {
+            <div class="devices-grid">
+              @for (device of devices(); track device.id) {
+                <div class="device-card">
+                  <div class="device-header">
+                    <div class="device-icon">
+                      @switch (device.deviceType) {
+                        @case ('MOBILE') {
+                          <span>📱</span>
+                        }
+                        @case ('TABLET') {
+                          <span>📱</span>
+                        }
+                        @case ('DESKTOP') {
+                          <span>🖥️</span>
+                        }
+                        @case ('LAPTOP') {
+                          <span>💻</span>
+                        }
+                        @default {
+                          <span>🔌</span>
+                        }
+                      }
+                    </div>
+                    <div class="device-name">
+                      {{ device.deviceType || 'Appareil' }} - {{ device.browser || 'Navigateur inconnu' }}
+                    </div>
+                    <div class="device-status">
+                      <span class="status-dot"
+                            [class.confirmed]="device.confirmed"
+                            [class.blacklisted]="device.blacklisted"
+                            [class.unconfirmed]="!device.confirmed && !device.blacklisted">
+                      </span>
+                      <span class="status-text">
+                        @if (device.blacklisted) {
+                          Liste noire
+                        } @else if (device.confirmed) {
+                          Confirmé
+                        } @else {
+                          Non confirmé
+                        }
+                      </span>
+                    </div>
+                  </div>
+                  <div class="device-info">
+                    <div class="device-meta">
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">OS:</span>
+                        <span class="device-meta-value">{{ device.operatingSystem || 'Inconnu' }}</span>
+                      </div>
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">Version:</span>
+                        <span class="device-meta-value">{{ device.osVersion || 'Inconnue' }}</span>
+                      </div>
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">Niveau de confiance:</span>
+                        <span class="device-meta-value trust-level" [ngClass]="'trust-level-' + device.level?.toLowerCase()">
+                          {{ device.level || 'INCONNU' }}
+                        </span>
+                      </div>
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">Dernière IP:</span>
+                        <span class="device-meta-value">{{ device.lastIpAddress || 'Inconnue' }}</span>
+                      </div>
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">Dernière connexion:</span>
+                        <span class="device-meta-value">{{ formatRelativeTime(device.lastSeen) }}</span>
+                      </div>
+                      <div class="device-meta-item">
+                        <span class="device-meta-label">Localisation:</span>
+                        <span class="device-meta-value">{{ device.location || 'Inconnue' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ONGLET SÉCURITÉ -->
+      @if (activeTab() === 'security') {
+        <div class="security-tab">
+          <h2>Paramètres de sécurité</h2>
+
+          <div class="security-stats">
+            <div class="security-stat-item">
+              <div class="stat-title">Nombre de connexions échouées</div>
+              <div class="stat-value">
+                {{ userStats().failedLogins || 0 }}
+              </div>
+              <div class="stat-description">
+                @if ((userStats().failedLogins || 0) > 5) {
+                  <span class="warning">Nombre élevé d'échecs de connexion</span>
+                } @else {
+                  <span class="normal">Niveau normal</span>
+                }
+              </div>
+            </div>
+
+            <div class="security-stat-item">
+              <div class="stat-title">Changements de mot de passe</div>
+              <div class="stat-value">
+                {{ userStats().passwordChanges || 0 }}
+              </div>
+              <div class="stat-description">
+                <span>Dernier changement: {{ formatDate(userStats().lastPasswordChange) || 'Jamais' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="security-actions">
+            <h3>Actions de sécurité</h3>
+            <div class="actions-grid">
+              <button class="security-action-btn" (click)="resetUserPassword()">
+                <span class="action-icon">🔑</span>
+                <span class="action-text">Réinitialiser le mot de passe</span>
+              </button>
+
+              <button class="security-action-btn" (click)="toggleUserStatus()">
+                <span class="action-icon">{{ user()!.enabled ? '🔒' : '🔓' }}</span>
+                <span class="action-text">{{ user()!.enabled ? 'Désactiver le compte' : 'Activer le compte' }}</span>
+              </button>
+
+              <!-- Cette fonctionnalité nécessiterait une API backend pour forcer la déconnexion -->
+              <button class="security-action-btn">
+                <span class="action-icon">📴</span>
+                <span class="action-text">Déconnecter tous les appareils</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="suspicious-activity">
+            <h3>Activités suspectes</h3>
+            @if (userStats().suspiciousActivities && userStats().suspiciousActivities.length > 0) {
+              <div class="activity-list">
+                @for (activity of userStats().suspiciousActivities; track activity.id) {
+                  <div class="suspicious-item">
+                    <div class="suspicious-icon">⚠️</div>
+                    <div class="suspicious-details">
+                      <div class="suspicious-type">{{ activity.description || activity.actionType }}</div>
+                      <div class="suspicious-meta">
+                        <span class="suspicious-time">{{ formatDate(activity.timestamp) }}</span>
+                        <span class="suspicious-location">{{ activity.location || 'Localisation inconnue' }}</span>
+                      </div>
+                    </div>
+                    <div class="suspicious-risk"
+                         [ngClass]="{
+                        'risk-high': activity.riskLevel >= 3,
+                        'risk-medium': activity.riskLevel === 2,
+                        'risk-low': activity.riskLevel === 1 || activity.riskLevel === null
+                      }">
+                      Risque {{ activity.riskLevel >= 3 ? 'Élevé' : (activity.riskLevel === 2 ? 'Moyen' : 'Faible') }}
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-data">
+                <p>Aucune activité suspecte détectée</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="error-container">
+      <div class="error-icon">⚠️</div>
+      <h2>Utilisateur non trouvé</h2>
+      <p>L'utilisateur demandé n'existe pas ou vous n'avez pas les droits pour le consulter.</p>
+      <div class="error-actions">
+        <a routerLink="/admin/users" class="btn-primary">Retour à la liste des utilisateurs</a>
+      </div>
+    </div>
+  }
+
+  <!-- Feedback en cas d'erreur ou succès -->
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (buttonClicked)="handleFeedbackButtonClick()"
+    ></app-feedback>
+  }
+</div>
+<div class="stat-title">Niveau de sécurité</div>
+<div class="security-level"
+     [ngClass]="{
+                  'level-high': userStats().riskScore <= 2,
+                  'level-medium': userStats().riskScore > 2 && userStats().riskScore <= 5,
+                  'level-low': userStats().riskScore > 5
+                }">
+  <div class="level-indicator">
+    <div class="level-bar"
+         [style.width.%]="100 - (userStats().riskScore || 0) * 10">
+    </div>
+  </div>
+  <div class="level-label">
+    @if (userStats().riskScore <= 2) {
+      Élevé
+    } @else if (userStats().riskScore > 2 && userStats().riskScore <= 5) {
+      Moyen
+    } @else {
+      Faible
+    }
+  </div>
+</div>
+
+<div class="security-stat-item">
+  <div class="stat-title">Adresses IP utilisées</div>
+  <div class="ip-list">
+    @if (!userStats().ipAddresses || userStats().ipAddresses.length === 0) {
+      <div class="no-data-small">Aucune adresse IP enregistrée</div>
+    } @else {
+      @for (ip of userStats().ipAddresses; track ip) {
+        <div class="ip-item">{{ ip }}</div>
+      }
+    }
+  </div>
+</div>
+
+<div class="security-stat-item">
