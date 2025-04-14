@@ -446,6 +446,44 @@
                 <span>Dernier changement: {{ formatDate(userStats().lastPasswordChange) || 'Jamais' }}</span>
               </div>
             </div>
+
+            <div class="security-stat-item">
+              <div class="stat-title">Niveau de sécurité</div>
+              <div class="security-level"
+                   [ngClass]="{
+                            'level-high': userStats().riskScore <= 2,
+                            'level-medium': userStats().riskScore > 2 && userStats().riskScore <= 5,
+                            'level-low': userStats().riskScore > 5
+                          }">
+                <div class="level-indicator">
+                  <div class="level-bar"
+                       [style.width.%]="100 - (userStats().riskScore || 0) * 10">
+                  </div>
+                </div>
+                <div class="level-label">
+                  @if (userStats().riskScore <= 2) {
+                    Élevé
+                  } @else if (userStats().riskScore > 2 && userStats().riskScore <= 5) {
+                    Moyen
+                  } @else {
+                    Faible
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="security-stat-item">
+              <div class="stat-title">Adresses IP utilisées</div>
+              <div class="ip-list">
+                @if (!userStats().ipAddresses || userStats().ipAddresses.length === 0) {
+                  <div class="no-data-small">Aucune adresse IP enregistrée</div>
+                } @else {
+                  @for (ip of userStats().ipAddresses; track ip) {
+                    <div class="ip-item">{{ ip }}</div>
+                  }
+                }
+              </div>
+            </div>
           </div>
 
           <div class="security-actions">
@@ -525,40 +563,3 @@
     ></app-feedback>
   }
 </div>
-<div class="stat-title">Niveau de sécurité</div>
-<div class="security-level"
-     [ngClass]="{
-                  'level-high': userStats().riskScore <= 2,
-                  'level-medium': userStats().riskScore > 2 && userStats().riskScore <= 5,
-                  'level-low': userStats().riskScore > 5
-                }">
-  <div class="level-indicator">
-    <div class="level-bar"
-         [style.width.%]="100 - (userStats().riskScore || 0) * 10">
-    </div>
-  </div>
-  <div class="level-label">
-    @if (userStats().riskScore <= 2) {
-      Élevé
-    } @else if (userStats().riskScore > 2 && userStats().riskScore <= 5) {
-      Moyen
-    } @else {
-      Faible
-    }
-  </div>
-</div>
-
-<div class="security-stat-item">
-  <div class="stat-title">Adresses IP utilisées</div>
-  <div class="ip-list">
-    @if (!userStats().ipAddresses || userStats().ipAddresses.length === 0) {
-      <div class="no-data-small">Aucune adresse IP enregistrée</div>
-    } @else {
-      @for (ip of userStats().ipAddresses; track ip) {
-        <div class="ip-item">{{ ip }}</div>
-      }
-    }
-  </div>
-</div>
-
-<div class="security-stat-item">
