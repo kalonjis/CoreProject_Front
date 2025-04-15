@@ -79,6 +79,15 @@ export const authInterceptor: HttpInterceptorFn = (
   // 8. Traitement de la requête avec gestion d'erreur
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Si c'est une erreur d'authentification ou une erreur 403 spécifique à la désactivation de compte
+      if (error.status === 403) {
+        // Vérifier si l'erreur vient d'une tentative de désactivation de son propre compte
+        if (error.url?.includes('/api/admin/users/deactivate/') &&
+          error.error?.error?.includes("own account")) {
+          // Dans ce cas, ne pas rediriger, simplement propager l'erreur
+          return throwError(() => error);
+        }
+      }
       // Vérifier si c'est une erreur d'authentification et si la route n'est pas publique
       if ((error.status === 401 || error.status === 403) && !isPublicApiRoute(req.url)) {
         // Si on est sur une route publique frontend, ne pas tenter de refresh

@@ -76,42 +76,42 @@ export class AdminService {
    * Supprimer un utilisateur
    */
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`/api/admin/users/${id}`);
+    return this.httpUtil.delete<void>(`/api/admin/users/${id}`);
   }
 
   /**
    * Activer un compte utilisateur
    */
   activateUser(id: number): Observable<void> {
-    return this.http.patch<void>(`/api/admin/users/activate/${id}`, {});
+    return this.httpUtil.patch<void>(`/api/admin/users/activate/${id}`, {});
   }
 
   /**
    * Désactiver un compte utilisateur
    */
   deactivateUser(id: number): Observable<void> {
-    return this.http.patch<void>(`/api/admin/users/deactivate/${id}`, {});
+    return this.httpUtil.patch<void>(`/api/admin/users/deactivate/${id}`, {});
   }
 
   /**
    * Ajouter un rôle à un utilisateur
    */
   grantUserRole(id: number, role: UserRole): Observable<void> {
-    return this.http.patch<void>(`/api/admin/users/grant-role/${id}`, { userRole: role });
+    return this.httpUtil.patch<void>(`/api/admin/users/grant-role/${id}`, { userRole: role });
   }
 
   /**
    * Retirer un rôle à un utilisateur
    */
   revokeUserRole(id: number, role: UserRole): Observable<void> {
-    return this.http.patch<void>(`/api/admin/users/revoke-role/${id}`, { userRole: role });
+    return this.httpUtil.patch<void>(`/api/admin/users/revoke-role/${id}`, { userRole: role });
   }
 
   /**
    * Forcer la réinitialisation du mot de passe d'un utilisateur
    */
   forceResetPassword(id: number): Observable<void> {
-    return this.http.patch<void>(`/api/admin/users/force-reset-password/${id}`, {});
+    return this.httpUtil.patch<void>(`/api/admin/users/force-reset-password/${id}`, {});
   }
 
   /**
@@ -120,4 +120,16 @@ export class AdminService {
   getUserDevices(userId: number): Observable<Device[]> {
     return this.http.get<Device[]>(`/api/admin/device/list/user/${userId}`);
   }
+
+
+  getUserActivityHistory(userId: number, page = 0, size = 10): Observable<any> {
+    return this.http.get<any>(`/api/security/logs/user/${userId}?page=${page}&size=${size}`);
+  }
+
+  // Pour avoir des actions spécifiques (connexions, modifications de mot de passe, etc.)
+  getUserSpecificActions(userId: number, types: string[], page = 0, size = 10): Observable<any> {
+    const typesParam = types.join(',');
+    return this.http.get<any>(`/api/security/logs/user/${userId}/actions?types=${typesParam}&page=${page}&size=${size}`);
+  }
+
 }

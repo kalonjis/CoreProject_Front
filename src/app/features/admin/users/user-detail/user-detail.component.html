@@ -1,0 +1,305 @@
+<!-- src/app/features/admin/users/user-detail/user-detail.component.html -->
+<div class="user-detail-container">
+  <div class="user-detail-header">
+    <a routerLink="/admin/users" class="back-link">
+      ← Retour à la liste
+    </a>
+    <h1>Détails de l'utilisateur</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des informations utilisateur...</p>
+    </div>
+  } @else if (!user()) {
+    <div class="error-container">
+      <p>Impossible de charger les informations de l'utilisateur.</p>
+      <button class="btn-primary" (click)="loadUserDetails(userId()!)">Réessayer</button>
+    </div>
+  } @else {
+    <div class="user-card">
+      <div class="user-card-header">
+        <div class="user-avatar">
+          <!-- Initiales de l'utilisateur -->
+          <span>{{ user()!.username.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="user-info">
+          <h2>{{ user()!.username }}</h2>
+          <p class="user-email">{{ user()!.email }}</p>
+          <p class="user-fullname">{{ (user()!.firstname || '') + ' ' + (user()!.lastname || '') }}</p>
+
+          <div class="user-status">
+            <span class="status-badge" [class.status-active]="user()!.enabled" [class.status-inactive]="!user()!.enabled">
+              {{ user()!.enabled ? 'Actif' : 'Inactif' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu principal avec onglets -->
+      <div class="user-detail-content">
+        <!-- Navigation par onglets -->
+        <div class="user-tabs">
+          <div class="tabs-nav">
+            <button class="tab-btn"
+                    [class.active]="activeTab() === 'info'"
+                    (click)="setActiveTab('info')">
+              Informations générales
+            </button>
+            <button class="tab-btn"
+                    [class.active]="activeTab() === 'devices'"
+                    (click)="setActiveTab('devices')">
+              Appareils
+            </button>
+            <button class="tab-btn"
+                    [class.active]="activeTab() === 'activity'"
+                    (click)="setActiveTab('activity')">
+              Activité
+            </button>
+            <button class="tab-btn"
+                    [class.active]="activeTab() === 'permissions'"
+                    (click)="setActiveTab('permissions')">
+              Autorisations
+            </button>
+          </div>
+
+          <!-- Contenu des onglets -->
+          <div class="tab-content">
+            <!-- Onglet Informations générales -->
+            @if (activeTab() === 'info') {
+              <div class="user-info-section">
+                <h3>Informations générales</h3>
+
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="info-label">ID</span>
+                    <span class="info-value">{{ user()!.id }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Nom d'utilisateur</span>
+                    <span class="info-value">{{ user()!.username }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user()!.email }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Prénom</span>
+                    <span class="info-value">{{ user()!.firstname || 'Non défini' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Nom</span>
+                    <span class="info-value">{{ user()!.lastname || 'Non défini' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Téléphone</span>
+                    <span class="info-value">{{ user()!.phoneNumber || 'Non défini' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Rôles</span>
+                    <span class="info-value">
+                      @for (role of user()!.userRoles; track role) {
+                        <span class="role-badge">{{ role }}</span>
+                      }
+                    </span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="info-label">Date de création</span>
+                    <span class="info-value">{{ user()!.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Onglet Appareils -->
+            @if (activeTab() === 'devices') {
+              <div class="devices-section">
+                <h3>Appareils associés</h3>
+                <p class="placeholder-text">Le contenu de l'onglet Appareils sera implémenté dans la prochaine étape.</p>
+              </div>
+            }
+
+            @if (activeTab() === 'activity') {
+              <div class="activity-section">
+                <h3>Historique d'activité</h3>
+
+                @if (isLoadingLogs()) {
+                  <div class="loading-container small">
+                    <div class="spinner"></div>
+                    <p>Chargement de l'historique...</p>
+                  </div>
+                } @else if (activityLogs().length === 0) {
+                  <div class="empty-state">
+                    <p>Aucune activité enregistrée pour cet utilisateur.</p>
+                  </div>
+                } @else {
+                  <div class="activity-table-container">
+                    <table class="activity-table">
+                      <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Action</th>
+                        <th>Appareil</th>
+                        <th>Localisation</th>
+                        <th>Statut</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                        @for (log of activityLogs(); track log.id) {
+                          <tr [class.error-row]="!log.successful">
+                            <td class="date-column">
+                              <div class="date-time">
+                                {{ log.formattedTimestamp }}
+                              </div>
+                            </td>
+                            <td class="action-column">
+                              <div class="action-type">
+                    <span class="action-badge" [class]="getActionTypeClass(log.actionType)">
+                      {{ log.actionCategory }}
+                    </span>
+                              </div>
+                              <div class="action-description">
+                                {{ log.actionDescription }}
+                              </div>
+                              @if (log.actionDetails) {
+                                <div class="action-details">
+                                  {{ log.actionDetails }}
+                                </div>
+                              }
+                            </td>
+                            <td class="device-column">
+                              {{ log.deviceInfo || 'Inconnu' }}
+                            </td>
+                            <td class="location-column">
+                              <div class="location">
+                                {{ log.location || 'Inconnue' }}
+                              </div>
+                              <div class="ip-address">
+                                {{ log.ipAddress }}
+                              </div>
+                            </td>
+                            <td class="status-column">
+                  <span class="status-indicator"
+                        [class.status-success]="log.successful"
+                        [class.status-failure]="!log.successful">
+                    {{ log.successful ? 'Réussi' : 'Échoué' }}
+                  </span>
+                              @if (!log.successful && log.failureReason) {
+                                <div class="failure-reason">
+                                  {{ log.failureReason }}
+                                </div>
+                              }
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  @if (activityPagination().totalPages > 1) {
+                    <div class="pagination">
+                      <button
+                        class="pagination-btn"
+                        [disabled]="activityPagination().pageNumber === 0"
+                        (click)="changeActivityPage(0)">
+                        ⟪
+                      </button>
+                      <button
+                        class="pagination-btn"
+                        [disabled]="activityPagination().pageNumber === 0"
+                        (click)="changeActivityPage(activityPagination().pageNumber - 1)">
+                        ⟨
+                      </button>
+
+                      <div class="pagination-info">
+                        Page {{ activityPagination().pageNumber + 1 }} sur {{ activityPagination().totalPages }}
+                        ({{ activityPagination().totalElements }} actions)
+                      </div>
+
+                      <button
+                        class="pagination-btn"
+                        [disabled]="activityPagination().pageNumber === activityPagination().totalPages - 1"
+                        (click)="changeActivityPage(activityPagination().pageNumber + 1)">
+                        ⟩
+                      </button>
+                      <button
+                        class="pagination-btn"
+                        [disabled]="activityPagination().pageNumber === activityPagination().totalPages - 1"
+                        (click)="changeActivityPage(activityPagination().totalPages - 1)">
+                        ⟫
+                      </button>
+                    </div>
+                  }
+                }
+              </div>
+            }
+
+            <!-- Onglet Autorisations -->
+            @if (activeTab() === 'permissions') {
+              <div class="permissions-section">
+                <h3>Gestion des autorisations</h3>
+                <p class="placeholder-text">Le contenu de l'onglet Autorisations sera implémenté dans la prochaine étape.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="user-actions">
+        <h3>Actions administratives</h3>
+        <div class="action-buttons">
+          @if (user()!.enabled) {
+            <button class="btn-warning"
+                    title="Désactiver l'utilisateur"
+                    (click)="deactivateUser()"
+                    [disabled]="isCurrentUserProfile()"
+                    [class.btn-disabled]="isCurrentUserProfile()">
+              <span class="icon">🔒</span> Désactiver
+              @if (isCurrentUserProfile()) {
+                <span class="tooltip-text">Vous ne pouvez pas désactiver votre propre compte</span>
+              }
+            </button>
+          } @else {
+            <button class="btn-success" title="Activer l'utilisateur" (click)="activateUser()">
+              <span class="icon">🔓</span> Activer
+            </button>
+          }
+
+          <button class="btn-info" title="Réinitialiser le mot de passe" (click)="resetPassword()">
+            <span class="icon">🔑</span> Réinitialiser le mot de passe
+          </button>
+
+          <button class="btn-danger"
+                  title="Supprimer l'utilisateur"
+                  (click)="deleteUser()"
+                  [disabled]="isCurrentUserProfile()"
+                  [class.btn-disabled]="isCurrentUserProfile()">
+            <span class="icon">❌</span> Supprimer
+            @if (isCurrentUserProfile()) {
+              <span class="tooltip-text">Vous ne pouvez pas supprimer votre propre compte</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (buttonClicked)="handleFeedbackButtonClick()">
+    </app-feedback>
+  }
+</div>

@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
-import { UserRole } from '../../../data/models/user/user-role';
-import { AdminService } from '../../../data/services/admin.service';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
+import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
+import { UserRole } from '../../../../data/models/user/user-role';
+import { AdminService } from '../../../../data/services/admin.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-user-register',
