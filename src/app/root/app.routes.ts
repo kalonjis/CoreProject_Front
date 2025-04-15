@@ -29,6 +29,10 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('../features/admin/admin.routes').then(r => r.ADMIN_ROUTES)
   },
+  {
+    path: 'user-dashboard',
+    loadChildren: () => import('../features/user-dashboard/user-dashboard.component').then(m => m.UserDashboardComponent)
+  }
 /*
   // Routes authentifiées standard
   {

@@ -12,6 +12,7 @@ import {catchError, forkJoin, of, Subscription, switchMap} from 'rxjs';
 import {UserDTO} from '../../data/models/user/user-dto';
 import {ConnectionLogDTO} from '../../data/models/Connection-log-dto';
 import {Device} from '../../data/models/device/device';
+import {formatRelative} from '../../data/format-relative';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -90,11 +91,12 @@ export class UserDashboardComponent extends FeedbackBase implements OnInit, OnDe
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-
+/*
   loadUserData(userId: number) {
     this.isLoading.set(true);
 
     // Utiliser forkJoin pour charger toutes les données en parallèle
+    // @ts-ignore
     return forkJoin({
       userData: this.adminService.getUserById(userId),
       userDevices: this.adminService.getUserDevices(userId),
