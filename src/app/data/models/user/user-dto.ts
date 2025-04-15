@@ -9,4 +9,5 @@ export interface UserDTO {
   phoneNumber?: string;
   userRoles: UserRole[];
   enabled: boolean;
+  createdAt: Date;
 }

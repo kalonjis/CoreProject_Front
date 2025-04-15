@@ -2,12 +2,12 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from '../../../data/services/admin.service';
-import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
+import { AdminService } from '../../../../data/services/admin.service';
+import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
+import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserDTO } from '../../../data/models/user/user-dto';
-import { UserRole } from '../../../data/models/user/user-role';
+import { UserDTO } from '../../../../data/models/user/user-dto';
+import { UserRole } from '../../../../data/models/user/user-role';
 
 interface PaginationInfo {
   totalPages: number;

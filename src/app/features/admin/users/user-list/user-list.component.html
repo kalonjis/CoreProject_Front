@@ -112,22 +112,22 @@
           </thead>
           <tbody>
             @for (user of users(); track user.id) {
-              <tr>
+              <tr class="user-row" [routerLink]="['/admin/users', user.id]">
                 <td class="user-id">{{ user.id }}</td>
                 <td class="user-username">{{ user.username }}</td>
                 <td class="user-email">{{ user.email }}</td>
                 <td class="user-name">{{ (user.firstname || '') + ' ' + (user.lastname || '') }}</td>
                 <td class="user-role">
-                  <span class="role-badge" [class]="getRoleClass(getTopRole(user.userRoles))">
-                    {{ getTopRole(user.userRoles) }}
-                  </span>
+        <span class="role-badge" [class]="getRoleClass(getTopRole(user.userRoles))">
+          {{ getTopRole(user.userRoles) }}
+        </span>
                 </td>
                 <td class="user-status">
-                  <span class="status-badge" [class.status-active]="user.enabled" [class.status-inactive]="!user.enabled">
-                    {{ user.enabled ? 'Actif' : 'Inactif' }}
-                  </span>
+        <span class="status-badge" [class.status-active]="user.enabled" [class.status-inactive]="!user.enabled">
+          {{ user.enabled ? 'Actif' : 'Inactif' }}
+        </span>
                 </td>
-                <td class="user-actions">
+                <td class="user-actions" (click)="$event.stopPropagation()"> <!-- Empêche la propagation du clic -->
                   <div class="action-buttons">
                     <a [routerLink]="['/admin/users', user.id]" class="action-btn view-btn" title="Voir les détails">
                       👁️
