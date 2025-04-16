@@ -123,7 +123,57 @@
             @if (activeTab() === 'devices') {
               <div class="devices-section">
                 <h3>Appareils associés</h3>
-                <p class="placeholder-text">Le contenu de l'onglet Appareils sera implémenté dans la prochaine étape.</p>
+                <div *ngIf="isLoadingDevices" class="loading-container">
+                  <div class="spinner"></div>
+                  <p>Chargement des appareils...</p>
+                </div>
+
+                <!-- Erreur de chargement -->
+                <div *ngIf="deviceError" class="error-message">
+                  {{ deviceError }}
+                  <button class="btn-retry" (click)="loadUserDevices()">Réessayer</button>
+                </div>
+
+                <!-- Pas d'appareils -->
+                <div *ngIf="!isLoadingDevices && !deviceError && devices.length === 0" class="empty-state">
+                  <p>Cet utilisateur n'a pas encore d'appareils associés.</p>
+                </div>
+
+                <!-- Liste des appareils -->
+                <div *ngIf="!isLoadingDevices && !deviceError && devices.length > 0" class="devices-list">
+                  <table class="devices-table">
+                    <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Navigateur</th>
+                      <th>Système</th>
+                      <th>Première connexion</th>
+                      <th>Dernière connexion</th>
+                      <th>Niveau de confiance</th>
+                      <th>Statut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let device of devices">
+                      <td>{{ device.deviceType || 'Inconnu' }}</td>
+                      <td>{{ device.browser + ' ' + device.browserVersion }}</td>
+                      <td>{{ device.operatingSystem + ' ' + device.osVersion }}</td>
+                      <td>{{ formatDeviceDate(device.firstSeen) }}</td>
+                      <td>{{ formatDeviceDate(device.lastSeen) }}</td>
+                      <td>
+            <span [class]="'trust-level ' + getTrustLevelClass(device.level)">
+              {{ getTrustLevelLabel(device.level) }}
+            </span>
+                      </td>
+                      <td>
+            <span [class]="'device-status ' + getDeviceStatusClass(device)">
+              {{ getDeviceStatus(device) }}
+            </span>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             }
 
@@ -247,7 +297,99 @@
             @if (activeTab() === 'permissions') {
               <div class="permissions-section">
                 <h3>Gestion des autorisations</h3>
-                <p class="placeholder-text">Le contenu de l'onglet Autorisations sera implémenté dans la prochaine étape.</p>
+
+                @if (!canManageRoles()) {
+                  <div class="permissions-info-banner">
+                    <div class="icon">ℹ️</div>
+                    <div class="message">
+                      @if (isCurrentUserProfile()) {
+                        <p>Vous ne pouvez pas modifier vos propres rôles.</p>
+                      } @else if (user()!.userRoles.includes(UserRole.SUPER_ADMIN) && !authService.hasRole('SUPER_ADMIN')) {
+                        <p>Seul un Super Administrateur peut modifier les rôles d'un autre Super Administrateur.</p>
+                      } @else {
+                        <p>Vous n'avez pas les droits nécessaires pour modifier les rôles de cet utilisateur.</p>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <div class="roles-container">
+                  <h4>Rôles actuels</h4>
+
+                  <div class="current-roles">
+                    @for (role of user()?.userRoles; track role) {
+                      <div class="role-card">
+                        <div class="role-header">
+                          <span class="role-name">{{ role }}</span>
+                          @if (canManageRoles()) {
+                            <button class="role-action remove"
+                                    [disabled]="isUpdatingRole()"
+                                    (click)="revokeRole(role)">
+                              <span class="icon">-</span>
+                            </button>
+                          }
+                        </div>
+                        <div class="role-description">{{ getRoleDescription(role) }}</div>
+                      </div>
+                    }
+
+                    @if (user()!.userRoles.length === 0) {
+                      <div class="empty-roles">
+                        <p>Cet utilisateur n'a aucun rôle assigné.</p>
+                      </div>
+                    }
+                  </div>
+
+                  @if (canManageRoles()) {
+                    <div class="available-roles">
+                      <h4>Ajouter un rôle</h4>
+
+                      @if (isUpdatingRole()) {
+                        <div class="updating-roles">
+                          <div class="spinner-sm"></div>
+                          <span>Mise à jour des rôles...</span>
+                        </div>
+                      }
+
+                      <div class="role-selector">
+                        @for (role of availableRoles(); track role) {
+                          @if (!hasRole(role)) {
+                            <button class="btn-add-role"
+                                    [disabled]="isUpdatingRole()"
+                                    (click)="grantRole(role)">
+                              <span class="icon">+</span> {{ role }}
+                            </button>
+                          }
+                        }
+                      </div>
+                    </div>
+
+                    @if (roleUpdateError()) {
+                      <div class="error-message">{{ roleUpdateError() }}</div>
+                    }
+                  }
+                </div>
+
+                <div class="permissions-info">
+                  <h4>À propos des rôles</h4>
+                  <ul class="role-info-list">
+                    <li>
+                      <strong>SUPER_ADMIN</strong>: Accès complet au système, peut gérer tous les utilisateurs y compris les autres administrateurs.
+                    </li>
+                    <li>
+                      <strong>ADMIN</strong>: Peut gérer les utilisateurs et les contenus, mais ne peut pas modifier les autres administrateurs.
+                    </li>
+                    <li>
+                      <strong>MODERATOR</strong>: Peut modérer les contenus et les interactions des utilisateurs.
+                    </li>
+                    <li>
+                      <strong>USER</strong>: Accès standard aux fonctionnalités de l'application.
+                    </li>
+                    <li>
+                      <strong>GUEST</strong>: Accès limité en lecture seule.
+                    </li>
+                  </ul>
+                </div>
               </div>
             }
           </div>

@@ -9,6 +9,9 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import {AuthService} from '../../../../core/auth/services/auth.service';
 import {ConnectionLogDTO, LogPagination} from '../../../../data/models/log/connection-log-dto';
+import {Device} from '../../../../data/models/device/device';
+import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
+import {UserRole} from '../../../../data/models/user/user-role';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -26,7 +29,7 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 export class UserDetailComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private adminService = inject(AdminService);
-  private authService: AuthService = inject(AuthService);
+  protected authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
 
@@ -34,6 +37,11 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   user = signal<UserDTO | null>(null);
   isLoading = signal(true);
   activeTab = signal<UserDetailTab>('info');
+
+
+  devices: Device[] = [];
+  isLoadingDevices = false;
+  deviceError: string | null = null;
 
   activityLogs = signal<ConnectionLogDTO[]>([]);
   isLoadingLogs = signal(false);
@@ -50,6 +58,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       if (idParam) {
         this.userId.set(parseInt(idParam, 10));
         this.loadUserDetails(parseInt(idParam, 10));
+        this.loadUserDevices();
       }
     });
   }
@@ -196,6 +205,70 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   }
 
 
+  // Propriétés pour la gestion des appareils
+
+
+  // Ajoutez cette méthode pour charger les appareils
+  loadUserDevices(): void {
+    if (!this.userId()) {
+      return;
+    }
+    this.isLoadingDevices = true;
+
+    // Vérifiez si userId a une valeur
+    this.adminService.getUserDevices(this.userId()!).subscribe({
+      next: (devices) => {
+        this.devices = devices;
+        this.isLoadingDevices = false;
+      },
+      error: (err) => {
+        this.deviceError = "Impossible de charger les appareils de l'utilisateur";
+        this.isLoadingDevices = false;
+        console.error('Erreur lors du chargement des appareils', err);
+      }
+    });
+  }
+
+  // Méthodes utilitaires pour l'affichage des appareils
+  getTrustLevelLabel(level: DeviceTrustLevel): string {
+    const labels: Record<DeviceTrustLevel, string> = {
+      [DeviceTrustLevel.UNTRUSTED]: 'Non approuvé',
+      [DeviceTrustLevel.BASIC]: 'Basique',
+      [DeviceTrustLevel.TRUSTED]: 'Approuvé',
+      [DeviceTrustLevel.HIGHLY_TRUSTED]: 'Haute confiance'
+    };
+    return labels[level] || 'Inconnu';
+  }
+
+  getTrustLevelClass(level: DeviceTrustLevel): string {
+    switch (level) {
+      case DeviceTrustLevel.HIGHLY_TRUSTED: return 'level-highly-trusted';
+      case DeviceTrustLevel.TRUSTED: return 'level-trusted';
+      case DeviceTrustLevel.BASIC: return 'level-basic';
+      case DeviceTrustLevel.UNTRUSTED: return 'level-untrusted';
+      default: return '';
+    }
+  }
+
+  formatDeviceDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
+
+  getDeviceStatus(device: Device): string {
+    if (device.blacklisted) return 'Blacklisté';
+    if (device.confirmed) return 'Confirmé';
+    return 'Non confirmé';
+  }
+
+  getDeviceStatusClass(device: Device): string {
+    if (device.blacklisted) return 'status-blacklisted';
+    if (device.confirmed) return 'status-confirmed';
+    return 'status-unconfirmed';
+  }
+
+
   // Pour l'onglet activité
 
   // Méthode pour charger les logs d'activité
@@ -265,6 +338,129 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   }
 
 
+  // Propriétés pour la gestion des rôles
+  availableRoles = signal<UserRole[]>([
+    UserRole.SUPER_ADMIN,
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.USER,
+    UserRole.GUEST
+  ]);
+  isUpdatingRole = signal(false);
+  roleUpdateError = signal<string | null>(null);
+
+// Méthodes pour la gestion des rôles
+  grantRole(role: UserRole): void {
+    if (!this.userId() || this.isUpdatingRole()) return;
+
+    this.isUpdatingRole.set(true);
+    this.roleUpdateError.set(null);
+
+    this.adminService.grantUserRole(this.userId()!, role).subscribe({
+      next: () => {
+        // Mettre à jour le modèle local
+        this.user.update(user => {
+          if (!user) return null;
+
+          // Créer une copie des rôles actuels et y ajouter le nouveau rôle
+          const updatedRoles = [...user.userRoles, role];
+
+          return {
+            ...user,
+            userRoles: updatedRoles
+          };
+        });
+
+        this.displaySuccess(`Rôle ${role} attribué avec succès`);
+        this.isUpdatingRole.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.roleUpdateError.set(
+          error.error?.error || `Erreur lors de l'attribution du rôle ${role}`
+        );
+        this.isUpdatingRole.set(false);
+        this.displayError(this.roleUpdateError()!);
+      }
+    });
+  }
+
+  revokeRole(role: UserRole): void {
+    if (!this.userId() || this.isUpdatingRole()) return;
+
+    this.isUpdatingRole.set(true);
+    this.roleUpdateError.set(null);
+
+    this.adminService.revokeUserRole(this.userId()!, role).subscribe({
+      next: () => {
+        // Mettre à jour le modèle local
+        this.user.update(user => {
+          if (!user) return null;
+
+          // Créer une copie des rôles sans le rôle révoqué
+          const updatedRoles = user.userRoles.filter(r => r !== role);
+
+          return {
+            ...user,
+            userRoles: updatedRoles
+          };
+        });
+
+        this.displaySuccess(`Rôle ${role} révoqué avec succès`);
+        this.isUpdatingRole.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.roleUpdateError.set(
+          error.error?.error || `Erreur lors de la révocation du rôle ${role}`
+        );
+        this.isUpdatingRole.set(false);
+        this.displayError(this.roleUpdateError()!);
+      }
+    });
+  }
+
+// Vérifier si un utilisateur possède un rôle spécifique
+  hasRole(role: UserRole): boolean {
+    return this.user()?.userRoles.includes(role) || false;
+  }
+
+// Vérifier si l'utilisateur connecté peut modifier les rôles (vérification supplémentaire)
+  canManageRoles(): boolean {
+    // Vérifier si on est sur son propre profil
+    if (this.isCurrentUserProfile()) {
+      return false;
+    }
+
+    // Vérifier les règles de gestion des rôles
+    const isSuperAdmin = this.authService.hasRole('SUPER_ADMIN');
+    const isAdmin = this.authService.hasRole('ADMIN');
+    const targetIsSuperAdmin = this.user()?.userRoles.includes(UserRole.SUPER_ADMIN);
+
+    // Un SUPER_ADMIN peut gérer tous les utilisateurs
+    if (isSuperAdmin) {
+      return true;
+    }
+
+    // Un ADMIN peut gérer tous les utilisateurs sauf les SUPER_ADMIN
+    if (isAdmin && !targetIsSuperAdmin) {
+      return true;
+    }
+
+    return false;
+  }
+
+  getRoleDescription(role: UserRole): string {
+    const descriptions: Record<UserRole, string> = {
+      [UserRole.SUPER_ADMIN]: 'Accès complet à toutes les fonctionnalités et tous les utilisateurs',
+      [UserRole.ADMIN]: 'Gestion des utilisateurs et des contenus',
+      [UserRole.MODERATOR]: 'Modération des contenus et des interactions',
+      [UserRole.USER]: 'Accès aux fonctionnalités standard',
+      [UserRole.GUEST]: 'Accès limité en lecture seule'
+    };
+
+    return descriptions[role] || 'Description non disponible';
+  }
+
+
 
   private handleError(error: HttpErrorResponse): void {
     let errorMessage = 'Une erreur est survenue lors du chargement des données utilisateur.';
@@ -275,4 +471,6 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
     this.displayError(errorMessage);
   }
+
+  protected readonly UserRole = UserRole;
 }
