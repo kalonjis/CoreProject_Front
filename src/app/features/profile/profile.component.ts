@@ -5,7 +5,7 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth/services/auth.service';
-import { DeviceService } from '../../data/services/device-service.service';
+import { DeviceService } from '../../data/services/device-service';
 import { Device } from '../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, retry, of, finalize } from 'rxjs';
