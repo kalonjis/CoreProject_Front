@@ -10,8 +10,8 @@ export const PUBLIC_API_ROUTES = [
   '/api/auth/logout',
   '/api/auth/signup',
   '/api/account-confirmation/',  // Activation du compte
-  '/api/device/confirm',         // Confirmation d'appareil
-  '/api/device/reject',          // Rejet d'appareil
+  '/api/user/device/confirm',         // Confirmation d'appareil
+  '/api/user/device/reject',          // Rejet d'appareil
   '/api/password/',              // Gestion des mots de passe publics
 ];
 
