@@ -6,7 +6,7 @@ import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 import {HttpUtilService} from '../../http/http-util.service';
 import {User} from '../../../data/models/user/user';
 import {Device} from '../../../data/models/device/device';
-import {DeviceService} from '../../../data/services/device-service.service';
+import {DeviceService} from '../../../data/services/device-service';
 import {DeviceTrustLevel} from '../../../data/models/device/device-trust-level';
 import {AuthState} from '../../../data/models/auth/auth.state';
 
@@ -335,7 +335,7 @@ export class AuthService implements OnDestroy {
 
 
   private fetchCurrentDevice(): void {
-    this.http.get<Device>('/api/device/current', { withCredentials: true })
+    this.http.get<Device>('/api/user/device/current', { withCredentials: true })
       .subscribe({
         next: (device) => {
           this._state.update(state => ({

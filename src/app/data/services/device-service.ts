@@ -5,32 +5,34 @@ import {Observable} from 'rxjs';
 import {DeviceTrustLevel} from '../models/device/device-trust-level';
 import {DeviceTrustLevelForm} from '../models/device/device-trust-level-form';
 import {ApiResponse} from '../models/auth/api-response';
+import {HttpUtilService} from '../../core/http/http-util.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
   private http = inject(HttpClient);
+  private httpUtil: HttpUtilService = inject(HttpUtilService);
 
   /**
    * Get current device information
    */
   getCurrentDevice(): Observable<Device> {
-    return this.http.get<Device>('/api/device/current');
+    return this.http.get<Device>('/api/user/device/current');
   }
 
   /**
    * Get specific device by ID
    */
   getDevice(deviceId: number): Observable<Device> {
-    return this.http.get<Device>(`/api/device/${deviceId}`);
+    return this.http.get<Device>(`/api/user/device/my-device/${deviceId}`);
   }
 
   /**
    * Get list of user's devices
    */
   getMyDevices(): Observable<Device[]> {
-    return this.http.get<Device[]>('/api/device/my-list');
+    return this.http.get<Device[]>('/api/user/device/my-devices-list');
   }
 
   /**
@@ -47,14 +49,14 @@ export class DeviceService {
    * Confirm device with token
    */
   confirmDevice(token: string): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`/api/device/confirm?token=${token}`, {});
+    return this.httpUtil.patch<ApiResponse>(`/api/user/device/confirm?token=${token}`, {}, true);
   }
 
   /**
    * Reject device with token
    */
   rejectDevice(token: string): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`/api/device/reject?token=${token}`, {});
+    return this.httpUtil.patch<ApiResponse>(`/api/user/device/reject?token=${token}`, {}, true);
   }
 
 
@@ -63,7 +65,7 @@ export class DeviceService {
    * Cette méthode doit correspondre à un nouvel endpoint côté backend
    */
   requestDeviceConfirmationLink(): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>('/api/device/request-confirmation', {}, { withCredentials: true });
+    return this.http.post<ApiResponse>('/api/user/device/request-confirmation', {}, { withCredentials: true });
   }
 
 
