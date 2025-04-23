@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FeedbackBase} from '../../../shared/feedback/tools/feedback.base';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DeviceService} from '../../../data/services/device-service.service';
+import {DeviceService} from '../../../data/services/device-service';
 import {AuthService} from '../../../core/auth/services/auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FeedbackComponent} from '../../../shared/feedback/feedback.component';

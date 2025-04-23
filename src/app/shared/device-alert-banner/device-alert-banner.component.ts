@@ -2,7 +2,7 @@ import { Component, inject, DestroyRef, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
-import { DeviceService } from '../../data/services/device-service.service';
+import { DeviceService } from '../../data/services/device-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 
