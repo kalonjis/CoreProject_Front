@@ -2,7 +2,7 @@
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { DeviceService } from '../../../data/services/device-service.service';
+import { DeviceService } from '../../../data/services/device-service';
 import { Device } from '../../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
