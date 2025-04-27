@@ -72,6 +72,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
     ).subscribe({
       next: () => {
         this.displaySuccess('Appareil déconnecté avec succès', '');
+       console.log('Appareil déconnecté avec succès', '');
         this.loadDevices(); // Recharger la liste
       },
       error: (err) => {
