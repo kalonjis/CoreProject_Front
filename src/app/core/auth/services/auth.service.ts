@@ -158,7 +158,9 @@ export class AuthService implements OnDestroy {
       lastSeen: new Date().toISOString(),
       lastIpAddress: '',
       level: DeviceTrustLevel.BASIC,
-      blacklisted: false
+      blacklisted: false,
+      loggedOut: false,
+      logoutTime: ''
     };
   }
 
