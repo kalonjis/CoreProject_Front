@@ -19,4 +19,6 @@ export interface Device {
   level: DeviceTrustLevel;
   confirmed: boolean;
   blacklisted: boolean;
+  loggedOut: boolean;
+  logoutTime: string;  // ISO date string
 }

@@ -69,7 +69,7 @@
             </div>
 
             <div class="device-actions">
-              @if (!isCurrentDevice(device.id)) {
+              @if (!isCurrentDevice(device.id) && !device.loggedOut) {
                 <button class="btn btn-secondary disconnect-btn" (click)="disconnectDevice(device.id)">
                   Se déconnecter
                 </button>
