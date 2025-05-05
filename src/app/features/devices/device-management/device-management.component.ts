@@ -1,7 +1,7 @@
 // src/app/features/devices/device-management/device-management.component.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Device } from '../../../data/models/device/device';
 import { DeviceService } from '../../../data/services/device-service';
 import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
@@ -14,7 +14,7 @@ import { DeviceDetailComponent } from '../device-detail/device-detail.component'
 @Component({
   selector: 'app-device-management',
   standalone: true,
-  imports: [CommonModule, RouterLink, FeedbackComponent, FormsModule, DeviceDetailComponent],
+  imports: [CommonModule, FeedbackComponent, FormsModule, DeviceDetailComponent],
   templateUrl: './device-management.component.html',
   styleUrl: './device-management.component.scss'
 })

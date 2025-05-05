@@ -1,0 +1,120 @@
+<!-- src/app/features/devices/device-detail/device-detail.component.html -->
+<div class="device-detail">
+  <div class="device-header">
+    <div class="device-icon">
+      {{ getDeviceIcon(device.deviceType) }}
+    </div>
+    <h2 class="device-name">{{ device.browser }} sur {{ device.operatingSystem }}</h2>
+  </div>
+
+  @if (isCurrentDevice) {
+    <div class="current-device-badge">Appareil actuel</div>
+  }
+
+  <div class="detail-section">
+    <h3>Informations générales</h3>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Type d'appareil</span>
+        <span class="detail-value">{{ device.deviceType }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Navigateur</span>
+        <span class="detail-value">{{ device.browser }} {{ device.browserVersion }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Système d'exploitation</span>
+        <span class="detail-value">{{ device.operatingSystem }} {{ device.osVersion }}</span>
+      </div>
+      @if (device.deviceBrand) {
+        <div class="detail-item">
+          <span class="detail-label">Marque</span>
+          <span class="detail-value">{{ device.deviceBrand }}</span>
+        </div>
+      }
+      <div class="detail-item">
+        <span class="detail-label">Langue</span>
+        <span class="detail-value">{{ device.language || 'Non spécifiée' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3>Sécurité et activité</h3>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Niveau de confiance</span>
+        <span class="detail-value trust-level" [class]="getTrustLevelClass(device.level)">
+          {{ getTrustLevelLabel(device.level) }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Statut</span>
+        <span class="detail-value status" [class.status-confirmed]="device.confirmed"
+              [class.status-unconfirmed]="!device.confirmed">
+          {{ device.confirmed ? 'Confirmé' : 'Non confirmé' }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Première utilisation</span>
+        <span class="detail-value">{{ formatDate(device.firstSeen) }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Dernière utilisation</span>
+        <span class="detail-value">{{ formatDate(device.lastSeen) }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Dernière adresse IP</span>
+        <span class="detail-value">{{ formatIpAddress(device.lastIpAddress) }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (!device.blacklisted && !device.loggedOut) {
+    <div class="detail-section trust-level-section">
+      <h3>Modifier le niveau de confiance</h3>
+      <div class="trust-level-options">
+        @for (option of trustLevelOptions; track option.value) {
+          <button
+            class="trust-level-btn"
+            [class]="getTrustLevelClass(option.value)"
+            [class.selected]="device.level === option.value"
+            [disabled]="isProcessing || device.level === option.value"
+            (click)="updateTrustLevel(option.value)">
+            {{ option.label }}
+          </button>
+        }
+      </div>
+      <div class="trust-level-info">
+        <p><strong>Note:</strong> Le niveau de confiance détermine les opérations que cet appareil peut effectuer sans vérification supplémentaire.</p>
+      </div>
+    </div>
+  }
+
+  <div class="device-actions">
+    @if (!device.loggedOut && !isCurrentDevice) {
+      <button class="btn-danger" (click)="disconnectDevice()" [disabled]="isProcessing">
+        <span class="icon">🔌</span> Déconnecter cet appareil
+      </button>
+    } @else if (device.loggedOut) {
+      <div class="device-status-message">
+        <span class="icon">✓</span> Cet appareil est déjà déconnecté
+      </div>
+    } @else if (isCurrentDevice) {
+      <div class="device-status-message">
+        <span class="icon">⚠️</span> Vous ne pouvez pas déconnecter votre appareil actuel
+      </div>
+    }
+    <button class="btn-secondary" (click)="closeDetail()">Fermer</button>
+  </div>
+
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (buttonClicked)="handleFeedbackButtonClick()">
+    </app-feedback>
+  }
+</div>
