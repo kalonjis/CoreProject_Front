@@ -21,8 +21,10 @@ export const routes: Routes = [
   {
     path: 'devices',
     canActivate: [() => authGuard()],
-    loadComponent: () => import('../features/devices/device-list/device-list.component')
-      .then(m => m.DeviceListComponent)
+    //loadComponent: () => import('../features/devices/device-list/device-list.component')
+     // .then(m => m.DeviceListComponent)
+    loadComponent: () => import('../features/devices/device-management/device-management.component')
+      .then(m => m.DeviceManagementComponent)
   },
   // Routes d'administration
   {

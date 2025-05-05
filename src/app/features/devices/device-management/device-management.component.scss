@@ -1,0 +1,161 @@
+// src/app/features/device-management/device-management.component.scss
+@import 'variables';
+@import 'mixins';
+
+.device-management-container {
+  padding: 2rem 1rem;
+  margin-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  background-color: $gray-light;
+}
+
+.page-header {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+
+  h1 {
+    color: $secondary-color;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-description {
+    color: $gray-dark;
+    max-width: 800px;
+  }
+}
+
+.device-management-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.global-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &.btn-primary {
+      background-color: $primary-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+
+    &.btn-secondary {
+      background-color: $light-color;
+      color: $dark-color;
+      border: 1px solid $border-color;
+
+      &:hover:not(:disabled) {
+        background-color: darken($light-color, 5%);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.loading-container {
+  padding: 3rem;
+  text-align: center;
+  background-color: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  margin: 2rem auto;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba($primary-color, 0.2);
+    border-radius: 50%;
+    border-top-color: $primary-color;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  p {
+    color: $gray-dark;
+  }
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  background-color: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  margin: 2rem auto;
+
+  p {
+    color: $gray-dark;
+    margin-bottom: 1rem;
+  }
+
+  .btn-reset-filters {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: $light-color;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    border-radius: $border-radius;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Responsive
+@media (max-width: $breakpoint-tablet) {
+  .devices-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .device-management-container {
+    padding: 1rem;
+  }
+
+  .devices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .global-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
