@@ -10,7 +10,7 @@
       <input
         type="text"
         placeholder="Rechercher un appareil..."
-        [(ngModel)]="filterText()"
+        [(ngModel)]="filterText"
         class="search-input"
       />
       <button class="refresh-button" (click)="loadDevices()" [disabled]="isLoading()">

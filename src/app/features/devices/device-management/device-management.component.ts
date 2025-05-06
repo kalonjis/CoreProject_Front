@@ -32,7 +32,7 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   // Pour le tri et le filtrage
   sortField = signal<keyof Device>('lastSeen');
   sortDirection = signal<'asc' | 'desc'>('desc');
-  filterText = signal('');
+  filterTextValue = signal('');
 
   // Pour les opérations de modification
   deviceToDisconnect = signal<Device | null>(null);
@@ -94,11 +94,20 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     }
   }
 
+  // Getters and setters for filterText (to be used with ngModel)
+  get filterText(): string {
+    return this.filterTextValue();
+  }
+
+  set filterText(value: string) {
+    this.filterTextValue.set(value);
+  }
+
   getSortedAndFilteredDevices(): Device[] {
     let result = [...this.devices()];
 
     // Filtrage
-    const filter = this.filterText().toLowerCase();
+    const filter = this.filterTextValue().toLowerCase();
     if (filter) {
       result = result.filter(device =>
         device.deviceType.toLowerCase().includes(filter) ||
@@ -273,6 +282,23 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
 
   isCurrentDevice(device: Device): boolean {
     return device.id === this.currentDeviceId();
+  }
+
+  getDeviceIcon(deviceType: string): string {
+    switch (deviceType.toLowerCase()) {
+      case 'mobile':
+        return '📱';
+      case 'tablet':
+        return '📱';
+      case 'desktop':
+      case 'laptop':
+        return '💻';
+      case 'tv':
+      case 'smarttv':
+        return '📺';
+      default:
+        return '🖥️';
+    }
   }
 
   private handleError(error: HttpErrorResponse): void {
