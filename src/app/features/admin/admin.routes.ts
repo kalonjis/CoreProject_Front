@@ -23,6 +23,12 @@ export const ADMIN_ROUTES: Routes = [
     //canActivate: [() => adminGuard()],
     loadComponent: () => import('./users/user-detail/user-detail.component')
       .then(m => m.UserDetailComponent)
+  },
+  {
+    path: 'users/:id/devices',
+    //canActivate: [() => adminGuard()],
+    loadComponent: () => import('../devices/device-list/device-list.component')
+      .then(m => m.DeviceListComponent)
   }
   /*
   {

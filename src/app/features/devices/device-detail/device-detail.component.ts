@@ -1,4 +1,3 @@
-// src/app/features/devices/device-detail/device-detail.component.ts
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Device } from '../../../data/models/device/device';
@@ -7,6 +6,7 @@ import { DeviceService } from '../../../data/services/device-service';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 
 @Component({
   selector: 'app-device-detail',
@@ -17,6 +17,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class DeviceDetailComponent extends FeedbackBase {
   private deviceService = inject(DeviceService);
+  private deviceUtils = inject(DeviceUtilsService);
 
   // Inputs and outputs
   @Input() device!: Device;
@@ -28,12 +29,9 @@ export class DeviceDetailComponent extends FeedbackBase {
   isProcessing = false;
 
   // Trust level options
-  trustLevelOptions = [
-    { value: DeviceTrustLevel.HIGHLY_TRUSTED, label: 'Très fiable' },
-    { value: DeviceTrustLevel.TRUSTED, label: 'Fiable' },
-    { value: DeviceTrustLevel.BASIC, label: 'Basique' },
-    { value: DeviceTrustLevel.UNTRUSTED, label: 'Non fiable' }
-  ];
+  get trustLevelOptions() {
+    return this.deviceUtils.trustLevelOptions;
+  }
 
   // Method to request device disconnection
   disconnectDevice(): void {
@@ -89,39 +87,25 @@ export class DeviceDetailComponent extends FeedbackBase {
     this.close.emit();
   }
 
+  // Delegation to the utility service
   getTrustLevelLabel(level: DeviceTrustLevel): string {
-    const option = this.trustLevelOptions.find(opt => opt.value === level);
-    return option ? option.label : 'Inconnu';
+    return this.deviceUtils.getTrustLevelLabel(level);
   }
 
   getTrustLevelClass(level: DeviceTrustLevel): string {
-    switch (level) {
-      case DeviceTrustLevel.HIGHLY_TRUSTED: return 'level-highly-trusted';
-      case DeviceTrustLevel.TRUSTED: return 'level-trusted';
-      case DeviceTrustLevel.BASIC: return 'level-basic';
-      case DeviceTrustLevel.UNTRUSTED: return 'level-untrusted';
-      default: return '';
-    }
+    return this.deviceUtils.getTrustLevelClass(level);
   }
 
   formatDate(dateString: string | null): string {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleString();
+    return this.deviceUtils.formatDate(dateString);
   }
 
   getDeviceIcon(deviceType: string): string {
-    switch (deviceType.toLowerCase()) {
-      case 'mobile': return '📱';
-      case 'tablet': return '📱';
-      case 'desktop': return '💻';
-      case 'laptop': return '💻';
-      default: return '🖥️';
-    }
+    return this.deviceUtils.getDeviceIcon(deviceType);
   }
 
   formatIpAddress(ip: string | null): string {
-    return ip || 'Non disponible';
+    return this.deviceUtils.formatIpAddress(ip);
   }
 
   // Error handling

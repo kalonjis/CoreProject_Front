@@ -10,6 +10,7 @@ import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DeviceDetailComponent } from '../device-detail/device-detail.component';
+import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 
 @Component({
   selector: 'app-device-management',
@@ -20,6 +21,7 @@ import { DeviceDetailComponent } from '../device-detail/device-detail.component'
 })
 export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   private deviceService = inject(DeviceService);
+  private deviceUtils = inject(DeviceUtilsService);
   private router = inject(Router);
 
   // Signaux pour l'état du composant
@@ -39,12 +41,11 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   showDisconnectModal = signal(false);
   showTrustLevelModal = signal(false);
   selectedTrustLevel = signal<DeviceTrustLevel | null>(null);
-  trustLevelOptions = [
-    { value: DeviceTrustLevel.HIGHLY_TRUSTED, label: 'Très fiable' },
-    { value: DeviceTrustLevel.TRUSTED, label: 'Fiable' },
-    { value: DeviceTrustLevel.BASIC, label: 'Basique' },
-    { value: DeviceTrustLevel.UNTRUSTED, label: 'Non fiable' }
-  ];
+
+  // Getter pour accéder aux options de niveau de confiance
+  get trustLevelOptions() {
+    return this.deviceUtils.trustLevelOptions;
+  }
 
   ngOnInit(): void {
     this.loadDevices();
@@ -104,47 +105,16 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   }
 
   getSortedAndFilteredDevices(): Device[] {
-    let result = [...this.devices()];
+    const filteredDevices = this.deviceUtils.filterDevices(
+      this.devices(),
+      this.filterTextValue()
+    );
 
-    // Filtrage
-    const filter = this.filterTextValue().toLowerCase();
-    if (filter) {
-      result = result.filter(device =>
-        device.deviceType.toLowerCase().includes(filter) ||
-        device.browser.toLowerCase().includes(filter) ||
-        device.operatingSystem.toLowerCase().includes(filter) ||
-        (device.deviceBrand && device.deviceBrand.toLowerCase().includes(filter))
-      );
-    }
-
-    // Tri
-    const field = this.sortField();
-    const direction = this.sortDirection();
-
-    result.sort((a, b) => {
-      let comparison = 0;
-
-      // Traitement spécial pour les dates
-      if (field === 'lastSeen' || field === 'firstSeen' || field === 'logoutTime') {
-        const dateA = a[field] ? new Date(a[field]).getTime() : 0;
-        const dateB = b[field] ? new Date(b[field]).getTime() : 0;
-        comparison = dateA - dateB;
-      }
-      // Traitement pour les booléens
-      else if (typeof a[field] === 'boolean') {
-        comparison = (a[field] === b[field]) ? 0 : a[field] ? 1 : -1;
-      }
-      // Traitement par défaut (chaînes)
-      else {
-        const valA = String(a[field] || '').toLowerCase();
-        const valB = String(b[field] || '').toLowerCase();
-        comparison = valA.localeCompare(valB);
-      }
-
-      return direction === 'asc' ? comparison : -comparison;
-    });
-
-    return result;
+    return this.deviceUtils.sortDevices(
+      filteredDevices,
+      this.sortField(),
+      this.sortDirection()
+    );
   }
 
   // Opérations sur les appareils
@@ -243,41 +213,25 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     });
   }
 
-  // Méthodes utilitaires pour l'affichage
+  // Méthodes utilitaires pour l'affichage - délègue au service utilitaire
   getTrustLevelLabel(level: DeviceTrustLevel): string {
-    const option = this.trustLevelOptions.find(opt => opt.value === level);
-    return option ? option.label : 'Inconnu';
+    return this.deviceUtils.getTrustLevelLabel(level);
   }
 
   getTrustLevelClass(level: DeviceTrustLevel): string {
-    switch (level) {
-      case DeviceTrustLevel.HIGHLY_TRUSTED: return 'level-highly-trusted';
-      case DeviceTrustLevel.TRUSTED: return 'level-trusted';
-      case DeviceTrustLevel.BASIC: return 'level-basic';
-      case DeviceTrustLevel.UNTRUSTED: return 'level-untrusted';
-      default: return '';
-    }
+    return this.deviceUtils.getTrustLevelClass(level);
   }
 
   formatDate(dateString: string | null): string {
-    if (!dateString) return 'N/A';
-
-    const date = new Date(dateString);
-    return date.toLocaleString();
+    return this.deviceUtils.formatDate(dateString);
   }
 
   getDeviceStatus(device: Device): string {
-    if (device.blacklisted) return 'Blacklisté';
-    if (device.loggedOut) return 'Déconnecté';
-    if (device.confirmed) return 'Confirmé';
-    return 'Non confirmé';
+    return this.deviceUtils.getDeviceStatus(device);
   }
 
   getDeviceStatusClass(device: Device): string {
-    if (device.blacklisted) return 'status-blacklisted';
-    if (device.loggedOut) return 'status-disconnected';
-    if (device.confirmed) return 'status-confirmed';
-    return 'status-unconfirmed';
+    return this.deviceUtils.getDeviceStatusClass(device);
   }
 
   isCurrentDevice(device: Device): boolean {
@@ -285,20 +239,7 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   }
 
   getDeviceIcon(deviceType: string): string {
-    switch (deviceType.toLowerCase()) {
-      case 'mobile':
-        return '📱';
-      case 'tablet':
-        return '📱';
-      case 'desktop':
-      case 'laptop':
-        return '💻';
-      case 'tv':
-      case 'smarttv':
-        return '📺';
-      default:
-        return '🖥️';
-    }
+    return this.deviceUtils.getDeviceIcon(deviceType);
   }
 
   private handleError(error: HttpErrorResponse): void {

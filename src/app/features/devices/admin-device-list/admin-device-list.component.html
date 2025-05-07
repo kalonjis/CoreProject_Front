@@ -1,0 +1,147 @@
+<div class="admin-device-container">
+  <div class="page-header">
+    <div class="back-link">
+      <a [routerLink]="['/admin/users', userId()]">← Retour au profil utilisateur</a>
+    </div>
+    <h1>Appareils de l'utilisateur : {{ userName() }}</h1>
+    <p class="subtitle">Liste des appareils associés à ce compte utilisateur</p>
+  </div>
+
+  <div class="action-bar">
+    <div class="search-filter">
+      <input
+        type="text"
+        placeholder="Rechercher un appareil..."
+        [(ngModel)]="filterText"
+        class="search-input"
+      />
+      <button class="refresh-button" (click)="loadUserDevices(userId()!)" [disabled]="isLoading()">
+        <span class="icon">↻</span> Actualiser
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des appareils...</p>
+    </div>
+  } @else if (devices().length === 0) {
+    <div class="empty-state">
+      <p>Aucun appareil associé à ce compte utilisateur.</p>
+    </div>
+  } @else {
+    <div class="devices-table-container">
+      <table class="devices-table">
+        <thead>
+        <tr>
+          <th (click)="sortDevices('deviceType')">
+            Type
+            @if (sortField() === 'deviceType') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th (click)="sortDevices('browser')">
+            Navigateur
+            @if (sortField() === 'browser') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th (click)="sortDevices('operatingSystem')">
+            Système
+            @if (sortField() === 'operatingSystem') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th (click)="sortDevices('lastSeen')">
+            Dernière connexion
+            @if (sortField() === 'lastSeen') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th (click)="sortDevices('level')">
+            Niveau de confiance
+            @if (sortField() === 'level') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th (click)="sortDevices('confirmed')">
+            Statut
+            @if (sortField() === 'confirmed') {
+              <span class="sort-indicator">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+            }
+          </th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (device of getSortedAndFilteredDevices(); track device.id) {
+            <tr [class.highlighted]="selectedDevice()?.id === device.id">
+              <td>
+                <div class="device-type">
+                  <span [class]="'device-icon ' + device.deviceType.toLowerCase()">
+                    {{ getDeviceIcon(device.deviceType) }}
+                  </span>
+                  <span>{{ device.deviceType || 'Inconnu' }}</span>
+                </div>
+              </td>
+              <td>{{ device.browser }} {{ device.browserVersion }}</td>
+              <td>{{ device.operatingSystem }} {{ device.osVersion }}</td>
+              <td>{{ formatDate(device.lastSeen) }}</td>
+              <td>
+                <span [class]="'trust-level ' + getTrustLevelClass(device.level)">
+                  {{ getTrustLevelLabel(device.level) }}
+                </span>
+              </td>
+              <td>
+                <span [class]="'device-status ' + getDeviceStatusClass(device)">
+                  {{ getDeviceStatus(device) }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <div class="device-actions">
+                  <button class="action-btn view" (click)="selectDevice(device)" title="Voir les détails">
+                    <span class="icon">👁️</span>
+                  </button>
+                  <button class="action-btn blacklist" (click)="blacklistDevice(device.id)"
+                          title="Blacklister l'appareil"
+                          [disabled]="device.blacklisted">
+                    <span class="icon">🚫</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Composant de vue détaillée -->
+  @if (selectedDevice()) {
+    <div class="side-panel">
+      <div class="side-panel-header">
+        <h2>Détails de l'appareil</h2>
+        <button class="close-btn" (click)="closeDeviceDetail()">×</button>
+      </div>
+      <div class="side-panel-body">
+        <app-device-detail
+          [device]="selectedDevice()!"
+          [isCurrentDevice]="false"
+          (deviceUpdated)="loadUserDevices(userId()!)"
+          (close)="closeDeviceDetail()"
+        ></app-device-detail>
+      </div>
+    </div>
+  }
+
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (buttonClicked)="handleFeedbackButtonClick()">
+    </app-feedback>
+  }
+</div>
