@@ -1,14 +1,13 @@
 // src/app/features/devices/device-management/device-management.component.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { Device } from '../../../data/models/device/device';
+import { FormsModule } from '@angular/forms';
 import { DeviceService } from '../../../data/services/device-service';
+import { Device } from '../../../data/models/device/device';
 import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { DeviceDetailComponent } from '../device-detail/device-detail.component';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 
@@ -22,7 +21,6 @@ import { DeviceUtilsService } from '../../../shared/services/device-utils.servic
 export class DeviceManagementComponent extends FeedbackBase implements OnInit {
   private deviceService = inject(DeviceService);
   private deviceUtils = inject(DeviceUtilsService);
-  private router = inject(Router);
 
   // Signaux pour l'état du composant
   devices = signal<Device[]>([]);
@@ -117,12 +115,19 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     );
   }
 
-  // Opérations sur les appareils
+  // Méthodes pour les modales
   showDisconnectConfirmation(device: Device): void {
     this.deviceToDisconnect.set(device);
     this.showDisconnectModal.set(true);
   }
 
+  openTrustLevelModal(device: Device): void {
+    this.selectedDevice.set(device);
+    this.selectedTrustLevel.set(device.level);
+    this.showTrustLevelModal.set(true);
+  }
+
+  // Opérations sur les appareils
   disconnectDevice(): void {
     const device = this.deviceToDisconnect();
     if (!device) return;
@@ -166,12 +171,6 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     });
   }
 
-  openTrustLevelModal(device: Device): void {
-    this.selectedDevice.set(device);
-    this.selectedTrustLevel.set(device.level);
-    this.showTrustLevelModal.set(true);
-  }
-
   updateTrustLevel(): void {
     const device = this.selectedDevice();
     const newLevel = this.selectedTrustLevel();
@@ -213,7 +212,7 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     });
   }
 
-  // Méthodes utilitaires pour l'affichage - délègue au service utilitaire
+  // Méthodes utilitaires - délèguent au service
   getTrustLevelLabel(level: DeviceTrustLevel): string {
     return this.deviceUtils.getTrustLevelLabel(level);
   }
@@ -234,14 +233,15 @@ export class DeviceManagementComponent extends FeedbackBase implements OnInit {
     return this.deviceUtils.getDeviceStatusClass(device);
   }
 
-  isCurrentDevice(device: Device): boolean {
-    return device.id === this.currentDeviceId();
-  }
-
   getDeviceIcon(deviceType: string): string {
     return this.deviceUtils.getDeviceIcon(deviceType);
   }
 
+  isCurrentDevice(device: Device): boolean {
+    return device.id === this.currentDeviceId();
+  }
+
+  // Gestion des erreurs
   private handleError(error: HttpErrorResponse): void {
     let errorMessage = 'Une erreur est survenue lors de l\'opération.';
 

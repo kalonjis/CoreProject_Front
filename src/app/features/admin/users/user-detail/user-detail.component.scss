@@ -860,6 +860,503 @@
   }
 }
 
+/* Styles pour la section des appareils dans user-detail.component.scss */
+
+/* Section des appareils */
+.devices-section {
+  .search-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    .search-input {
+      width: 300px;
+      padding: 0.6rem 1rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 100%;
+      }
+    }
+
+    .refresh-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background-color: white;
+      color: $secondary-color;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background-color: $light-color;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .icon {
+        display: inline-block;
+        transition: transform 0.3s ease;
+      }
+
+      &:hover .icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .loading-container.small {
+    min-height: 100px;
+    padding: 1.5rem;
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .empty-state {
+    background-color: $light-color;
+    padding: 2rem;
+    border-radius: $border-radius;
+    text-align: center;
+    margin-bottom: 1rem;
+
+    p {
+      color: $gray-dark;
+      font-style: italic;
+      margin: 0;
+    }
+  }
+
+  .devices-table-container {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+
+  .devices-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      background-color: $light-color;
+      color: $secondary-color;
+      font-weight: 500;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid darken($light-color, 5%);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        background-color: darken($light-color, 3%);
+      }
+
+      .sort-indicator {
+        display: inline-block;
+        margin-left: 0.25rem;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid $border-color;
+      font-size: 0.95rem;
+    }
+
+    tr {
+      &:nth-child(even) {
+        background-color: rgba($light-color, 0.4);
+      }
+
+      &:hover {
+        background-color: rgba($primary-color, 0.05);
+      }
+
+      &.highlighted {
+        background-color: rgba($primary-color, 0.08);
+      }
+    }
+
+    .device-type {
+      display: flex;
+      align-items: center;
+
+      .device-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba($primary-color, 0.1);
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+      }
+    }
+
+    .trust-level {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+
+      &.level-highly-trusted {
+        background-color: rgba($success-color, 0.1);
+        color: $success-color;
+      }
+
+      &.level-trusted {
+        background-color: rgba($info-color, 0.1);
+        color: $info-color;
+      }
+
+      &.level-basic {
+        background-color: rgba($warning-color, 0.1);
+        color: $warning-color;
+      }
+
+      &.level-untrusted {
+        background-color: rgba($danger-color, 0.1);
+        color: $danger-color;
+      }
+    }
+
+    .device-status {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+
+      &.status-confirmed {
+        background-color: rgba($success-color, 0.1);
+        color: $success-color;
+      }
+
+      &.status-unconfirmed {
+        background-color: rgba($warning-color, 0.1);
+        color: $warning-color;
+      }
+
+      &.status-disconnected {
+        background-color: rgba($gray-dark, 0.1);
+        color: $gray-dark;
+      }
+
+      &.status-blacklisted {
+        background-color: rgba($danger-color, 0.1);
+        color: $danger-color;
+      }
+    }
+
+    .actions-cell {
+      width: 100px;
+    }
+
+    .device-actions {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: flex-end;
+
+      .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: white;
+        border: 1px solid $border-color;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: $secondary-color;
+
+        &:hover:not(:disabled) {
+          background-color: $light-color;
+          transform: scale(1.1);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        &.view {
+          color: $info-color;
+        }
+
+        &.blacklist {
+          color: $danger-color;
+        }
+      }
+    }
+  }
+
+  .devices-link {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+
+    .btn-view-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      background-color: white;
+      color: $primary-color;
+      border: 1px solid $primary-color;
+      border-radius: $border-radius;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+      }
+
+      &::after {
+        content: '→';
+        font-size: 1.1rem;
+        margin-left: 0.25rem;
+      }
+    }
+  }
+}
+
+/* Panneau latéral de détail d'appareil */
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 400px;
+  max-width: 90vw;
+  background-color: white;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+  z-index: $z-index-modal;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out;
+
+  .side-panel-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: $secondary-color;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: $gray-dark;
+      font-size: 1.25rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: $light-color;
+        color: $danger-color;
+      }
+    }
+  }
+
+  .side-panel-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .device-detail {
+    padding: 1.5rem;
+
+    .device-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+
+      .device-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba($primary-color, 0.1);
+        border-radius: 50%;
+        font-size: 1.75rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+
+      .device-name {
+        font-size: 1.4rem;
+        color: $secondary-color;
+        margin: 0;
+        line-height: 1.3;
+      }
+    }
+
+    .detail-section {
+      background-color: $light-color;
+      border-radius: $border-radius;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-size: 1.1rem;
+        color: $secondary-color;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 0.5rem;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .detail-item {
+        .detail-label {
+          display: block;
+          font-size: 0.85rem;
+          color: $gray-dark;
+          margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+          font-weight: 500;
+          color: $secondary-color;
+        }
+
+        .trust-level, .status {
+          display: inline-block;
+          padding: 0.25rem 0.5rem;
+          border-radius: $border-radius-sm;
+          font-size: 0.9rem;
+        }
+
+        .level-highly-trusted {
+          background-color: rgba($success-color, 0.1);
+          color: darken($success-color, 10%);
+        }
+
+        .level-trusted {
+          background-color: rgba($info-color, 0.1);
+          color: darken($info-color, 10%);
+        }
+
+        .level-basic {
+          background-color: rgba($warning-color, 0.1);
+          color: darken($warning-color, 10%);
+        }
+
+        .level-untrusted {
+          background-color: rgba($danger-color, 0.1);
+          color: darken($danger-color, 10%);
+        }
+
+        .status-confirmed {
+          background-color: rgba($success-color, 0.1);
+          color: darken($success-color, 10%);
+        }
+
+        .status-unconfirmed {
+          background-color: rgba($warning-color, 0.1);
+          color: darken($warning-color, 10%);
+        }
+      }
+    }
+
+    .device-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: $border-radius;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        justify-content: center;
+        flex: 1;
+
+        &.btn-danger {
+          background-color: $danger-color;
+          color: white;
+          border: none;
+
+          &:hover:not(:disabled) {
+            background-color: darken($danger-color, 10%);
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+        }
+
+        &.btn-secondary {
+          background-color: $light-color;
+          color: $dark-color;
+          border: 1px solid $border-color;
+
+          &:hover {
+            background-color: darken($light-color, 5%);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
 .error-message {
   margin-top: 1rem;
   padding: 0.75rem 1rem;

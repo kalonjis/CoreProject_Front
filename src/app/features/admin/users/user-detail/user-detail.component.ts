@@ -473,4 +473,127 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   }
 
   protected readonly UserRole = UserRole;
+
+  // Ajouter ces propriétés et méthodes à la classe UserDetailComponent
+
+// Propriétés pour la gestion des appareils
+  deviceFilterText = '';
+  deviceSortField: keyof Device = 'lastSeen';
+  deviceSortDirection: 'asc' | 'desc' = 'desc';
+  selectedDevice: Device | null = null;
+
+  /**
+   * Sélectionne un appareil pour afficher ses détails
+   */
+  selectDeviceDetail(device: Device): void {
+    this.selectedDevice = device;
+  }
+
+  /**
+   * Ferme le panneau de détails de l'appareil
+   */
+  closeDeviceDetail(): void {
+    this.selectedDevice = null;
+  }
+
+  /**
+   * Trie les appareils selon un champ spécifique
+   */
+  sortDevices(field: keyof Device): void {
+    if (this.deviceSortField === field) {
+      // Inverser la direction si on clique sur le même champ
+      this.deviceSortDirection = this.deviceSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Nouveau champ de tri, réinitialiser à desc (récent -> ancien)
+      this.deviceSortField = field;
+      this.deviceSortDirection = 'desc';
+    }
+  }
+
+  /**
+   * Renvoie les appareils filtrés et triés pour l'affichage
+   */
+  getSortedAndFilteredDevices(): Device[] {
+    let filteredDevices = this.devices;
+
+    // Appliquer le filtre textuel si présent
+    if (this.deviceFilterText) {
+      const filter = this.deviceFilterText.toLowerCase();
+      filteredDevices = filteredDevices.filter(device =>
+        device.deviceType.toLowerCase().includes(filter) ||
+        device.browser.toLowerCase().includes(filter) ||
+        device.operatingSystem.toLowerCase().includes(filter) ||
+        (device.deviceBrand && device.deviceBrand.toLowerCase().includes(filter))
+      );
+    }
+
+    // Trier les appareils
+    return [...filteredDevices].sort((a, b) => {
+      let comparison = 0;
+
+      // Traitement spécial pour les dates
+      if (this.deviceSortField === 'lastSeen' || this.deviceSortField === 'firstSeen' || this.deviceSortField === 'logoutTime') {
+        const dateA = a[this.deviceSortField] ? new Date(a[this.deviceSortField] as string).getTime() : 0;
+        const dateB = b[this.deviceSortField] ? new Date(b[this.deviceSortField] as string).getTime() : 0;
+        comparison = dateA - dateB;
+      }
+      // Traitement pour les booléens
+      else if (typeof a[this.deviceSortField] === 'boolean') {
+        comparison = (a[this.deviceSortField] === b[this.deviceSortField]) ? 0 : a[this.deviceSortField] ? 1 : -1;
+      }
+      // Traitement par défaut (chaînes)
+      else {
+        const valA = String(a[this.deviceSortField] || '').toLowerCase();
+        const valB = String(b[this.deviceSortField] || '').toLowerCase();
+        comparison = valA.localeCompare(valB);
+      }
+
+      return this.deviceSortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  /**
+   * Action pour mettre un appareil sur liste noire (à implémenter côté backend)
+   */
+  blacklistDevice(deviceId: number): void {
+    if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) {
+      return;
+    }
+
+    // Cette méthode est spécifique à l'admin, il faudrait l'implémenter dans le service admin
+    // this.adminService.blacklistDevice(deviceId).subscribe({ ... });
+
+    // Pour l'instant, on simule une réponse réussie
+    this.displayWarning(
+      'Fonctionnalité non implémentée : la mise en liste noire des appareils sera disponible prochainement.',
+      'Compris'
+    );
+
+    // Fermer le panneau de détails si ouvert
+    if (this.selectedDevice && this.selectedDevice.id === deviceId) {
+      this.closeDeviceDetail();
+    }
+  }
+
+  /**
+   * Obtient l'icône appropriée pour un type d'appareil
+   */
+  getDeviceIcon(deviceType: string): string {
+    switch (deviceType.toLowerCase()) {
+      case 'mobile':
+        return '📱';
+      case 'tablet':
+        return '📱';
+      case 'desktop':
+      case 'laptop':
+        return '💻';
+      case 'tv':
+      case 'smarttv':
+        return '📺';
+      default:
+        return '🖥️';
+    }
+  }
+
+
 }

@@ -2,7 +2,7 @@
 <div class="device-management-container">
   <div class="page-header">
     <h1>Gestion de vos appareils</h1>
-    <p class="subtitle">Gérez les appareils connectés à votre compte et contrôlez leur niveau d'accès</p>
+    <p class="subtitle">Visualisez et gérez les appareils connectés à votre compte</p>
   </div>
 
   <div class="action-bar">
@@ -135,7 +135,7 @@
     </div>
   }
 
-  <!-- Modales -->
+  <!-- Modal de confirmation de déconnexion -->
   @if (showDisconnectModal()) {
     <div class="modal-overlay">
       <div class="modal-container">
@@ -162,6 +162,7 @@
     </div>
   }
 
+  <!-- Modal de modification du niveau de confiance -->
   @if (showTrustLevelModal()) {
     <div class="modal-overlay">
       <div class="modal-container">
@@ -194,8 +195,8 @@
           <div class="trust-level-info">
             <h4>À propos des niveaux de confiance</h4>
             <ul>
-              <li><strong>Très fiable</strong> : Accès complet à toutes les fonctionnalités, y compris les opérations sensibles.</li>
-              <li><strong>Fiable</strong> : Accès à la plupart des fonctionnalités, avec quelques restrictions pour les opérations administratives.</li>
+              <li><strong>Très fiable</strong> : Accès complet à toutes les fonctionnalités.</li>
+              <li><strong>Fiable</strong> : Accès à la plupart des fonctionnalités.</li>
               <li><strong>Basique</strong> : Accès aux fonctionnalités standard uniquement.</li>
               <li><strong>Non fiable</strong> : Accès minimal, requiert une confirmation pour la plupart des actions.</li>
             </ul>
@@ -215,7 +216,7 @@
     </div>
   }
 
-  <!-- Composant de vue détaillée -->
+  <!-- Panneau latéral pour les détails d'un appareil -->
   @if (selectedDevice()) {
     <div class="side-panel">
       <div class="side-panel-header">
@@ -233,6 +234,7 @@
     </div>
   }
 
+  <!-- Composant de feedback -->
   @if (showFeedback()) {
     <app-feedback
       [message]="feedbackMessage()"
@@ -242,4 +244,12 @@
       (buttonClicked)="handleFeedbackButtonClick()">
     </app-feedback>
   }
+
+  <!-- Note de sécurité en bas de page -->
+  <div class="security-note">
+    <p>
+      <strong>Note de sécurité :</strong> Si vous remarquez un appareil que vous ne reconnaissez pas,
+      déconnectez-le immédiatement et envisagez de changer votre mot de passe pour protéger votre compte.
+    </p>
+  </div>
 </div>

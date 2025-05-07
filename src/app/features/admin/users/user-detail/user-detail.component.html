@@ -122,57 +122,208 @@
             <!-- Onglet Appareils -->
             @if (activeTab() === 'devices') {
               <div class="devices-section">
-                <h3>Appareils associés</h3>
-                <div *ngIf="isLoadingDevices" class="loading-container">
-                  <div class="spinner"></div>
-                  <p>Chargement des appareils...</p>
+                <h3>Appareils de l'utilisateur</h3>
+
+                <div class="action-bar">
+                  <div class="search-filter">
+                    <input
+                      type="text"
+                      placeholder="Rechercher un appareil..."
+                      [(ngModel)]="deviceFilterText"
+                      class="search-input"
+                    />
+                    <button class="refresh-button" (click)="loadUserDevices()" [disabled]="isLoadingDevices">
+                      <span class="icon">↻</span> Actualiser
+                    </button>
+                  </div>
                 </div>
 
-                <!-- Erreur de chargement -->
-                <div *ngIf="deviceError" class="error-message">
-                  {{ deviceError }}
-                  <button class="btn-retry" (click)="loadUserDevices()">Réessayer</button>
-                </div>
+                @if (isLoadingDevices) {
+                  <div class="loading-container small">
+                    <div class="spinner"></div>
+                    <p>Chargement des appareils...</p>
+                  </div>
+                } @else if (devices.length === 0) {
+                  <div class="empty-state">
+                    <p>Aucun appareil associé à ce compte utilisateur.</p>
+                  </div>
+                } @else {
+                  <div class="devices-table-container">
+                    <table class="devices-table">
+                      <thead>
+                      <tr>
+                        <th (click)="sortDevices('deviceType')">
+                          Type
+                          @if (deviceSortField === 'deviceType') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th (click)="sortDevices('browser')">
+                          Navigateur
+                          @if (deviceSortField === 'browser') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th (click)="sortDevices('operatingSystem')">
+                          Système
+                          @if (deviceSortField === 'operatingSystem') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th (click)="sortDevices('lastSeen')">
+                          Dernière connexion
+                          @if (deviceSortField === 'lastSeen') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th (click)="sortDevices('level')">
+                          Niveau de confiance
+                          @if (deviceSortField === 'level') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th (click)="sortDevices('confirmed')">
+                          Statut
+                          @if (deviceSortField === 'confirmed') {
+                            <span class="sort-indicator">{{ deviceSortDirection === 'asc' ? '▲' : '▼' }}</span>
+                          }
+                        </th>
+                        <th>Actions</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                        @for (device of getSortedAndFilteredDevices(); track device.id) {
+                          <tr [class.highlighted]="selectedDevice?.id === device.id">
+                            <td>
+                              <div class="device-type">
+                    <span [class]="'device-icon ' + device.deviceType.toLowerCase()">
+                      {{ getDeviceIcon(device.deviceType) }}
+                    </span>
+                                <span>{{ device.deviceType || 'Inconnu' }}</span>
+                              </div>
+                            </td>
+                            <td>{{ device.browser }} {{ device.browserVersion }}</td>
+                            <td>{{ device.operatingSystem }} {{ device.osVersion }}</td>
+                            <td>{{ formatDeviceDate(device.lastSeen) }}</td>
+                            <td>
+                  <span [class]="'trust-level ' + getTrustLevelClass(device.level)">
+                    {{ getTrustLevelLabel(device.level) }}
+                  </span>
+                            </td>
+                            <td>
+                  <span [class]="'device-status ' + getDeviceStatusClass(device)">
+                    {{ getDeviceStatus(device) }}
+                  </span>
+                            </td>
+                            <td class="actions-cell">
+                              <div class="device-actions">
+                                <button class="action-btn view" (click)="selectDeviceDetail(device)" title="Voir les détails">
+                                  <span class="icon">👁️</span>
+                                </button>
+                                <button class="action-btn blacklist" (click)="blacklistDevice(device.id)"
+                                        title="Blacklister l'appareil"
+                                        [disabled]="device.blacklisted">
+                                  <span class="icon">🚫</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
 
-                <!-- Pas d'appareils -->
-                <div *ngIf="!isLoadingDevices && !deviceError && devices.length === 0" class="empty-state">
-                  <p>Cet utilisateur n'a pas encore d'appareils associés.</p>
+                <div class="devices-link">
+                  <a [routerLink]="['/admin/users', userId(), 'devices']" class="btn-view-all">
+                    Voir tous les appareils
+                  </a>
                 </div>
+              </div>
+            }
 
-                <!-- Liste des appareils -->
-                <div *ngIf="!isLoadingDevices && !deviceError && devices.length > 0" class="devices-list">
-                  <table class="devices-table">
-                    <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Navigateur</th>
-                      <th>Système</th>
-                      <th>Première connexion</th>
-                      <th>Dernière connexion</th>
-                      <th>Niveau de confiance</th>
-                      <th>Statut</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let device of devices">
-                      <td>{{ device.deviceType || 'Inconnu' }}</td>
-                      <td>{{ device.browser + ' ' + device.browserVersion }}</td>
-                      <td>{{ device.operatingSystem + ' ' + device.osVersion }}</td>
-                      <td>{{ formatDeviceDate(device.firstSeen) }}</td>
-                      <td>{{ formatDeviceDate(device.lastSeen) }}</td>
-                      <td>
-            <span [class]="'trust-level ' + getTrustLevelClass(device.level)">
-              {{ getTrustLevelLabel(device.level) }}
-            </span>
-                      </td>
-                      <td>
-            <span [class]="'device-status ' + getDeviceStatusClass(device)">
-              {{ getDeviceStatus(device) }}
-            </span>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
+            <!-- Ajouter ce panneau latéral à la fin du composant, avant les feedbacks -->
+            @if (selectedDevice) {
+              <div class="side-panel">
+                <div class="side-panel-header">
+                  <h2>Détails de l'appareil</h2>
+                  <button class="close-btn" (click)="closeDeviceDetail()">×</button>
+                </div>
+                <div class="side-panel-body">
+                  <div class="device-detail">
+                    <div class="device-header">
+                      <div class="device-icon">
+                        {{ getDeviceIcon(selectedDevice.deviceType) }}
+                      </div>
+                      <h2 class="device-name">{{ selectedDevice.browser }} sur {{ selectedDevice.operatingSystem }}</h2>
+                    </div>
+
+                    <div class="detail-section">
+                      <h3>Informations générales</h3>
+                      <div class="detail-grid">
+                        <div class="detail-item">
+                          <span class="detail-label">Type d'appareil</span>
+                          <span class="detail-value">{{ selectedDevice.deviceType }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Navigateur</span>
+                          <span class="detail-value">{{ selectedDevice.browser }} {{ selectedDevice.browserVersion }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Système d'exploitation</span>
+                          <span class="detail-value">{{ selectedDevice.operatingSystem }} {{ selectedDevice.osVersion }}</span>
+                        </div>
+                        @if (selectedDevice.deviceBrand) {
+                          <div class="detail-item">
+                            <span class="detail-label">Marque</span>
+                            <span class="detail-value">{{ selectedDevice.deviceBrand }}</span>
+                          </div>
+                        }
+                        <div class="detail-item">
+                          <span class="detail-label">Langue</span>
+                          <span class="detail-value">{{ selectedDevice.language || 'Non spécifiée' }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="detail-section">
+                      <h3>Sécurité et activité</h3>
+                      <div class="detail-grid">
+                        <div class="detail-item">
+                          <span class="detail-label">Niveau de confiance</span>
+                          <span class="detail-value trust-level" [class]="getTrustLevelClass(selectedDevice.level)">
+                {{ getTrustLevelLabel(selectedDevice.level) }}
+              </span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Statut</span>
+                          <span class="detail-value status" [class.status-confirmed]="selectedDevice.confirmed"
+                                [class.status-unconfirmed]="!selectedDevice.confirmed">
+                {{ selectedDevice.confirmed ? 'Confirmé' : 'Non confirmé' }}
+              </span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Première utilisation</span>
+                          <span class="detail-value">{{ formatDeviceDate(selectedDevice.firstSeen) }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Dernière utilisation</span>
+                          <span class="detail-value">{{ formatDeviceDate(selectedDevice.lastSeen) }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Dernière adresse IP</span>
+                          <span class="detail-value">{{ selectedDevice.lastIpAddress || 'Non disponible' }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="device-actions">
+                      <button class="btn-danger" (click)="blacklistDevice(selectedDevice.id)" [disabled]="selectedDevice.blacklisted">
+                        <span class="icon">🚫</span> Blacklister cet appareil
+                      </button>
+                      <button class="btn-secondary" (click)="closeDeviceDetail()">Fermer</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             }

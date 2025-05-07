@@ -11,7 +11,6 @@ export const DEVICE_ROUTES: Routes = [
   {
     path: 'list',
     canActivate: [() => authGuard()],
-    loadComponent: () => import('./device-list/device-list.component')
-      .then(m => m.DeviceListComponent)
+    redirectTo: ''
   }
 ];
