@@ -18,23 +18,15 @@
   }
 
   <div class="action-bar">
-    <div class="search-filter">
-      <input
-        type="text"
-        placeholder="Rechercher un appareil..."
-        [(ngModel)]="filterText"
-        class="search-input"
-      />
-      <button class="refresh-button" (click)="loadDevices()" [disabled]="isLoading()">
-        <span class="icon">↻</span> Rafraîchir la liste
-      </button>
-    </div>
     <div class="action-buttons">
       <button class="btn-primary" (click)="disconnectAllDevices()" [disabled]="isProcessing()">
-        Déconnecter tous les autres appareils
+        <span class="icon">🔌</span> Déconnecter tous les autres appareils
       </button>
       <button class="btn-secondary" (click)="requestConfirmationLink()" [disabled]="isProcessing()">
-        Demander un nouveau lien de confirmation
+        <span class="icon">🔒</span> Confirmer cet appareil
+      </button>
+      <button class="refresh-button" (click)="loadDevices()" [disabled]="isLoading()">
+        <span class="icon">↻</span> Actualiser
       </button>
     </div>
   </div>
@@ -74,14 +66,15 @@
               </span>
             </div>
 
-            @if (isCurrentDevice(device.id)) {
-              <div class="current-badge">Appareil actuel</div>
-            }
           </div>
 
           <div class="device-actions">
             <div class="action-buttons">
               <button class="btn btn-info view-btn" (click)="selectDevice(device)" title="Voir les détails">
+
+                @if (isCurrentDevice(device.id)) {
+                  <div class="current-badge">Appareil actuel</div>
+                }
                 Voir détails
               </button>
               @if (!isCurrentDevice(device.id) && !device.loggedOut) {

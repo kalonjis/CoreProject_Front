@@ -30,6 +30,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   filterText = '';
   sortField: keyof Device = 'lastSeen';
   sortDirection: 'asc' | 'desc' = 'desc';
+  confirmDisconnectAll:  boolean = false;
 
   ngOnInit(): void {
     this.loadDevices();
