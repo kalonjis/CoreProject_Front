@@ -13,6 +13,7 @@ import {Device} from '../../../../data/models/device/device';
 import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
 import {UserRole} from '../../../../data/models/user/user-role';
 import {FormsModule} from '@angular/forms';
+import {DeviceUtilsService} from '../../../../shared/services/device-utils.service';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -24,7 +25,6 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })
-
 
 
 export class UserDetailComponent extends FeedbackBase implements OnInit {
@@ -43,6 +43,12 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   devices: Device[] = [];
   isLoadingDevices = false;
   deviceError: string | null = null;
+  deviceFilterText = '';
+  deviceSortField: keyof Device = 'lastSeen';
+  deviceSortDirection: 'asc' | 'desc' = 'desc';
+  selectedDevice: Device | null = null;
+
+  protected deviceUtils = inject(DeviceUtilsService);
 
   activityLogs = signal<ConnectionLogDTO[]>([]);
   isLoadingLogs = signal(false);
@@ -98,8 +104,6 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       replaceUrl: true
     });
   }
-
-
 
 
   activateUser(): void {
@@ -205,8 +209,6 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     return currentUsername === this.user()?.username;
   }
 
-
-  // Propriétés pour la gestion des appareils
 
 
   // Ajoutez cette méthode pour charger les appareils
@@ -475,14 +477,6 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
   protected readonly UserRole = UserRole;
 
-  // Ajouter ces propriétés et méthodes à la classe UserDetailComponent
-
-// Propriétés pour la gestion des appareils
-  deviceFilterText = '';
-  deviceSortField: keyof Device = 'lastSeen';
-  deviceSortDirection: 'asc' | 'desc' = 'desc';
-  selectedDevice: Device | null = null;
-
   /**
    * Sélectionne un appareil pour afficher ses détails
    */
@@ -511,60 +505,24 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     }
   }
 
-  /**
-   * Renvoie les appareils filtrés et triés pour l'affichage
-   */
+
+// Méthode pour filtrer et trier les appareils
   getSortedAndFilteredDevices(): Device[] {
-    let filteredDevices = this.devices;
-
-    // Appliquer le filtre textuel si présent
-    if (this.deviceFilterText) {
-      const filter = this.deviceFilterText.toLowerCase();
-      filteredDevices = filteredDevices.filter(device =>
-        device.deviceType.toLowerCase().includes(filter) ||
-        device.browser.toLowerCase().includes(filter) ||
-        device.operatingSystem.toLowerCase().includes(filter) ||
-        (device.deviceBrand && device.deviceBrand.toLowerCase().includes(filter))
-      );
-    }
-
-    // Trier les appareils
-    return [...filteredDevices].sort((a, b) => {
-      let comparison = 0;
-
-      // Traitement spécial pour les dates
-      if (this.deviceSortField === 'lastSeen' || this.deviceSortField === 'firstSeen' || this.deviceSortField === 'logoutTime') {
-        const dateA = a[this.deviceSortField] ? new Date(a[this.deviceSortField] as string).getTime() : 0;
-        const dateB = b[this.deviceSortField] ? new Date(b[this.deviceSortField] as string).getTime() : 0;
-        comparison = dateA - dateB;
-      }
-      // Traitement pour les booléens
-      else if (typeof a[this.deviceSortField] === 'boolean') {
-        comparison = (a[this.deviceSortField] === b[this.deviceSortField]) ? 0 : a[this.deviceSortField] ? 1 : -1;
-      }
-      // Traitement par défaut (chaînes)
-      else {
-        const valA = String(a[this.deviceSortField] || '').toLowerCase();
-        const valB = String(b[this.deviceSortField] || '').toLowerCase();
-        comparison = valA.localeCompare(valB);
-      }
-
-      return this.deviceSortDirection === 'asc' ? comparison : -comparison;
-    });
+    return this.deviceUtils.getSortedAndFilteredDevices(
+      this.devices,
+      this.deviceFilterText,
+      this.deviceSortField,
+      this.deviceSortDirection
+    );
   }
 
-  /**
-   * Action pour mettre un appareil sur liste noire (à implémenter côté backend)
-   */
+// Méthode pour blacklister un appareil (à implémenter)
   blacklistDevice(deviceId: number): void {
     if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) {
       return;
     }
 
-    // Cette méthode est spécifique à l'admin, il faudrait l'implémenter dans le service admin
-    // this.adminService.blacklistDevice(deviceId).subscribe({ ... });
-
-    // Pour l'instant, on simule une réponse réussie
+    // Fonctionnalité à implémenter
     this.displayWarning(
       'Fonctionnalité non implémentée : la mise en liste noire des appareils sera disponible prochainement.',
       'Compris'
@@ -576,25 +534,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     }
   }
 
-  /**
-   * Obtient l'icône appropriée pour un type d'appareil
-   */
-  getDeviceIcon(deviceType: string): string {
-    switch (deviceType.toLowerCase()) {
-      case 'mobile':
-        return '📱';
-      case 'tablet':
-        return '📱';
-      case 'desktop':
-      case 'laptop':
-        return '💻';
-      case 'tv':
-      case 'smarttv':
-        return '📺';
-      default:
-        return '🖥️';
-    }
-  }
+
 
 
 }

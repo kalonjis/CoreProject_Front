@@ -17,7 +17,7 @@ import { DeviceUtilsService } from '../../../shared/services/device-utils.servic
 })
 export class DeviceDetailComponent extends FeedbackBase {
   private deviceService = inject(DeviceService);
-  private deviceUtils = inject(DeviceUtilsService);
+  protected deviceUtils = inject(DeviceUtilsService);
 
   // Inputs and outputs
   @Input() device!: Device;
@@ -59,18 +59,18 @@ export class DeviceDetailComponent extends FeedbackBase {
 
   // Method to update trust level
   updateTrustLevel(newLevel: DeviceTrustLevel): void {
-    if (this.device.blacklisted || this.device.loggedOut) {
+    if (this.deviceUtils.isDeviceDisabled(this.device)) {
       return;
     }
 
-    if (!confirm(`Êtes-vous sûr de vouloir modifier le niveau de confiance de cet appareil vers "${this.getTrustLevelLabel(newLevel)}" ?`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir modifier le niveau de confiance de cet appareil vers "${this.deviceUtils.getTrustLevelLabel(newLevel)}" ?`)) {
       return;
     }
 
     this.isProcessing = true;
     this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
       next: () => {
-        this.displaySuccess(`Niveau de confiance mis à jour vers ${this.getTrustLevelLabel(newLevel)}`, '');
+        this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');
         this.device.level = newLevel; // Update local state
         this.deviceUpdated.emit();
         this.isProcessing = false;
@@ -85,27 +85,6 @@ export class DeviceDetailComponent extends FeedbackBase {
   // Helper methods
   closeDetail(): void {
     this.close.emit();
-  }
-
-  // Delegation to the utility service
-  getTrustLevelLabel(level: DeviceTrustLevel): string {
-    return this.deviceUtils.getTrustLevelLabel(level);
-  }
-
-  getTrustLevelClass(level: DeviceTrustLevel): string {
-    return this.deviceUtils.getTrustLevelClass(level);
-  }
-
-  formatDate(dateString: string | null): string {
-    return this.deviceUtils.formatDate(dateString);
-  }
-
-  getDeviceIcon(deviceType: string): string {
-    return this.deviceUtils.getDeviceIcon(deviceType);
-  }
-
-  formatIpAddress(ip: string | null): string {
-    return this.deviceUtils.formatIpAddress(ip);
   }
 
   // Error handling

@@ -80,22 +80,22 @@
               <td>
                 <div class="device-type">
                   <span [class]="'device-icon ' + device.deviceType.toLowerCase()">
-                    {{ getDeviceIcon(device.deviceType) }}
+                    {{ deviceUtils.getDeviceIcon(device.deviceType) }}
                   </span>
                   <span>{{ device.deviceType || 'Inconnu' }}</span>
                 </div>
               </td>
               <td>{{ device.browser }} {{ device.browserVersion }}</td>
               <td>{{ device.operatingSystem }} {{ device.osVersion }}</td>
-              <td>{{ formatDate(device.lastSeen) }}</td>
+              <td>{{ deviceUtils.formatDate(device.lastSeen) }}</td>
               <td>
-                <span [class]="'trust-level ' + getTrustLevelClass(device.level)">
-                  {{ getTrustLevelLabel(device.level) }}
+                <span [class]="'trust-level ' + deviceUtils.getTrustLevelClass(device.level)">
+                  {{ deviceUtils.getTrustLevelLabel(device.level) }}
                 </span>
               </td>
               <td>
-                <span [class]="'device-status ' + getDeviceStatusClass(device)">
-                  {{ getDeviceStatus(device) }}
+                <span [class]="'device-status ' + deviceUtils.getDeviceStatusClass(device)">
+                  {{ deviceUtils.getDeviceStatus(device) }}
                 </span>
               </td>
               <td class="actions-cell">

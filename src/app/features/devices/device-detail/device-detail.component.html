@@ -2,7 +2,7 @@
 <div class="device-detail">
   <div class="device-header">
     <div class="device-icon">
-      {{ getDeviceIcon(device.deviceType) }}
+      {{ deviceUtils.getDeviceIcon(device.deviceType) }}
     </div>
     <h2 class="device-name">{{ device.browser }} sur {{ device.operatingSystem }}</h2>
   </div>
@@ -44,8 +44,8 @@
     <div class="detail-grid">
       <div class="detail-item">
         <span class="detail-label">Niveau de confiance</span>
-        <span class="detail-value trust-level" [class]="getTrustLevelClass(device.level)">
-          {{ getTrustLevelLabel(device.level) }}
+        <span class="detail-value trust-level" [class]="deviceUtils.getTrustLevelClass(device.level)">
+          {{ deviceUtils.getTrustLevelLabel(device.level) }}
         </span>
       </div>
       <div class="detail-item">
@@ -57,15 +57,15 @@
       </div>
       <div class="detail-item">
         <span class="detail-label">Première utilisation</span>
-        <span class="detail-value">{{ formatDate(device.firstSeen) }}</span>
+        <span class="detail-value">{{ deviceUtils.formatDate(device.firstSeen) }}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">Dernière utilisation</span>
-        <span class="detail-value">{{ formatDate(device.lastSeen) }}</span>
+        <span class="detail-value">{{ deviceUtils.formatDate(device.lastSeen) }}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">Dernière adresse IP</span>
-        <span class="detail-value">{{ formatIpAddress(device.lastIpAddress) }}</span>
+        <span class="detail-value">{{ deviceUtils.formatIpAddress(device.lastIpAddress) }}</span>
       </div>
     </div>
   </div>
@@ -77,7 +77,7 @@
         @for (option of trustLevelOptions; track option.value) {
           <button
             class="trust-level-btn"
-            [class]="getTrustLevelClass(option.value)"
+            [class]="deviceUtils.getTrustLevelClass(option.value)"
             [class.selected]="device.level === option.value"
             [disabled]="isProcessing || device.level === option.value"
             (click)="updateTrustLevel(option.value)">

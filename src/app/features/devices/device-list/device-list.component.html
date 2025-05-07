@@ -53,7 +53,7 @@
       @for (device of devices(); track device.id) {
         <div class="device-card" [class.current-device]="isCurrentDevice(device.id)">
           <div class="device-header">
-            <div class="device-icon">{{ getDeviceIcon(device.deviceType) }}</div>
+            <div class="device-icon">{{ deviceUtils.getDeviceIcon(device.deviceType) }}</div>
             <div class="device-info">
               <h3 class="device-name">{{ device.browser }} sur {{ device.operatingSystem }}</h3>
               <p class="device-type">{{ device.deviceType }}
@@ -67,7 +67,7 @@
           <div class="device-details">
             <div class="detail-row">
               <span class="last-seen">
-                <i class="icon">🕒</i> {{ formatDate(device.lastSeen) }}
+                <i class="icon">🕒</i> {{ deviceUtils.formatDate(device.lastSeen) }}
               </span>
               <span class="trust-level" [attr.data-level]="device.level.toLowerCase()">
                 {{ device.level }}

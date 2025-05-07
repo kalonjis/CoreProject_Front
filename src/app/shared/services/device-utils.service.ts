@@ -39,11 +39,19 @@ export class DeviceUtilsService {
 
   /**
    * Formate une date ISO en chaîne localisée
+   * @param dateString Date au format ISO ou null
+   * @param fallbackText Texte à afficher si la date est null ou invalide
    */
-  formatDate(dateString: string | null): string {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleString();
+  formatDate(dateString: string | null, fallbackText: string = 'N/A'): string {
+    if (!dateString) return fallbackText;
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return fallbackText;
+      return date.toLocaleString();
+    } catch (e) {
+      return fallbackText;
+    }
   }
 
   /**
@@ -96,8 +104,8 @@ export class DeviceUtilsService {
 
       // Traitement spécial pour les dates
       if (field === 'lastSeen' || field === 'firstSeen' || field === 'logoutTime') {
-        const dateA = a[field] ? new Date(a[field]).getTime() : 0;
-        const dateB = b[field] ? new Date(b[field]).getTime() : 0;
+        const dateA = a[field] ? new Date(a[field] as string).getTime() : 0;
+        const dateB = b[field] ? new Date(b[field] as string).getTime() : 0;
         comparison = dateA - dateB;
       }
       // Traitement pour les booléens
@@ -119,15 +127,30 @@ export class DeviceUtilsService {
    * Filtre les appareils selon un texte de recherche
    */
   filterDevices(devices: Device[], filterText: string): Device[] {
-    if (!filterText) return devices;
+    if (!filterText || filterText.trim() === '') return devices;
 
-    const filter = filterText.toLowerCase();
+    const filter = filterText.toLowerCase().trim();
     return devices.filter(device =>
-      device.deviceType.toLowerCase().includes(filter) ||
-      device.browser.toLowerCase().includes(filter) ||
-      device.operatingSystem.toLowerCase().includes(filter) ||
-      (device.deviceBrand && device.deviceBrand.toLowerCase().includes(filter))
+      (device.deviceType && device.deviceType.toLowerCase().includes(filter)) ||
+      (device.browser && device.browser.toLowerCase().includes(filter)) ||
+      (device.operatingSystem && device.operatingSystem.toLowerCase().includes(filter)) ||
+      (device.deviceBrand && device.deviceBrand.toLowerCase().includes(filter)) ||
+      (device.deviceClass && device.deviceClass.toLowerCase().includes(filter))
     );
+  }
+
+  /**
+   * Récupère les appareils triés et filtrés
+   * Méthode utilitaire qui combine filtrage et tri
+   */
+  getSortedAndFilteredDevices(
+    devices: Device[],
+    filterText: string,
+    sortField: keyof Device,
+    sortDirection: 'asc' | 'desc'
+  ): Device[] {
+    const filteredDevices = this.filterDevices(devices, filterText);
+    return this.sortDevices(filteredDevices, sortField, sortDirection);
   }
 
   /**
@@ -135,5 +158,21 @@ export class DeviceUtilsService {
    */
   formatIpAddress(ip: string | null): string {
     return ip || 'Non disponible';
+  }
+
+  /**
+   * Retourne le nom complet de l'appareil (navigateur + système)
+   */
+  getDeviceFullName(device: Device): string {
+    const browser = device.browser || 'Navigateur inconnu';
+    const os = device.operatingSystem || 'Système inconnu';
+    return `${browser} sur ${os}`;
+  }
+
+  /**
+   * Vérifie si un appareil est déconnecté ou blacklisté
+   */
+  isDeviceDisabled(device: Device): boolean {
+    return device.loggedOut || device.blacklisted;
   }
 }

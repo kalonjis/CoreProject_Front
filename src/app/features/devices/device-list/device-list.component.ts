@@ -1,15 +1,14 @@
-// src/app/features/devices/device-list/device-list.component.ts
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeviceService } from '../../../data/services/device-service';
 import { Device } from '../../../data/models/device/device';
-import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceDetailComponent } from '../device-detail/device-detail.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 
 @Component({
   selector: 'app-device-list',
@@ -20,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class DeviceListComponent extends FeedbackBase implements OnInit {
   private deviceService = inject(DeviceService);
+  protected deviceUtils = inject(DeviceUtilsService);
   private destroyRef = inject(DestroyRef);
 
   devices = signal<Device[]>([]);
@@ -28,6 +28,8 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   currentDeviceId = signal<number | null>(null);
   selectedDevice = signal<Device | null>(null);
   filterText = '';
+  sortField: keyof Device = 'lastSeen';
+  sortDirection: 'asc' | 'desc' = 'desc';
 
   ngOnInit(): void {
     this.loadDevices();
@@ -47,12 +49,8 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (devices) => {
-        this.devices.set(devices.sort((a, b) => {
-          // Sort by date (most recent first)
-          const dateA = new Date(a.lastSeen).getTime();
-          const dateB = new Date(b.lastSeen).getTime();
-          return dateB - dateA;
-        }));
+        // Trier par date (le plus récent en premier) en utilisant deviceUtils
+        this.devices.set(this.deviceUtils.sortDevices(devices, 'lastSeen', 'desc'));
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -139,28 +137,24 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
     this.selectedDevice.set(null);
   }
 
-  getDeviceIcon(deviceType: string): string {
-    switch (deviceType.toLowerCase()) {
-      case 'mobile':
-        return '📱';
-      case 'tablet':
-        return '📱';
-      case 'desktop':
-      case 'laptop':
-        return '💻';
-      case 'tv':
-      case 'smarttv':
-        return '📺';
-      default:
-        return '🖥️';
-    }
+  // Méthode pour filtrer et trier les appareils
+  getSortedAndFilteredDevices(): Device[] {
+    return this.deviceUtils.getSortedAndFilteredDevices(
+      this.devices(),
+      this.filterText,
+      this.sortField,
+      this.sortDirection
+    );
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return 'Unknown date';
-
-    const date = new Date(dateString);
-    return date.toLocaleString();
+  // Méthode pour trier les appareils selon un champ
+  sortDevices(field: keyof Device): void {
+    if (this.sortField === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDirection = 'desc'; // Par défaut, tri descendant
+    }
   }
 
   isCurrentDevice(deviceId: number): boolean {

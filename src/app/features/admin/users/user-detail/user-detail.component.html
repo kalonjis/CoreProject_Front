@@ -197,7 +197,7 @@
                             <td>
                               <div class="device-type">
                     <span [class]="'device-icon ' + device.deviceType.toLowerCase()">
-                      {{ getDeviceIcon(device.deviceType) }}
+                      {{ deviceUtils.getDeviceIcon(device.deviceType) }}
                     </span>
                                 <span>{{ device.deviceType || 'Inconnu' }}</span>
                               </div>
@@ -253,7 +253,7 @@
                   <div class="device-detail">
                     <div class="device-header">
                       <div class="device-icon">
-                        {{ getDeviceIcon(selectedDevice.deviceType) }}
+                        {{ deviceUtils.getDeviceIcon(selectedDevice.deviceType) }}
                       </div>
                       <h2 class="device-name">{{ selectedDevice.browser }} sur {{ selectedDevice.operatingSystem }}</h2>
                     </div>

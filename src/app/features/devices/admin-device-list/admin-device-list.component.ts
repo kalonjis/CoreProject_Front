@@ -2,25 +2,24 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Device } from '../../../data/models/device/device';
-import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 import { AdminService } from '../../../data/services/admin.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import { DeviceDetailComponent } from '../../devices/device-detail/device-detail.component';
 
 @Component({
   selector: 'app-admin-device-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
+  imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent, RouterLink],
   templateUrl: './admin-device-list.component.html',
   styleUrls: ['./admin-device-list.component.scss']
 })
 export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
   private adminService = inject(AdminService);
-  private deviceUtils = inject(DeviceUtilsService);
+  protected deviceUtils = inject(DeviceUtilsService);
   private route = inject(ActivatedRoute);
 
   // État du composant
@@ -35,18 +34,12 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
   sortDirection = signal<'asc' | 'desc'>('desc');
   filterTextValue = signal('');
 
-  // Getter pour les options de niveau de confiance
-  get trustLevelOptions() {
-    return this.deviceUtils.trustLevelOptions;
-  }
-
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const id = +params['id'];
       if (!isNaN(id)) {
         this.userId.set(id);
         this.loadUserDevices(id);
-        // Charger les informations de l'utilisateur pour afficher son nom
         this.loadUserInfo(id);
       }
     });
@@ -85,11 +78,11 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
     this.selectedDevice.set(null);
   }
 
-  // Méthodes de tri et filtrage
+  // Méthodes de tri
   sortDevices(field: keyof Device): void {
     if (this.sortField() === field) {
       // Inverser la direction si on clique sur le même champ
-      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
+      this.sortDirection.update(dir => dir === 'asc' ? 'desc' : 'asc');
     } else {
       // Nouveau champ de tri, réinitialiser à desc (récent -> ancien)
       this.sortField.set(field);
@@ -107,19 +100,15 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
   }
 
   getSortedAndFilteredDevices(): Device[] {
-    const filteredDevices = this.deviceUtils.filterDevices(
+    return this.deviceUtils.getSortedAndFilteredDevices(
       this.devices(),
-      this.filterTextValue()
-    );
-
-    return this.deviceUtils.sortDevices(
-      filteredDevices,
+      this.filterTextValue(),
       this.sortField(),
       this.sortDirection()
     );
   }
 
-  // Pour les fonctionnalités spécifiques à l'admin (exemple)
+  // Pour les fonctionnalités spécifiques à l'admin
   blacklistDevice(deviceId: number): void {
     if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) {
       return;
@@ -130,31 +119,6 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
 
     // Pour l'instant, on simule une réponse réussie
     this.displayWarning('Fonctionnalité non implémentée : Blacklister un appareil');
-  }
-
-  // Délégation au service utilitaire pour les fonctions communes
-  getTrustLevelLabel(level: DeviceTrustLevel): string {
-    return this.deviceUtils.getTrustLevelLabel(level);
-  }
-
-  getTrustLevelClass(level: DeviceTrustLevel): string {
-    return this.deviceUtils.getTrustLevelClass(level);
-  }
-
-  formatDate(dateString: string | null): string {
-    return this.deviceUtils.formatDate(dateString);
-  }
-
-  getDeviceStatus(device: Device): string {
-    return this.deviceUtils.getDeviceStatus(device);
-  }
-
-  getDeviceStatusClass(device: Device): string {
-    return this.deviceUtils.getDeviceStatusClass(device);
-  }
-
-  getDeviceIcon(deviceType: string): string {
-    return this.deviceUtils.getDeviceIcon(deviceType);
   }
 
   private handleError(error: HttpErrorResponse): void {
