@@ -5,12 +5,7 @@ export const DEVICE_ROUTES: Routes = [
   {
     path: '',
     canActivate: [() => authGuard()],
-    loadComponent: () => import('./device-management/device-management.component')
-      .then(m => m.DeviceManagementComponent)
-  },
-  {
-    path: 'list',
-    canActivate: [() => authGuard()],
-    redirectTo: ''
+    loadComponent: () => import('./device-list/device-list.component')
+      .then(m => m.DeviceListComponent)
   }
 ];

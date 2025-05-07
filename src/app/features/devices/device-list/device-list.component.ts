@@ -1,17 +1,20 @@
 // src/app/features/devices/device-list/device-list.component.ts
-import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { DeviceService } from '../../../data/services/device-service';
 import { Device } from '../../../data/models/device/device';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DeviceDetailComponent } from '../device-detail/device-detail.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-device-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FeedbackComponent],
+  imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
   templateUrl: './device-list.component.html',
   styleUrls: ['./device-list.component.scss']
 })
@@ -21,12 +24,15 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
 
   devices = signal<Device[]>([]);
   isLoading = signal(true);
+  isProcessing = signal(false);
   currentDeviceId = signal<number | null>(null);
+  selectedDevice = signal<Device | null>(null);
+  filterText = '';
 
   ngOnInit(): void {
     this.loadDevices();
 
-    // Détecter l'appareil actuel
+    // Detect current device
     this.deviceService.getCurrentDevice().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(device => {
@@ -42,7 +48,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
     ).subscribe({
       next: (devices) => {
         this.devices.set(devices.sort((a, b) => {
-          // Tri par date (du plus récent au plus ancien)
+          // Sort by date (most recent first)
           const dateA = new Date(a.lastSeen).getTime();
           const dateB = new Date(b.lastSeen).getTime();
           return dateB - dateA;
@@ -50,8 +56,8 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des appareils', err);
-        this.displayError('Impossible de charger la liste de vos appareils', 'Réessayer');
+        console.error('Error loading devices', err);
+        this.displayError('Unable to load your devices list', 'Retry');
         this.buttonAction = () => this.loadDevices();
         this.isLoading.set(false);
       }
@@ -61,43 +67,76 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   disconnectDevice(deviceId: number): void {
     if (this.currentDeviceId() === deviceId) {
       this.displayWarning(
-        'Vous ne pouvez pas déconnecter l\'appareil que vous utilisez actuellement.',
-        'Compris'
+        'You cannot disconnect the device you are currently using.',
+        'Understood'
       );
       return;
     }
 
+    this.isProcessing.set(true);
     this.deviceService.disconnectDevice(deviceId).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {
-        this.displaySuccess('Appareil déconnecté avec succès', '');
-       console.log('Appareil déconnecté avec succès', '');
-        this.loadDevices(); // Recharger la liste
+        this.displaySuccess('Device successfully disconnected', '');
+        this.loadDevices(); // Reload the list
+        this.isProcessing.set(false);
       },
       error: (err) => {
-        console.error('Erreur lors de la déconnexion', err);
-        this.displayError('Impossible de déconnecter cet appareil', 'Réessayer');
+        console.error('Error during disconnection', err);
+        this.displayError('Unable to disconnect this device', 'Retry');
+        this.isProcessing.set(false);
       }
     });
   }
 
   disconnectAllDevices(): void {
+    if (!confirm('Are you sure you want to disconnect all other devices? This action cannot be undone.')) {
+      return;
+    }
+
+    this.isProcessing.set(true);
     this.deviceService.disconnectAllDevices().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {
         this.displaySuccess(
-          'Tous les autres appareils ont été déconnectés. Seul votre appareil actuel reste connecté.',
+          'All other devices have been successfully disconnected. Only your current device remains connected.',
           ''
         );
-        this.loadDevices(); // Recharger la liste
+        this.loadDevices(); // Reload the list
+        this.isProcessing.set(false);
       },
       error: (err) => {
-        console.error('Erreur lors de la déconnexion de tous les appareils', err);
-        this.displayError('Impossible de déconnecter tous les appareils', 'Réessayer');
+        console.error('Error disconnecting all devices', err);
+        this.displayError('Unable to disconnect all devices', 'Retry');
+        this.isProcessing.set(false);
       }
     });
+  }
+
+  requestConfirmationLink(): void {
+    this.isProcessing.set(true);
+    this.deviceService.requestDeviceConfirmationLink().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: () => {
+        this.displaySuccess('A new confirmation link has been sent to your email address', '');
+        this.isProcessing.set(false);
+      },
+      error: (err) => {
+        this.handleError(err);
+        this.isProcessing.set(false);
+      }
+    });
+  }
+
+  selectDevice(device: Device): void {
+    this.selectedDevice.set(device);
+  }
+
+  closeDeviceDetail(): void {
+    this.selectedDevice.set(null);
   }
 
   getDeviceIcon(deviceType: string): string {
@@ -118,7 +157,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    if (!dateString) return 'Date inconnue';
+    if (!dateString) return 'Unknown date';
 
     const date = new Date(dateString);
     return date.toLocaleString();
@@ -126,5 +165,18 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
 
   isCurrentDevice(deviceId: number): boolean {
     return this.currentDeviceId() === deviceId;
+  }
+
+  // Error handling
+  private handleError(error: HttpErrorResponse): void {
+    let errorMessage = 'An error occurred during the operation.';
+
+    if (error.error?.error) {
+      errorMessage = error.error.error;
+    } else if (error.error?.message) {
+      errorMessage = error.error.message;
+    }
+
+    this.displayError(errorMessage);
   }
 }

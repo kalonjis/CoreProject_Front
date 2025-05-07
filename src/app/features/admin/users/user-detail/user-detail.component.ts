@@ -12,6 +12,7 @@ import {ConnectionLogDTO, LogPagination} from '../../../../data/models/log/conne
 import {Device} from '../../../../data/models/device/device';
 import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
 import {UserRole} from '../../../../data/models/user/user-role';
+import {FormsModule} from '@angular/forms';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -19,7 +20,7 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FeedbackComponent],
+  imports: [CommonModule, RouterLink, FeedbackComponent, FormsModule],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })
