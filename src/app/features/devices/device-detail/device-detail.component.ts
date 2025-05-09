@@ -7,6 +7,7 @@ import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
+import {ConfirmDialogService} from '../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 @Component({
   selector: 'app-device-detail',
@@ -18,6 +19,7 @@ import { DeviceUtilsService } from '../../../shared/services/device-utils.servic
 export class DeviceDetailComponent extends FeedbackBase {
   private deviceService = inject(DeviceService);
   protected deviceUtils = inject(DeviceUtilsService);
+  private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
   // Inputs and outputs
   @Input() device!: Device;
@@ -63,23 +65,31 @@ export class DeviceDetailComponent extends FeedbackBase {
       return;
     }
 
-    if (!confirm(`Êtes-vous sûr de vouloir modifier le niveau de confiance de cet appareil vers "${this.deviceUtils.getTrustLevelLabel(newLevel)}" ?`)) {
-      return;
-    }
+    this.confirmDialogService.confirm({
+      message: `Êtes-vous sûr de vouloir modifier le niveau de confiance de cet appareil vers "${this.deviceUtils.getTrustLevelLabel(newLevel)}" ?`,
+      title: 'Confirmation de changement de niveau de confiance de l\'appareil',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() =>{
+        this.isProcessing = true;
+        this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
+          next: () => {
+            this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');
+            this.device.level = newLevel; // Update local state
+            this.deviceUpdated.emit();
+            this.isProcessing = false;
+          },
+          error: (error: HttpErrorResponse) => {
+            this.handleError(error);
+            this.isProcessing = false;
+          }
+        });
+      })
+      .catch(()=>{
 
-    this.isProcessing = true;
-    this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
-      next: () => {
-        this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');
-        this.device.level = newLevel; // Update local state
-        this.deviceUpdated.emit();
-        this.isProcessing = false;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.handleError(error);
-        this.isProcessing = false;
-      }
-    });
+      });
   }
 
   // Helper methods
