@@ -42,7 +42,7 @@ export class DeviceService {
     const form: DeviceTrustLevelForm = {
       deviceTrustLevel: trustLevel
     };
-    return this.http.patch<void>(`/api/device/update-trust-level/${deviceId}`, form);
+    return this.httpUtil.patch<void>(`/api/user/device/update-trust-level/${deviceId}`, form);
   }
 
   /**
