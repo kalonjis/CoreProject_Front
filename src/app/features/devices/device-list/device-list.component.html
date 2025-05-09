@@ -22,9 +22,11 @@
       <button class="btn-primary" (click)="disconnectAllDevices()" [disabled]="isProcessing()">
         <span class="icon">🔌</span> Déconnecter tous les autres appareils
       </button>
-      <button class="btn-secondary" (click)="requestConfirmationLink()" [disabled]="isProcessing()">
-        <span class="icon">🔒</span> Confirmer cet appareil
-      </button>
+      @if (! currentDeviceIsConfirmed()){
+        <button class="btn-secondary" (click)="requestConfirmationLink()" [disabled]="isProcessing()">
+          <span class="icon">🔒</span> Confirmer cet appareil
+        </button>
+      }
       <button class="refresh-button" (click)="loadDevices()" [disabled]="isLoading()">
         <span class="icon">↻</span> Actualiser
       </button>
