@@ -28,6 +28,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   isLoading = signal(true);
   isProcessing = signal(false);
   currentDeviceId = signal<number | null>(null);
+  currentDeviceIsConfirmed = signal<boolean>(false);
   selectedDevice = signal<Device | null>(null);
   filterText = '';
   sortField: keyof Device = 'lastSeen';
@@ -42,6 +43,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(device => {
       this.currentDeviceId.set(device.id);
+      this.currentDeviceIsConfirmed.set(device.confirmed)
     });
   }
 
@@ -74,21 +76,31 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
       return;
     }
 
-    this.isProcessing.set(true);
-    this.deviceService.disconnectDevice(deviceId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.displaySuccess('Device successfully disconnected', '');
-        this.loadDevices(); // Reload the list
-        this.isProcessing.set(false);
-      },
-      error: (err) => {
-        console.error('Error during disconnection', err);
-        this.displayError('Unable to disconnect this device', 'Retry');
-        this.isProcessing.set(false);
-      }
-    });
+    this.confirmDialogService.confirm({
+      message: `Êtes-vous sûr de vouloir déconnecter cet appareil?`,
+      title: 'Confirmation de déconnexion',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() => {
+        this.isProcessing.set(true);
+        this.deviceService.disconnectDevice(deviceId).pipe(
+          takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
+          next: () => {
+            this.displaySuccess('Device successfully disconnected', '');
+            this.loadDevices(); // Reload the list
+            this.isProcessing.set(false);
+          },
+          error: (err) => {
+            console.error('Error during disconnection', err);
+            this.displayError('Unable to disconnect this device', 'Retry');
+            this.isProcessing.set(false);
+          }
+        });
+      })
+      .catch(() => {})
   }
 
   disconnectAllDevices(): void {
@@ -148,26 +160,6 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
 
   closeDeviceDetail(): void {
     this.selectedDevice.set(null);
-  }
-
-  // Méthode pour filtrer et trier les appareils
-  getSortedAndFilteredDevices(): Device[] {
-    return this.deviceUtils.getSortedAndFilteredDevices(
-      this.devices(),
-      this.filterText,
-      this.sortField,
-      this.sortDirection
-    );
-  }
-
-  // Méthode pour trier les appareils selon un champ
-  sortDevices(field: keyof Device): void {
-    if (this.sortField === field) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortField = field;
-      this.sortDirection = 'desc'; // Par défaut, tri descendant
-    }
   }
 
   isCurrentDevice(deviceId: number): boolean {
