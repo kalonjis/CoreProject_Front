@@ -79,7 +79,7 @@
             class="trust-level-btn"
             [class]="deviceUtils.getTrustLevelClass(option.value)"
             [class.selected]="device.level === option.value"
-            [disabled]="isProcessing || device.level === option.value"
+            [disabled]="isProcessing() || device.level === option.value"
             (click)="updateTrustLevel(option.value)">
             {{ option.label }}
           </button>
@@ -93,7 +93,7 @@
 
   <div class="device-actions">
     @if (!device.loggedOut && !isCurrentDevice) {
-      <button class="btn-danger" (click)="disconnectDevice()" [disabled]="isProcessing">
+      <button class="btn-danger" (click)="disconnectDevice()" [disabled]="isProcessing()">
         <span class="icon">🔌</span> Déconnecter cet appareil
       </button>
     } @else if (device.loggedOut) {

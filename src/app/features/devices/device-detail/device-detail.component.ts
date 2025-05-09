@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {Component, EventEmitter, Input, Output, inject, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Device } from '../../../data/models/device/device';
 import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
@@ -28,7 +28,7 @@ export class DeviceDetailComponent extends FeedbackBase {
   @Output() close = new EventEmitter<void>();
 
   // UI state
-  isProcessing = false;
+  isProcessing = signal(false);
 
   // Trust level options
   get trustLevelOptions() {
@@ -45,16 +45,20 @@ export class DeviceDetailComponent extends FeedbackBase {
       return;
     }
 
-    this.isProcessing = true;
+    this.isProcessing.set(true);
     this.deviceService.disconnectDevice(this.device.id).subscribe({
       next: () => {
+        this.clearFeedback();
+
         this.displaySuccess('Appareil déconnecté avec succès', '');
         this.deviceUpdated.emit();
-        this.isProcessing = false;
+        this.isProcessing.set(false);
       },
       error: (error: HttpErrorResponse) => {
+        this.clearFeedback();
+
         this.handleError(error);
-        this.isProcessing = false;
+        this.isProcessing.set(false);
       }
     });
   }
@@ -73,17 +77,21 @@ export class DeviceDetailComponent extends FeedbackBase {
       type: 'warning'
     })
       .then(() =>{
-        this.isProcessing = true;
+        this.isProcessing.set(true);
         this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
           next: () => {
+            this.clearFeedback();
+
             this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');
             this.device.level = newLevel; // Update local state
             this.deviceUpdated.emit();
-            this.isProcessing = false;
+            this.isProcessing.set(false);
           },
           error: (error: HttpErrorResponse) => {
+            this.clearFeedback();
+
             this.handleError(error);
-            this.isProcessing = false;
+            this.isProcessing.set(false);
           }
         });
       })
