@@ -1,0 +1,32 @@
+<!-- confirm-dialog.component.html -->
+@if (visible) {
+  <div class="confirm-dialog-overlay">
+    <div class="confirm-dialog" [ngClass]="dialogClass">
+      <div class="confirm-dialog-header">
+        @if (title) {
+          <h3 class="confirm-dialog-title">{{ title }}</h3>
+        }
+        <div class="confirm-dialog-icon">
+          <span>{{ icon }}</span>
+        </div>
+      </div>
+
+      <div class="confirm-dialog-content">
+        <p class="confirm-dialog-message">{{ message }}</p>
+      </div>
+
+      <div class="confirm-dialog-actions">
+        <button
+          class="confirm-dialog-button cancel-button"
+          (click)="onCancel()">
+          {{ cancelButtonText }}
+        </button>
+        <button
+          class="confirm-dialog-button confirm-button"
+          (click)="onConfirm()">
+          {{ confirmButtonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

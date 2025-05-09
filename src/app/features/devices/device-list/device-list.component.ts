@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceDetailComponent } from '../device-detail/device-detail.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 @Component({
   selector: 'app-device-list',
@@ -21,6 +22,7 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   private deviceService = inject(DeviceService);
   protected deviceUtils = inject(DeviceUtilsService);
   private destroyRef = inject(DestroyRef);
+  private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
   devices = signal<Device[]>([]);
   isLoading = signal(true);
@@ -90,28 +92,38 @@ export class DeviceListComponent extends FeedbackBase implements OnInit {
   }
 
   disconnectAllDevices(): void {
-    if (!confirm('Are you sure you want to disconnect all other devices? This action cannot be undone.')) {
-      return;
-    }
+    this.confirmDialogService.confirm({
+      message: 'Êtes-vous sûr de vouloir déconnecter tous les autres appareils ? Cette action est irréversible.',
+      title: 'Confirmation de déconnexion',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() => {
+        // Action si l'utilisateur confirme
+        this.isProcessing.set(true);
 
-    this.isProcessing.set(true);
-    this.deviceService.disconnectAllDevices().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.displaySuccess(
-          'All other devices have been successfully disconnected. Only your current device remains connected.',
-          ''
-        );
-        this.loadDevices(); // Reload the list
-        this.isProcessing.set(false);
-      },
-      error: (err) => {
-        console.error('Error disconnecting all devices', err);
-        this.displayError('Unable to disconnect all devices', 'Retry');
-        this.isProcessing.set(false);
-      }
-    });
+        this.deviceService.disconnectAllDevices().pipe(
+          takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
+          next: () => {
+            this.displaySuccess(
+              'Tous les autres appareils ont été déconnectés avec succès. Seul votre appareil actuel reste connecté.',
+              ''
+            );
+            this.loadDevices();
+            this.isProcessing.set(false);
+          },
+          error: (err) => {
+            console.error('Erreur lors de la déconnexion de tous les appareils', err);
+            this.displayError('Impossible de déconnecter tous les appareils', 'Réessayer');
+            this.isProcessing.set(false);
+          }
+        });
+      })
+      .catch(() => {
+        // Action si l'utilisateur annule - ne rien faire
+      });
   }
 
   requestConfirmationLink(): void {
