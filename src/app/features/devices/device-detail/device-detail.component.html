@@ -70,7 +70,7 @@
     </div>
   </div>
 
-  @if (!device.blacklisted ) {
+  @if (!device.blacklisted && device.confirmed ) {
     <div class="detail-section trust-level-section">
       <h3>Modifier le niveau de confiance</h3>
       <div class="trust-level-options">
