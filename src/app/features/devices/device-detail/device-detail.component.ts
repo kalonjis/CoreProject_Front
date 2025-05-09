@@ -28,7 +28,7 @@ export class DeviceDetailComponent extends FeedbackBase {
   @Output() close = new EventEmitter<void>();
 
   // UI state
-  isProcessing = signal(false);
+  isProcessing = signal<boolean>(false);
 
   // Trust level options
   get trustLevelOptions() {
@@ -48,14 +48,12 @@ export class DeviceDetailComponent extends FeedbackBase {
     this.isProcessing.set(true);
     this.deviceService.disconnectDevice(this.device.id).subscribe({
       next: () => {
-        this.clearFeedback();
 
         this.displaySuccess('Appareil déconnecté avec succès', '');
         this.deviceUpdated.emit();
         this.isProcessing.set(false);
       },
       error: (error: HttpErrorResponse) => {
-        this.clearFeedback();
 
         this.handleError(error);
         this.isProcessing.set(false);
@@ -80,7 +78,6 @@ export class DeviceDetailComponent extends FeedbackBase {
         this.isProcessing.set(true);
         this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
           next: () => {
-            this.clearFeedback();
 
             this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');
             this.device.level = newLevel; // Update local state
@@ -88,7 +85,6 @@ export class DeviceDetailComponent extends FeedbackBase {
             this.isProcessing.set(false);
           },
           error: (error: HttpErrorResponse) => {
-            this.clearFeedback();
 
             this.handleError(error);
             this.isProcessing.set(false);
