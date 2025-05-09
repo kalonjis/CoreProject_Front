@@ -24,14 +24,20 @@ export class FeedbackBase {
    * @param buttonText Texte du bouton (optionnel)
    * @param timeout Délai avant disparition automatique (optionnel)
    */
+  // In FeedbackBase class
   displayFeedback(type: FeedbackType, message: string, buttonText: string = '', timeout: number | null = null) {
-    this.showFeedback.set(true);
-    this.feedbackType.set(type);
-    this.feedbackMessage.set(message);
-    this.buttonText.set(buttonText);
-    this.feedbackTimeout.set(timeout);
-  }
+    // Clear any existing feedback first
+    this.showFeedback.set(false);
 
+    // Small timeout to ensure the feedback component is properly removed and re-added
+    setTimeout(() => {
+      this.feedbackType.set(type);
+      this.feedbackMessage.set(message);
+      this.buttonText.set(buttonText);
+      this.feedbackTimeout.set(timeout);
+      this.showFeedback.set(true);
+    }, 10);
+  }
   /**
    * Affiche un message de succès
    */
