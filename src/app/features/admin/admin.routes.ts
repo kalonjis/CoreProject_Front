@@ -30,25 +30,6 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () => import('../devices/device-list/device-list.component')
       .then(m => m.DeviceListComponent)
   }
-  /*
-  {
-    path: 'users',
-    canActivate: [() => adminGuard()],
-    loadComponent: () => import('./users/user-management/user-management.component')
-      .then(m => m.UserManagementComponent)
-  },
-  {
-    path: 'users/:id',
-    canActivate: [() => adminGuard()],
-    loadComponent: () => import('./users/user-detail/user-detail.component')
-      .then(m => m.UserDetailComponent)
-  },
-  {
-    path: 'users/create',
-    canActivate: [() => adminGuard()],
-    loadComponent: () => import('./users/user-form/user-form.component')
-      .then(m => m.UserFormComponent)
-  }
- */
+
 ];
 
