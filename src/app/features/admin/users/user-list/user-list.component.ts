@@ -8,6 +8,7 @@ import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { UserRole } from '../../../../data/models/user/user-role';
+import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 interface PaginationInfo {
   totalPages: number;
@@ -26,9 +27,11 @@ interface PaginationInfo {
 export class UserListComponent extends FeedbackBase implements OnInit {
   private adminService = inject(AdminService);
   private fb = inject(FormBuilder);
+  private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
+
 
   // État de chargement
-  isLoading = signal(true);
+  isLoading = signal<boolean>(true);
 
   // Données des utilisateurs
   users = signal<UserDTO[]>([]);
@@ -222,39 +225,59 @@ export class UserListComponent extends FeedbackBase implements OnInit {
   }
 
   activateUser(id: number, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
+    this.confirmDialogService.confirm({
+      message: `Êtes-vous sûr de vouloir activer cet utilsateur?`,
+      title: 'Confirmation de l\'activation de l\'utilisateur',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(()=>{
+        event.preventDefault();
+        event.stopPropagation();
 
-    this.adminService.activateUser(id).subscribe({
-      next: () => {
-        this.displaySuccess('Utilisateur activé avec succès', '');
-        this.loadUsers(this.pagination().pageNumber);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.displayError(
-          error.error?.message || 'Erreur lors de l\'activation de l\'utilisateur',
-          'Réessayer'
-        );
-      }
-    });
+        this.adminService.activateUser(id).subscribe({
+          next: () => {
+            this.displaySuccess('Utilisateur activé avec succès', '');
+            this.loadUsers(this.pagination().pageNumber);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.displayError(
+              error.error?.message || 'Erreur lors de l\'activation de l\'utilisateur',
+              'Réessayer'
+            );
+          }
+        });
+      })
+      .catch(()=>{})
   }
 
   deactivateUser(id: number, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
+    this.confirmDialogService.confirm({
+      message: `Êtes-vous sûr de vouloir désactiver cet utilsateur?`,
+      title: 'Confirmation de desactivation de l\'utilisateur',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(()=>{
+        event.preventDefault();
+        event.stopPropagation();
 
-    this.adminService.deactivateUser(id).subscribe({
-      next: () => {
-        this.displaySuccess('Utilisateur désactivé avec succès', '');
-        this.loadUsers(this.pagination().pageNumber);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.displayError(
-          error.error?.message || 'Erreur lors de la désactivation de l\'utilisateur',
-          'Réessayer'
-        );
-      }
-    });
+        this.adminService.deactivateUser(id).subscribe({
+          next: () => {
+            this.displaySuccess('Utilisateur désactivé avec succès', '');
+            this.loadUsers(this.pagination().pageNumber);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.displayError(
+              error.error?.message || 'Erreur lors de la désactivation de l\'utilisateur',
+              'Réessayer'
+            );
+          }
+        });
+      })
+      .catch(() => {})
   }
 
   deleteUser(id: number, event: Event): void {
