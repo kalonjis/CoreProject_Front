@@ -30,6 +30,5 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () => import('../devices/device-list/device-list.component')
       .then(m => m.DeviceListComponent)
   }
-
 ];
 
