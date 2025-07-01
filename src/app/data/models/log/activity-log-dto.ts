@@ -1,4 +1,4 @@
-export interface ConnectionLogDTO {
+export interface ActivityLogDto {
   id: number;
   userId: number;
   username: string;

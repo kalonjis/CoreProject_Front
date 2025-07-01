@@ -8,7 +8,7 @@ import { UserDTO } from '../../../../data/models/user/user-dto';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import {AuthService} from '../../../../core/auth/services/auth.service';
-import {ConnectionLogDTO, LogPagination} from '../../../../data/models/log/connection-log-dto';
+import {ActivityLogDto, LogPagination} from '../../../../data/models/log/activity-log-dto';
 import {Device} from '../../../../data/models/device/device';
 import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
 import {UserRole} from '../../../../data/models/user/user-role';
@@ -50,7 +50,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
   protected deviceUtils = inject(DeviceUtilsService);
 
-  activityLogs = signal<ConnectionLogDTO[]>([]);
+  activityLogs = signal<ActivityLogDto[]>([]);
   isLoadingLogs = signal(false);
   activityPagination = signal<LogPagination>({
     totalPages: 0,
@@ -288,8 +288,8 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       this.activityPagination().pageSize
     ).subscribe({
       next: (response) => {
-        if (response && response._embedded && response._embedded.connectionLogDTOList) {
-          this.activityLogs.set(response._embedded.connectionLogDTOList);
+        if (response && response._embedded && response._embedded.activityLogDTOList) {
+          this.activityLogs.set(response._embedded.activityLogDTOList);
 
           // Mise à jour de la pagination
           if (response.page) {
