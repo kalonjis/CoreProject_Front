@@ -1,16 +1,20 @@
-// src/app/core/http/auth-interceptor.ts
-import { HttpInterceptorFn, HttpHandlerFn, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError, switchMap, catchError, Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { catchError, switchMap, throwError, Observable, BehaviorSubject, of } from 'rxjs';
+import { signal } from '@angular/core';
+
+// Services d'erreur
+import { HttpErrorAnalyzerService } from '../errors/services/http-error-analyzer.service';
+import { GlobalErrorManagerService } from '../errors/services/global-error-manager.service';
+
+// Services existants
 import { AuthService } from '../auth/services/auth.service';
 import { isPublicApiRoute, isPublicFrontendRoute } from '../auth/config/public-routes.config';
 
-// Un sujet pour suivre si un refresh est en cours
-let isRefreshing = false;
-
-// File d'attente pour stocker les requêtes en attente de refresh
-const pendingRequests: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+// Gestion du refresh token avec signaux
+const isRefreshingSignal = signal(false);
+const pendingRequests = new Subject<boolean>();
 
 /**
  * Récupère le token CSRF à partir des cookies
@@ -27,19 +31,16 @@ function getCsrfToken(): string | null {
 }
 
 /**
- * Intercepteur HTTP qui gère l'ajout de cookies, la gestion des erreurs d'authentification
- * et le rafraîchissement automatique du token.
+ * Intercepteur HTTP avec signaux Angular
  */
-export const authInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
+export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const router = inject(Router);
   const authService = inject(AuthService);
+  const errorAnalyzer = inject(HttpErrorAnalyzerService);
+  const errorManager = inject(GlobalErrorManagerService);
 
   // 1. Ne pas intercepter les requêtes marquées pour être ignorées
   if (req.headers.has('X-Skip-Interceptor')) {
-    // Créer une nouvelle requête sans cet en-tête pour ne pas l'envoyer au serveur
     const cleanedReq = req.clone({
       headers: req.headers.delete('X-Skip-Interceptor')
     });
@@ -68,7 +69,12 @@ export const authInterceptor: HttpInterceptorFn = (
 
   // 6. Ne pas appliquer la logique de refresh token pour les routes publiques
   if (isPublicRoute && !isAuthStatusCheck) {
-    return next(authReq);
+    return next(authReq).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Analyser et gérer les erreurs même pour les routes publiques
+        return handleHttpError(error, req.url, errorAnalyzer, errorManager);
+      })
+    );
   }
 
   // 7. Ne pas intercepter les requêtes de refresh token pour éviter les boucles
@@ -79,16 +85,22 @@ export const authInterceptor: HttpInterceptorFn = (
   // 8. Traitement de la requête avec gestion d'erreur
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Si c'est une erreur d'authentification ou une erreur 403 spécifique à la désactivation de compte
+      // Gestion spécifique des erreurs 403 (votre logique existante)
       if (error.status === 403) {
         // Vérifier si l'erreur vient d'une tentative de désactivation de son propre compte
         if (error.url?.includes('/api/admin/users/deactivate/') &&
           error.error?.error?.includes("own account")) {
-          // Dans ce cas, ne pas rediriger, simplement propager l'erreur
+          return throwError(() => error);
+        }
+
+        // Vérifier si l'erreur vient d'une tentative de désactivation d'un SUPER_ADMIN sans droits
+        if (error.url?.includes('/api/admin/users/deactivate/') &&
+          error.error?.error?.includes("SUPER_ADMIN privileges")) {
           return throwError(() => error);
         }
       }
-      // Vérifier si c'est une erreur d'authentification et si la route n'est pas publique
+
+      // Gestion des erreurs d'authentification 401/403
       if ((error.status === 401 || error.status === 403) && !isPublicApiRoute(req.url)) {
         // Si on est sur une route publique frontend, ne pas tenter de refresh
         if (isPublicRoute && !isAuthStatusCheck) {
@@ -97,9 +109,8 @@ export const authInterceptor: HttpInterceptorFn = (
 
         console.log(`Erreur d'authentification sur ${req.url}, tentative de refresh token`);
 
-        // Si un refresh token est déjà en cours
-        if (isRefreshing) {
-          // Attendre la fin du refresh et réessayer la requête
+        // Si un refresh token est déjà en cours (utilisation du signal)
+        if (isRefreshingSignal()) {
           return pendingRequests.pipe(
             switchMap(success => {
               if (success) {
@@ -115,22 +126,20 @@ export const authInterceptor: HttpInterceptorFn = (
 
                 return next(newReq);
               }
-              // Si le refresh a échoué, rediriger vers login
               return throwError(() => error);
             })
           );
         }
 
-        // Marquer le début d'un refresh
-        isRefreshing = true;
-        // Réinitialiser le sujet pour les requêtes en attente
+        // Marquer le début d'un refresh (avec signal)
+        isRefreshingSignal.set(true);
         pendingRequests.next(false);
 
         // Appeler le service pour rafraîchir le token
         return authService.refreshToken().pipe(
           switchMap(() => {
             // Le refresh a réussi
-            isRefreshing = false;
+            isRefreshingSignal.set(false);
             pendingRequests.next(true);
 
             // Réessayer la requête originale avec le nouveau token CSRF
@@ -147,7 +156,7 @@ export const authInterceptor: HttpInterceptorFn = (
           }),
           catchError(refreshError => {
             // Le refresh a échoué
-            isRefreshing = false;
+            isRefreshingSignal.set(false);
             pendingRequests.next(false);
 
             // Ne pas rediriger si on est sur une route publique
@@ -166,8 +175,41 @@ export const authInterceptor: HttpInterceptorFn = (
         );
       }
 
-      // Pour les autres erreurs, les propager normalement
-      return throwError(() => error);
+      // Gestion générique des autres erreurs HTTP
+      return handleHttpError(error, req.url, errorAnalyzer, errorManager);
     })
   );
 };
+
+/**
+ * Gestion générique des erreurs HTTP
+ */
+function handleHttpError(
+  error: HttpErrorResponse,
+  url: string,
+  analyzer: HttpErrorAnalyzerService,
+  manager: GlobalErrorManagerService
+): Observable<never> {
+
+  // Analyser l'erreur avec le service générique
+  const context = analyzer.analyze(error, url);
+
+  // Les erreurs avec action 'feedback' ou 'inline' sont laissées aux composants
+  if (context.action === 'feedback' || context.action === 'inline') {
+    // Ne pas traiter ici, laisser le composant gérer
+    return throwError(() => error);
+  }
+
+  // Traiter les autres types d'erreurs (redirect, modal, banner, page)
+  manager.handleError(context);
+
+  // Toujours propager l'erreur pour que les composants puissent réagir si nécessaire
+  return throwError(() => error);
+}
+
+/**
+ * Fonction utilitaire pour accéder à l'état du refresh depuis l'extérieur (optionnel)
+ */
+export function isRefreshTokenInProgress(): boolean {
+  return isRefreshingSignal();
+}
