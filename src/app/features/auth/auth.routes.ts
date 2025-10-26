@@ -49,7 +49,12 @@ export const AUTH_ROUTES: Routes = [
     path: 'confirm-email',
     canActivate: [() => authGuard()],
     loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)
-  }
+  },
+  {
+    path: 'webauthn-test',
+    canActivate: [() => authGuard()],
+    loadComponent: () => import('./webauthn-test/webauthn-test.component').then(m => m.WebAuthnTestComponent)
+  },
   /*
 
   {

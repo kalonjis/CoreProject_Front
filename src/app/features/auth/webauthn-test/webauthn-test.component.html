@@ -1,0 +1,41 @@
+<div class="webauthn-test-container">
+  <div class="webauthn-test-card">
+    <h1 class="title">Test WebAuthn 2FA</h1>
+
+    <div class="test-section">
+      <p class="description">
+        Ce composant teste l'intégration WebAuthn avec votre backend.
+        Il va appeler l'API et tenter de créer une credential WebAuthn.
+      </p>
+
+      <button
+        class="btn-primary"
+        (click)="testWebAuthn()"
+        [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span>Test en cours...</span>
+        } @else {
+          <span>Tester WebAuthn</span>
+        }
+      </button>
+    </div>
+
+    @if (result()) {
+      <div class="result-section">
+        <h3>Résultat :</h3>
+        <div class="result-content">
+          {{ result() }}
+        </div>
+      </div>
+    }
+
+    <div class="info-section">
+      <h4>Info technique :</h4>
+      <ul>
+        <li>Appelle POST /api/auth/2fa/webauthn/initiate-activation</li>
+        <li>Utilise navigator.credentials.create() avec la réponse</li>
+        <li>Affiche le résultat (succès ou erreur)</li>
+      </ul>
+    </div>
+  </div>
+</div>
