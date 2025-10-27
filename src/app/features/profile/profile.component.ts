@@ -9,6 +9,7 @@ import { DeviceService } from '../../data/services/device-service';
 import { Device } from '../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, retry, of, finalize } from 'rxjs';
+import {AuthService} from '../../domains/auth/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +23,8 @@ export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  authService = inject(OldAuthService);
+  oldAuthService = inject(OldAuthService);
+  authService = inject(AuthService);
   deviceService = inject(DeviceService);
 
   // User profile information
@@ -206,7 +208,7 @@ export class ProfileComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.authService.changeEmailRequest(
+    this.oldAuthService.changeEmailRequest(
       this.emailForm.value.email || '',
       this.emailForm.value.confirmEmail || ''
     ).pipe(

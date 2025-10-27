@@ -1,7 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {Observable, BehaviorSubject, tap, catchError, of, throwError, map} from 'rxjs';
+import { Observable, tap, catchError, throwError, map, of } from 'rxjs';
 import { HttpUtilService } from '../../../core/http/http-util.service';
 import { AUTH_ROUTES, FRONTEND_ROUTES } from '../../../core/config/api-routes.constants';
 
@@ -11,13 +11,13 @@ import { LoginResponse } from '../models/login-response';
 import { TwoFARequest } from '../models/two-fa-request';
 import { TwoFAResponse } from '../models/two-fa-response';
 import { ApiResponse } from '../models/api-response';
-import {UserDTO} from '../../../data/models/user/user-dto';
-
-// Models du domain user (shared)
+import { UserDTO } from '../../../data/models/user/user-dto';
 
 /**
  * Authentication Service - Domain AUTH
  * Gère l'authentification et l'état de session utilisateur
+ *
+ * ✅ Utilise UNIQUEMENT des signals (moderne et performant)
  *
  * Responsabilités (comme AuthController backend):
  * - Login/Logout
@@ -33,15 +33,29 @@ export class AuthService {
   private readonly httpUtil = inject(HttpUtilService);
   private readonly router = inject(Router);
 
-  // State management
-  private readonly isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  private readonly currentUserSubject = new BehaviorSubject<UserDTO | null>(null);
+  // =========================================================================
+  // STATE MANAGEMENT avec SIGNALS
+  // =========================================================================
 
-  public readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-  public readonly currentUser$ = this.currentUserSubject.asObservable();
+  // Signals privés (writable)
+  private readonly _isAuthenticated = signal<boolean>(false);
+  private readonly _currentUser = signal<UserDTO | null>(null);
+  private readonly _isInitialized = signal<boolean>(false);
+  private readonly _isLoading = signal<boolean>(false);
+  private readonly _error = signal<string | null>(null);
 
-  // Signal for reactive state
-  public readonly isAuthenticatedSignal = signal<boolean>(false);
+  // Signals publics (readonly) - Computed pour dérivation
+  public readonly isAuthenticated = computed(() => this._isAuthenticated());
+  public readonly currentUser = computed(() => this._currentUser());
+  public readonly isInitialized = computed(() => this._isInitialized());
+  public readonly isLoading = computed(() => this._isLoading());
+  public readonly error = computed(() => this._error());
+  public readonly username = computed(() => this._currentUser()?.username || null);
+  public readonly mustChangePassword = computed(() => this._currentUser()?. || false);
+
+  // Signals writable exposés (pour compatibilité avec ancien code si besoin)
+  public readonly isAuthenticatedSignal = this._isAuthenticated.asReadonly();
+  public readonly currentUserSignal = this._currentUser.asReadonly();
 
   // =========================================================================
   // INITIALIZATION
@@ -52,7 +66,18 @@ export class AuthService {
    * Called by APP_INITIALIZER in app.config.ts
    */
   initialize(): Promise<void> {
-    return this.checkAuthStatus().toPromise().then(() => {});
+    console.log('🚀 AuthService initialization (with signals)');
+    this._isLoading.set(true);
+
+    return this.checkAuthStatus().toPromise().then(() => {
+      this._isInitialized.set(true);
+      this._isLoading.set(false);
+      console.log('✅ AuthService initialized - isAuth:', this.isAuthenticated());
+    }).catch(() => {
+      this._isInitialized.set(true);
+      this._isLoading.set(false);
+      console.log('⚠️ AuthService initialized - not authenticated');
+    });
   }
 
   /**
@@ -62,14 +87,15 @@ export class AuthService {
   checkAuthStatus(): Observable<boolean> {
     return this.http.get<{ authenticated: boolean }>(AUTH_ROUTES.STATUS).pipe(
       tap(response => {
+        console.log('🔍 Auth status check:', response.authenticated);
         this.setAuthenticated(response.authenticated);
         if (response.authenticated) {
           this.loadCurrentUser();
         }
       }),
-      // Mapper l'objet vers boolean pour correspondre au type de retour
       map(response => response.authenticated),
       catchError(() => {
+        console.log('❌ Auth status check failed');
         this.setAuthenticated(false);
         return of(false);
       })
@@ -82,9 +108,15 @@ export class AuthService {
    */
   loadCurrentUser(): void {
     this.http.get<UserDTO>(AUTH_ROUTES.ME).pipe(
-      tap(user => this.currentUserSubject.next(user)),
-      catchError(() => {
-        this.currentUserSubject.next(null);
+      tap(user => {
+        console.log('👤 User loaded:', user.username);
+        this._currentUser.set(user);
+        this._error.set(null);
+      }),
+      catchError((err) => {
+        console.error('❌ Failed to load user:', err);
+        this._currentUser.set(null);
+        this._error.set('Failed to load user profile');
         return of(null);
       })
     ).subscribe();
@@ -100,16 +132,28 @@ export class AuthService {
    * Public route - uses skipInterceptor
    */
   login(request: LoginRequest): Observable<LoginResponse> {
+    console.log('🔐 Login attempt for:', request.username);
+    this._isLoading.set(true);
+    this._error.set(null);
+
     return this.httpUtil.post<LoginResponse>(
       AUTH_ROUTES.LOGIN,
       request,
       true // Skip interceptor
     ).pipe(
       tap(response => {
+        console.log('✅ Login response:', response);
         if (response.success) {
           this.setAuthenticated(true);
           this.loadCurrentUser();
         }
+        this._isLoading.set(false);
+      }),
+      catchError(err => {
+        console.error('❌ Login failed:', err);
+        this._isLoading.set(false);
+        this._error.set(err.error?.message || 'Login failed');
+        return throwError(() => err);
       })
     );
   }
@@ -120,10 +164,19 @@ export class AuthService {
    * Public route - uses skipInterceptor
    */
   initiateLogin(request: LoginRequest): Observable<ApiResponse> {
+    this._isLoading.set(true);
+
     return this.httpUtil.post<ApiResponse>(
       AUTH_ROUTES.INITIATE_LOGIN,
       request,
       true
+    ).pipe(
+      tap(() => this._isLoading.set(false)),
+      catchError(err => {
+        this._isLoading.set(false);
+        this._error.set(err.error?.message || '2FA initiation failed');
+        return throwError(() => err);
+      })
     );
   }
 
@@ -133,6 +186,8 @@ export class AuthService {
    * Public route - uses skipInterceptor
    */
   verify2FA(request: TwoFARequest): Observable<TwoFAResponse> {
+    this._isLoading.set(true);
+
     return this.httpUtil.post<TwoFAResponse>(
       AUTH_ROUTES.VERIFY_2FA,
       request,
@@ -143,6 +198,12 @@ export class AuthService {
           this.setAuthenticated(true);
           this.loadCurrentUser();
         }
+        this._isLoading.set(false);
+      }),
+      catchError(err => {
+        this._isLoading.set(false);
+        this._error.set(err.error?.message || '2FA verification failed');
+        return throwError(() => err);
       })
     );
   }
@@ -179,13 +240,19 @@ export class AuthService {
    * CSRF protection active (uses cookies)
    */
   refreshToken(): Observable<ApiResponse> {
+    console.log('🔄 Refreshing token');
+
     return this.httpUtil.post<ApiResponse>(
       AUTH_ROUTES.REFRESH_TOKEN,
       {},
       true // Skip interceptor to avoid infinite loop
     ).pipe(
-      tap(() => this.setAuthenticated(true)),
+      tap(() => {
+        console.log('✅ Token refreshed');
+        this.setAuthenticated(true);
+      }),
       catchError(error => {
+        console.error('❌ Token refresh failed');
         this.handleRefreshTokenError();
         return throwError(() => error);
       })
@@ -202,11 +269,22 @@ export class AuthService {
    * CSRF protection active
    */
   logout(): Observable<ApiResponse> {
+    console.log('🚪 Logging out');
+    this._isLoading.set(true);
+
     return this.http.post<ApiResponse>(AUTH_ROUTES.LOGOUT, {}).pipe(
       tap(() => {
-        this.setAuthenticated(false);
-        this.currentUserSubject.next(null);
+        console.log('✅ Logged out successfully');
+        this.clearSession();
+        this._isLoading.set(false);
         this.router.navigate([FRONTEND_ROUTES.AUTH_LOGIN]);
+      }),
+      catchError(err => {
+        console.warn('⚠️ Logout error, clearing session anyway');
+        this.clearSession();
+        this._isLoading.set(false);
+        this.router.navigate([FRONTEND_ROUTES.AUTH_LOGIN]);
+        return of({ success: true, message: 'Logged out' });
       })
     );
   }
@@ -296,43 +374,51 @@ export class AuthService {
   }
 
   // =========================================================================
-  // STATE MANAGEMENT
+  // STATE MANAGEMENT - Méthodes Publiques
+  // =========================================================================
+
+  /**
+   * Check if user has a specific role
+   */
+  hasRole(role: string): boolean {
+    const user = this._currentUser();
+    return user?.userRoles?.includes(role as any) || false;
+  }
+
+  /**
+   * Clear session without API call
+   * Useful when handling auth errors
+   */
+  clearSession(): void {
+    console.log('🧹 Clearing session');
+    this.setAuthenticated(false);
+    this._currentUser.set(null);
+    this._error.set(null);
+  }
+
+  // =========================================================================
+  // STATE MANAGEMENT - Méthodes Privées
   // =========================================================================
 
   /**
    * Set authentication state
    */
   private setAuthenticated(value: boolean): void {
-    this.isAuthenticatedSubject.next(value);
-    this.isAuthenticatedSignal.set(value);
-  }
+    console.log('🔄 setAuthenticated:', value);
+    this._isAuthenticated.set(value);
 
-  /**
-   * Get current authentication state (synchronous)
-   */
-  isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
+    if (!value) {
+      this._currentUser.set(null);
+    }
   }
-
-  /**
-   * Get current user (synchronous)
-   */
-  getCurrentUserSync(): UserDTO | null {
-    return this.currentUserSubject.value;
-  }
-
-  // =========================================================================
-  // ERROR HANDLING
-  // =========================================================================
 
   /**
    * Handle refresh token error
    * Clears authentication state and redirects to login
    */
   private handleRefreshTokenError(): void {
-    console.warn('Refresh token failed - clearing authentication state');
-    this.setAuthenticated(false);
-    this.currentUserSubject.next(null);
+    console.warn('⚠️ Refresh token failed - clearing authentication state');
+    this.clearSession();
     this.router.navigate([FRONTEND_ROUTES.AUTH_LOGIN]);
   }
 }

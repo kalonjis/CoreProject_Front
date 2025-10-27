@@ -1,10 +1,10 @@
 import {Routes} from '@angular/router';
-import {authGuard} from '../../core/auth/guards/auth.guard';
+import {authGuard} from '../../domains/auth/guards/auth.guard';
 
 export const AUTH_ROUTES: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('../../domains/auth/components/login/login.component').then(m => m.LoginComponent)
   },
   {
     path: 'device-confirmation',

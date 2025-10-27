@@ -4,10 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../../domains/auth/services/auth.service';
-import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
-import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import {OldAuthService} from '../../../core/auth/services/old.auth.service';
+import { AuthService } from '../../services/auth.service';
+import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
+import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
+import {OldAuthService} from '../../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-login',

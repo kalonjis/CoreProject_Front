@@ -1,7 +1,7 @@
 // src/app/core/auth/guards/auth.guard.ts
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { OldAuthService } from '../services/old.auth.service';
+import { OldAuthService } from '../../../core/auth/services/old.auth.service';
 
 export function authGuard(requirePasswordChange: boolean = false) {
   const authService = inject(OldAuthService);
