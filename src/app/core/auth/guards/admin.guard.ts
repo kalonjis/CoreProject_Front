@@ -1,13 +1,13 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { OldAuthService } from '../services/old.auth.service';
 
 /**
  * Guard qui vérifie si l'utilisateur a des privilèges d'administration
  * Vérifie d'abord l'authentification puis le rôle ADMIN
  */
 export function adminGuard() {
-  const authService = inject(AuthService);
+  const authService = inject(OldAuthService);
   const router = inject(Router);
 
   // Vérifier si l'utilisateur est connecté

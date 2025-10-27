@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
-import {AuthService} from '../../../core/auth/services/auth.service';
+import {OldAuthService} from '../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-account-confirmation',
@@ -19,7 +19,7 @@ import {AuthService} from '../../../core/auth/services/auth.service';
 export class AccountConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private authService: AuthService = inject(AuthService);
+  private authService: OldAuthService = inject(OldAuthService);
 
   isProcessing = false;
   token: string | null = null;

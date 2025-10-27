@@ -1,6 +1,6 @@
 flowchart TD
     subgraph Frontend["Frontend (Angular)"]
-        authService["AuthService"]
+        authService["OldAuthService"]
         authInterceptor["AuthInterceptor"]
         router["Router"]
         publicRoutes["Public Routes Config"]
@@ -9,12 +9,12 @@ flowchart TD
         deviceConfirm["Device Confirmation"]
         accountConfirm["Account Confirmation"]
     end
-    
+
     subgraph Backend["Backend (Spring Boot)"]
         jwtFilter["JWT Filter"]
         jwtUtil["JWT Util"]
         securityConfig["Security Config"]
-        authServiceImpl["AuthService Implementation"]
+        authServiceImpl["OldAuthService Implementation"]
         deviceService["Device Service"]
         mailerService["Mailer Service"]
         subgraph Tokens["Token Services"]
@@ -25,49 +25,49 @@ flowchart TD
             deviceConfirmTokenService["DeviceConfirmationTokenService"]
         end
     end
-    
+
     subgraph Database["Database"]
         users[("Users")]
         devices[("Devices")]
         refreshTokens[("Refresh Tokens")]
         otherTokens[("Other Tokens")]
     end
-    
+
     authService <--> authInterceptor
     authService --> router
     authInterceptor --> publicRoutes
-    
+
     login --> authService
     signup --> authService
     deviceConfirm --> authService
     accountConfirm --> authService
-    
+
     authService --> jwtFilter
-    
+
     jwtFilter --> jwtUtil
     jwtFilter --> securityConfig
-    
+
     authServiceImpl --> jwtUtil
     authServiceImpl --> deviceService
     authServiceImpl --> mailerService
-    
+
     deviceService --> devices
     authServiceImpl --> users
-    
+
     baseTokenService -.-> refreshTokenService
     baseTokenService -.-> pwdResetTokenService
     baseTokenService -.-> accountConfirmTokenService
     baseTokenService -.-> deviceConfirmTokenService
-    
+
     refreshTokenService --> refreshTokens
     pwdResetTokenService --> otherTokens
     accountConfirmTokenService --> otherTokens
     deviceConfirmTokenService --> otherTokens
-    
+
     classDef angular fill:#DD0031,stroke:#DD0031,color:white;
     classDef spring fill:#6DB33F,stroke:#6DB33F,color:white;
     classDef database fill:#3498DB,stroke:#3498DB,color:white;
-    
+
     class authService,authInterceptor,router,publicRoutes,login,signup,deviceConfirm,accountConfirm angular;
     class jwtFilter,jwtUtil,securityConfig,authServiceImpl,deviceService,mailerService,baseTokenService,refreshTokenService,pwdResetTokenService,accountConfirmTokenService,deviceConfirmTokenService spring;
     class users,devices,refreshTokens,otherTokens database;

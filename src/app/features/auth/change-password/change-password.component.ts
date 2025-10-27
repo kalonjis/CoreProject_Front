@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { OldAuthService } from '../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-change-password',
@@ -17,7 +17,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class ChangePasswordComponent extends FeedbackBase {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private authService = inject(OldAuthService);
 
   // État local du composant
   isSubmitting = signal(false);

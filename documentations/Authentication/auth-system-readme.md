@@ -15,14 +15,14 @@ The CoreProject implements a comprehensive authentication system that features:
 
 ### Frontend (Angular)
 
-- **AuthService**: Central service for managing authentication state
+- **OldAuthService**: Central service for managing authentication state
 - **AuthInterceptor**: HTTP interceptor for handling tokens and automatic refresh
 - **Public Routes Configuration**: Defines which routes are accessible without authentication
 
 ### Backend (Spring Boot)
 
 - **JwtFilter**: Extracts and validates JWT tokens from cookies
-- **AuthService**: Handles authentication logic
+- **OldAuthService**: Handles authentication logic
 - **Token Services**: Manages different types of tokens
 - **Device Service**: Tracks and manages user devices
 
@@ -33,7 +33,7 @@ The CoreProject implements a comprehensive authentication system that features:
 1. User logs in with credentials
 2. Backend validates credentials and identifies the device
 3. If valid, access and refresh tokens are stored as HTTP-only cookies
-4. AuthService updates the authentication state
+4. OldAuthService updates the authentication state
 5. User is redirected to the requested page
 
 ### Token Refresh Flow

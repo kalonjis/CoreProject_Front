@@ -2,7 +2,7 @@
 import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../auth/services/auth.service';
+import { OldAuthService } from '../../auth/services/old.auth.service';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ import { AuthService } from '../../auth/services/auth.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  authService = inject(AuthService);
+  authService = inject(OldAuthService);
 
   mobileMenuActive = false;
   isDropdownOpen = false;

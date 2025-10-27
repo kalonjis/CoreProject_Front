@@ -1,7 +1,7 @@
 import { Component, inject, DestroyRef, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/services/auth.service';
+import { OldAuthService } from '../../core/auth/services/old.auth.service';
 import { DeviceService } from '../../data/services/device-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './device-alert-banner.component.scss'
 })
 export class DeviceAlertBannerComponent implements OnInit {
-  private authService = inject(AuthService);
+  private authService = inject(OldAuthService);
   private deviceService = inject(DeviceService);
   private destroyRef = inject(DestroyRef);
 

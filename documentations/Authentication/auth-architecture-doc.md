@@ -72,13 +72,13 @@ The authentication system is built around these key principles:
 
 ### Frontend Authentication Components
 
-#### 1. AuthService (`auth.service.ts`)
+#### 1. OldAuthService (`old.auth.service.ts`)
 
 The central service managing authentication state:
 
 ```typescript
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class OldAuthService {
   // State management with Angular signals
   private _state = signal<AuthState>({...});
   

@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { OldAuthService } from '../../../core/auth/services/old.auth.service';
 import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
@@ -17,7 +17,7 @@ import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
 export class SignupComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private authService = inject(OldAuthService);
   private feedbackService = inject(FeedbackService);
 
   // État local du composant

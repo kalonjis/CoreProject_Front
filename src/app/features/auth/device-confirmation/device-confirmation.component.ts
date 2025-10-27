@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FeedbackBase} from '../../../shared/feedback/tools/feedback.base';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeviceService} from '../../../data/services/device-service';
-import {AuthService} from '../../../core/auth/services/auth.service';
+import {OldAuthService} from '../../../core/auth/services/old.auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FeedbackComponent} from '../../../shared/feedback/feedback.component';
 
@@ -19,7 +19,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private deviceService = inject(DeviceService);
-  private authService = inject(AuthService);
+  private authService = inject(OldAuthService);
 
   isProcessing = false;
   token: string | null = null;

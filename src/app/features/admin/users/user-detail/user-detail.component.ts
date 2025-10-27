@@ -7,7 +7,7 @@ import { AdminService } from '../../../../data/services/admin.service';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
-import {AuthService} from '../../../../core/auth/services/auth.service';
+import {OldAuthService} from '../../../../core/auth/services/old.auth.service';
 import {ActivityLogDto, LogPagination} from '../../../../data/models/log/activity-log-dto';
 import {Device} from '../../../../data/models/device/device';
 import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
@@ -30,7 +30,7 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 export class UserDetailComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private adminService = inject(AdminService);
-  protected authService: AuthService = inject(AuthService);
+  protected authService: OldAuthService = inject(OldAuthService);
   private router: Router = inject(Router);
 
 

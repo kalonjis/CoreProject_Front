@@ -4,9 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { AuthService } from '../../../domains/auth/services/auth.service';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
+import {OldAuthService} from '../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class LoginComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private authService = inject(AuthService);
+  private oldAuthService = inject(OldAuthService);
+  private authService: AuthService = inject(AuthService);
 
   // État local du composant
   isSubmitting = signal(false);
@@ -67,7 +69,7 @@ export class LoginComponent extends FeedbackBase implements OnInit {
       password: this.loginForm.value.password || ''
     };
 
-    this.authService.login(credentials)
+    this.authService.initiateLogin(credentials)
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
@@ -130,7 +132,7 @@ export class LoginComponent extends FeedbackBase implements OnInit {
 
     this.isSubmitting.set(true);
 
-    this.authService.requestNewActivationByUsername(username)
+    this.oldAuthService.requestNewActivationByUsername(username)
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);

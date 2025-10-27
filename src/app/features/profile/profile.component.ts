@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../core/auth/services/auth.service';
+import { OldAuthService } from '../../core/auth/services/old.auth.service';
 import { DeviceService } from '../../data/services/device-service';
 import { Device } from '../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  authService = inject(AuthService);
+  authService = inject(OldAuthService);
   deviceService = inject(DeviceService);
 
   // User profile information

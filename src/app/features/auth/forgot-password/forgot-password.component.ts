@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { OldAuthService } from '../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -18,7 +18,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class ForgotPasswordComponent extends FeedbackBase {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private authService: AuthService = inject(AuthService);
+  private authService: OldAuthService = inject(OldAuthService);
   private feedbackService = inject(FeedbackService);
 
   // État local du composant
@@ -50,7 +50,7 @@ export class ForgotPasswordComponent extends FeedbackBase {
     this.isSubmitting.set(true);
     this.clearFeedback();
 
-    // Utilisation de l'AuthService pour la réinitialisation du mot de passe
+    // Utilisation de l'OldAuthService pour la réinitialisation du mot de passe
     this.authService.requestPasswordReset(email).subscribe({
       next: (response: any) => {
         this.isSubmitting.set(false);

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../core/auth/services/auth.service';
+import { OldAuthService } from '../core/auth/services/old.auth.service';
 import { FooterComponent } from '../core/layout/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../core/layout/header/header.component';
@@ -15,7 +15,7 @@ import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-a
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  authService = inject(AuthService);
+  authService = inject(OldAuthService);
 
   // Utilisation d'un effect pour gérer le thème basé sur les préférences
   themeEffect = effect(() => {

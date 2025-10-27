@@ -14,7 +14,7 @@ import {AuthState} from '../../../data/models/auth/auth.state';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService implements OnDestroy {
+export class OldAuthService implements OnDestroy {
 
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -399,7 +399,7 @@ export class AuthService implements OnDestroy {
   }
 
 
-  // À ajouter à votre AuthService
+  // À ajouter à votre OldAuthService
 
   /**
    * Rafraîchit le token d'accès à l'aide du refresh token

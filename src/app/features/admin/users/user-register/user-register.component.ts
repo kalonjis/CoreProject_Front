@@ -7,7 +7,7 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../../data/models/user/user-role';
 import { AdminService } from '../../../../data/services/admin.service';
-import { AuthService } from '../../../../core/auth/services/auth.service';
+import { OldAuthService } from '../../../../core/auth/services/old.auth.service';
 
 @Component({
   selector: 'app-user-register',
@@ -20,7 +20,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private http = inject(HttpClient);
-  protected authService: AuthService = inject(AuthService);
+  protected authService: OldAuthService = inject(OldAuthService);
   private adminService: AdminService = inject(AdminService);
 
   // État local du composant

@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HttpErrorType, HttpErrorSubType } from '../types/http-error-type';
 import { HttpErrorContext } from '../models/http-error-context';
-import { AuthService } from '../../auth/services/auth.service';
+import { OldAuthService } from '../../auth/services/old.auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpErrorAnalyzerService {
 
-  private authService = inject(AuthService);
+  private authService = inject(OldAuthService);
 
   analyze(error: HttpErrorResponse, url: string = ''): HttpErrorContext {
     const baseContext: HttpErrorContext = {

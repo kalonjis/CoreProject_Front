@@ -6,7 +6,7 @@
   import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
   import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
   import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
-  import { AuthService } from '../../../core/auth/services/auth.service';
+  import { OldAuthService } from '../../../core/auth/services/old.auth.service';
 
   @Component({
     selector: 'app-reset-password',
@@ -19,7 +19,7 @@
     private fb = inject(FormBuilder);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
-    private authService: AuthService = inject(AuthService);
+    private authService: OldAuthService = inject(OldAuthService);
     private feedbackService = inject(FeedbackService);
 
     // État local du composant
