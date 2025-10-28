@@ -110,68 +110,75 @@
     margin-top: 0.75rem;
   }
   // ⭐ NOUVEAUX STYLES OAUTH2
+  /* OAuth Section Styling */
   .oauth-section {
     margin-top: 2rem;
+  }
 
-    .separator {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 1.5rem 0;
+  .separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+  }
 
-      &::before,
-      &::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #e0e0e0;
-      }
+  .separator::before,
+  .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+  }
 
-      span {
-        padding: 0 1rem;
-        color: #666;
-        font-size: 0.9rem;
-        font-weight: 500;
-      }
-    }
+  .separator span {
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.875rem;
+  }
 
-    .btn-oauth {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      width: 100%;
-      padding: 0.875rem;
-      border: 2px solid #d1d5db;
-      border-radius: 6px;
-      background: white;
-      color: #1f2937;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: all 0.2s;
+  .btn-oauth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
 
-      svg {
-        flex-shrink: 0;
-      }
+  .btn-oauth:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 
-      &:hover {
-        background: #f9fafb;
-        border-color: #9ca3af;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
+  .btn-github {
+    background-color: #24292e;
+    color: white;
+  }
 
-      &.btn-github {
-        &:hover {
-          background: #24292e;
-          color: white;
-          border-color: #24292e;
+  .btn-github:hover {
+    background-color: #1b1f23;
+  }
 
-          svg {
-            color: white;
-          }
-        }
-      }
-    }
+  .btn-google {
+    background-color: white;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+  }
+
+  .btn-google:hover {
+    background-color: #f8f9fa;
+    border-color: #d2d3d4;
+  }
+
+  /* Ensure SVG icons are properly sized */
+  .btn-oauth svg {
+    flex-shrink: 0;
   }
 }
