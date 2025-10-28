@@ -46,6 +46,15 @@ export class LoginComponent extends FeedbackBase implements OnInit {
       if (params['expired'] === 'true') {
         this.displayWarning('Votre session a expiré. Veuillez vous reconnecter.', '', 5000);
       }
+
+      // ⭐ GESTION DES ERREURS OAUTH2
+      if (params['error'] === 'oauth2') {
+        this.displayError(
+          'Erreur lors de l\'authentification avec GitHub. Veuillez réessayer.',
+          '',
+          5000
+        );
+      }
     });
   }
 

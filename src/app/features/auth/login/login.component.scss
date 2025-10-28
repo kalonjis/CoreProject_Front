@@ -109,4 +109,69 @@
   .register-link {
     margin-top: 0.75rem;
   }
+  // ⭐ NOUVEAUX STYLES OAUTH2
+  .oauth-section {
+    margin-top: 2rem;
+
+    .separator {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+
+      &::before,
+      &::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      span {
+        padding: 0 1rem;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    }
+
+    .btn-oauth {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.875rem;
+      border: 2px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+
+      svg {
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      &.btn-github {
+        &:hover {
+          background: #24292e;
+          color: white;
+          border-color: #24292e;
+
+          svg {
+            color: white;
+          }
+        }
+      }
+    }
+  }
 }
