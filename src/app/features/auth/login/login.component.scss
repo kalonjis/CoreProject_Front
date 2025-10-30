@@ -1,3 +1,6 @@
+// Voici le SCSS COMPLET ET CORRIGÉ pour login.component.scss
+// Copiez-collez tout ce fichier pour remplacer l'ancien
+
 .login-container {
   display: flex;
   justify-content: center;
@@ -109,4 +112,207 @@
   .register-link {
     margin-top: 0.75rem;
   }
+}
+
+// ⭐ SECTION OAUTH2 - DESIGN MODERNE ET AMÉLIORÉ (AU BON NIVEAU!)
+.oauth-section {
+  margin-top: 2rem;
+
+  // Séparateur "ou" élégant
+  .separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    span {
+      padding: 0 1rem;
+      color: #666;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Boutons OAuth avec design moderne
+  .btn-oauth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    margin-bottom: 0.875rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    // Animation de hover avec overlay
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    // Icône SVG
+    svg {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      z-index: 1;
+    }
+
+    span {
+      z-index: 1;
+    }
+  }
+
+  // GitHub - Design moderne avec dégradé subtil
+  .btn-github {
+    background: linear-gradient(135deg, #24292e 0%, #1a1e22 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(36, 41, 46, 0.2);
+
+    &:hover {
+      background: linear-gradient(135deg, #1a1e22 0%, #0d1117 100%);
+      box-shadow: 0 6px 20px rgba(36, 41, 46, 0.3);
+    }
+
+    svg {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  // Google - Design officiel avec bordure colorée
+  .btn-google {
+    background-color: white;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.1);
+    position: relative;
+
+    // Bordure colorée au hover (inspiration Google)
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+      linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335) border-box;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+      background-color: #f8f9fa;
+      border-color: #d2d3d4;
+      box-shadow: 0 2px 8px rgba(60, 64, 67, 0.15);
+
+      &::after {
+        opacity: 0.5;
+      }
+    }
+
+    svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // Microsoft - Design officiel Windows
+  .btn-microsoft {
+    background-color: white;
+    color: #5e5e5e;
+    border: 1px solid #8c8c8c;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background-color: #f3f2f1;
+      border-color: #8c8c8c;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // Alternative: Design compact pour mobile
+  @media (max-width: 480px) {
+    .btn-oauth {
+      font-size: 0.875rem;
+      padding: 0.75rem;
+      gap: 0.625rem;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+// Animation d'entrée optionnelle
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.oauth-section {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
 }

@@ -18,21 +18,21 @@ export class DeviceService {
    * Get current device information
    */
   getCurrentDevice(): Observable<Device> {
-    return this.http.get<Device>('/api/user/device/current');
+    return this.http.get<Device>('/api/device/current');
   }
 
   /**
    * Get specific device by ID
    */
   getDevice(deviceId: number): Observable<Device> {
-    return this.http.get<Device>(`/api/user/device/my-device/${deviceId}`);
+    return this.http.get<Device>(`/api/device/${deviceId}`);
   }
 
   /**
    * Get list of user's devices
    */
   getMyDevices(): Observable<Device[]> {
-    return this.http.get<Device[]>('/api/user/device/my-devices-list');
+    return this.http.get<Device[]>('/api/device/my-devices');
   }
 
   /**
@@ -42,21 +42,21 @@ export class DeviceService {
     const form: DeviceTrustLevelForm = {
       deviceTrustLevel: trustLevel
     };
-    return this.httpUtil.patch<void>(`/api/user/device/update-trust-level/${deviceId}`, form);
+    return this.httpUtil.patch<void>(`/api/device/trust-level/${deviceId}`, form);
   }
 
   /**
    * Confirm device with token
    */
   confirmDevice(token: string): Observable<ApiResponse> {
-    return this.httpUtil.patch<ApiResponse>(`/api/user/device/confirm?token=${token}`, {}, true);
+    return this.http.get<ApiResponse>(`/api/device/confirm?token=${token}`, {});
   }
 
   /**
    * Reject device with token
    */
   rejectDevice(token: string): Observable<ApiResponse> {
-    return this.httpUtil.patch<ApiResponse>(`/api/user/device/reject?token=${token}`, {}, true);
+    return this.http.get<ApiResponse>(`/api/device/reject?token=${token}`, {});
   }
 
 
@@ -65,15 +65,15 @@ export class DeviceService {
    * Cette méthode doit correspondre à un nouvel endpoint côté backend
    */
   requestDeviceConfirmationLink(): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>('/api/user/device/request-confirmation', {}, { withCredentials: true });
+    return this.http.post<ApiResponse>('/api/device/request-confirmation', {}, { withCredentials: true });
   }
 
 
   disconnectDevice(deviceId: number): Observable<any> {
-    return this.http.patch<any>(`/api/user/device/disconnect/${deviceId}`, {}, { withCredentials: true });
+    return this.http.patch<any>(`/api/device/disconnect/${deviceId}`, {}, { withCredentials: true });
   }
 
   disconnectAllDevices(): Observable<any> {
-    return this.http.post<any>('/api/user/device/disconnect-all-others', {}, { withCredentials: true });
+    return this.http.post<any>('/api/device/disconnect-all-others', {}, { withCredentials: true });
   }
 }

@@ -337,7 +337,7 @@ export class AuthService implements OnDestroy {
 
 
   private fetchCurrentDevice(): void {
-    this.http.get<Device>('/api/user/device/current', { withCredentials: true })
+    this.http.get<Device>('/api/device/current', { withCredentials: true })
       .subscribe({
         next: (device) => {
           this._state.update(state => ({
@@ -504,12 +504,12 @@ export class AuthService implements OnDestroy {
    * @param email Adresse email pour laquelle réinitialiser le mot de passe
    */
   requestPasswordReset(email: string): Observable<any> {
-    return this.httpUtil.post<any>('/api/password/request-password-reset', { email }, true);
+    return this.httpUtil.post<any>('/api/password/forgot', { email }, true);
   }
 
 
   requestNewPasswordToken(token: string): Observable<any> {
-    return this.httpUtil.get<any>(`/api/password/request-password-token?token=${token}`, true);
+    return this.httpUtil.get<any>(`/api/password/reset/resend?token=${token}`, true);
   }
 
   /**
@@ -519,7 +519,7 @@ export class AuthService implements OnDestroy {
    * @param confirmPassword Confirmation du nouveau mot de passe
    */
   resetPassword(token: string, password: string, confirmPassword: string): Observable<any> {
-    return this.httpUtil.put<any>(`/api/password/reset-password?token=${token}`, {
+    return this.httpUtil.put<any>(`/api/password/reset?token=${token}`, {
       password,
       confirmPassword
     }, true);
@@ -536,7 +536,7 @@ export class AuthService implements OnDestroy {
     password: string;
     confirmPassword: string;
   }): Observable<any> {
-    return this.http.put('/api/password/change-password', data, {
+    return this.http.put('/api/password/change', data, {
       withCredentials: true
     }).pipe(
       tap(() => {
