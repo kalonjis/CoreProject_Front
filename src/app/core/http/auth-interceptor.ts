@@ -83,8 +83,26 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
   }
 
   // 8. Traitement de la requête avec gestion d'erreur
+  // Dans votre auth-interceptor.ts, remplacez la section "8. Traitement de la requête avec gestion d'erreur" par :
+
+// 8. Traitement de la requête avec gestion d'erreur
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+
+      // 🔥 NOUVEAU: Gestion PASSWORD_CHANGE_REQUIRED du backend
+      if (error.status === 403 && error.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
+        console.log('Backend requires password change, redirecting...');
+
+        // Rediriger vers la page de changement de mot de passe
+        // Le guard authGuard() se chargera de vérifier le statut mustChangePassword()
+        router.navigate(['/auth/change-password'], {
+          queryParams: { forced: 'true' }
+        });
+
+        // Ne pas propager l'erreur pour éviter les messages d'erreur inutiles
+        return throwError(() => new Error('Password change required - redirected'));
+      }
+
       // Gestion spécifique des erreurs 403 (votre logique existante)
       if (error.status === 403) {
         // Vérifier si l'erreur vient d'une tentative de désactivation de son propre compte
@@ -114,52 +132,34 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
           return pendingRequests.pipe(
             switchMap(success => {
               if (success) {
-                // Réessayer la requête originale avec potentiellement un nouveau token CSRF
-                const newCsrfToken = getCsrfToken();
-                let newReq = req.clone({ withCredentials: true });
-
-                if (newCsrfToken && req.method !== 'GET') {
-                  newReq = newReq.clone({
-                    headers: newReq.headers.set('X-XSRF-TOKEN', newCsrfToken)
-                  });
-                }
-
-                return next(newReq);
+                // Réessayer la requête originale avec potentiellement un nouveau token
+                return next(authReq);
+              } else {
+                return throwError(() => error);
               }
-              return throwError(() => error);
             })
           );
         }
 
-        // Marquer le début d'un refresh (avec signal)
+        // Marquer le refresh comme en cours
         isRefreshingSignal.set(true);
-        pendingRequests.next(false);
 
-        // Appeler le service pour rafraîchir le token
+        // Tenter le refresh token
         return authService.refreshToken().pipe(
           switchMap(() => {
-            // Le refresh a réussi
-            isRefreshingSignal.set(false);
+            // Refresh réussi, notifier les requêtes en attente
             pendingRequests.next(true);
-
-            // Réessayer la requête originale avec le nouveau token CSRF
-            const newCsrfToken = getCsrfToken();
-            let newReq = req.clone({ withCredentials: true });
-
-            if (newCsrfToken && req.method !== 'GET') {
-              newReq = newReq.clone({
-                headers: newReq.headers.set('X-XSRF-TOKEN', newCsrfToken)
-              });
-            }
-
-            return next(newReq);
-          }),
-          catchError(refreshError => {
-            // Le refresh a échoué
             isRefreshingSignal.set(false);
-            pendingRequests.next(false);
 
-            // Ne pas rediriger si on est sur une route publique
+            // Réessayer la requête originale
+            return next(authReq);
+          }),
+          catchError((refreshError) => {
+            // Refresh échoué, notifier les requêtes en attente
+            pendingRequests.next(false);
+            isRefreshingSignal.set(false);
+
+            // Si on est sur une route publique
             if (isPublicRoute) {
               return throwError(() => refreshError);
             }
