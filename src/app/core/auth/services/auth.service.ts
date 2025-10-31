@@ -448,7 +448,7 @@ export class AuthService implements OnDestroy {
     this._state.update(state => ({...state, isLoading: true, error: null}));
 
     // Faire la requête POST vers l'API d'inscription
-    return this.http.post<any>('/api/auth/signup', userData)
+    return this.http.post<any>('/api/account/signup', userData)
       .pipe(
         tap(response => {
           // Mettre à jour l'état après une inscription réussie
@@ -477,12 +477,12 @@ export class AuthService implements OnDestroy {
 
   // Méthode pour confirmer un compte
   confirmAccount(token: string): Observable<any> {
-    return this.httpUtil.get<any>(`/api/account-confirmation/activation?token=${token}`, true);
+    return this.http.get<any>(`/api/account/activate?token=${token}`);
   }
 
   // Méthode pour demander un nouveau token de confirmation
   requestNewConfirmationToken(token: string): Observable<any> {
-    return this.httpUtil.get<any>(`/api/account-confirmation/request-activation?token=${token}`, true);
+    return this.http.get<any>(`/api/account/resend-activation?token=${token}`);
   }
 
 
@@ -492,9 +492,8 @@ export class AuthService implements OnDestroy {
    * @returns Observable de la réponse de l'API
    */
   requestNewActivationByUsername(username: string): Observable<any> {
-    return this.httpUtil.get<any>(
-      `/api/account-confirmation/request-confirmation-by-username?username=${encodeURIComponent(username)}`,
-      true
+    return this.http.get<any>(
+      `/api/account-confirmation/request-confirmation-by-username?username=${encodeURIComponent(username)}`
     );
   }
 
@@ -509,7 +508,7 @@ export class AuthService implements OnDestroy {
 
 
   requestNewPasswordToken(token: string): Observable<any> {
-    return this.httpUtil.get<any>(`/api/password/reset/resend?token=${token}`, true);
+    return this.http.get<any>(`/api/password/reset/resend?token=${token}`);
   }
 
   /**
@@ -621,7 +620,7 @@ export class AuthService implements OnDestroy {
    * Demande un changement d'adresse email
    */
   changeEmailRequest(email: string, confirmEmail: string): Observable<any> {
-    return this.http.post('/api/auth/change-email-request', {
+    return this.http.post('/api/email-address-change/request', {
       email,
       confirmEmail
     }, { withCredentials: true });
@@ -631,23 +630,20 @@ export class AuthService implements OnDestroy {
    * Confirme la première étape du changement d'email (vérification de l'ancien email)
    */
   verifyEmailChange(token: string): Observable<any> {
-    return this.http.patch(`/api/auth/change-email-verification?token=${token}`, {},
-      { withCredentials: true });
+    return this.http.get(`/api/email-address-change/verification?token=${token}`);
   }
 
   /**
    * Finalise le changement d'email après confirmation de la nouvelle adresse
    */
   confirmEmailChange(token: string): Observable<any> {
-    return this.http.put(`/api/auth/change-email-confirmation?token=${token}`, {},
-      { withCredentials: true });
+    return this.http.get(`/api/email-address-change/confirmation?token=${token}`);
   }
 
   /**
    * Annule le processus de changement d'email
    */
   cancelEmailChange(token: string): Observable<any> {
-    return this.http.patch(`/api/auth/cancel-email-change?token=${token}`, {},
-      { withCredentials: true });
+    return this.http.get(`/api/email-address-change/cancel?token=${token}`);
   }
 }
