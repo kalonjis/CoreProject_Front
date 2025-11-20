@@ -459,3 +459,329 @@
     margin-right: 4px;
   }
 }
+
+// Ajouter ces styles à profile.component.scss
+
+// Enhanced Phone Field Styles
+.phone-enhanced {
+  .phone-label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: $dark-color;
+    margin-bottom: 0.75rem;
+
+    .icon {
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .phone-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    @include respond-to('mobile') {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+  }
+
+  .phone-input {
+    flex: 1;
+    padding-right: 3rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    }
+
+    &.valid {
+      border-color: $success-color;
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba($success-color, 0.2);
+      }
+    }
+
+    &.verified {
+      border-color: $success-color;
+      background: linear-gradient(to right, rgba($success-color, 0.05), transparent);
+    }
+  }
+
+  .input-status {
+    position: absolute;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: none;
+    z-index: 1;
+
+    @include respond-to('mobile') {
+      position: static;
+      order: -1;
+      justify-content: center;
+      pointer-events: auto;
+    }
+  }
+
+  .check-icon {
+    color: $success-color;
+    font-weight: bold;
+    font-size: 1.2rem;
+    animation: checkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .error-icon {
+    color: $danger-color;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .verify-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.9rem;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, darken($primary-color, 5%), darken($primary-color, 15%));
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @include respond-to('mobile') {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+
+  .status-message {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+
+    &.success {
+      background-color: rgba($success-color, 0.1);
+      color: darken($success-color, 20%);
+      border: 1px solid rgba($success-color, 0.3);
+    }
+
+    &.info {
+      background-color: rgba($info-color, 0.1);
+      color: darken($info-color, 20%);
+      border: 1px solid rgba($info-color, 0.3);
+    }
+  }
+}
+
+// Verification Modal Styles
+.verification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  animation: fadeIn 0.3s ease;
+  padding: 1rem;
+}
+
+.verification-modal {
+  background: white;
+  border-radius: $border-radius-lg;
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: $box-shadow-lg;
+  animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .modal-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .modal-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: $font-weight-bold;
+      color: $secondary-color;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      color: $gray-dark;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+
+  .verification-inputs {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    @include respond-to('mobile') {
+      gap: 0.5rem;
+    }
+  }
+
+  .code-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: $font-weight-bold;
+    border: 2px solid $border-color;
+    border-radius: $border-radius;
+    background: $gray-light;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:focus {
+      border-color: $primary-color;
+      background: white;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      transform: scale(1.05);
+    }
+
+    @include respond-to('mobile') {
+      width: 45px;
+      height: 45px;
+      font-size: 1.1rem;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+
+    @include respond-to('mobile') {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  .verify-code-btn, .cancel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.9rem;
+    min-width: 120px;
+  }
+
+  .verify-code-btn {
+    background: linear-gradient(135deg, $success-color, darken($success-color, 10%));
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, darken($success-color, 5%), darken($success-color, 15%));
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  .cancel-btn {
+    background: $gray-light;
+    color: $gray-dark;
+    border: 1px solid $border-color;
+
+    &:hover {
+      background: $gray-medium;
+      color: $dark-color;
+    }
+  }
+}
+
+// Animations
+@keyframes checkBounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(50px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}

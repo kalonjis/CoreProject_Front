@@ -9,6 +9,7 @@ import { DeviceService } from '../../data/services/device-service';
 import { Device } from '../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, retry, of, finalize } from 'rxjs';
+import {HttpUtilService} from '../../core/http/http-util.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +20,7 @@ import { catchError, retry, of, finalize } from 'rxjs';
 })
 export class ProfileComponent implements OnInit {
   private http = inject(HttpClient);
+  private httpUtil = inject(HttpUtilService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
@@ -37,7 +39,22 @@ export class ProfileComponent implements OnInit {
   changeEmailMode = signal(false);
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
+  private phoneValid = signal(false);
+  private phoneVerified = signal(false);
+  private sendingCode = signal(false);
+  private verifying = signal(false);
+  private showModal = signal(false);
+  private statusMessage = signal('');
+  private codeArray = signal(['', '', '', '', '', '']);
 
+  // Getters pour les signals
+  isPhoneValid = this.phoneValid.asReadonly();
+  isPhoneVerified = this.phoneVerified.asReadonly();
+  isSendingCode = this.sendingCode.asReadonly();
+  isVerifying = this.verifying.asReadonly();
+  showVerificationModal = this.showModal.asReadonly();
+  phoneStatusMessage = this.statusMessage.asReadonly();
+  verificationCode = this.codeArray.asReadonly();
   // Pour gérer les tentatives de chargement
   retryAttempts = 0;
   maxRetries = 3;
@@ -253,4 +270,159 @@ export class ProfileComponent implements OnInit {
     this.loadUserProfile();
     this.loadUserDevices();
   }
+
+  /**
+   * Validation du format international du téléphone
+   */
+  private validatePhoneFormat(phone: string): boolean {
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
+    return phoneRegex.test(phone?.trim() || '');
+  }
+
+  /**
+   * Gestionnaire de changement du numéro de téléphone
+   */
+  onPhoneChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const phone = input.value;
+
+    this.phoneValid.set(this.validatePhoneFormat(phone));
+    this.phoneVerified.set(false); // Reset verification status
+    this.statusMessage.set('');
+  }
+
+  /**
+   * Envoi du code de vérification SMS
+   */
+  async sendVerificationCode(): Promise<void> {
+    const phoneNumber = this.profileForm.get('phoneNumber')?.value;
+    if (!this.phoneValid() || !phoneNumber) return;
+
+    this.sendingCode.set(true);
+    this.statusMessage.set('');
+
+    this.httpUtil.post('/api/profile/SMS/request-verification', {
+      phoneNumber
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError(err => {
+        console.error('Erreur envoi SMS:', err);
+        this.statusMessage.set('Erreur lors de l\'envoi du SMS. Veuillez réessayer.');
+        return of(null);
+      }),
+      finalize(() => {
+        this.sendingCode.set(false);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response !== null) {
+          this.statusMessage.set('Code de vérification envoyé !');
+          this.showModal.set(true);
+          this.resetVerificationCode();
+        }
+      }
+    });
+  }
+
+  /**
+   * Gestionnaire d'input pour le code de vérification
+   */
+  onCodeInput(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    // Ne garder que les chiffres
+    const numericValue = value.replace(/\D/g, '');
+    input.value = numericValue;
+
+    // Mettre à jour le tableau du code
+    const currentCode = [...this.codeArray()];
+    currentCode[index] = numericValue;
+    this.codeArray.set(currentCode);
+
+    // Auto-focus sur le champ suivant si une valeur est saisie
+    if (numericValue && index < 5) {
+      const nextInput = document.querySelector(`input.code-input:nth-child(${index + 2})`) as HTMLInputElement;
+      nextInput?.focus();
+    }
+  }
+
+  /**
+   * Gestionnaire des touches pour navigation du code
+   */
+  onCodeKeyDown(index: number, event: KeyboardEvent): void {
+    // Retour en arrière
+    if (event.key === 'Backspace' && !this.codeArray()[index] && index > 0) {
+      const prevInput = document.querySelector(`input.code-input:nth-child(${index})`) as HTMLInputElement;
+      prevInput?.focus();
+    }
+  }
+
+  /**
+   * Vérifier si le code est complet
+   */
+  isCodeComplete(): boolean {
+    return this.codeArray().every(digit => digit.length === 1);
+  }
+
+  /**
+   * Vérification du code SMS
+   */
+  verifyCode(): void {
+    if (!this.isCodeComplete()) return;
+
+    this.verifying.set(true);
+    const code = this.codeArray().join('');
+
+    this.http.post('/api/profile/SMS/verify', {
+      verificationCode: code
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError(err => {
+        console.error('Erreur vérification:', err);
+        this.statusMessage.set('Code incorrect. Veuillez réessayer.');
+        this.resetVerificationCode();
+        return of(null);
+      }),
+      finalize(() => {
+        this.verifying.set(false);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response !== null) {
+          this.phoneVerified.set(true);
+          this.showModal.set(false);
+          this.statusMessage.set('Numéro vérifié avec succès !');
+
+          // Optionnel: mettre à jour le profil utilisateur
+          this.loadUserProfile();
+        }
+      }
+    });
+  }
+
+  /**
+   * Fermer la modal de vérification
+   */
+  closeVerificationModal(): void {
+    this.showModal.set(false);
+    this.resetVerificationCode();
+  }
+
+  /**
+   * Fermer la modal en cliquant sur l'overlay
+   */
+  closeModal(event: Event): void {
+    if (event.target === event.currentTarget) {
+      this.closeVerificationModal();
+    }
+  }
+
+  /**
+   * Reset du code de vérification
+   */
+  private resetVerificationCode(): void {
+    this.codeArray.set(['', '', '', '', '', '']);
+  }
+
 }

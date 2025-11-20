@@ -64,13 +64,65 @@
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="phoneNumber">Phone Number</label>
-                  <input type="text" id="phoneNumber" formControlName="phoneNumber" class="form-control">
-                  @if (profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched) {
-                    <div class="error-message">Please enter a valid phone number</div>
+              <div class="form-group phone-enhanced">
+                <label for="phoneNumber" class="phone-label">
+                  <span class="icon">📱</span>
+                  Numéro de téléphone
+                </label>
+
+                <div class="phone-input-wrapper">
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    formControlName="phoneNumber"
+                    class="form-control phone-input"
+                    [class.valid]="isPhoneValid()"
+                    [class.verified]="isPhoneVerified()"
+                    placeholder="+32 498 56 78 90"
+                    (input)="onPhoneChange($event)"
+                  >
+
+                  <div class="input-status">
+                    @if (isPhoneVerified()) {
+                      <span class="check-icon">✓</span>
+                    }
+                    @if (!isPhoneValid() && profileForm.get('phoneNumber')?.value) {
+                      <span class="error-icon">!</span>
+                    }
+                  </div>
+
+                  @if (isPhoneValid() && !isPhoneVerified()) {
+                    <button
+                      type="button"
+                      class="verify-btn"
+                      [disabled]="isSendingCode()"
+                      (click)="sendVerificationCode()"
+                    >
+                      @if (isSendingCode()) {
+                        <span class="spinner"></span>
+                        <span>Envoi...</span>
+                      } @else {
+                        <span class="send-icon">📤</span>
+                        <span>Vérifier</span>
+                      }
+                    </button>
                   }
                 </div>
+
+                @if (!isPhoneValid() && profileForm.get('phoneNumber')?.value) {
+                  <div class="error-message">
+                    Format requis : +33 1 23 45 67 89 (format international)
+                  </div>
+                }
+
+                @if (phoneStatusMessage()) {
+                  <div class="status-message"
+                       [class.success]="isPhoneVerified()"
+                       [class.info]="!isPhoneVerified()">
+                    {{ phoneStatusMessage() }}
+                  </div>
+                }
+              </div>
 
                 <div class="form-actions">
                   <button type="submit" class="btn-primary" [disabled]="profileForm.invalid">Save Changes</button>
@@ -202,4 +254,49 @@
       }
     }
   </div>
+  @if (showVerificationModal()) {
+    <div class="verification-overlay" (click)="closeModal($event)">
+      <div class="verification-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span class="modal-icon">📱</span>
+          <h3>Vérification SMS</h3>
+          <p>Entrez le code à 6 chiffres envoyé au {{ profileForm.get('phoneNumber')?.value }}</p>
+        </div>
+
+        <div class="verification-inputs">
+          @for (digit of verificationCode(); track $index) {
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              [value]="digit"
+              (input)="onCodeInput($index, $event)"
+              (keydown)="onCodeKeyDown($index, $event)"
+              #codeInput
+            >
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="verify-code-btn"
+            [disabled]="!isCodeComplete() || isVerifying()"
+            (click)="verifyCode()"
+          >
+            @if (isVerifying()) {
+              <span class="spinner"></span>
+              <span>Vérification...</span>
+            } @else {
+              <span class="check-icon">✓</span>
+              <span>Confirmer</span>
+            }
+          </button>
+
+          <button class="cancel-btn" (click)="closeVerificationModal()">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
