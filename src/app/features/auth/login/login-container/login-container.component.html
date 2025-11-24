@@ -1,0 +1,50 @@
+<!-- login-container.component.html -->
+<div class="login-container">
+  <div class="login-card">
+    <h2>Login</h2>
+
+    <!-- Feedback system for error and success messages -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Login error display (for errors that don't require action) -->
+    @if (loginError()) {
+      <div class="error-message">
+        {{ loginError() }}
+      </div>
+    }
+
+    <!-- Login Form Component -->
+    <app-login-form
+      [isSubmitting]="isSubmitting()"
+      (submitLogin)="handleLogin($event)">
+    </app-login-form>
+
+    <!-- OAuth Section -->
+    <div class="oauth-section">
+      <div class="separator">
+        <span>or</span>
+      </div>
+
+      <app-oauth-button provider="github"></app-oauth-button>
+      <app-oauth-button provider="google"></app-oauth-button>
+      <app-oauth-button provider="microsoft"></app-oauth-button>
+    </div>
+
+    <!-- Auth Links -->
+    <div class="auth-links">
+      <a routerLink="/auth/forgot-password">Forgot password?</a>
+      <div class="signup-link">
+        Don't have an account yet?
+        <a routerLink="/auth/signup">Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>

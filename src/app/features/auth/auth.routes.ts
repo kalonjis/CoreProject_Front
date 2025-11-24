@@ -4,7 +4,7 @@ import {authGuard} from '../../core/auth/guards/auth.guard';
 export const AUTH_ROUTES: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./login/login-container/login-container.component').then(m => m.LoginContainerComponent),
   },
   {
     path: 'device-confirmation',
