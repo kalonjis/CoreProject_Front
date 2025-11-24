@@ -1,0 +1,56 @@
+<!-- login-form.component.html -->
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+  <!-- Username Field -->
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      id="username"
+      formControlName="username"
+      placeholder="Enter your username"
+      autocomplete="username"
+      [class.error]="isFieldInvalid('username')"
+    >
+    @if (isFieldInvalid('username')) {
+      <div class="validation-error">
+        {{ getFieldError('username') }}
+      </div>
+    }
+  </div>
+
+  <!-- Password Field -->
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      formControlName="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+      [class.error]="isFieldInvalid('password')"
+    >
+    @if (isFieldInvalid('password')) {
+      <div class="validation-error">
+        {{ getFieldError('password') }}
+      </div>
+    }
+  </div>
+
+  <!-- Submit Button -->
+  <div class="form-actions">
+    <button
+      type="submit"
+      class="btn-primary"
+      [disabled]="loginForm.invalid || isSubmitting"
+    >
+      @if (isSubmitting) {
+        <span class="loading-spinner"></span>
+        <span>Logging in...</span>
+      } @else {
+        <span>Login</span>
+      }
+    </button>
+  </div>
+
+</form>
