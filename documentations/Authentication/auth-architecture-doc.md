@@ -94,7 +94,7 @@ export class AuthService {
 }
 ```
 
-#### 2. AuthInterceptor (`auth-interceptor.ts`)
+#### 2. AuthInterceptor (`auth.interceptor.ts`)
 
 HTTP interceptor that:
 - Attaches cookies and CSRF tokens to outgoing requests

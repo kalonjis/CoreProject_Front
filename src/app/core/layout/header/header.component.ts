@@ -1,8 +1,8 @@
-// header.component.ts
 import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../auth/services/auth.service';
+
+import { AuthFacade } from '../../auth/services/auth.facade';
 
 @Component({
   selector: 'app-header',
@@ -12,12 +12,18 @@ import { AuthService } from '../../auth/services/auth.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  authService = inject(AuthService);
 
+  private readonly authFacade = inject(AuthFacade);
+
+  // Expose signals for template
+  readonly isAuthenticated = this.authFacade.isAuthenticated;
+  readonly username = this.authFacade.username;
+  readonly isAdmin = this.authFacade.isAdmin;
+
+  // Local UI state
   mobileMenuActive = false;
   isDropdownOpen = false;
 
-  // Ferme le dropdown quand on clique ailleurs sur la page
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
@@ -36,14 +42,14 @@ export class HeaderComponent {
     document.body.style.overflow = '';
   }
 
-  toggleDropdown(): void {
-    // Empêche la fermeture lorsque l'événement document:click se déclenche
-    event?.stopPropagation();
+  // APRÈS ✅
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
   logout(): void {
-    this.authService.logout().subscribe();
+    this.authFacade.logout().subscribe();
     this.isDropdownOpen = false;
   }
 }
