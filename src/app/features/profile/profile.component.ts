@@ -261,7 +261,7 @@ export class ProfileComponent implements OnInit {
     this.sendingCode.set(true);
     this.statusMessage.set('');
 
-    this.http.post('/api/user/phone/send-code', {
+    this.http.post('/api/profile/SMS/request-verification', {
       phoneNumber: this.profileForm.get('phoneNumber')?.value
     })
       .pipe(
@@ -290,7 +290,7 @@ export class ProfileComponent implements OnInit {
 
     const code = this.codeArray().join('');
 
-    this.http.post('/api/user/phone/verify', { code })
+    this.http.post('/api/profile/SMS/verify', { code })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
