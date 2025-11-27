@@ -1,45 +1,45 @@
-import { Component, inject, OnInit, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../core/auth/services/auth.service';
-import { FooterComponent } from '../core/layout/footer/footer.component';
+import { Component, inject, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { AuthFacade } from '../core/auth';
+import { FooterComponent } from '../core/layout/footer/footer.component';
 import { HeaderComponent } from '../core/layout/header/header.component';
 import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
-import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-alert-banner.component';
+import { DeviceAlertBannerComponent } from '../shared/device-alert-banner/device-alert-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent, DeviceAlertBannerComponent],
+  imports: [
+    RouterOutlet,
+    FooterComponent,
+    HeaderComponent,
+    GlobalFeedbackComponent,
+    DeviceAlertBannerComponent
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
-  authService = inject(AuthService);
+export class AppComponent {
 
-  // Utilisation d'un effect pour gérer le thème basé sur les préférences
+  private readonly authFacade = inject(AuthFacade);
+
+  // Apply theme based on user preferences
   themeEffect = effect(() => {
-    const user = this.authService.user();
+    const user = this.authFacade.user();
     if (user) {
-      // Exemple: appliquer le thème préféré de l'utilisateur
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.body.className = savedTheme;
     }
   });
 
-  // Utilisation d'un effect pour afficher le statut d'authentification en dev
+  // Log auth status in dev mode
   logEffect = effect(() => {
-    const isAuth = this.authService.isAuthenticated();
-    console.log(`État d'authentification: ${isAuth ? 'Connecté' : 'Non connecté'}`);
+    const isAuth = this.authFacade.isAuthenticated();
+    console.log(`Auth status: ${isAuth ? 'Authenticated' : 'Not authenticated'}`);
 
     if (isAuth) {
-      console.log('Utilisateur:', this.authService.user()?.username);
+      console.log('User:', this.authFacade.username());
     }
   });
-
-  ngOnInit(): void {
-    // L'initialisation est déjà gérée par APP_INITIALIZER
-    // Mais on peut ajouter des actions supplémentaires si nécessaire
-    console.log('Application initialisée');
-  }
 }

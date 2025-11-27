@@ -1,18 +1,16 @@
-// login-container.component.ts
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../../../core/auth/services/auth.service';
+
+import { AuthFacade, LoginRequest } from '../../../../core/auth';
+
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { LoginFormComponent } from '../components/login-form/login-form.component';
 import { OAuthButtonComponent } from '../components/oauth-button/oauth-button.component';
 
-export interface LoginFormData {
-  username: string;
-  password: string;
-}
+// ✅ SUPPRIMÉ: interface LoginFormData (utilise LoginRequest du barrel)
 
 @Component({
   selector: 'app-login-container',
@@ -28,9 +26,13 @@ export interface LoginFormData {
   styleUrl: './login-container.component.scss'
 })
 export class LoginContainerComponent extends FeedbackBase implements OnInit {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private authService = inject(AuthService);
+
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
+  // ✅ AVANT: private authService = inject(AuthService);
+  // ✅ APRÈS: Utilise AuthFacade
+  private readonly authFacade = inject(AuthFacade);
 
   // Container state
   isSubmitting = signal(false);
@@ -44,22 +46,20 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
   /**
    * Handles login form submission
    */
-  handleLogin(formData: LoginFormData): void {
+  handleLogin(formData: LoginRequest): void {
     if (this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
     this.loginError.set(null);
 
-    this.authService.login(formData).subscribe({
+    this.authFacade.login(formData).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.displaySuccess('Login successful! Redirecting...', '', 2000);
 
-        // Navigate to return URL or dashboard
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         setTimeout(() => this.router.navigateByUrl(returnUrl), 1500);
       },
-
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
         this.handleLoginError(error);
@@ -82,6 +82,10 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
 
       if (params['expired'] === 'true') {
         this.displayWarning('Your session has expired. Please log in again.', '', 5000);
+      }
+
+      if (params['loggedOut'] === 'true') {
+        this.displaySuccess('You have been logged out.', '', 3000);
       }
 
       if (params['error'] === 'oauth2') {
@@ -130,32 +134,6 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
       return;
     }
 
-    // Generic error
     this.loginError.set('An error occurred during login. Please try again.');
   }
-
-  /**
-   * Handles feedback button clicks (e.g., resend activation)
-
-  handleFeedbackButtonClick(): void {
-    const username = this.unactivatedUsername();
-    if (username) {
-      this.authService.(username).subscribe({
-        next: () => {
-          this.displaySuccess(
-            'Activation email sent! Please check your inbox.',
-            '',
-            3000
-          );
-        },
-        error: () => {
-          this.displayError(
-            'Failed to send activation email. Please try again.',
-            '',
-            3000
-          );
-        }
-      });
-    }
-  }*/
 }

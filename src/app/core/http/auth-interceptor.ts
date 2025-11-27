@@ -2,22 +2,18 @@ import { inject } from '@angular/core';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, switchMap, catchError, Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { signal } from '@angular/core';
 
-// Services d'erreur
-import { HttpErrorAnalyzerService } from '../errors/services/http-error-analyzer.service';
-import { GlobalErrorManagerService } from '../errors/services/global-error-manager.service';
-
-// Services existants
-import { AuthService } from '../auth/services/auth.service';
+import { SKIP_AUTH_INTERCEPTOR } from './http.context';
+import { AuthStore } from '../auth/state/auth.store';
+import { AuthApiService } from '../auth/services/auth-api.service';
 import { isPublicApiRoute, isPublicFrontendRoute } from '../auth/config/public-routes.config';
 
-// Gestion du refresh token avec signaux
-const isRefreshingSignal = signal(false);
-const pendingRequests = new Subject<boolean>();
+// Refresh token state
+let isRefreshing = false;
+const refreshComplete$ = new Subject<boolean>();
 
 /**
- * Récupère le token CSRF à partir des cookies
+ * Get CSRF token from cookies
  */
 function getCsrfToken(): string | null {
   const cookies = document.cookie.split(';');
@@ -31,185 +27,106 @@ function getCsrfToken(): string | null {
 }
 
 /**
- * Intercepteur HTTP avec signaux Angular
+ * Auth interceptor using HttpContext (Angular modern approach)
  */
-export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-  const router = inject(Router);
-  const authService = inject(AuthService);
-  const errorAnalyzer = inject(HttpErrorAnalyzerService);
-  const errorManager = inject(GlobalErrorManagerService);
+export const authInterceptor = (
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn
+  ): Observable<HttpEvent<unknown>> => {
 
-  // 1. Ne pas intercepter les requêtes marquées pour être ignorées
-  if (req.headers.has('X-Skip-Interceptor')) {
-    const cleanedReq = req.clone({
-      headers: req.headers.delete('X-Skip-Interceptor')
-    });
-    return next(cleanedReq);
-  }
+    const router = inject(Router);
+    const authStore = inject(AuthStore);
+    const authApi = inject(AuthApiService);
 
-  // 2. Récupérer l'URL actuelle et vérifier si c'est une route publique
-  const currentUrl = router.url;
-  const isPublicRoute = isPublicFrontendRoute(currentUrl);
-  const isAuthStatusCheck = req.url.includes('/api/auth/me') || req.url.includes('/api/auth/status');
+    // =========================================================================
+    // 1. Check if we should skip this interceptor
+    // =========================================================================
+    if (req.context.get(SKIP_AUTH_INTERCEPTOR)) {
+      return next(req);
+    }
 
-  // 3. Récupérer le token CSRF
-  const csrfToken = getCsrfToken();
+    // =========================================================================
+    // 2. Check if this is a public route
+    // =========================================================================
+    const currentUrl = router.url;
+    const isPublicRoute = isPublicFrontendRoute(currentUrl);
+    const isAuthStatusCheck = req.url.includes('/api/auth/session') ||
+      req.url.includes('/api/auth/status');
 
-  // 4. Ajouter withCredentials et éventuellement l'en-tête CSRF
-  let authReq = req.clone({
-    withCredentials: true
-  });
+    // =========================================================================
+    // 3. Clone request with credentials and CSRF token
+    // =========================================================================
+    let authReq = req.clone({ withCredentials: true });
 
-  // 5. Ajouter le token CSRF pour les requêtes non GET
-  if (csrfToken && req.method !== 'GET') {
-    authReq = authReq.clone({
-      headers: authReq.headers.set('X-XSRF-TOKEN', csrfToken)
-    });
-  }
+    const csrfToken = getCsrfToken();
+    if (csrfToken && req.method !== 'GET') {
+      authReq = authReq.clone({
+        headers: authReq.headers.set('X-XSRF-TOKEN', csrfToken)
+      });
+    }
 
-  // 6. Ne pas appliquer la logique de refresh token pour les routes publiques
-  if (isPublicRoute && !isAuthStatusCheck) {
+    // =========================================================================
+    // 4. Skip refresh logic for public routes
+    // =========================================================================
+    if (isPublicRoute && !isAuthStatusCheck) {
+      return next(authReq);
+    }
+
+    // =========================================================================
+    // 5. Handle request with 401 retry logic
+    // =========================================================================
     return next(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Analyser et gérer les erreurs même pour les routes publiques
-        return handleHttpError(error, req.url, errorAnalyzer, errorManager);
+        if (error.status === 401 && !isPublicApiRoute(req.url)) {
+          return handleUnauthorized(authReq, next, authApi, authStore, router);
+        }
+        return throwError(() => error);
       })
     );
-  }
+  };
 
-  // 7. Ne pas intercepter les requêtes de refresh token pour éviter les boucles
-  if (req.url.includes('/api/auth/refresh-token')) {
-    return next(authReq);
-  }
+  /**
+   * Handle 401 errors by attempting token refresh
+   */
+  function handleUnauthorized(
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn,
+    authApi: AuthApiService,
+    authStore: AuthStore,
+    router: Router
+  ): Observable<HttpEvent<unknown>> {
 
-  // 8. Traitement de la requête avec gestion d'erreur
-  // Dans votre auth-interceptor.ts, remplacez la section "8. Traitement de la requête avec gestion d'erreur" par :
+    if (isRefreshing) {
+      // Wait for ongoing refresh to complete, then retry
+      return refreshComplete$.pipe(
+        switchMap(success => {
+          if (success) {
+            return next(req);
+          }
+          return throwError(() => new HttpErrorResponse({ status: 401 }));
+        })
+      );
+    }
 
-// 8. Traitement de la requête avec gestion d'erreur
-  return next(authReq).pipe(
-    catchError((error: HttpErrorResponse) => {
+    isRefreshing = true;
 
-      // 🔥 NOUVEAU: Gestion PASSWORD_CHANGE_REQUIRED du backend
-      if (error.status === 403 && error.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
-        console.log('Backend requires password change, redirecting...');
+  return authApi.refreshToken().pipe(
+    switchMap(() => {
+      isRefreshing = false;
+      refreshComplete$.next(true);
+      return next(req);
+    }),
+    catchError(refreshError => {
+      isRefreshing = false;
+      refreshComplete$.next(false);
 
-        // Rediriger vers la page de changement de mot de passe
-        // Le guard authGuard() se chargera de vérifier le statut mustChangePassword()
-        router.navigate(['/auth/change-password'], {
-          queryParams: { forced: 'true' }
-        });
+      // Clear auth state and redirect to login
+      authStore.reset();
+      router.navigate(['/auth/login'], {
+        queryParams: { expired: 'true' }
+      });
 
-        // Ne pas propager l'erreur pour éviter les messages d'erreur inutiles
-        return throwError(() => new Error('Password change required - redirected'));
-      }
-
-      // Gestion spécifique des erreurs 403 (votre logique existante)
-      if (error.status === 403) {
-        // Vérifier si l'erreur vient d'une tentative de désactivation de son propre compte
-        if (error.url?.includes('/api/admin/users/deactivate/') &&
-          error.error?.error?.includes("own account")) {
-          return throwError(() => error);
-        }
-
-        // Vérifier si l'erreur vient d'une tentative de désactivation d'un SUPER_ADMIN sans droits
-        if (error.url?.includes('/api/admin/users/deactivate/') &&
-          error.error?.error?.includes("SUPER_ADMIN privileges")) {
-          return throwError(() => error);
-        }
-      }
-
-      // Gestion des erreurs d'authentification 401/403
-      if ((error.status === 401 || error.status === 403) && !isPublicApiRoute(req.url)) {
-        // Si on est sur une route publique frontend, ne pas tenter de refresh
-        if (isPublicRoute && !isAuthStatusCheck) {
-          return throwError(() => error);
-        }
-
-        console.log(`Erreur d'authentification sur ${req.url}, tentative de refresh token`);
-
-        // Si un refresh token est déjà en cours (utilisation du signal)
-        if (isRefreshingSignal()) {
-          return pendingRequests.pipe(
-            switchMap(success => {
-              if (success) {
-                // Réessayer la requête originale avec potentiellement un nouveau token
-                return next(authReq);
-              } else {
-                return throwError(() => error);
-              }
-            })
-          );
-        }
-
-        // Marquer le refresh comme en cours
-        isRefreshingSignal.set(true);
-
-        // Tenter le refresh token
-        return authService.refreshToken().pipe(
-          switchMap(() => {
-            // Refresh réussi, notifier les requêtes en attente
-            pendingRequests.next(true);
-            isRefreshingSignal.set(false);
-
-            // Réessayer la requête originale
-            return next(authReq);
-          }),
-          catchError((refreshError) => {
-            // Refresh échoué, notifier les requêtes en attente
-            pendingRequests.next(false);
-            isRefreshingSignal.set(false);
-
-            // Si on est sur une route publique
-            if (isPublicRoute) {
-              return throwError(() => refreshError);
-            }
-
-            // Déconnecter l'utilisateur et rediriger
-            authService.clearSession();
-            router.navigate(['/auth/login'], {
-              queryParams: { expired: 'true' }
-            });
-
-            return throwError(() => refreshError);
-          })
-        );
-      }
-
-      // Gestion générique des autres erreurs HTTP
-      return handleHttpError(error, req.url, errorAnalyzer, errorManager);
+      return throwError(() => refreshError);
     })
   );
-};
-
-/**
- * Gestion générique des erreurs HTTP
- */
-function handleHttpError(
-  error: HttpErrorResponse,
-  url: string,
-  analyzer: HttpErrorAnalyzerService,
-  manager: GlobalErrorManagerService
-): Observable<never> {
-
-  // Analyser l'erreur avec le service générique
-  const context = analyzer.analyze(error, url);
-
-  // Les erreurs avec action 'feedback' ou 'inline' sont laissées aux composants
-  if (context.action === 'feedback' || context.action === 'inline') {
-    // Ne pas traiter ici, laisser le composant gérer
-    return throwError(() => error);
-  }
-
-  // Traiter les autres types d'erreurs (redirect, modal, banner, page)
-  manager.handleError(context);
-
-  // Toujours propager l'erreur pour que les composants puissent réagir si nécessaire
-  return throwError(() => error);
-}
-
-/**
- * Fonction utilitaire pour accéder à l'état du refresh depuis l'extérieur (optionnel)
- */
-export function isRefreshTokenInProgress(): boolean {
-  return isRefreshingSignal();
 }

@@ -1,35 +1,101 @@
-// src/app/core/auth/guards/auth.guard.ts
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { Router, CanActivateFn } from '@angular/router';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, map, take } from 'rxjs';
 
-export function authGuard(requirePasswordChange: boolean = false) {
-  const authService = inject(AuthService);
+import { AuthFacade } from '../services/auth.facade';
+
+/**
+ * Auth guard using the new AuthFacade.
+ *
+ * Waits for initialization before checking auth status.
+ * Redirects to login if not authenticated.
+ *
+ * @param isPasswordChangePage - Set to true for password change route
+ *                               to allow access even with mustChangePassword
+ */
+export const authGuard = (isPasswordChangePage = false): CanActivateFn => {
+  return () => {
+    const router = inject(Router);
+    const authFacade = inject(AuthFacade);
+
+    // Wait for auth to be initialized
+    return toObservable(authFacade.isInitialized).pipe(
+      filter(initialized => initialized),
+      take(1),
+      map(() => {
+        // Not authenticated → redirect to login
+        if (!authFacade.isAuthenticated()) {
+          router.navigate(['/auth/login'], {
+            queryParams: { returnUrl: router.url }
+          });
+          return false;
+        }
+
+        // Must change password → redirect (except on password page)
+        if (authFacade.mustChangePassword() && !isPasswordChangePage) {
+          router.navigate(['/auth/change-password'], {
+            queryParams: { forced: 'true' }
+          });
+          return false;
+        }
+
+        return true;
+      })
+    );
+  };
+};
+
+/**
+ * Guest guard - only allows unauthenticated users.
+ * Redirects to dashboard if already authenticated.
+ */
+export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
+  const authFacade = inject(AuthFacade);
 
-  if (authService.isAuthenticated()) {
-    // If the user must change password and they're not already on the change password page
-    if (authService.mustChangePassword() && !requirePasswordChange) {
-      // Redirect to change password page
-      router.navigate(['/auth/change-password'], {
-        queryParams: { forced: 'true' }
-      });
-      return false;
-    }
-
-    // If we're on the change password page and password change is required, allow access
-    if (requirePasswordChange && authService.mustChangePassword()) {
+  return toObservable(authFacade.isInitialized).pipe(
+    filter(initialized => initialized),
+    take(1),
+    map(() => {
+      if (authFacade.isAuthenticated()) {
+        router.navigate(['/']);
+        return false;
+      }
       return true;
-    }
+    })
+  );
+};
 
-    // For normal pages, only allow access if password change is not required
-    return !authService.mustChangePassword() || requirePasswordChange;
-  }
+/**
+ * Role guard - checks if user has required role(s).
+ *
+ * @param allowedRoles - Array of roles that can access the route
+ */
+export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
+  return () => {
+    const router = inject(Router);
+    const authFacade = inject(AuthFacade);
 
-  // User is not authenticated, redirect to login
-  const returnUrl = router.url;
-  router.navigate(['/auth/login'], {
-    queryParams: { returnUrl }
-  });
-  return false;
-}
+    return toObservable(authFacade.isInitialized).pipe(
+      filter(initialized => initialized),
+      take(1),
+      map(() => {
+        if (!authFacade.isAuthenticated()) {
+          router.navigate(['/auth/login']);
+          return false;
+        }
+
+        const userRoles = authFacade.roles();
+        const hasRole = allowedRoles.some(role => userRoles.includes(role as any));
+
+        if (!hasRole) {
+          router.navigate(['/unauthorized']);
+          return false;
+        }
+
+        return true;
+      })
+    );
+  };
+};

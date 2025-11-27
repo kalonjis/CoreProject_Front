@@ -1,48 +1,53 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+import { SKIP_AUTH_INTERCEPTOR } from './http.context';
+
+interface HttpOptions {
+  context?: HttpContext;
+  withCredentials: boolean;
+}
+
+/**
+ * HttpUtilService - Utility wrapper for HttpClient.
+ *
+ * Features:
+ * - Always includes withCredentials: true (for httpOnly cookies)
+ * - Option to skip auth interceptor using HttpContext (Angular modern approach)
+ */
+@Injectable({ providedIn: 'root' })
 export class HttpUtilService {
-  constructor(private http: HttpClient) {}
 
-  // Méthode générique pour les requêtes GET
-  get<T>(url: string, skipInterceptor: boolean = false): Observable<T> {
-    const options = this.createOptions(skipInterceptor);
-    return this.http.get<T>(url, options);
+  private readonly http = inject(HttpClient);
+
+  get<T>(url: string, skipInterceptor = false): Observable<T> {
+    return this.http.get<T>(url, this.createOptions(skipInterceptor));
   }
 
-  // Méthode générique pour les requêtes POST
-  post<T>(url: string, body: any, skipInterceptor: boolean = false): Observable<T> {
-    const options = this.createOptions(skipInterceptor);
-    return this.http.post<T>(url, body, options);
+  post<T>(url: string, body: unknown, skipInterceptor = false): Observable<T> {
+    return this.http.post<T>(url, body, this.createOptions(skipInterceptor));
   }
 
-  // Méthode générique pour les requêtes PUT
-  put<T>(url: string, body: any, skipInterceptor: boolean = false): Observable<T> {
-    const options = this.createOptions(skipInterceptor);
-    return this.http.put<T>(url, body, options);
+  put<T>(url: string, body: unknown, skipInterceptor = false): Observable<T> {
+    return this.http.put<T>(url, body, this.createOptions(skipInterceptor));
   }
 
-  // Méthode générique pour les requêtes PATCH
-  patch<T>(url: string, body: any, skipInterceptor: boolean = false): Observable<T> {
-    const options = this.createOptions(skipInterceptor);
-    return this.http.patch<T>(url, body, options);
+  patch<T>(url: string, body: unknown, skipInterceptor = false): Observable<T> {
+    return this.http.patch<T>(url, body, this.createOptions(skipInterceptor));
   }
 
-  // Méthode générique pour les requêtes DELETE
-  delete<T>(url: string, skipInterceptor: boolean = false): Observable<T> {
-    const options = this.createOptions(skipInterceptor);
-    return this.http.delete<T>(url, options);
+  delete<T>(url: string, skipInterceptor = false): Observable<T> {
+    return this.http.delete<T>(url, this.createOptions(skipInterceptor));
   }
 
-  // Méthode privée pour créer les options HTTP avec ou sans l'en-tête X-Skip-Interceptor
-  private createOptions(skipInterceptor: boolean): { headers?: HttpHeaders } {
+  private createOptions(skipInterceptor: boolean): HttpOptions {
+    const options: HttpOptions = { withCredentials: true };
+
     if (skipInterceptor) {
-      return { headers: new HttpHeaders().set('X-Skip-Interceptor', 'true') };
+      options.context = new HttpContext().set(SKIP_AUTH_INTERCEPTOR, true);
     }
-    return {};
+
+    return options;
   }
 }

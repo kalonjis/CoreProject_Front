@@ -1,10 +1,11 @@
-import { Component, inject, DestroyRef, OnInit, signal } from '@angular/core';
+import { Component, inject, DestroyRef, OnInit, OnDestroy, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/services/auth.service';
-import { DeviceService } from '../../data/services/device-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+
+import { AuthFacade } from '../../core/auth';
+import { DeviceApiService } from '../../core/device';
 
 @Component({
   selector: 'app-device-alert-banner',
@@ -13,87 +14,107 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './device-alert-banner.component.html',
   styleUrl: './device-alert-banner.component.scss'
 })
-export class DeviceAlertBannerComponent implements OnInit {
-  private authService = inject(AuthService);
-  private deviceService = inject(DeviceService);
-  private destroyRef = inject(DestroyRef);
+export class DeviceAlertBannerComponent implements OnInit, OnDestroy {
 
-  // État local
+  private readonly auth = inject(AuthFacade);
+  private readonly deviceApi = inject(DeviceApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  // Local state
   private bannerDismissed = signal(false);
   protected isRequestingLink = signal(false);
 
-  // Intervalle de vérification périodique
-  private checkInterval: any;
+  // Periodic check interval
+  private checkInterval: ReturnType<typeof setInterval> | null = null;
+
+  // Debug: log device confirmation changes
+  private debugEffect = effect(() => {
+    console.log('[DeviceAlertBanner] isAuthenticated:', this.auth.isAuthenticated());
+    console.log('[DeviceAlertBanner] isDeviceConfirmed:', this.auth.isDeviceConfirmed());
+    console.log('[DeviceAlertBanner] bannerDismissed:', this.bannerDismissed());
+    console.log('[DeviceAlertBanner] showBanner:', this.showBanner());
+  });
 
   ngOnInit(): void {
-    // Vérifier périodiquement l'état de l'appareil (toutes les 5 minutes)
+    // Check for previously dismissed banner in session
+    const dismissed = sessionStorage.getItem('device-banner-dismissed');
+    if (dismissed === 'true') {
+      this.bannerDismissed.set(true);
+    }
+
+    // Initial device status check
+    this.refreshDeviceStatus();
+
+    // Periodic device status check (every 5 minutes)
     this.checkInterval = setInterval(() => {
       this.refreshDeviceStatus();
-    }, 5 * 60 * 1000); // 5 minutes
-
-    // Vérifier au démarrage pour s'assurer d'avoir les dernières infos
-    this.refreshDeviceStatus();
+    }, 5 * 60 * 1000);
   }
 
   ngOnDestroy(): void {
-    // Nettoyer l'intervalle à la destruction du composant
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
     }
   }
 
   /**
-   * Détermine si la bannière doit être affichée en fonction de l'état d'authentification,
-   * de confirmation de l'appareil et de l'état de rejet de la bannière
+   * Determines if banner should be displayed.
+   * Uses signals from AuthFacade which reads from DeviceStore.
    */
   showBanner(): boolean {
-    return this.authService.isAuthenticated() &&
-      !this.authService.isDeviceConfirmed() &&
+    return this.auth.isAuthenticated() &&
+      !this.auth.isDeviceConfirmed() &&
       !this.bannerDismissed();
   }
 
   /**
-   * Rafraîchit l'état de l'appareil auprès du serveur
+   * Refreshes device status from server.
+   * Updates DeviceStore via AuthFacade.
    */
   refreshDeviceStatus(): void {
-    if (!this.authService.isAuthenticated()) return;
+    if (!this.auth.isAuthenticated()) return;
 
-    this.authService.refreshDeviceStatus();
+    // Reload device session - this updates the DeviceStore
+    this.auth.reloadDeviceSession()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          console.log('[DeviceAlertBanner] Device status refreshed');
+        },
+        error: (err) => {
+          console.error('[DeviceAlertBanner] Failed to refresh device status', err);
+        }
+      });
   }
 
   /**
-   * Demande un nouveau lien de confirmation pour l'appareil actuel
+   * Requests a new confirmation link for current device.
    */
   requestNewConfirmationLink(): void {
     if (this.isRequestingLink()) return;
 
     this.isRequestingLink.set(true);
 
-    this.deviceService.requestDeviceConfirmationLink()
+    this.deviceApi.requestConfirmationLink()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          // Notification de succès (pourrait utiliser un service de feedback global)
           alert('Un nouveau lien de confirmation a été envoyé à votre adresse email.');
           this.isRequestingLink.set(false);
         },
         error: (error: HttpErrorResponse) => {
-          // Gestion des erreurs
-          console.error('Erreur lors de la demande de nouveau lien', error);
-          alert('Une erreur est survenue lors de la demande du lien de confirmation. Veuillez réessayer plus tard.');
+          console.error('Error requesting confirmation link', error);
+          alert('Une erreur est survenue. Veuillez réessayer plus tard.');
           this.isRequestingLink.set(false);
         }
       });
   }
 
   /**
-   * Rejette temporairement la bannière pour la session actuelle
+   * Dismisses banner for current session.
    */
   dismissBanner(): void {
     this.bannerDismissed.set(true);
-
-    // Optionnel : stocker la décision dans sessionStorage pour la conserver
-    // pendant toute la session du navigateur
     sessionStorage.setItem('device-banner-dismissed', 'true');
   }
 }

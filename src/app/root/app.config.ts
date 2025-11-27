@@ -1,14 +1,17 @@
-// app.config.ts
 import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { routes } from './app.routes';
-import {AuthService} from '../core/auth/services/auth.service';
-import {authInterceptor} from '../core/http/auth-interceptor';
 
-// Initialisation de l'authentification
-function initializeAuth(authService: AuthService) {
-  return () => authService.initialize();
+import { routes } from './app.routes';
+import { AuthFacade } from '../core/auth';
+import { authInterceptor } from '../core/http';
+
+/**
+ * Initialize authentication on app bootstrap.
+ * Checks for existing session and loads user/device data.
+ */
+function initializeAuth(authFacade: AuthFacade) {
+  return () => authFacade.initialize();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -20,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: initializeAuth,
-      deps: [AuthService],
+      deps: [AuthFacade],
       multi: true
     }
   ]

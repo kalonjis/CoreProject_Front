@@ -3,9 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { AuthService } from '../../../core/auth/services/auth.service';
+
+// ✅ AVANT: import { AuthService } from '../../../core/auth/services/auth.service';
+// ✅ APRÈS: Import depuis le barrel
+import { AuthFacade } from '../../../core/auth';
+import { HttpUtilService } from '../../../core/http';
+
+/** Request payload for password change */
+interface ChangePasswordRequest {
+  currentPassword: string;
+  password: string;
+  confirmPassword: string;
+}
 
 @Component({
   selector: 'app-change-password',
@@ -15,35 +27,37 @@ import { AuthService } from '../../../core/auth/services/auth.service';
   styleUrl: './change-password.component.scss'
 })
 export class ChangePasswordComponent extends FeedbackBase {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private authService = inject(AuthService);
 
-  // État local du composant
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly http = inject(HttpUtilService);
+
+  // ✅ AVANT: private authService = inject(AuthService);
+  // ✅ APRÈS: AuthFacade pour logout
+  private readonly auth = inject(AuthFacade);
+
+  // Local state
   isSubmitting = signal(false);
   showPassword = signal(false);
   showCurrentPassword = signal(false);
 
-  // Indicateurs de force du mot de passe
+  // Password strength indicators
   passwordHasMinLength = signal(false);
   passwordHasUppercase = signal(false);
   passwordHasLowercase = signal(false);
   passwordHasNumber = signal(false);
   passwordHasSpecialChar = signal(false);
 
-  // Fonction de validation pour vérifier que les mots de passe correspondent
+  // Form validation
   passwordMatchValidator = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
-
-    if (password && confirmPassword && password !== confirmPassword) {
-      return { 'passwordMismatch': true };
-    }
-
-    return null;
+    return password && confirmPassword && password !== confirmPassword
+      ? { passwordMismatch: true }
+      : null;
   };
 
-  // Formulaire
+  // Form
   changePasswordForm = this.fb.group({
     currentPassword: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
@@ -52,8 +66,10 @@ export class ChangePasswordComponent extends FeedbackBase {
 
   constructor() {
     super();
+    this.setupPasswordStrengthObserver();
+  }
 
-    // Observer les changements du mot de passe pour mettre à jour les indicateurs de force
+  private setupPasswordStrengthObserver(): void {
     this.changePasswordForm.get('password')?.valueChanges.subscribe(password => {
       if (password) {
         this.updatePasswordStrength(password);
@@ -63,17 +79,14 @@ export class ChangePasswordComponent extends FeedbackBase {
     });
   }
 
-  // Méthode pour basculer la visibilité du mot de passe
   togglePasswordVisibility(): void {
-    this.showPassword.update(value => !value);
+    this.showPassword.update(v => !v);
   }
 
-  // Méthode pour basculer la visibilité du mot de passe actuel
   toggleCurrentPasswordVisibility(): void {
-    this.showCurrentPassword.update(value => !value);
+    this.showCurrentPassword.update(v => !v);
   }
 
-  // Mettre à jour les indicateurs de force du mot de passe
   updatePasswordStrength(password: string): void {
     this.passwordHasMinLength.set(password.length >= 8);
     this.passwordHasUppercase.set(/[A-Z]/.test(password));
@@ -82,7 +95,6 @@ export class ChangePasswordComponent extends FeedbackBase {
     this.passwordHasSpecialChar.set(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password));
   }
 
-  // Réinitialiser les indicateurs de force du mot de passe
   resetPasswordStrength(): void {
     this.passwordHasMinLength.set(false);
     this.passwordHasUppercase.set(false);
@@ -102,62 +114,51 @@ export class ChangePasswordComponent extends FeedbackBase {
     this.isSubmitting.set(true);
     this.clearFeedback();
 
-    // Préparer les données du formulaire
-    const formData = {
+    const formData: ChangePasswordRequest = {
       currentPassword: this.changePasswordForm.value.currentPassword || '',
       password: this.changePasswordForm.value.password || '',
       confirmPassword: this.changePasswordForm.value.confirmPassword || ''
     };
 
-    // Appeler le service d'authentification
-    this.authService.changePassword(formData).subscribe({
+    // ✅ AVANT: this.authService.changePassword(formData).subscribe(...)
+    // ✅ APRÈS: Appel HTTP direct (action spécifique, pas dans la facade)
+    this.http.put('/api/password/change', formData).subscribe({
       next: () => {
         this.isSubmitting.set(false);
 
-        // Afficher le message de succès
         this.displaySuccess(
-          'Votre mot de passe a été modifié avec succès. Vous allez être déconnecté pour des raisons de sécurité.',
+          'Votre mot de passe a été modifié avec succès. Vous allez être déconnecté.',
           'OK',
-          null // Pas de timeout auto, on le gère ci-dessous
+          null
         );
 
-        // Définir l'action du bouton (facultatif car déconnexion auto)
-        this.buttonAction = () => {
-          this.logoutAndRedirect();
-        };
+        this.buttonAction = () => this.logoutAndRedirect();
 
-        // Déclencher la déconnexion et redirection après 5 secondes
-        setTimeout(() => {
-          this.logoutAndRedirect();
-        }, 5000);
+        // Auto logout after 5 seconds
+        setTimeout(() => this.logoutAndRedirect(), 5000);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
-
-        // Afficher le message d'erreur
         this.displayError(
-          error.error?.message || 'Une erreur est survenue lors du changement de mot de passe.',
+          error.error?.message || 'Une erreur est survenue.',
           'Réessayer'
         );
-
-        this.buttonAction = () => {
-          this.clearFeedback();
-        };
+        this.buttonAction = () => this.clearFeedback();
       }
     });
   }
 
-// Méthode pour gérer la déconnexion et redirection
+  // ✅ AVANT: this.authService.logout().subscribe(...)
+  // ✅ APRÈS: Utilise AuthFacade.logout()
   private logoutAndRedirect(): void {
-    this.authService.logout().subscribe({
+    this.auth.logout().subscribe({
       next: () => {
-        // Rediriger vers la page de connexion avec un paramètre indiquant le changement de mot de passe
         this.router.navigate(['/auth/login'], {
           queryParams: { passwordChanged: 'true' }
         });
       },
       error: () => {
-        // Même en cas d'erreur, rediriger
+        // Even on error, redirect
         this.router.navigate(['/auth/login'], {
           queryParams: { passwordChanged: 'true' }
         });

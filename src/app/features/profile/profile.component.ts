@@ -1,15 +1,14 @@
-// src/app/features/profile/profile.component.ts
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../core/auth/services/auth.service';
-import { DeviceService } from '../../data/services/device-service';
-import { Device } from '../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, retry, of, finalize } from 'rxjs';
-import {HttpUtilService} from '../../core/http/http-util.service';
+
+import { AuthFacade } from '../../core/auth';
+import { DeviceApiService } from '../../core/device';
+import { HttpUtilService } from '../../core/http';
+import { Device } from '../../data/models/device/device';
 
 @Component({
   selector: 'app-profile',
@@ -19,13 +18,13 @@ import {HttpUtilService} from '../../core/http/http-util.service';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
-  private http = inject(HttpClient);
-  private httpUtil = inject(HttpUtilService);
-  private fb = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
-  private router = inject(Router);
-  authService = inject(AuthService);
-  deviceService = inject(DeviceService);
+
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly http = inject(HttpUtilService);
+  protected readonly auth = inject(AuthFacade);
+  private readonly deviceApi = inject(DeviceApiService);
 
   // User profile information
   userInfo = signal<any>(null);
@@ -39,6 +38,8 @@ export class ProfileComponent implements OnInit {
   changeEmailMode = signal(false);
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
+
+  // Phone verification signals
   private phoneValid = signal(false);
   private phoneVerified = signal(false);
   private sendingCode = signal(false);
@@ -47,7 +48,7 @@ export class ProfileComponent implements OnInit {
   private statusMessage = signal('');
   private codeArray = signal(['', '', '', '', '', '']);
 
-  // Getters pour les signals
+  // Readonly getters for template
   isPhoneValid = this.phoneValid.asReadonly();
   isPhoneVerified = this.phoneVerified.asReadonly();
   isSendingCode = this.sendingCode.asReadonly();
@@ -55,9 +56,6 @@ export class ProfileComponent implements OnInit {
   showVerificationModal = this.showModal.asReadonly();
   phoneStatusMessage = this.statusMessage.asReadonly();
   verificationCode = this.codeArray.asReadonly();
-  // Pour gérer les tentatives de chargement
-  retryAttempts = 0;
-  maxRetries = 3;
 
   // Forms
   profileForm!: FormGroup;
@@ -89,24 +87,20 @@ export class ProfileComponent implements OnInit {
     this.http.get<any>('/api/auth/me')
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        // Attendre jusqu'à 3 secondes avant d'afficher une erreur
-        // Cela donne le temps au refresh token de s'exécuter
         retry({ count: 2, delay: 1500 }),
         catchError(err => {
-          console.error('Failed to load profile after retries', err);
+          console.error('Failed to load profile', err);
           this.errorMessage.set('Failed to load profile data');
           return of(null);
         }),
-        finalize(() => {
-          // Toujours exécuté, que la requête réussisse ou échoue
-          this.isLoading.set(false);
-        })
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
         next: (data) => {
           if (data) {
             this.userInfo.set(data);
             this.populateForm(data);
+            this.phoneVerified.set(data.phoneNumberVerified || false);
             this.errorMessage.set(null);
           }
         }
@@ -116,7 +110,7 @@ export class ProfileComponent implements OnInit {
   protected loadUserDevices(): void {
     this.isLoadingDevices.set(true);
 
-    this.deviceService.getMyDevices()
+    this.deviceApi.getMyDevices()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         retry({ count: 2, delay: 1500 }),
@@ -124,14 +118,10 @@ export class ProfileComponent implements OnInit {
           console.error('Failed to load devices', err);
           return of([]);
         }),
-        finalize(() => {
-          this.isLoadingDevices.set(false);
-        })
+        finalize(() => this.isLoadingDevices.set(false))
       )
       .subscribe({
-        next: (devices) => {
-          this.devices.set(devices);
-        }
+        next: (devices) => this.devices.set(devices)
       });
   }
 
@@ -144,31 +134,41 @@ export class ProfileComponent implements OnInit {
       phoneNumber: data.phoneNumber || ''
     });
 
-    this.emailForm.patchValue({
-      email: '',
-      confirmEmail: ''
-    });
+    this.emailForm.reset();
   }
 
+  // =========================================================================
+  // UI ACTIONS
+  // =========================================================================
+
   toggleEditMode(): void {
-    this.editMode.set(!this.editMode());
+    this.editMode.update(v => !v);
     if (!this.editMode()) {
-      // Reset form when canceling edit
       this.populateForm(this.userInfo());
     }
   }
 
   toggleChangeEmailMode(): void {
-    this.changeEmailMode.set(!this.changeEmailMode());
+    this.changeEmailMode.update(v => !v);
     if (!this.changeEmailMode()) {
-      // Reset email form
       this.emailForm.reset();
     }
   }
 
+  retryLoading(): void {
+    this.loadUserProfile();
+  }
+
+  initiatePasswordChange(): void {
+    this.router.navigate(['/auth/change-password']);
+  }
+
+  // =========================================================================
+  // PROFILE UPDATE
+  // =========================================================================
+
   updateProfile(): void {
     if (this.profileForm.invalid) {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.profileForm.controls).forEach(key => {
         this.profileForm.get(key)?.markAsTouched();
       });
@@ -187,15 +187,13 @@ export class ProfileComponent implements OnInit {
           this.errorMessage.set(err.error?.message || 'Failed to update profile');
           return of(null);
         }),
-        finalize(() => {
-          this.isLoading.set(false);
-        })
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
         next: (response) => {
           if (response !== null) {
-            // Refresh user data
             this.loadUserProfile();
+            this.auth.reloadSession().subscribe();
             this.successMessage.set('Profile updated successfully');
             this.toggleEditMode();
           }
@@ -203,17 +201,14 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-
   requestEmailChange(): void {
     if (this.emailForm.invalid) {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.emailForm.controls).forEach(key => {
         this.emailForm.get(key)?.markAsTouched();
       });
       return;
     }
 
-    // Check if emails match
     if (this.emailForm.value.email !== this.emailForm.value.confirmEmail) {
       this.errorMessage.set('Les adresses email ne correspondent pas');
       return;
@@ -223,206 +218,167 @@ export class ProfileComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.authService.changeEmailRequest(
-      this.emailForm.value.email || '',
-      this.emailForm.value.confirmEmail || ''
-    ).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError(err => {
-        console.error('Failed to request email change', err);
-        this.errorMessage.set(err.error?.message || 'Échec de la demande de changement d\'email');
-        return of(null);
-      }),
-      finalize(() => {
-        this.isLoading.set(false);
-      })
-    ).subscribe({
-      next: (response) => {
-        if (response !== null) {
-          this.successMessage.set('Demande de changement d\'email envoyée. Veuillez vérifier votre adresse email actuelle pour confirmer la demande.');
-          this.toggleChangeEmailMode();
+    this.http.post('/api/user/change-email-request', {
+      email: this.emailForm.value.email,
+      confirmEmail: this.emailForm.value.confirmEmail
+    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          this.errorMessage.set(err.error?.message || 'Échec de la demande');
+          return of(null);
+        }),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          if (response !== null) {
+            this.successMessage.set('Demande envoyée. Vérifiez votre email.');
+            this.toggleChangeEmailMode();
+          }
         }
-      }
-    });
+      });
   }
 
-  initiatePasswordChange(): void {
-    this.router.navigate(['/auth/change-password']);
-  }
+  // =========================================================================
+  // PHONE VERIFICATION
+  // =========================================================================
 
-  getRecentDevices(): Device[] {
-    return [...this.devices()]
-      .sort((a, b) => {
-        const dateA = new Date(a.lastSeen).getTime();
-        const dateB = new Date(b.lastSeen).getTime();
-        return dateB - dateA;
-      })
-      .slice(0, this.MAX_RECENT_DEVICES);
-  }
-
-  formatDate(date: string): string {
-    if (!date) return 'Unknown';
-    return new Date(date).toLocaleString();
-  }
-
-  // Si l'utilisateur veut forcer le rechargement des données
-  retryLoading(): void {
-    this.loadUserProfile();
-    this.loadUserDevices();
-  }
-
-  /**
-   * Validation du format international du téléphone
-   */
-  private validatePhoneFormat(phone: string): boolean {
-    const phoneRegex = /^\+[1-9]\d{6,14}$/;
-    return phoneRegex.test(phone?.trim() || '');
-  }
-
-  /**
-   * Gestionnaire de changement du numéro de téléphone
-   */
   onPhoneChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const phone = input.value;
+    const isValid = /^[0-9+\-\s]{10,}$/.test(phone);
+    this.phoneValid.set(isValid);
 
-    this.phoneValid.set(this.validatePhoneFormat(phone));
-    this.phoneVerified.set(false); // Reset verification status
-    this.statusMessage.set('');
+    if (!isValid) {
+      this.statusMessage.set('');
+    }
   }
 
-  /**
-   * Envoi du code de vérification SMS
-   */
-  async sendVerificationCode(): Promise<void> {
-    const phoneNumber = this.profileForm.get('phoneNumber')?.value;
-    if (!this.phoneValid() || !phoneNumber) return;
+  sendVerificationCode(): void {
+    if (this.sendingCode() || !this.phoneValid()) return;
 
     this.sendingCode.set(true);
     this.statusMessage.set('');
 
-    this.httpUtil.post('/api/profile/SMS/request-verification', {
-      phoneNumber
-    }).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError(err => {
-        console.error('Erreur envoi SMS:', err);
-        this.statusMessage.set('Erreur lors de l\'envoi du SMS. Veuillez réessayer.');
-        return of(null);
-      }),
-      finalize(() => {
-        this.sendingCode.set(false);
-      })
-    ).subscribe({
-      next: (response) => {
-        if (response !== null) {
-          this.statusMessage.set('Code de vérification envoyé !');
-          this.showModal.set(true);
-          this.resetVerificationCode();
+    this.http.post('/api/user/phone/send-code', {
+      phoneNumber: this.profileForm.get('phoneNumber')?.value
+    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          this.statusMessage.set(err.error?.message || 'Failed to send code');
+          return of(null);
+        }),
+        finalize(() => this.sendingCode.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          if (response !== null) {
+            this.statusMessage.set('Code sent to your phone');
+            this.showModal.set(true);
+            this.codeArray.set(['', '', '', '', '', '']);
+          }
         }
-      }
-    });
+      });
   }
 
-  /**
-   * Gestionnaire d'input pour le code de vérification
-   */
+  verifyCode(): void {
+    if (this.verifying() || !this.isCodeComplete()) return;
+
+    this.verifying.set(true);
+
+    const code = this.codeArray().join('');
+
+    this.http.post('/api/user/phone/verify', { code })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          this.statusMessage.set(err.error?.message || 'Invalid code');
+          return of(null);
+        }),
+        finalize(() => this.verifying.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          if (response !== null) {
+            this.phoneVerified.set(true);
+            this.statusMessage.set('Phone verified successfully');
+            this.closeVerificationModal();
+            this.loadUserProfile();
+          }
+        }
+      });
+  }
+
+  isCodeComplete(): boolean {
+    return this.codeArray().every(digit => digit !== '');
+  }
+
   onCodeInput(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     const value = input.value;
 
-    // Ne garder que les chiffres
-    const numericValue = value.replace(/\D/g, '');
-    input.value = numericValue;
+    if (value.length === 1 && /^\d$/.test(value)) {
+      const newCode = [...this.codeArray()];
+      newCode[index] = value;
+      this.codeArray.set(newCode);
 
-    // Mettre à jour le tableau du code
-    const currentCode = [...this.codeArray()];
-    currentCode[index] = numericValue;
-    this.codeArray.set(currentCode);
-
-    // Auto-focus sur le champ suivant si une valeur est saisie
-    if (numericValue && index < 5) {
-      const nextInput = document.querySelector(`input.code-input:nth-child(${index + 2})`) as HTMLInputElement;
-      nextInput?.focus();
-    }
-  }
-
-  /**
-   * Gestionnaire des touches pour navigation du code
-   */
-  onCodeKeyDown(index: number, event: KeyboardEvent): void {
-    // Retour en arrière
-    if (event.key === 'Backspace' && !this.codeArray()[index] && index > 0) {
-      const prevInput = document.querySelector(`input.code-input:nth-child(${index})`) as HTMLInputElement;
-      prevInput?.focus();
-    }
-  }
-
-  /**
-   * Vérifier si le code est complet
-   */
-  isCodeComplete(): boolean {
-    return this.codeArray().every(digit => digit.length === 1);
-  }
-
-  /**
-   * Vérification du code SMS
-   */
-  verifyCode(): void {
-    if (!this.isCodeComplete()) return;
-
-    this.verifying.set(true);
-    const code = this.codeArray().join('');
-
-    this.http.post('/api/profile/SMS/verify', {
-      verificationCode: code
-    }).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError(err => {
-        console.error('Erreur vérification:', err);
-        this.statusMessage.set('Code incorrect. Veuillez réessayer.');
-        this.resetVerificationCode();
-        return of(null);
-      }),
-      finalize(() => {
-        this.verifying.set(false);
-      })
-    ).subscribe({
-      next: (response) => {
-        if (response !== null) {
-          this.phoneVerified.set(true);
-          this.showModal.set(false);
-          this.statusMessage.set('Numéro vérifié avec succès !');
-
-          // Optionnel: mettre à jour le profil utilisateur
-          this.loadUserProfile();
-        }
+      // Auto-focus next input
+      if (index < 5) {
+        const nextInput = document.querySelector(`input[data-index="${index + 1}"]`) as HTMLInputElement;
+        nextInput?.focus();
       }
-    });
+    } else {
+      input.value = '';
+    }
   }
 
-  /**
-   * Fermer la modal de vérification
-   */
+  onCodeKeyDown(index: number, event: KeyboardEvent): void {
+    if (event.key === 'Backspace') {
+      const newCode = [...this.codeArray()];
+
+      if (newCode[index]) {
+        newCode[index] = '';
+        this.codeArray.set(newCode);
+      } else if (index > 0) {
+        const prevInput = document.querySelector(`input[data-index="${index - 1}"]`) as HTMLInputElement;
+        prevInput?.focus();
+      }
+    }
+  }
+
   closeVerificationModal(): void {
     this.showModal.set(false);
-    this.resetVerificationCode();
+    this.codeArray.set(['', '', '', '', '', '']);
   }
 
-  /**
-   * Fermer la modal en cliquant sur l'overlay
-   */
-  closeModal(event: Event): void {
-    if (event.target === event.currentTarget) {
+  closeModal(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('verification-overlay')) {
       this.closeVerificationModal();
     }
   }
 
-  /**
-   * Reset du code de vérification
-   */
-  private resetVerificationCode(): void {
-    this.codeArray.set(['', '', '', '', '', '']);
+  // =========================================================================
+  // HELPERS
+  // =========================================================================
+
+  get recentDevices(): Device[] {
+    return this.devices().slice(0, this.MAX_RECENT_DEVICES);
   }
 
+  getRecentDevices(): Device[] {
+    return this.recentDevices;
+  }
+
+  formatDate(date: string | Date | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 }
