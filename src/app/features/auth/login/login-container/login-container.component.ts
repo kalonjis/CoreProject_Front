@@ -4,10 +4,12 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { AuthFacade } from '../../../../core/auth/services/auth.facade';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { LoginFormComponent } from '../components/login-form/login-form.component';
 import { OAuthButtonComponent } from '../components/oauth-button/oauth-button.component';
+import {LoginRequest} from '../../../../core/auth';
 
 export interface LoginFormData {
   username: string;
@@ -31,6 +33,7 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
+  private authFacade = inject(AuthFacade);
 
   // Container state
   isSubmitting = signal(false);
@@ -50,16 +53,13 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
     this.isSubmitting.set(true);
     this.loginError.set(null);
 
-    this.authService.login(formData).subscribe({
+    const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    this.authFacade.login(formData, returnUrl).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.displaySuccess('Login successful! Redirecting...', '', 2000);
-
-        // Navigate to return URL or dashboard
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        setTimeout(() => this.router.navigateByUrl(returnUrl), 1500);
+        // Navigation is handled by AuthFacade
       },
-
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
         this.handleLoginError(error);

@@ -73,6 +73,7 @@ export class AuthFacade {
       this.authApi.getSession().pipe(
         tap(user => {
           this.authStore.setUser(user);
+          console.log('✅ AuthStore populated:', user);
           this.loadDeviceSession();
           this.syncService.startListening();
         }),
@@ -91,9 +92,13 @@ export class AuthFacade {
 
   /**
    * Login with username/password.
-   * On success: loads user session, device, navigates to dashboard.
+   * On success: loads user session, device, handles mustChangePassword redirect.
+   *
+   * @param credentials - Username and password
+   * @param returnUrl - URL to redirect after successful login (default: '/')
+   * @returns Observable that completes after login and navigation
    */
-  login(credentials: LoginRequest): Observable<AuthOperationResponse> {
+  login(credentials: LoginRequest, returnUrl: string = '/'): Observable<AuthOperationResponse> {
     this.authStore.setLoading(true);
     this.authStore.clearError();
 
@@ -103,14 +108,24 @@ export class AuthFacade {
         this.authStore.setUser(user);
         this.loadDeviceSession();
         this.syncService.broadcastLogin();
+        this.syncService.startListening();
       }),
-      switchMap(user => {
-        // Return the user wrapped as AuthOperationResponse for consistency
+      switchMap(() => {
+        // Check if password change is required
+        if (this.authStore.mustChangePassword()) {
+          this.router.navigate(['/auth/change-password'], {
+            queryParams: { forced: 'true', returnUrl }
+          });
+        } else {
+          this.router.navigateByUrl(returnUrl);
+        }
+
         return [{ message: 'Login successful' } as AuthOperationResponse];
       }),
       catchError(err => {
-        const message = err.error?.message || 'Login failed';
+        const message = err.error?.message || err.error?.error || 'Login failed';
         this.authStore.setError(message);
+        this.authStore.setLoading(false);
         return throwError(() => err);
       })
     );

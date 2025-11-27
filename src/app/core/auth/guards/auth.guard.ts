@@ -1,35 +1,57 @@
-// src/app/core/auth/guards/auth.guard.ts
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 
-export function authGuard(requirePasswordChange: boolean = false) {
-  const authService = inject(AuthService);
+import { AuthFacade } from '../services/auth.facade';
+
+/**
+ * Auth guard using AuthFacade (new architecture).
+ *
+ * Protects routes that require authentication.
+ * Also handles forced password change redirect.
+ *
+ * @param isPasswordChangePage - Set to true for the change-password route
+ *                               to allow access even when mustChangePassword is true
+ *
+ * Usage in routes:
+ * ```typescript
+ * {
+ *   path: 'profile',
+ *   canActivate: [() => authGuard()],
+ *   loadComponent: () => import('./profile.component')
+ * },
+ * {
+ *   path: 'change-password',
+ *   canActivate: [() => authGuard(true)], // Allow access for password change
+ *   loadComponent: () => import('./change-password.component')
+ * }
+ * ```
+ */
+export function authGuard(isPasswordChangePage: boolean = false): boolean {
+  const authFacade = inject(AuthFacade);
   const router = inject(Router);
 
-  if (authService.isAuthenticated()) {
-    // If the user must change password and they're not already on the change password page
-    if (authService.mustChangePassword() && !requirePasswordChange) {
-      // Redirect to change password page
-      router.navigate(['/auth/change-password'], {
-        queryParams: { forced: 'true' }
-      });
-      return false;
-    }
+  // Not authenticated → redirect to login
+  if (!authFacade.isAuthenticated()) {
+    router.navigate(['/auth/login'], {
+      queryParams: { returnUrl: router.url }
+    });
+    return false;
+  }
 
-    // If we're on the change password page and password change is required, allow access
-    if (requirePasswordChange && authService.mustChangePassword()) {
+  // Must change password?
+  if (authFacade.mustChangePassword()) {
+    // If we're on the password change page, allow access
+    if (isPasswordChangePage) {
       return true;
     }
 
-    // For normal pages, only allow access if password change is not required
-    return !authService.mustChangePassword() || requirePasswordChange;
+    // Otherwise, redirect to password change
+    router.navigate(['/auth/change-password'], {
+      queryParams: { forced: 'true', returnUrl: router.url }
+    });
+    return false;
   }
 
-  // User is not authenticated, redirect to login
-  const returnUrl = router.url;
-  router.navigate(['/auth/login'], {
-    queryParams: { returnUrl }
-  });
-  return false;
+  // Authenticated and no password change required
+  return true;
 }

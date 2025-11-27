@@ -1,36 +1,48 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+
+import { AuthFacade } from '../services/auth.facade';
 
 /**
- * Guard qui vérifie si l'utilisateur a des privilèges d'administration
- * Vérifie d'abord l'authentification puis le rôle ADMIN
+ * Admin guard using AuthFacade (new architecture).
+ *
+ * Protects routes that require ADMIN or SUPER_ADMIN role.
+ * First checks authentication, then role, then password change requirement.
+ *
+ * Usage in routes:
+ * ```typescript
+ * {
+ *   path: 'admin',
+ *   canActivate: [() => adminGuard()],
+ *   loadChildren: () => import('./admin/admin.routes')
+ * }
+ * ```
  */
-export function adminGuard() {
-  const authService = inject(AuthService);
+export function adminGuard(): boolean {
+  const authFacade = inject(AuthFacade);
   const router = inject(Router);
 
-  // Vérifier si l'utilisateur est connecté
-  if (!authService.isAuthenticated()) {
+  // Not authenticated → redirect to login
+  if (!authFacade.isAuthenticated()) {
     router.navigate(['/auth/login'], {
       queryParams: { returnUrl: router.url }
     });
     return false;
   }
 
-  // Vérifier si l'utilisateur a le rôle ADMIN ou SUPER_ADMIN
-  if (authService.hasRole('ADMIN') || authService.hasRole('SUPER_ADMIN')) {
-    // Si l'utilisateur doit changer son mot de passe, rediriger
-    if (authService.mustChangePassword()) {
-      router.navigate(['/auth/change-password'], {
-        queryParams: { forced: 'true', returnUrl: router.url }
-      });
-      return false;
-    }
-    return true;
+  // Check admin role
+  if (!authFacade.isAdmin()) {
+    router.navigate(['/access-denied']);
+    return false;
   }
 
-  // Si l'utilisateur n'a pas les droits requis
-  router.navigate(['/access-denied']);
-  return false;
+  // Must change password → redirect
+  if (authFacade.mustChangePassword()) {
+    router.navigate(['/auth/change-password'], {
+      queryParams: { forced: 'true', returnUrl: router.url }
+    });
+    return false;
+  }
+
+  return true;
 }
