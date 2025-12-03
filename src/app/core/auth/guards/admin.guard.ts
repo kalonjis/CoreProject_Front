@@ -38,7 +38,7 @@ export function adminGuard(): boolean {
 
   // Must change password → redirect
   if (authFacade.mustChangePassword()) {
-    router.navigate(['/auth/change-password'], {
+    router.navigate(['/password/change'], {
       queryParams: { forced: 'true', returnUrl: router.url }
     });
     return false;

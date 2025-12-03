@@ -1,0 +1,88 @@
+.code-input-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+
+  input {
+    width: 3rem;
+    height: 3.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.2s ease;
+    caret-color: #007bff;
+
+    // Remove spinner for number inputs
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    }
+
+    &:hover:not(:disabled):not(:focus) {
+      border-color: #999;
+    }
+
+    &.filled {
+      border-color: #28a745;
+      background-color: #f8fff9;
+    }
+
+    &.masked {
+      -webkit-text-security: disc;
+      font-family: text-security-disc, serif;
+    }
+
+    &:disabled {
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    // Error state (can be added via parent)
+    &.error {
+      border-color: #dc3545;
+      background-color: #fff8f8;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .code-input-container {
+    gap: 0.35rem;
+
+    input {
+      width: 2.5rem;
+      height: 3rem;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Animation for filled state
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.code-input-container input.filled {
+  animation: pop 0.15s ease-out;
+}

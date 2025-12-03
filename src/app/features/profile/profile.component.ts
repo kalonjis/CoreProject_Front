@@ -247,7 +247,7 @@ export class ProfileComponent implements OnInit {
   }
 
   initiatePasswordChange(): void {
-    this.router.navigate(['/auth/change-password']);
+    this.router.navigate(['/password/change']);
   }
 
   getRecentDevices(): Device[] {

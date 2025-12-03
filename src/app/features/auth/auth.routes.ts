@@ -20,21 +20,6 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
   },
 
-
-  {
-    path: 'forgot-password',
-    loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
-  },
-  {
-    path: 'reset-password',
-    loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
-  },
-
-  {
-    path: 'change-password',
-    canActivate: [() => authGuard(true)], // Pass true to indicate this is the password change page
-    loadComponent: () => import('./change-password/change-password.component').then(m => m.ChangePasswordComponent)
-  },
   {
     path: 'verify-email',
     canActivate: [() => authGuard()],
