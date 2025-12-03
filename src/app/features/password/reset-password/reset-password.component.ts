@@ -150,7 +150,7 @@
                 'Veuillez demander un nouveau lien de réinitialisation de mot de passe.',
                 'Demander un nouveau lien'
               );
-              this.buttonAction = () => this.router.navigate(['/auth/forgot-password']);
+              this.buttonAction = () => this.requestNewToken();
               return;
             }
 

@@ -113,7 +113,7 @@ export class AuthFacade {
       switchMap(() => {
         // Check if password change is required
         if (this.authStore.mustChangePassword()) {
-          this.router.navigate(['/auth/change-password'], {
+          this.router.navigate(['/password/change'], {
             queryParams: { forced: 'true', returnUrl }
           });
         } else {

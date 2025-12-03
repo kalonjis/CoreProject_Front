@@ -5,12 +5,16 @@ import {adminGuard} from '../core/auth/guards/admin.guard';
 export const routes: Routes = [
   // Routes publiques
   {
+    path: '',
+    loadComponent: () => import('../features/home/home.component').then(m => m.HomeComponent)
+  },
+  {
     path: 'auth',
     loadChildren: () => import('../features/auth/auth.routes').then(r => r.AUTH_ROUTES)
   },
   {
-    path: '',
-    loadComponent: () => import('../features/home/home.component').then(m => m.HomeComponent)
+    path: 'password',
+    loadChildren: () => import('../features/password/password.routes').then(r => r.PASSWORD_ROUTES)
   },
   {
     path: 'profile',

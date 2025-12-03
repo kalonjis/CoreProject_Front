@@ -46,7 +46,7 @@ export function authGuard(isPasswordChangePage: boolean = false): boolean {
     }
 
     // Otherwise, redirect to password change
-    router.navigate(['/auth/change-password'], {
+    router.navigate(['/password/change'], {
       queryParams: { forced: 'true', returnUrl: router.url }
     });
     return false;
