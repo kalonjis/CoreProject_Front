@@ -1,0 +1,20 @@
+<div class="code-input-container" [class.disabled]="disabled">
+  @for (digit of digits(); track trackByIndex($index)) {
+    <input
+      #inputEl
+      type="text"
+      inputmode="numeric"
+      [attr.maxlength]="1"
+      [attr.aria-label]="'Digit ' + ($index + 1) + ' of ' + length"
+      [disabled]="disabled"
+      [class.filled]="digit"
+      [class.masked]="mask"
+      [value]="digit"
+      (input)="onInput($event, $index)"
+      (keydown)="onKeyDown($event, $index)"
+      (paste)="onPaste($event)"
+      (focus)="onFocus($event)"
+      autocomplete="one-time-code"
+    />
+  }
+</div>

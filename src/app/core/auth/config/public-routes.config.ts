@@ -1,47 +1,55 @@
-// Configuration des routes publiques qui ne nécessitent pas d'authentification
+/**
+ * Public routes configuration.
+ * Routes that don't require authentication.
+ */
 
 /**
- * Liste des préfixes d'URL pour les API publiques qui ne doivent pas déclencher
- * de redirection vers la page de connexion en cas d'erreur 401/403
+ * Public API routes that should NOT trigger login redirect on 401/403.
  */
 export const PUBLIC_API_ROUTES = [
   '/api/auth/login',
   '/api/auth/refresh-token',
   '/api/auth/logout',
+  '/api/auth/session',
+  '/api/auth/status',
   '/api/auth/signup',
-  '/api/account-confirmation/',  // Activation du compte
-  '/api/user/device/confirm',         // Confirmation d'appareil
-  '/api/user/device/reject',          // Rejet d'appareil
-  '/api/password/',              // Gestion des mots de passe publics
+  '/api/account-confirmation/',
+  '/api/user/device/confirm',
+  '/api/user/device/reject',
+  '/api/password/',
 ];
 
 /**
- * Liste des routes frontend qui sont accessibles sans authentification
- * et qui ne doivent pas tenter de rafraîchir le token
+ * Public frontend routes that don't require authentication
+ * and should NOT trigger token refresh.
  */
 export const PUBLIC_FRONTEND_ROUTES = [
+  '/',
   '/auth/login',
   '/auth/signup',
-  '/auth/forgot-password',
-  '/auth/reset-password',
   '/auth/account-confirmation',
   '/auth/device-confirmation',
-  '/'  // Page d'accueil
+  '/password/forgot',
+  '/password/reset',
+  '/password/verify-sms',
 ];
 
 /**
- * Vérifie si une URL est une route d'API publique
+ * Check if URL is a public API route.
  */
 export function isPublicApiRoute(url: string): boolean {
   return PUBLIC_API_ROUTES.some(route => url.includes(route));
 }
 
 /**
- * Vérifie si une URL de page est publique (ne nécessite pas d'authentification)
+ * Check if URL is a public frontend route.
+ * Handles exact match, path prefix, and query params.
  */
 export function isPublicFrontendRoute(url: string): boolean {
+  // Remove query params for comparison
+  const urlPath = url.split('?')[0];
+
   return PUBLIC_FRONTEND_ROUTES.some(route =>
-    // Gestion exacte ou préfixe
-    url === route || url.startsWith(`${route}/`)
+    urlPath === route || urlPath.startsWith(`${route}/`)
   );
 }

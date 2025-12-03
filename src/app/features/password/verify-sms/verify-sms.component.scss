@@ -1,0 +1,146 @@
+.verify-sms-container {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #f5f5f5;
+}
+
+.verify-sms-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    color: #333;
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}
+
+.code-section {
+  margin: 2rem 0;
+  text-align: center;
+
+  .code-error {
+    margin-top: 1rem;
+    color: #dc3545;
+    font-size: 0.875rem;
+    animation: shake 0.3s ease-in-out;
+  }
+
+  .verifying-text {
+    margin-top: 1rem;
+    color: #007bff;
+    font-size: 0.875rem;
+    animation: pulse 1.5s infinite;
+  }
+}
+
+.resend-section {
+  text-align: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid #eee;
+
+  .resend-text {
+    margin: 0 0 0.75rem;
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  .cooldown-text {
+    margin: 0;
+    color: #999;
+    font-size: 0.875rem;
+  }
+
+  .btn-resend {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f0f7ff;
+    }
+
+    &:disabled {
+      color: #999;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.back-section {
+  text-align: center;
+  margin-top: 1rem;
+
+  .btn-back {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+// Animations
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .verify-sms-card {
+    padding: 1.5rem;
+  }
+
+  .card-header {
+    .icon {
+      font-size: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+}

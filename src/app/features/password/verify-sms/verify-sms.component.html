@@ -1,0 +1,73 @@
+<div class="verify-sms-container">
+  <div class="verify-sms-card">
+    <div class="card-header">
+      <div class="icon">📱</div>
+      <h2>Vérification SMS</h2>
+      <p class="subtitle">
+        Entrez le code à 6 chiffres envoyé à votre téléphone
+      </p>
+    </div>
+
+    <!-- Feedback messages -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Code input -->
+    <div class="code-section">
+      <app-code-input
+        [length]="6"
+        [autoFocus]="true"
+        [autoSubmit]="true"
+        [disabled]="isVerifying()"
+        (codeComplete)="onCodeComplete($event)">
+      </app-code-input>
+
+      <!-- Inline error -->
+      @if (codeError()) {
+        <p class="code-error">{{ codeError() }}</p>
+      }
+
+      <!-- Loading indicator -->
+      @if (isVerifying()) {
+        <p class="verifying-text">Vérification en cours...</p>
+      }
+    </div>
+
+    <!-- Resend section -->
+    <div class="resend-section">
+      <p class="resend-text">Vous n'avez pas reçu le code ?</p>
+
+      @if (resendCooldown() > 0) {
+        <p class="cooldown-text">
+          Renvoyer dans {{ resendCooldown() }}s
+        </p>
+      } @else {
+        <button
+          type="button"
+          class="btn-resend"
+          [disabled]="isResending()"
+          (click)="resendCode()">
+          @if (isResending()) {
+            <span>Envoi en cours...</span>
+          } @else {
+            <span>Renvoyer le code</span>
+          }
+        </button>
+      }
+    </div>
+
+    <!-- Back link -->
+    <div class="back-section">
+      <button type="button" class="btn-back" (click)="goBack()">
+        ← Retour
+      </button>
+    </div>
+  </div>
+</div>
