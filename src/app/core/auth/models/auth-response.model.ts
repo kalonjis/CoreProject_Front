@@ -1,5 +1,7 @@
+// src/app/core/auth/models/auth-response.model.ts
+
 /**
- * Generic response for auth operations (login, logout, refresh, 2FA).
+ * Generic response for auth operations (login, logout, refresh).
  * Maps to: AuthOperationResponse.java
  */
 export interface AuthOperationResponse {
@@ -17,19 +19,7 @@ export interface AuthStatusResponse {
 }
 
 /**
- * Response for GET /api/auth/2fa-status
- * Used to check 2FA state during login flow.
+ * Re-export 2FA types from two-factor.model.ts
+ * for backward compatibility with existing imports.
  */
-export interface TwoFactorStatusResponse {
-  twoFactorRequired: boolean;
-  status: '2fa_session' | 'awaiting_verification' | 'no_2fa_session' | 'invalid_2fa_session';
-  type?: TwoFactorType;
-  maskedEmail?: string;
-  timeRemaining?: number;
-}
-
-/**
- * Two-factor authentication types.
- * Maps to: TwoFactorType.java
- */
-export type TwoFactorType = 'EMAIL' | 'SMS' | 'TOTP' | 'BACKUP_CODE';
+export type { TwoFactorStatusResponse, TwoFactorType } from './two-factor.model';

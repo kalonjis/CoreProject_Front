@@ -1,0 +1,81 @@
+<!-- src/app/features/auth/two-factor/components/verify-code/verify-code.component.html -->
+
+<div class="verify-code" [class.verify-code--submitting]="isSubmitting">
+  <!-- Header -->
+  <div class="verify-code__header">
+    <span class="verify-code__icon">{{ getIcon() }}</span>
+    <h2 class="verify-code__title">{{ getTitle() }}</h2>
+    <p class="verify-code__description">{{ getDescription() }}</p>
+  </div>
+
+  <!-- Code Input -->
+  <div class="verify-code__input">
+    <app-code-input
+      [length]="codeLength()"
+      [inputType]="inputType()"
+      [disabled]="isSubmitting"
+      [autoFocus]="true"
+      [autoSubmit]="true"
+      (codeComplete)="onCodeComplete($event)">
+    </app-code-input>
+  </div>
+
+  <!-- Error Message -->
+  @if (error) {
+    <div class="verify-code__error" role="alert">
+      <span class="verify-code__error-icon">!</span>
+      <span class="verify-code__error-text">{{ error }}</span>
+    </div>
+  }
+
+  <!-- Submitting Indicator -->
+  @if (isSubmitting) {
+    <div class="verify-code__loading">
+      <span class="verify-code__spinner"></span>
+      <span>Verifying...</span>
+    </div>
+  }
+
+  <!-- Resend Section (EMAIL & SMS only) -->
+  @if (canResend()) {
+    <div class="verify-code__resend">
+      @if (resendCooldown() > 0) {
+        <p class="verify-code__resend-wait">
+          Resend code in <strong>{{ resendCooldown() }}s</strong>
+        </p>
+      } @else {
+        <p class="verify-code__resend-prompt">
+          Didn't receive the code?
+          <button
+            type="button"
+            class="verify-code__resend-button"
+            [disabled]="isResending()"
+            (click)="onResendClick()"
+          >
+            @if (isResending()) {
+              Sending...
+            } @else {
+              Resend code
+            }
+          </button>
+        </p>
+      }
+    </div>
+  }
+
+  <!-- Backup Code Hint -->
+  @if (type === 'BACKUP_CODE') {
+    <div class="verify-code__hint">
+      <p>Enter one of your 8-character backup codes.</p>
+      <p>Each code can only be used once.</p>
+    </div>
+  }
+
+  <!-- TOTP Hint -->
+  @if (type === 'TOTP') {
+    <div class="verify-code__hint">
+      <p>Open your authenticator app to view your code.</p>
+      <p>Codes refresh every 30 seconds.</p>
+    </div>
+  }
+</div>

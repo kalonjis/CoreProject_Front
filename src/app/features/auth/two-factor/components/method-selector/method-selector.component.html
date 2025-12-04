@@ -1,0 +1,43 @@
+<!-- src/app/features/auth/two-factor/components/method-selector/method-selector.component.html -->
+
+<div class="method-selector" [class.loading]="isLoading">
+  <h2 class="method-selector__title">Choose verification method</h2>
+  <p class="method-selector__subtitle">
+    Select how you want to verify your identity
+  </p>
+
+  <div class="method-selector__list">
+    @for (method of methods; track trackByType($index, method)) {
+      <button
+        type="button"
+        class="method-card"
+        [class.method-card--primary]="method.isPrimary"
+        [disabled]="isLoading"
+        (click)="onSelectMethod(method)"
+      >
+        <span class="method-card__icon">
+          {{ getMethodIcon(method.type) }}
+        </span>
+
+        <div class="method-card__content">
+          <span class="method-card__name">
+            {{ method.displayName }}
+            @if (method.isPrimary) {
+              <span class="method-card__badge">Primary</span>
+            }
+          </span>
+          <span class="method-card__description">
+            {{ method.description }}
+          </span>
+        </div>
+
+        <span class="method-card__arrow">→</span>
+      </button>
+    } @empty {
+      <div class="method-selector__empty">
+        <p>No verification methods available.</p>
+        <p>Please contact support for assistance.</p>
+      </div>
+    }
+  </div>
+</div>

@@ -1,3 +1,5 @@
+// src/app/core/auth/config/public-routes.config.ts
+
 /**
  * Public routes configuration.
  * Routes that don't require authentication.
@@ -7,15 +9,25 @@
  * Public API routes that should NOT trigger login redirect on 401/403.
  */
 export const PUBLIC_API_ROUTES = [
+  // Auth
   '/api/auth/login',
+  '/api/auth/initiate-login',
   '/api/auth/refresh-token',
   '/api/auth/logout',
   '/api/auth/session',
   '/api/auth/status',
   '/api/auth/signup',
+  // 2FA (during login flow - user not yet authenticated)
+  '/api/auth/2fa-status',
+  '/api/auth/2fa/choose-method',
+  '/api/auth/2fa/available-methods',
+  '/api/auth/verify-2fa',
+  '/api/auth/resend-2fa-code',
+  // Account & Device
   '/api/account-confirmation/',
   '/api/user/device/confirm',
   '/api/user/device/reject',
+  // Password
   '/api/password/',
 ];
 
@@ -27,6 +39,7 @@ export const PUBLIC_FRONTEND_ROUTES = [
   '/',
   '/auth/login',
   '/auth/signup',
+  '/auth/two-factor',
   '/auth/account-confirmation',
   '/auth/device-confirmation',
   '/password/forgot',

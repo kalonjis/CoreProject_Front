@@ -55,7 +55,7 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
 
     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.authFacade.login(formData, returnUrl).subscribe({
+    this.authFacade.initiateLogin(formData, returnUrl).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         // Navigation is handled by AuthFacade
