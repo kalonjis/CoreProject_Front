@@ -7,6 +7,12 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('./login/login-container/login-container.component').then(m => m.LoginContainerComponent),
   },
   {
+    path: 'two-factor',
+    loadComponent: () =>
+      import('./two-factor/two-factor-container/two-factor-container.component')
+        .then(m => m.TwoFactorContainerComponent),
+  },
+  {
     path: 'device-confirmation',
     loadComponent: () => import('./device-confirmation/device-confirmation.component')
       .then(m => m.ConfirmDeviceComponent)

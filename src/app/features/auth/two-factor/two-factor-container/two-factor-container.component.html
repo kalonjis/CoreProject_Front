@@ -1,0 +1,110 @@
+<!-- src/app/features/auth/two-factor/two-factor-container/two-factor-container.component.html -->
+
+<div class="two-factor-container">
+  <div class="two-factor-card">
+
+    <!-- Loading State -->
+    @if (flowState() === 'loading') {
+      <div class="two-factor-loading">
+        <div class="two-factor-loading__spinner"></div>
+        <p class="two-factor-loading__text">Loading verification methods...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (flowState() === 'error') {
+      <div class="two-factor-error">
+        <div class="two-factor-error__icon">!</div>
+        <h2 class="two-factor-error__title">Verification Error</h2>
+        <p class="two-factor-error__message">{{ error() }}</p>
+        <div class="two-factor-error__actions">
+          <button
+            type="button"
+            class="btn btn--primary"
+            (click)="onRetry()"
+          >
+            Try Again
+          </button>
+          <button
+            type="button"
+            class="btn btn--secondary"
+            (click)="onCancel()"
+          >
+            Back to Login
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Method Selection State -->
+    @if (flowState() === 'selecting') {
+      <app-method-selector
+        [methods]="availableMethods()"
+        [isLoading]="isLoading()"
+        (methodSelected)="onMethodSelected($event)">
+      </app-method-selector>
+
+      <!-- Error during selection -->
+      @if (error()) {
+        <div class="two-factor-inline-error" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Cancel link -->
+      <div class="two-factor-footer">
+        <button
+          type="button"
+          class="two-factor-link"
+          (click)="onCancel()"
+        >
+          ← Back to login
+        </button>
+      </div>
+    }
+
+    <!-- Verification State -->
+    @if (flowState() === 'verifying') {
+      <!-- Back button (if multiple methods) -->
+      @if (canGoBack()) {
+        <button
+          type="button"
+          class="two-factor-back"
+          (click)="onBackToSelection()"
+        >
+          ← Choose different method
+        </button>
+      }
+
+      <app-verify-code
+        [type]="selectedMethod()!"
+        [maskedDestination]="maskedDestination()"
+        [isSubmitting]="isLoading()"
+        [error]="error()"
+        (codeSubmitted)="onCodeSubmitted($event)"
+        (resendRequested)="onResendRequested()">
+      </app-verify-code>
+
+      <!-- Cancel link -->
+      <div class="two-factor-footer">
+        <button
+          type="button"
+          class="two-factor-link"
+          (click)="onCancel()"
+        >
+          Cancel and return to login
+        </button>
+      </div>
+    }
+
+    <!-- Success State (brief, before redirect) -->
+    @if (flowState() === 'success') {
+      <div class="two-factor-success">
+        <div class="two-factor-success__icon">✓</div>
+        <h2 class="two-factor-success__title">Verified!</h2>
+        <p class="two-factor-success__message">Redirecting you now...</p>
+      </div>
+    }
+
+  </div>
+</div>
