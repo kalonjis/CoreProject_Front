@@ -78,8 +78,7 @@ export class PasswordApiService {
    * On success, sets password_reset_permission cookie.
    */
   verifySmsCode(request: VerifySmsCodeRequest): Observable<PasswordOperationResponse> {
-    return this.http.post(`${this.baseUrl}/verify
-    -code`, request);
+    return this.http.post(`${this.baseUrl}/verify-code`, request);
   }
 
   // =========================================================================
