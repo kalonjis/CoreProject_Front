@@ -31,7 +31,8 @@ export const PUBLIC_FRONTEND_ROUTES = [
   '/auth/device-confirmation',
   '/password/forgot',
   '/password/reset',
-  '/password/verify-sms',
+  '/password/reset-code',
+  '/password/verify-code',
 ];
 
 /**

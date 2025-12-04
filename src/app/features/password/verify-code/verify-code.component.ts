@@ -9,13 +9,13 @@ import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { PasswordApiService } from '../services/password-api.service';
 
 @Component({
-  selector: 'app-verify-sms',
+  selector: 'app-verify-code',
   standalone: true,
   imports: [CommonModule, RouterLink, CodeInputComponent, FeedbackComponent],
-  templateUrl: './verify-sms.component.html',
-  styleUrl: './verify-sms.component.scss'
+  templateUrl: './verify-code.component.html',
+  styleUrl: './verify-code.component.scss'
 })
-export class VerifySmsComponent extends FeedbackBase implements OnInit, OnDestroy {
+export class VerifyCodeComponent extends FeedbackBase implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
   private readonly passwordApi = inject(PasswordApiService);
@@ -87,7 +87,7 @@ export class VerifySmsComponent extends FeedbackBase implements OnInit, OnDestro
 
         // Redirect to reset password page
         setTimeout(() => {
-          this.router.navigate(['/password/reset']);
+          this.router.navigate(['/password/reset-code']);
         }, 1500);
       },
       error: (error: HttpErrorResponse) => {

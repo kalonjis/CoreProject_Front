@@ -1,7 +1,7 @@
 /**
  * Notification type for password reset delivery.
  */
-export type NotificationType = 'EMAIL' | 'SMS';
+export type PasswordResetType = 'EMAIL_LINK' | 'EMAIL_CODE' | 'SMS_CODE';
 
 /**
  * Request to initiate password reset (forgot password).
@@ -9,7 +9,7 @@ export type NotificationType = 'EMAIL' | 'SMS';
  */
 export interface ForgotPasswordRequest {
   email: string;
-  notificationType: NotificationType;
+  resetType: PasswordResetType;
 }
 
 /**
@@ -17,7 +17,7 @@ export interface ForgotPasswordRequest {
  * PUT /api/password/reset?token=xxx
  */
 export interface ResetPasswordRequest {
-  newPassword: string;
+  password: string;
   confirmPassword: string;
 }
 
@@ -26,7 +26,7 @@ export interface ResetPasswordRequest {
  * PUT /api/password/reset-with-permission
  */
 export interface ResetPasswordWithPermissionRequest {
-  newPassword: string;
+  password: string;
   confirmPassword: string;
 }
 
@@ -36,13 +36,13 @@ export interface ResetPasswordWithPermissionRequest {
  */
 export interface ChangePasswordRequest {
   currentPassword: string;
-  newPassword: string;
+  password: string;
   confirmPassword: string;
 }
 
 /**
  * Request to verify SMS code for password reset.
- * POST /api/password/verify-sms-code
+ * POST /api/password/verify-code-code
  */
 export interface VerifySmsCodeRequest {
   verificationCode: string;

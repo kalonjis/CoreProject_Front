@@ -14,14 +14,19 @@ export const PASSWORD_ROUTES: Routes = [
       .then(m => m.ResetPasswordComponent)
   },
   {
+    path: 'reset-code',
+    loadComponent: () => import('./reset-password-code/reset-password-code.component')
+      .then(m => m.ResetPasswordCodeComponent)
+  },
+  {
     path: 'change',
     canActivate: [() => authGuard(true)], // Allow access for forced password change
     loadComponent: () => import('./change-password/change-password.component')
       .then(m => m.ChangePasswordComponent)
   },
   {
-    path: 'verify-sms',
-    loadComponent: () => import('./verify-sms/verify-sms.component')
-      .then(m => m.VerifySmsComponent)
+    path: 'verify-code',
+    loadComponent: () => import('./verify-code/verify-code.component')
+      .then(m => m.VerifyCodeComponent)
   }
 ];

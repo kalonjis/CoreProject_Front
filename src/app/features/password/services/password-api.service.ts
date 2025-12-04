@@ -20,7 +20,7 @@ import { PasswordOperationResponse } from '../models/password-response.model';
  * - PUT  /api/password/reset-with-permission → Reset with SMS permission
  * - PUT  /api/password/change          → Change password (authenticated)
  * - GET  /api/password/reset/resend    → Resend expired token
- * - POST /api/password/verify-sms-code → Verify SMS code
+ * - POST /api/password/verify-code-code → Verify SMS code
  */
 @Injectable({ providedIn: 'root' })
 export class PasswordApiService {
@@ -78,7 +78,8 @@ export class PasswordApiService {
    * On success, sets password_reset_permission cookie.
    */
   verifySmsCode(request: VerifySmsCodeRequest): Observable<PasswordOperationResponse> {
-    return this.http.post(`${this.baseUrl}/verify-sms-code`, request);
+    return this.http.post(`${this.baseUrl}/verify
+    -code`, request);
   }
 
   // =========================================================================

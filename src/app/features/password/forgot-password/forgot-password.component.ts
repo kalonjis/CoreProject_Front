@@ -7,7 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { PasswordApiService } from '../services/password-api.service';
-import { NotificationType } from '../models/password-request.model';
+import { PasswordResetType } from '../models/password-request.model';
 
 @Component({
   selector: 'app-forgot-password',
@@ -25,7 +25,7 @@ export class ForgotPasswordComponent extends FeedbackBase {
   // Component state
   isSubmitting = signal(false);
   resetRequested = signal(false);
-  selectedMethod = signal<NotificationType>('EMAIL');
+  selectedMethod = signal<PasswordResetType>('EMAIL_LINK');
 
   // Form
   resetForm = this.fb.group({
@@ -35,7 +35,7 @@ export class ForgotPasswordComponent extends FeedbackBase {
   /**
    * Select notification method (EMAIL or SMS).
    */
-  selectMethod(method: NotificationType): void {
+  selectMethod(method: PasswordResetType): void {
     this.selectedMethod.set(method);
   }
 
@@ -58,14 +58,14 @@ export class ForgotPasswordComponent extends FeedbackBase {
 
     this.passwordApi.forgotPassword({
       email,
-      notificationType: this.selectedMethod()
+      resetType: this.selectedMethod()
     }).subscribe({
       next: () => {
         this.isSubmitting.set(false);
 
-        if (this.selectedMethod() === 'SMS') {
+        if (this.selectedMethod() === 'SMS_CODE'|| this.selectedMethod() === 'EMAIL_CODE' ) {
           // Redirect to SMS verification page
-          this.router.navigate(['/password/verify-sms']);
+          this.router.navigate(['/password/verify-code']);
         } else {
           // Show success message for email
           this.resetRequested.set(true);
