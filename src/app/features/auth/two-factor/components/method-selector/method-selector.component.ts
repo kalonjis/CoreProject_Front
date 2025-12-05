@@ -72,7 +72,7 @@ export class MethodSelectorComponent {
       TOTP: '🔐',
       EMAIL: '📧',
       SMS: '📱',
-      BACKUP_CODE: '🔑',
+      BACKUP_CODES: '🔑',
       WEBAUTHN: '🛡️'
     };
     return icons[type] ?? '🔒';

@@ -194,7 +194,7 @@ export class TwoFactorApiService {
         return this.enableEmail();
       case 'SMS':
         return this.enableSms();
-      case 'BACKUP_CODE':
+      case 'BACKUP_CODES':
         return this.enableBackupCodes();
       default:
         throw new Error(`Unsupported 2FA type: ${type}`);
@@ -213,7 +213,7 @@ export class TwoFactorApiService {
         return this.disableEmail();
       case 'SMS':
         return this.disableSms();
-      case 'BACKUP_CODE':
+      case 'BACKUP_CODES':
         return this.disableBackupCodes();
       default:
         throw new Error(`Unsupported 2FA type: ${type}`);

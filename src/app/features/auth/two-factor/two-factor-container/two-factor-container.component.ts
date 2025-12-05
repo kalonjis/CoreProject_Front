@@ -148,6 +148,7 @@ export class TwoFactorContainerComponent implements OnInit {
     this.error.set(null);
     this.selectedMethod.set(type);
 
+
     this.authFacade.choose2FAMethod(type).subscribe({
       next: (response) => {
         this.isLoading.set(false);
@@ -158,7 +159,6 @@ export class TwoFactorContainerComponent implements OnInit {
         this.isLoading.set(false);
         console.error('Failed to select 2FA method:', err);
         this.error.set(err.error?.message || 'Failed to initiate verification. Please try again.');
-        // Stay in current state to allow retry
       }
     });
   }

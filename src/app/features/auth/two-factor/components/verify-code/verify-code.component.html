@@ -10,14 +10,24 @@
 
   <!-- Code Input -->
   <div class="verify-code__input">
-    <app-code-input
-      [length]="codeLength()"
-      [inputType]="inputType()"
-      [disabled]="isSubmitting"
-      [autoFocus]="true"
-      [autoSubmit]="true"
-      (codeComplete)="onCodeComplete($event)">
-    </app-code-input>
+    @if (type === 'BACKUP_CODES') {
+      <!-- Input spécialisé pour backup codes -->
+      <app-backup-code-input
+        [disabled]="isSubmitting"
+        [autoFocus]="true"
+        (codeComplete)="onCodeComplete($event)">
+      </app-backup-code-input>
+    } @else {
+      <!-- Input standard pour les autres types -->
+      <app-code-input
+        [length]="codeLength()"
+        [inputType]="inputType()"
+        [disabled]="isSubmitting"
+        [autoFocus]="true"
+        [autoSubmit]="true"
+        (codeComplete)="onCodeComplete($event)">
+      </app-code-input>
+    }
   </div>
 
   <!-- Error Message -->
@@ -64,7 +74,7 @@
   }
 
   <!-- Backup Code Hint -->
-  @if (type === 'BACKUP_CODE') {
+  @if (type === 'BACKUP_CODES') {
     <div class="verify-code__hint">
       <p>Enter one of your 8-character backup codes.</p>
       <p>Each code can only be used once.</p>

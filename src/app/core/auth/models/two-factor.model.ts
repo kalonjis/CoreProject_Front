@@ -23,7 +23,7 @@
  * Available two-factor authentication method types.
  * Maps to: TwoFactorType.java
  */
-export type TwoFactorType = 'EMAIL' | 'SMS' | 'TOTP' | 'BACKUP_CODE' | 'WEBAUTHN';
+export type TwoFactorType = 'EMAIL' | 'SMS' | 'TOTP' | 'BACKUP_CODES' | 'WEBAUTHN';
 
 /**
  * Two-factor flow states for the login container state machine.
@@ -58,7 +58,7 @@ export const TWO_FACTOR_CONFIG: Record<TwoFactorType, TwoFactorTypeConfig> = {
     canResend: false,
     resendCooldown: 0,
   },
-  BACKUP_CODE: {
+  BACKUP_CODES: {
     codeLength: 16,
     inputType: 'alphanumeric',
     canResend: false,
@@ -210,7 +210,7 @@ export function formatBackupCode(code: string): string {
  * Build a TwoFactorVerifyRequest from a code and type.
  */
 export function buildVerifyRequest(code: string, type: TwoFactorType): TwoFactorVerifyRequest {
-  if (type === 'BACKUP_CODE') {
+  if (type === 'BACKUP_CODES') {
     return { backupCode: formatBackupCode(code) };
   }
   return { verificationCode: code };
