@@ -1,0 +1,30 @@
+<div class="backup-code-input">
+  <input
+    #inputEl
+    type="text"
+    [(ngModel)]="displayValue"
+    (input)="onInput($event)"
+    (paste)="onPaste($event)"
+    (keydown)="onKeyDown($event)"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    [class.error]="hasError()"
+    [class.valid]="isValid()"
+    maxlength="19"
+    autocomplete="one-time-code"
+    spellcheck="false"
+  />
+
+  @if (hasError()) {
+    <div class="error-hint">
+      <span class="error-icon">⚠️</span>
+      Format attendu: XXXX-XXXX-XXXX-XXXX
+    </div>
+  }
+
+  @if (showHint && !hasError()) {
+    <div class="hint">
+      Entrez votre code de sauvegarde à 16 caractères
+    </div>
+  }
+</div>

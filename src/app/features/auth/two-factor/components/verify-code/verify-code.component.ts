@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 
 import { CodeInputComponent } from '../../../../../shared/code-input/code-input.component';
 import { TwoFactorType, getTwoFactorConfig } from '../../../../../core/auth';
+import {BackupCodeInputComponent} from '../../../../../shared/backup-code-input/backup-code-input.component';
 
 /**
  * VerifyCodeComponent - Presentational component for 2FA code verification.
@@ -42,7 +43,7 @@ import { TwoFactorType, getTwoFactorConfig } from '../../../../../core/auth';
 @Component({
   selector: 'app-verify-code',
   standalone: true,
-  imports: [CommonModule, CodeInputComponent],
+  imports: [CommonModule, CodeInputComponent, BackupCodeInputComponent],
   templateUrl: './verify-code.component.html',
   styleUrl: './verify-code.component.scss'
 })
@@ -101,16 +102,46 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
   // ===========================================================================
 
   /** Code length based on type */
-  codeLength = computed(() => getTwoFactorConfig(this.type).codeLength);
+  codeLength = computed(() => {
+    try {
+      if (!this.type) return 6; // temporaire
+      const config = getTwoFactorConfig(this.type);
+      return config.codeLength;
+    } catch (e) {
+      console.error('Error getting code length:', e);
+      return 6;
+    }
+  });
 
   /** Input type based on 2FA type */
-  inputType = computed(() => getTwoFactorConfig(this.type).inputType);
+  inputType = computed(() => {
+    try {
+      if (!this.type) return 'numeric';
+      return getTwoFactorConfig(this.type).inputType;
+    } catch {
+      return 'numeric';
+    }
+  });
 
   /** Whether this type supports code resend */
-  canResend = computed(() => getTwoFactorConfig(this.type).canResend);
+  canResend = computed(() => {
+    try {
+      if (!this.type) return false;
+      return getTwoFactorConfig(this.type).canResend;
+    } catch {
+      return false;
+    }
+  });
 
   /** Default cooldown duration for this type */
-  defaultCooldown = computed(() => getTwoFactorConfig(this.type).resendCooldown);
+  defaultCooldown = computed(() => {
+    try {
+      if (!this.type) return 0;
+      return getTwoFactorConfig(this.type).resendCooldown;
+    } catch {
+      return 0;
+    }
+  });
 
   // ===========================================================================
   // LIFECYCLE
@@ -189,7 +220,7 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
       TOTP: 'Enter authenticator code',
       EMAIL: 'Check your email',
       SMS: 'Check your phone',
-      BACKUP_CODE: 'Enter backup code',
+      BACKUP_CODES: 'Enter backup code',
       WEBAUTHN: 'Use your security key'
     };
     return titles[this.type] ?? 'Enter verification code';
@@ -210,7 +241,7 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
         return this.maskedDestination
           ? `We sent a code to ${this.maskedDestination}`
           : 'We sent a verification code to your phone';
-      case 'BACKUP_CODE':
+      case 'BACKUP_CODES':
         return 'Enter one of your saved backup codes';
       default:
         return 'Enter your verification code';
@@ -225,7 +256,7 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
       TOTP: '🔐',
       EMAIL: '📧',
       SMS: '📱',
-      BACKUP_CODE: '🔑',
+      BACKUP_CODES: '🔑',
       WEBAUTHN: '🛡️'
     };
     return icons[this.type] ?? '🔒';

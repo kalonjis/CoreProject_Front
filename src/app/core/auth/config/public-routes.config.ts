@@ -21,6 +21,7 @@ export const PUBLIC_API_ROUTES = [
   '/api/auth/2fa-status',
   '/api/auth/2fa/choose-method',
   '/api/auth/2fa/available-methods',
+  '/api/auth/2fa/enabled-methods',
   '/api/auth/verify-2fa',
   '/api/auth/resend-2fa-code',
   // Account & Device
