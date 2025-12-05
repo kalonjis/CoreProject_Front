@@ -1,28 +1,30 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, signal, ViewChild} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-
-@Component({
-  selector: 'app-backup-code-input',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
-  templateUrl: './backup-code-input.component.html',
-  styleUrl: './backup-code-input.component.scss'
-})
+// src/app/shared/backup-code-input/backup-code-input.component.ts
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  ViewChild,
+  OnInit,
+  signal,
+  computed
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 /**
  * BackupCodeInputComponent - Input spécialisé pour les codes backup 2FA
  *
  * Format attendu: XXXX-XXXX-XXXX-XXXX
- *
- * Features:
- * - Auto-formatage avec tirets
- * - Copier-coller complet
- * - Validation du format
- * - Nettoyage automatique
+ * Utilise signals comme code-input pour la cohérence
  */
-
+@Component({
+  selector: 'app-backup-code-input',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './backup-code-input.component.html',
+  styleUrl: './backup-code-input.component.scss'
+})
 export class BackupCodeInputComponent implements OnInit {
 
   // ===========================================================================
@@ -42,13 +44,28 @@ export class BackupCodeInputComponent implements OnInit {
   @Output() codeChange = new EventEmitter<string>();
 
   // ===========================================================================
-  // STATE
+  // STATE (SIGNALS - moderne comme code-input)
   // ===========================================================================
 
   @ViewChild('inputEl') inputElement!: ElementRef<HTMLInputElement>;
 
+  /** Valeur affichée avec formatage */
   displayValue = signal('');
-  private currentCode = '';
+
+  /** Code nettoyé (16 caractères) */
+  cleanCode = signal('');
+
+  /** Est-ce que le code est valide */
+  isValid = computed(() => {
+    const code = this.cleanCode();
+    return code.length === 16 && /^[A-Z0-9]{16}$/.test(code);
+  });
+
+  /** Est-ce qu'il y a une erreur */
+  hasError = computed(() => {
+    const code = this.cleanCode();
+    return code.length > 0 && !this.isValid();
+  });
 
   // ===========================================================================
   // LIFECYCLE
@@ -61,7 +78,7 @@ export class BackupCodeInputComponent implements OnInit {
   }
 
   // ===========================================================================
-  // METHODS
+  // EVENT HANDLERS (natifs, pas ngModel)
   // ===========================================================================
 
   onInput(event: Event): void {
@@ -72,17 +89,17 @@ export class BackupCodeInputComponent implements OnInit {
     const cleaned = this.cleanValue(value);
     const formatted = this.formatValue(cleaned);
 
-    // Mettre à jour l'affichage
+    // Mettre à jour les signals
+    this.cleanCode.set(cleaned);
     this.displayValue.set(formatted);
-    input.value = formatted;
 
-    // Mettre à jour le code interne
-    this.currentCode = cleaned;
+    // Synchroniser l'input (important!)
+    input.value = formatted;
 
     // Émettre les événements
     this.codeChange.emit(cleaned);
 
-    if (this.isValidCode(cleaned)) {
+    if (this.isValid()) {
       this.codeComplete.emit(cleaned);
     }
   }
@@ -95,12 +112,19 @@ export class BackupCodeInputComponent implements OnInit {
 
     if (cleaned.length <= 16) {
       const formatted = this.formatValue(cleaned);
+
+      // Mettre à jour les signals
+      this.cleanCode.set(cleaned);
       this.displayValue.set(formatted);
-      this.currentCode = cleaned;
+
+      // Synchroniser l'input
+      if (this.inputElement) {
+        this.inputElement.nativeElement.value = formatted;
+      }
 
       this.codeChange.emit(cleaned);
 
-      if (this.isValidCode(cleaned)) {
+      if (this.isValid()) {
         this.codeComplete.emit(cleaned);
       }
     }
@@ -136,6 +160,11 @@ export class BackupCodeInputComponent implements OnInit {
     }
   }
 
+  onFocus(event: FocusEvent): void {
+    const input = event.target as HTMLInputElement;
+    input.select();
+  }
+
   // ===========================================================================
   // PRIVATE HELPERS
   // ===========================================================================
@@ -150,10 +179,6 @@ export class BackupCodeInputComponent implements OnInit {
     return cleaned.match(/.{1,4}/g)?.join('-') || cleaned;
   }
 
-  private isValidCode(code: string): boolean {
-    return code.length === 16 && /^[A-Z0-9]{16}$/.test(code);
-  }
-
   // ===========================================================================
   // PUBLIC API
   // ===========================================================================
@@ -163,21 +188,15 @@ export class BackupCodeInputComponent implements OnInit {
   }
 
   reset(): void {
+    this.cleanCode.set('');
     this.displayValue.set('');
-    this.currentCode = '';
+    if (this.inputElement) {
+      this.inputElement.nativeElement.value = '';
+    }
     this.codeChange.emit('');
   }
 
   getCode(): string {
-    return this.currentCode;
-  }
-
-  hasError(): boolean {
-    const code = this.currentCode;
-    return code.length > 0 && !this.isValidCode(code);
-  }
-
-  isValid(): boolean {
-    return this.isValidCode(this.currentCode);
+    return this.cleanCode();
   }
 }
