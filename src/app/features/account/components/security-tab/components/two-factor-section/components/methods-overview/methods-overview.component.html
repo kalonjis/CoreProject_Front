@@ -1,0 +1,70 @@
+<!-- src/app/features/account/components/security-tab/components/two-factor-section/components/methods-overview/methods-overview.component.html -->
+
+<div class="methods-overview">
+
+  <!-- Methods list -->
+  <div class="methods-list">
+    @for (method of methods; track method.type) {
+      <div
+        class="method-card"
+        [class.enabled]="method.isEnabled"
+        [class.clickable]="true"
+        (click)="onMethodClick(method)"
+      >
+        <div class="method-info">
+          <div class="method-icon">{{ getMethodIcon(method.type) }}</div>
+          <div class="method-details">
+            <h3 class="method-name">{{ method.displayName }}</h3>
+            <p class="method-description">{{ method.description }}</p>
+            @if (method.isPrimary && method.isEnabled) {
+              <span class="primary-badge">Primary</span>
+            }
+          </div>
+        </div>
+
+        <div class="method-actions">
+          @if (method.isEnabled) {
+            <span class="status-indicator enabled">Enabled</span>
+            <button
+              class="btn-secondary small"
+              (click)="onDisableClick($event, method)"
+              [disabled]="method.isPrimary"
+              [title]="method.isPrimary ? 'Cannot disable primary method' : 'Disable this method'"
+            >
+              Disable
+            </button>
+          } @else {
+            <span class="status-indicator disabled">Disabled</span>
+            <button
+              class="btn-primary small"
+              (click)="onEnableClick($event, method)"
+            >
+              Enable
+            </button>
+          }
+
+          <!-- Detail button/indicator -->
+          <button class="detail-button" [title]="'Configure ' + method.displayName">
+            <span class="detail-icon">⚙️</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Empty state -->
+  @if (methods.length === 0) {
+    <div class="empty-state">
+      <p>No two-factor authentication methods available.</p>
+    </div>
+  }
+
+  <!-- Help text -->
+  <div class="overview-help">
+    <p class="help-text">
+      <strong>Click on any method</strong> to view detailed configuration options.
+      It's recommended to have at least two methods enabled for account security.
+    </p>
+  </div>
+
+</div>

@@ -1,0 +1,17 @@
+<!-- src/app/features/account/components/account-tabs/account-tabs.component.html -->
+
+<nav class="account-tabs">
+  <div class="tabs-wrapper">
+    @for (tab of tabs; track tab.route) {
+      <a
+        [routerLink]="tab.route"
+        routerLinkActive="active"
+        [title]="tab.description"
+        class="tab-link"
+      >
+        <span class="tab-icon">{{ tab.icon }}</span>
+        <span class="tab-label">{{ tab.label }}</span>
+      </a>
+    }
+  </div>
+</nav>
