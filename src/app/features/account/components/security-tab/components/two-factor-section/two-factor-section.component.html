@@ -1,0 +1,145 @@
+<!-- src/app/features/account/components/security-tab/components/two-factor-section/two-factor-section.component.html -->
+
+<div class="two-factor-section">
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <div class="header-content">
+      <div class="section-icon">🔐</div>
+      <div class="header-text">
+        <h2>Two-Factor Authentication</h2>
+        <p class="section-description">
+          Add an extra layer of security to your account
+        </p>
+      </div>
+    </div>
+    <div class="section-status">
+      @if (getEnabledMethodsCount() > 0) {
+        <span class="status-badge enabled">
+          {{ getEnabledMethodsCount() }} method{{ getEnabledMethodsCount() > 1 ? 's' : '' }} active
+        </span>
+      } @else {
+        <span class="status-badge disabled">Not configured</span>
+      }
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading two-factor authentication settings...</p>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (errorMessage()) {
+    <div class="alert alert-danger">
+      <div class="alert-content">
+        <span>{{ errorMessage() }}</span>
+        <button class="btn-retry" (click)="retryLoading()">Retry</button>
+      </div>
+    </div>
+  }
+
+  <!-- Content based on current view -->
+  @else {
+
+    <!-- Overview: List of methods -->
+    @if (currentView() === 'overview') {
+      <app-methods-overview
+        [methods]="twoFactorMethods()"
+        (methodSelected)="showMethodDetail($event)"
+        (enableMethod)="enableMethod($event)"
+        (disableMethod)="disableMethod($event)"
+      />
+    }
+
+    <!-- Detail: Selected method configuration -->
+    @else if (currentView() === 'detail' && selectedMethod()) {
+      <div class="method-detail-container">
+
+        <!-- Back navigation -->
+        <div class="detail-header">
+          <button class="back-button" (click)="showOverview()">
+            <span class="icon">←</span>
+            Back to overview
+          </button>
+          <h3>{{ selectedMethod()!.displayName }} Configuration</h3>
+        </div>
+
+        <!-- Method detail content (placeholder for now) -->
+        <div class="method-detail-content">
+          <div class="method-info-card">
+            <div class="method-icon-large">{{ getMethodIcon(selectedMethod()!.type) }}</div>
+            <h4>{{ selectedMethod()!.displayName }}</h4>
+            <p>{{ selectedMethod()!.description }}</p>
+
+            <div class="method-status">
+              <span class="status-label">Status:</span>
+              @if (selectedMethod()!.isEnabled) {
+                <span class="status-value enabled">Enabled</span>
+                @if (selectedMethod()!.isPrimary) {
+                  <span class="primary-indicator">(Primary)</span>
+                }
+              } @else {
+                <span class="status-value disabled">Disabled</span>
+              }
+            </div>
+
+            <div class="method-actions">
+              @if (selectedMethod()!.isEnabled) {
+                <button
+                  class="btn-secondary"
+                  (click)="disableMethod(selectedMethod()!)"
+                  [disabled]="selectedMethod()!.isPrimary"
+                >
+                  Disable Method
+                </button>
+                @if (selectedMethod()!.isPrimary && getEnabledMethodsCount() === 1) {
+                  <small class="action-note">
+                    Enable another method before disabling your primary method
+                  </small>
+                }
+              } @else {
+                <button
+                  class="btn-primary"
+                  (click)="enableMethod(selectedMethod()!)"
+                >
+                  Enable Method
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Method-specific configuration will be added here -->
+          <div class="method-config-placeholder">
+            <p><strong>Configuration for {{ selectedMethod()!.type }}:</strong></p>
+            <p class="placeholder-text">
+              Detailed configuration options will be implemented here.
+            </p>
+            @if (selectedMethod()!.type === 'SMS') {
+              <p>• Phone number management</p>
+              <p>• Test SMS functionality</p>
+            } @else if (selectedMethod()!.type === 'TOTP') {
+              <p>• QR code generation</p>
+              <p>• Manual secret key</p>
+              <p>• Authenticator app setup</p>
+            } @else if (selectedMethod()!.type === 'BACKUP_CODES') {
+              <p>• Generate backup codes</p>
+              <p>• Download codes securely</p>
+              <p>• Regenerate used codes</p>
+            } @else if (selectedMethod()!.type === 'EMAIL') {
+              <p>• Email verification settings</p>
+              <p>• Test email delivery</p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+  }
+
+</div>

@@ -1,0 +1,355 @@
+// src/app/features/account/components/security-tab/components/two-factor-section/two-factor-section.component.scss
+
+// Import variables and mixins
+@import 'variables';
+@import 'mixins';
+
+.two-factor-section {
+
+  // Section Header
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid $border-color;
+    background: linear-gradient(135deg, rgba($primary-color, 0.02), transparent);
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .section-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba($primary-color, 0.1);
+        border-radius: 50%;
+      }
+
+      .header-text {
+        h2 {
+          color: $secondary-color;
+          font-size: 1.25rem;
+          margin: 0 0 0.25rem 0;
+          font-weight: $font-weight-bold;
+        }
+
+        .section-description {
+          color: $gray-dark;
+          margin: 0;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .section-status {
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.enabled {
+          background-color: rgba($success-color, 0.15);
+          color: darken($success-color, 15%);
+          border: 1px solid rgba($success-color, 0.3);
+        }
+
+        &.disabled {
+          background-color: rgba($gray-medium, 0.15);
+          color: darken($gray-medium, 25%);
+          border: 1px solid rgba($gray-medium, 0.3);
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      .header-content {
+        width: 100%;
+      }
+    }
+  }
+
+  // Loading State
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    padding: 2rem;
+
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba($primary-color, 0.2);
+        border-radius: 50%;
+        border-top-color: $primary-color;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      p {
+        color: $gray-dark;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+    }
+  }
+
+  // Alert Messages
+  .alert {
+    margin: 1rem 1.5rem;
+    padding: 1rem;
+    border-radius: $border-radius;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+
+    .alert-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &.alert-danger {
+      background-color: rgba($danger-color, 0.1);
+      color: darken($danger-color, 10%);
+      border: 1px solid rgba($danger-color, 0.3);
+
+      .btn-retry {
+        background-color: rgba(white, 0.3);
+        border: 1px solid currentColor;
+        border-radius: $border-radius;
+        padding: 0.25rem 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: inherit;
+        font-weight: 500;
+
+        &:hover {
+          background-color: rgba(white, 0.5);
+        }
+      }
+    }
+  }
+
+  // Method Detail Container
+  .method-detail-container {
+    padding: 1.5rem;
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid $border-color;
+
+      .back-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba($gray-light, 0.5);
+        color: $gray-dark;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+
+        .icon {
+          font-size: 1.1rem;
+        }
+
+        &:hover {
+          background: $gray-light;
+          color: $secondary-color;
+          border-color: $gray-medium;
+        }
+      }
+
+      h3 {
+        color: $secondary-color;
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: $font-weight-bold;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .method-detail-content {
+      display: grid;
+      gap: 1.5rem;
+
+      .method-info-card {
+        background: white;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-lg;
+        padding: 1.5rem;
+        text-align: center;
+
+        .method-icon-large {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        h4 {
+          color: $secondary-color;
+          font-size: 1.2rem;
+          margin: 0 0 0.5rem 0;
+          font-weight: $font-weight-bold;
+        }
+
+        p {
+          color: $gray-dark;
+          margin: 0 0 1.5rem 0;
+          line-height: 1.5;
+        }
+
+        .method-status {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+
+          .status-label {
+            font-weight: 500;
+            color: $gray-dark;
+          }
+
+          .status-value {
+            font-weight: 600;
+
+            &.enabled {
+              color: darken($success-color, 15%);
+            }
+
+            &.disabled {
+              color: darken($gray-medium, 25%);
+            }
+          }
+
+          .primary-indicator {
+            color: darken($primary-color, 15%);
+            font-size: 0.9rem;
+            font-style: italic;
+          }
+        }
+
+        .method-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.75rem;
+
+          .action-note {
+            color: $gray-dark;
+            font-size: 0.8rem;
+            font-style: italic;
+            text-align: center;
+          }
+        }
+      }
+
+      .method-config-placeholder {
+        background: rgba($gray-light, 0.3);
+        border: 1px dashed $border-color;
+        border-radius: $border-radius-lg;
+        padding: 1.5rem;
+
+        p {
+          margin: 0 0 0.75rem 0;
+          color: $gray-dark;
+
+          &.placeholder-text {
+            font-style: italic;
+            color: $gray-medium;
+            margin-bottom: 1rem;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
+  // Buttons
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    border: none;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  .btn-secondary {
+    background-color: $gray-light;
+    color: $gray-dark;
+    border: 1px solid $border-color;
+
+    &:hover:not(:disabled) {
+      background-color: $gray-medium;
+      color: $secondary-color;
+    }
+  }
+
+  // Animations
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}

@@ -1,11 +1,13 @@
+<!-- src/app/shared/backup-code-input/backup-code-input.component.html -->
 <div class="backup-code-input">
   <input
     #inputEl
     type="text"
-    [(ngModel)]="displayValue"
+    [value]="displayValue()"
     (input)="onInput($event)"
     (paste)="onPaste($event)"
     (keydown)="onKeyDown($event)"
+    (focus)="onFocus($event)"
     [disabled]="disabled"
     [placeholder]="placeholder"
     [class.error]="hasError()"

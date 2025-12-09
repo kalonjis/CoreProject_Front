@@ -1,0 +1,135 @@
+<!-- src/app/features/account/components/security-tab/security-tab.component.html -->
+
+<div class="security-tab">
+
+  <!-- Overview: Security sections cards -->
+  @if (selectedSection() === 'overview') {
+    <div class="security-overview">
+      <div class="overview-header">
+        <h1>Security & Privacy</h1>
+        <p class="overview-description">
+          Manage your account security settings and privacy options
+        </p>
+      </div>
+
+      <div class="sections-grid">
+        @for (section of securitySections; track section.id) {
+          <div
+            class="section-card"
+            [class.enabled]="section.enabled"
+            [class.disabled]="!section.enabled"
+            (click)="selectSection(section.id)"
+          >
+            <div class="section-icon">{{ section.icon }}</div>
+            <div class="section-content">
+              <h3 class="section-title">{{ section.title }}</h3>
+              <p class="section-description">{{ section.description }}</p>
+              <div class="section-status">
+                <span class="status-text">{{ section.status }}</span>
+              </div>
+            </div>
+            <div class="section-arrow">
+              @if (section.enabled) {
+                <span class="arrow-icon">→</span>
+              } @else {
+                <span class="coming-soon-badge">Soon</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Two-Factor Authentication Detail -->
+  @else if (selectedSection() === 'twofactor') {
+    <div class="section-detail">
+      <!-- Back navigation -->
+      <div class="detail-header">
+        <button class="back-button" (click)="showOverview()">
+          <span class="icon">←</span>
+          Back to Security
+        </button>
+        <h2>Two-Factor Authentication</h2>
+      </div>
+
+      <!-- Two-Factor Section Component -->
+      <div class="detail-content">
+        <app-two-factor-section />
+      </div>
+    </div>
+  }
+
+  <!-- Password Detail -->
+  @else if (selectedSection() === 'password') {
+    <div class="section-detail">
+      <!-- Back navigation -->
+      <div class="detail-header">
+        <button class="back-button" (click)="showOverview()">
+          <span class="icon">←</span>
+          Back to Security
+        </button>
+        <h2>Password Management</h2>
+      </div>
+
+      <!-- Password Section Content -->
+      <div class="detail-content">
+        <section class="security-section">
+          <div class="section-header">
+            <div class="header-content">
+              <div class="section-icon">🔑</div>
+              <div class="header-text">
+                <h3>Account Password</h3>
+                <p class="section-description">
+                  Manage and update your account password
+                </p>
+              </div>
+            </div>
+            <div class="section-info">
+              @if (lastPasswordChange()) {
+                <span class="info-text">
+                  Last changed: {{ lastPasswordChange()! | date:'MMM d, yyyy' }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="password-actions">
+            <button class="btn-outline" (click)="changePassword()">
+              <span class="btn-icon">🔄</span>
+              Change Password
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  }
+
+  <!-- Recovery Options Detail -->
+  @else if (selectedSection() === 'recovery') {
+    <div class="section-detail">
+      <!-- Back navigation -->
+      <div class="detail-header">
+        <button class="back-button" (click)="showOverview()">
+          <span class="icon">←</span>
+          Back to Security
+        </button>
+        <h2>Recovery Options</h2>
+      </div>
+
+      <!-- Recovery Section Content -->
+      <div class="detail-content">
+        <section class="security-section future-section">
+          <div class="recovery-placeholder">
+            <div class="placeholder-content">
+              <div class="placeholder-icon">🚧</div>
+              <h3>Coming Soon</h3>
+              <p>Recovery email and phone options will be available in a future update.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  }
+
+</div>

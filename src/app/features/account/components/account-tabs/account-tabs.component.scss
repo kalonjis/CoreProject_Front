@@ -1,0 +1,96 @@
+// src/app/features/account/components/account-tabs/account-tabs.component.scss
+
+// Import variables and mixins
+@import 'variables';
+@import 'mixins';
+
+.account-tabs {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid $border-color;
+
+  .tabs-wrapper {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tab-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: $gray-dark;
+    text-decoration: none;
+    background-color: transparent;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    white-space: nowrap;
+    min-width: 120px;
+    justify-content: center;
+
+    .tab-icon {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+
+    .tab-label {
+      font-size: 0.95rem;
+    }
+
+    // Hover state
+    &:hover {
+      color: $primary-color;
+      background-color: rgba($primary-color, 0.05);
+    }
+
+    // Active state (RouterLinkActive)
+    &.active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+      background-color: rgba($primary-color, 0.05);
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .account-tabs {
+    .tab-link {
+      padding: 0.75rem 1rem;
+      min-width: 100px;
+
+      .tab-icon {
+        font-size: 1.1rem;
+        margin-right: 0.25rem;
+      }
+
+      .tab-label {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .account-tabs {
+    .tab-link {
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.75rem 0.5rem;
+
+      .tab-icon {
+        margin-right: 0;
+        font-size: 1.3rem;
+      }
+
+      .tab-label {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

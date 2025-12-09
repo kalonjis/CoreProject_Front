@@ -1,0 +1,42 @@
+// src/app/features/account/account-container.component.scss
+
+// Import variables and mixins
+@import 'variables';
+@import 'mixins';
+
+.account-container {
+  padding: 2rem 0;
+  margin-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  background-color: $gray-light;
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+}
+
+.account-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    color: $secondary-color;
+    margin-bottom: 0.5rem;
+    font-weight: $font-weight-bold;
+  }
+
+  .text-muted {
+    color: $gray-dark;
+    font-size: 1rem;
+  }
+}
+
+.account-content {
+  // Content area for child routes
+  background-color: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+}

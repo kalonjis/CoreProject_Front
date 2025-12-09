@@ -17,10 +17,9 @@ export const routes: Routes = [
     loadChildren: () => import('../features/password/password.routes').then(r => r.PASSWORD_ROUTES)
   },
   {
-    path: 'profile',
+    path: 'account',
     canActivate: [() => authGuard()],
-    loadComponent: () => import('../features/profile/profile.component')
-      .then(m => m.ProfileComponent)
+    loadChildren: () =>import('../features/account/account.routes').then(r => r.ACCOUNT_ROUTES)
   },
   {
     path: 'devices',
