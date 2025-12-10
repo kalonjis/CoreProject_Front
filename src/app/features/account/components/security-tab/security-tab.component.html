@@ -13,7 +13,7 @@
       </div>
 
       <div class="sections-grid">
-        @for (section of securitySections; track section.id) {
+        @for (section of securitySections(); track section.id) {
           <div
             class="section-card"
             [class.enabled]="section.enabled"
@@ -39,18 +39,37 @@
         }
       </div>
     </div>
-  }
-
-  <!-- Two-Factor Authentication Detail -->
-  @else if (selectedSection() === 'twofactor') {
+  } @else if (selectedSection() === 'twofactor') {
+    <!-- Two-Factor Authentication Detail -->
     <div class="section-detail">
       <!-- Back navigation -->
-      <div class="detail-header">
+      <div class="detail-nav">
         <button class="back-button" (click)="showOverview()">
           <span class="icon">←</span>
           Back to Security
         </button>
-        <h2>Two-Factor Authentication</h2>
+      </div>
+
+      <!-- Section Header with icon and status -->
+      <div class="section-header-banner">
+        <div class="header-content">
+          <div class="section-icon">🔐</div>
+          <div class="header-text">
+            <h2>Two-Factor Authentication</h2>
+            <p class="section-description">
+              Add an extra layer of security to your account
+            </p>
+          </div>
+        </div>
+        <div class="section-status">
+          @if (enabledMethodsCount() > 0) {
+            <span class="status-badge enabled">
+              {{ enabledMethodsCount() }} method{{ enabledMethodsCount() > 1 ? 's' : '' }} active
+            </span>
+          } @else {
+            <span class="status-badge disabled">Not configured</span>
+          }
+        </div>
       </div>
 
       <!-- Two-Factor Section Component -->
@@ -58,10 +77,8 @@
         <app-two-factor-section />
       </div>
     </div>
-  }
-
-  <!-- Password Detail -->
-  @else if (selectedSection() === 'password') {
+  } @else if (selectedSection() === 'password') {
+    <!-- Password Detail -->
     <div class="section-detail">
       <!-- Back navigation -->
       <div class="detail-header">
@@ -85,13 +102,6 @@
                 </p>
               </div>
             </div>
-            <div class="section-info">
-              @if (lastPasswordChange()) {
-                <span class="info-text">
-                  Last changed: {{ lastPasswordChange()! | date:'MMM d, yyyy' }}
-                </span>
-              }
-            </div>
           </div>
 
           <div class="password-actions">
@@ -103,10 +113,8 @@
         </section>
       </div>
     </div>
-  }
-
-  <!-- Recovery Options Detail -->
-  @else if (selectedSection() === 'recovery') {
+  } @else if (selectedSection() === 'recovery') {
+    <!-- Recovery Options Detail -->
     <div class="section-detail">
       <!-- Back navigation -->
       <div class="detail-header">

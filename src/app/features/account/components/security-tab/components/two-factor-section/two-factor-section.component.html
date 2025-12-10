@@ -2,28 +2,6 @@
 
 <div class="two-factor-section">
 
-  <!-- Section Header -->
-  <div class="section-header">
-    <div class="header-content">
-      <div class="section-icon">🔐</div>
-      <div class="header-text">
-        <h2>Two-Factor Authentication</h2>
-        <p class="section-description">
-          Add an extra layer of security to your account
-        </p>
-      </div>
-    </div>
-    <div class="section-status">
-      @if (getEnabledMethodsCount() > 0) {
-        <span class="status-badge enabled">
-          {{ getEnabledMethodsCount() }} method{{ getEnabledMethodsCount() > 1 ? 's' : '' }} active
-        </span>
-      } @else {
-        <span class="status-badge disabled">Not configured</span>
-      }
-    </div>
-  </div>
-
   <!-- Loading State -->
   @if (isLoading()) {
     <div class="loading-container">
@@ -32,22 +10,18 @@
         <p>Loading two-factor authentication settings...</p>
       </div>
     </div>
-  }
-
-  <!-- Error State -->
-  @else if (errorMessage()) {
+  } @else if (errorMessage()) {
+    <!-- Error State -->
     <div class="alert alert-danger">
       <div class="alert-content">
         <span>{{ errorMessage() }}</span>
         <button class="btn-retry" (click)="retryLoading()">Retry</button>
       </div>
     </div>
-  }
+  } @else {
+    <!-- Content based on current view -->
 
-  <!-- Content based on current view -->
-  @else {
-
-    <!-- Overview: List of methods -->
+      <!-- Overview: List of methods -->
     @if (currentView() === 'overview') {
       <app-methods-overview
         [methods]="twoFactorMethods()"
@@ -55,10 +29,8 @@
         (enableMethod)="enableMethod($event)"
         (disableMethod)="disableMethod($event)"
       />
-    }
-
-    <!-- Detail: Selected method configuration -->
-    @else if (currentView() === 'detail' && selectedMethod()) {
+    } @else if (currentView() === 'detail' && selectedMethod()) {
+      <!-- Detail: Selected method configuration -->
       <div class="method-detail-container">
 
         <!-- Back navigation -->
@@ -70,7 +42,7 @@
           <h3>{{ selectedMethod()!.displayName }} Configuration</h3>
         </div>
 
-        <!-- Method detail content (placeholder for now) -->
+        <!-- Method detail content -->
         <div class="method-detail-content">
           <div class="method-info-card">
             <div class="method-icon-large">{{ getMethodIcon(selectedMethod()!.type) }}</div>
@@ -94,7 +66,7 @@
                 <button
                   class="btn-secondary"
                   (click)="disableMethod(selectedMethod()!)"
-                  [disabled]="selectedMethod()!.isPrimary"
+                  [disabled]="selectedMethod()!.isPrimary && getEnabledMethodsCount() === 1"
                 >
                   Disable Method
                 </button>
@@ -114,26 +86,39 @@
             </div>
           </div>
 
-          <!-- Method-specific configuration will be added here -->
+          <!-- Method-specific configuration placeholder -->
           <div class="method-config-placeholder">
-            <p><strong>Configuration for {{ selectedMethod()!.type }}:</strong></p>
+            <p><strong>Configuration for {{ selectedMethod()!.displayName }}:</strong></p>
             <p class="placeholder-text">
               Detailed configuration options will be implemented here.
             </p>
-            @if (selectedMethod()!.type === 'SMS') {
-              <p>• Phone number management</p>
-              <p>• Test SMS functionality</p>
-            } @else if (selectedMethod()!.type === 'TOTP') {
-              <p>• QR code generation</p>
-              <p>• Manual secret key</p>
-              <p>• Authenticator app setup</p>
-            } @else if (selectedMethod()!.type === 'BACKUP_CODES') {
-              <p>• Generate backup codes</p>
-              <p>• Download codes securely</p>
-              <p>• Regenerate used codes</p>
-            } @else if (selectedMethod()!.type === 'EMAIL') {
-              <p>• Email verification settings</p>
-              <p>• Test email delivery</p>
+            @switch (selectedMethod()!.type) {
+              @case ('SMS') {
+                <ul class="config-hints">
+                  <li>Phone number management</li>
+                  <li>Test SMS functionality</li>
+                </ul>
+              }
+              @case ('TOTP') {
+                <ul class="config-hints">
+                  <li>QR code generation</li>
+                  <li>Manual secret key</li>
+                  <li>Authenticator app setup</li>
+                </ul>
+              }
+              @case ('BACKUP_CODES') {
+                <ul class="config-hints">
+                  <li>Generate backup codes</li>
+                  <li>Download codes securely</li>
+                  <li>Regenerate used codes</li>
+                </ul>
+              }
+              @case ('EMAIL') {
+                <ul class="config-hints">
+                  <li>Email verification settings</li>
+                  <li>Test email delivery</li>
+                </ul>
+              }
             }
           </div>
         </div>

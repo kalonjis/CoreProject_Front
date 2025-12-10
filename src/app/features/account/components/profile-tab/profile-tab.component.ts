@@ -29,8 +29,6 @@ export class ProfileTabComponent implements OnInit {
 
   // User profile information
   userInfo = signal<any>(null);
-  devices = signal<Device[]>([]);
-  private readonly MAX_RECENT_DEVICES = 3;
 
   // UI state signals
   isLoading = signal(true);
@@ -66,7 +64,6 @@ export class ProfileTabComponent implements OnInit {
   ngOnInit(): void {
     this.initForms();
     this.loadUserProfile();
-    this.loadUserDevices();
   }
 
   private initForms(): void {
@@ -109,28 +106,6 @@ export class ProfileTabComponent implements OnInit {
             this.populateForm(data);
             this.errorMessage.set(null);
           }
-        }
-      });
-  }
-
-  protected loadUserDevices(): void {
-    this.isLoadingDevices.set(true);
-
-    this.deviceService.getMyDevices()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        retry({ count: 2, delay: 1500 }),
-        catchError(err => {
-          console.error('Failed to load devices', err);
-          return of([]);
-        }),
-        finalize(() => {
-          this.isLoadingDevices.set(false);
-        })
-      )
-      .subscribe({
-        next: (devices) => {
-          this.devices.set(devices);
         }
       });
   }
@@ -246,20 +221,6 @@ export class ProfileTabComponent implements OnInit {
     });
   }
 
-  initiatePasswordChange(): void {
-    this.router.navigate(['/password/change']);
-  }
-
-  getRecentDevices(): Device[] {
-    return [...this.devices()]
-      .sort((a, b) => {
-        const dateA = new Date(a.lastSeen).getTime();
-        const dateB = new Date(b.lastSeen).getTime();
-        return dateB - dateA;
-      })
-      .slice(0, this.MAX_RECENT_DEVICES);
-  }
-
   formatDate(date: string): string {
     if (!date) return 'Unknown';
     return new Date(date).toLocaleString();
@@ -268,7 +229,6 @@ export class ProfileTabComponent implements OnInit {
   // Si l'utilisateur veut forcer le rechargement des données
   retryLoading(): void {
     this.loadUserProfile();
-    this.loadUserDevices();
   }
 
   /**

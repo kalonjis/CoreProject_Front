@@ -1,9 +1,13 @@
 // src/app/features/account/components/security-tab/security-tab.component.ts
 
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 
+import { AuthFacade } from '../../../../core/auth/services/auth.facade';
+import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
 import { TwoFactorSectionComponent } from './components/two-factor-section/two-factor-section.component';
 
 /**
@@ -22,30 +26,70 @@ import { TwoFactorSectionComponent } from './components/two-factor-section/two-f
   templateUrl: './security-tab.component.html',
   styleUrl: './security-tab.component.scss'
 })
-export class SecurityTabComponent {
+export class SecurityTabComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+  private authFacade = inject(AuthFacade);
 
   // Navigation state
   selectedSection = signal<'overview' | 'twofactor' | 'password' | 'recovery'>('overview');
 
-  // Password state (mock for now)
-  lastPasswordChange = signal<Date | null>(new Date('2024-12-05'));
+  // 2FA state
+  twoFactorMethods = signal<TwoFactorMethod[]>([]);
+  twoFactorLoading = signal(true);
 
-  // Security sections configuration
-  securitySections = [
+  // Computed: count enabled 2FA methods
+  enabledMethodsCount = computed(() =>
+    this.twoFactorMethods().filter(m => m.isEnabled).length
+  );
+
+  // Computed: 2FA status text
+  twoFactorStatus = computed(() => {
+    if (this.twoFactorLoading()) {
+      return 'Loading...';
+    }
+    const count = this.enabledMethodsCount();
+    if (count === 0) {
+      return 'Not configured';
+    }
+    return `${count} method${count > 1 ? 's' : ''} active`;
+  });
+
+  // Computed: 2FA section enabled
+  twoFactorEnabled = computed(() => !this.twoFactorLoading());
+
+  // Password status (from user session)
+  passwordStatus = computed(() => {
+    const user = this.authFacade.user();
+    if (user?.passwordChangedAt) {
+      const date = new Date(user.passwordChangedAt);
+      return `Last changed: ${date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      })}`; // → "Last changed: Dec 5, 2024, 3:45 PM"
+    }
+    return 'Configured';
+  });
+
+
+  // Security sections configuration (computed for dynamic status)
+  securitySections = computed(() => [
     {
       id: 'twofactor' as const,
       title: 'Two-Factor Authentication',
       description: 'Add an extra layer of security to your account',
       icon: '🔐',
-      status: '2 methods active', // This would be dynamic
-      enabled: true
+      status: this.twoFactorStatus(),
+      enabled: this.twoFactorEnabled()
     },
     {
       id: 'password' as const,
       title: 'Password',
       description: 'Manage your account password',
       icon: '🔑',
-      status: 'Last changed: Dec 5, 2024',
+      status: this.passwordStatus(),  // ← dynamique
       enabled: true
     },
     {
@@ -56,14 +100,38 @@ export class SecurityTabComponent {
       status: 'Coming Soon',
       enabled: false
     }
-  ];
+  ]);
+
+  ngOnInit(): void {
+    this.loadTwoFactorStatus();
+  }
+
+  /**
+   * Load 2FA methods to display status in overview.
+   */
+  private loadTwoFactorStatus(): void {
+    this.twoFactorLoading.set(true);
+
+    this.authFacade.loadTwoFactorSettings()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          console.error('Failed to load 2FA status', err);
+          return of([]);
+        })
+      )
+      .subscribe(methods => {
+        this.twoFactorMethods.set(methods);
+        this.twoFactorLoading.set(false);
+      });
+  }
 
   /**
    * Navigate to a specific security section.
    */
   selectSection(sectionId: 'twofactor' | 'password' | 'recovery'): void {
-    if (sectionId === 'recovery') {
-      // Recovery not implemented yet
+    const section = this.securitySections().find(s => s.id === sectionId);
+    if (!section?.enabled) {
       return;
     }
     this.selectedSection.set(sectionId);
@@ -74,13 +142,14 @@ export class SecurityTabComponent {
    */
   showOverview(): void {
     this.selectedSection.set('overview');
+    // Refresh 2FA status when returning to overview
+    this.loadTwoFactorStatus();
   }
 
   /**
    * Navigate to password change page.
    */
   changePassword(): void {
-    // This will use the existing password change functionality
     window.location.href = '/password/change';
   }
 
@@ -88,6 +157,6 @@ export class SecurityTabComponent {
    * Get section configuration by ID.
    */
   getSectionById(sectionId: string) {
-    return this.securitySections.find(section => section.id === sectionId);
+    return this.securitySections().find(section => section.id === sectionId);
   }
 }

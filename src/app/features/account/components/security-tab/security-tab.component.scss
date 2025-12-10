@@ -165,6 +165,114 @@
   // ==========================================================================
 
   .section-detail {
+
+    // Back navigation (standalone)
+    .detail-nav {
+      margin-bottom: 1.5rem;
+    }
+
+    // Back button (shared style)
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba($gray-light, 0.7);
+      color: $gray-dark;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      .icon {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: $gray-light;
+        color: $secondary-color;
+        border-color: $gray-medium;
+        transform: translateX(-2px);
+      }
+    }
+
+    // Section header banner (icon + title + status)
+    .section-header-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem;
+      background-color: white;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-lg;
+      box-shadow: $box-shadow;
+      margin-bottom: 1.5rem;
+
+      .header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .section-icon {
+          font-size: 2.5rem;
+          line-height: 1;
+        }
+
+        .header-text {
+          h2 {
+            font-size: 1.5rem;
+            font-weight: $font-weight-bold;
+            color: $secondary-color;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .section-description {
+            font-size: 0.95rem;
+            color: $gray-dark;
+            margin: 0;
+          }
+        }
+      }
+
+      .section-status {
+        .status-badge {
+          display: inline-block;
+          padding: 0.5rem 1rem;
+          border-radius: 2rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.025em;
+
+          &.enabled {
+            background-color: rgba($success-color, 0.1);
+            color: $success-color;
+          }
+
+          &.disabled {
+            background-color: rgba($gray-dark, 0.1);
+            color: $gray-dark;
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 1rem;
+
+        .header-content {
+          width: 100%;
+        }
+
+        .section-status {
+          align-self: flex-start;
+        }
+      }
+    }
+
+    // Legacy detail header (for password, recovery sections)
     .detail-header {
       display: flex;
       align-items: center;
@@ -172,32 +280,6 @@
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 2px solid $border-color;
-
-      .back-button {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.25rem;
-        background: rgba($gray-light, 0.7);
-        color: $gray-dark;
-        border: 1px solid $border-color;
-        border-radius: $border-radius;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 0.9rem;
-        font-weight: 500;
-
-        .icon {
-          font-size: 1.2rem;
-        }
-
-        &:hover {
-          background: $gray-light;
-          color: $secondary-color;
-          border-color: $gray-medium;
-          transform: translateX(-2px);
-        }
-      }
 
       h2 {
         color: $secondary-color;
@@ -214,8 +296,6 @@
     }
 
     .detail-content {
-      // Remove extra padding since content components handle their own spacing
-
       // Security sections in detail view
       .security-section {
         background: white;
@@ -230,7 +310,7 @@
         }
       }
 
-      // Section headers in detail view
+      // Section headers in detail view (for password, etc.)
       .section-header {
         display: flex;
         align-items: center;

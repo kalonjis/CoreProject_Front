@@ -55,7 +55,7 @@ export class TwoFactorApiService {
    * Uses 2fa_session_token cookie for context.
    */
   getAvailableMethodsForLogin(): Observable<TwoFactorMethod[]> {
-    return this.http.get<TwoFactorMethod[]>(`${this.baseUrl}/2fa/enabled-methods`);
+    return this.http.get<TwoFactorMethod[]>(`${this.baseUrl}/2fa/login/methods`);
   }
 
   /**
@@ -90,11 +90,11 @@ export class TwoFactorApiService {
   // ===========================================================================
 
   /**
-   * Get all enabled 2FA methods for the authenticated user.
-   * Used in security settings to display configured methods.
+   * Get all 2FA methods with their status for the settings page.
+   * Returns all supported methods (enabled and disabled).
    */
-  getEnabledMethods(): Observable<TwoFactorMethod[]> {
-    return this.http.get<TwoFactorMethod[]>(`${this.baseUrl}/2fa/available-methods`);
+  getSettings(): Observable<TwoFactorMethod[]> {
+    return this.http.get<TwoFactorMethod[]>(`${this.baseUrl}/2fa/settings`);
   }
 
   // ===========================================================================
