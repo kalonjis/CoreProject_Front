@@ -181,69 +181,6 @@
             </form>
           </div>
         }
-
-        <!-- Security Section -->
-        <div class="profile-section security">
-          <div class="section-header">
-            <h2>Security</h2>
-          </div>
-          <div class="security-actions">
-            <button class="btn-outline" (click)="initiatePasswordChange()">
-              <span class="icon">🔒</span>
-              Change Password
-            </button>
-            <a routerLink="/devices" class="btn-outline">
-              <span class="icon">💻</span>
-              Manage Devices
-            </a>
-          </div>
-        </div>
-
-        <!-- Recent Activities (Devices) -->
-        <div class="profile-section recent-devices">
-          <div class="section-header">
-            <h2>Recent Devices</h2>
-            <div class="section-actions">
-              <button class="refresh-button" (click)="loadUserDevices()">
-                <span class="refresh-icon">🔄</span> Rafraîchir
-              </button>
-              <a routerLink="/devices" class="link-primary">View All</a>
-            </div>
-          </div>
-
-          @if (isLoadingDevices()) {
-            <div class="loading-indicator">Loading devices...</div>
-          } @else if (devices().length === 0) {
-            <p class="no-data">No recent device activity</p>
-          } @else {
-            <div class="devices-list">
-              @for (device of getRecentDevices(); track device.id) {
-                <div class="device-item">
-                  <div class="device-icon">
-                    @if (device.deviceType === 'MOBILE') {
-                      <span>📱</span>
-                    } @else if (device.deviceType === 'TABLET') {
-                      <span>📱</span>
-                    } @else if (device.deviceType === 'DESKTOP') {
-                      <span>💻</span>
-                    } @else {
-                      <span>🖥️</span>
-                    }
-                  </div>
-                  <div class="device-info">
-                    <div class="device-name">
-                      {{ device.browser }} on {{ device.operatingSystem }}
-                    </div>
-                    <div class="device-meta">
-                      <span class="trust-level">{{ device.level }}</span>
-                      <span class="last-seen">Last seen: {{ formatDate(device.lastSeen) }}</span>
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </div>
       </div>
     }
   }
