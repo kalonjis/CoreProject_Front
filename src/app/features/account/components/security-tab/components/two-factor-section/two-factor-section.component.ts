@@ -11,6 +11,8 @@ import {
   TwoFactorMethod
 } from '../../../../../../core/auth/models/two-factor.model';
 import { MethodsOverviewComponent } from './components/methods-overview/methods-overview.component';
+import { TotpDetailComponent } from './components/totp-detail/totp-detail.component';
+import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 /**
  * Two-Factor Authentication section container.
@@ -24,13 +26,14 @@ import { MethodsOverviewComponent } from './components/methods-overview/methods-
 @Component({
   selector: 'app-two-factor-section',
   standalone: true,
-  imports: [CommonModule, MethodsOverviewComponent],
+  imports: [CommonModule, MethodsOverviewComponent, TotpDetailComponent],
   templateUrl: './two-factor-section.component.html',
   styleUrl: './two-factor-section.component.scss'
 })
 export class TwoFactorSectionComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authFacade = inject(AuthFacade);
+  private confirmDialogService = inject(ConfirmDialogService);
 
   // Navigation state
   currentView = signal<'overview' | 'detail'>('overview');
@@ -104,19 +107,123 @@ export class TwoFactorSectionComponent implements OnInit {
 
   /**
    * Handle enabling a 2FA method.
+   * For TOTP, this is handled by the TotpDetailComponent itself.
+   * For other methods, we handle the enable logic here.
    */
   enableMethod(method: TwoFactorMethod): void {
-    console.log('Enable method:', method.type);
-    // TODO: Implement enable logic with modal
-    this.showMethodDetail(method);
+    if (method.type === 'TOTP') {
+      // TOTP enable is handled by TotpDetailComponent
+      this.showMethodDetail(method);
+      return;
+    }
+
+    // For other methods, show confirmation and enable
+    this.confirmDialogService.confirm({
+      title: `Enable ${method.displayName}`,
+      message: `Are you sure you want to enable ${method.displayName}?`,
+      confirmButtonText: 'Enable',
+      type: 'info'
+    }).then(() => {
+      this.performEnableMethod(method);
+    }).catch(() => {
+      // User cancelled
+      console.log('Enable cancelled by user');
+    });
   }
 
   /**
    * Handle disabling a 2FA method.
    */
   disableMethod(method: TwoFactorMethod): void {
-    console.log('Disable method:', method.type);
-    // TODO: Implement disable logic with confirmation modal
+    // Check if this is the last enabled method
+    const enabledCount = this.getEnabledMethodsCount();
+    if (method.isPrimary && enabledCount === 1) {
+      this.errorMessage.set('Cannot disable your only 2FA method. Enable another method first.');
+      return;
+    }
+
+    this.confirmDialogService.confirm({
+      title: `Disable ${method.displayName}`,
+      message: `Are you sure you want to disable ${method.displayName}? This will reduce your account security.`,
+      confirmButtonText: 'Disable',
+      type: 'danger'
+    }).then(() => {
+      this.performDisableMethod(method);
+    }).catch(() => {
+      // User cancelled
+      console.log('Disable cancelled by user');
+    });
+  }
+
+  /**
+   * Perform the actual enable method API call.
+   */
+  private performEnableMethod(method: TwoFactorMethod): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authFacade.enableTwoFactorMethod(method.type)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          console.error('Failed to enable method', err);
+          this.errorMessage.set(`Failed to enable ${method.displayName}. Please try again.`);
+          return of(null);
+        }),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe(response => {
+        if (response) {
+          this.loadTwoFactorMethods(); // Reload to get updated status
+        }
+      });
+  }
+
+  /**
+   * Perform the actual disable method API call.
+   */
+  private performDisableMethod(method: TwoFactorMethod): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authFacade.disableTwoFactorMethod(method.type)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          console.error('Failed to disable method', err);
+          this.errorMessage.set(`Failed to disable ${method.displayName}. Please try again.`);
+          return of(null);
+        }),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe(response => {
+        if (response) {
+          this.loadTwoFactorMethods(); // Reload to get updated status
+          this.showOverview(); // Return to overview after disable
+        }
+      });
+  }
+
+  /**
+   * Handle method updated event from detail components.
+   * Reloads the methods list to reflect changes.
+   */
+  onMethodUpdated(): void {
+    this.loadTwoFactorMethods();
+  }
+
+  /**
+   * Handle enable request from detail components.
+   */
+  onEnableRequested(method: TwoFactorMethod): void {
+    this.enableMethod(method);
+  }
+
+  /**
+   * Handle disable request from detail components.
+   */
+  onDisableRequested(method: TwoFactorMethod): void {
+    this.disableMethod(method);
   }
 
   /**
