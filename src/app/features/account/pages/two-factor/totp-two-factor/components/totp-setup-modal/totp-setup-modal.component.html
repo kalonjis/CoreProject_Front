@@ -1,0 +1,204 @@
+<!-- src/app/features/account/pages/two-factor/totp-two-factor/components/totp-setup-modal/totp-setup-modal.component.html -->
+
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="onModalClick($event)">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">Setup Authenticator App</h3>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content">
+
+      @if (isLoading()) {
+        <!-- Loading State -->
+        <div class="loading-section">
+          <div class="spinner"></div>
+          <p>Generating your TOTP configuration...</p>
+        </div>
+
+      } @else if (errorMessage()) {
+        <!-- Error State -->
+        <div class="error-section">
+          <div class="error-icon">⚠️</div>
+          <p class="error-message">{{ errorMessage() }}</p>
+          <button class="btn-retry" (click)="initiateTotpSetup()">Try Again</button>
+        </div>
+
+      } @else if (setupData()) {
+        <!-- Setup Instructions -->
+        <div class="setup-content">
+
+          <!-- Step 1: Install App -->
+          <div class="setup-step">
+            <div class="step-header">
+              <span class="step-number">1</span>
+              <h4 class="step-title">Install an Authenticator App</h4>
+            </div>
+            <p class="step-description">
+              Choose and install one of these popular authenticator apps:
+            </p>
+            <div class="apps-grid">
+              @for (app of authenticatorApps; track app.name) {
+                <div class="app-item">
+                  <span class="app-icon">{{ app.icon }}</span>
+                  <div class="app-info">
+                    <span class="app-name">{{ app.name }}</span>
+                    <span class="app-platforms">{{ app.platforms.join(', ') }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Step 2: Scan QR Code -->
+          <div class="setup-step">
+            <div class="step-header">
+              <span class="step-number">2</span>
+              <h4 class="step-title">Scan QR Code</h4>
+            </div>
+            <p class="step-description">
+              Open your authenticator app and scan this QR code:
+            </p>
+
+            @if (qrCodeDataUrl()) {
+              <div class="qr-section">
+                <div class="qr-container">
+                  <img
+                    [src]="qrCodeDataUrl()"
+                    alt="TOTP QR Code"
+                    class="qr-image">
+                </div>
+                <p class="qr-help">
+                  Point your authenticator app's camera at this code
+                </p>
+              </div>
+            } @else {
+              <div class="qr-loading">
+                <div class="qr-placeholder"></div>
+                <p>Generating QR code...</p>
+              </div>
+            }
+          </div>
+
+          <!-- Manual Entry Alternative -->
+          <div class="manual-entry">
+            <div class="manual-header">
+              <span class="manual-icon">🔤</span>
+              <span class="manual-text">Can't scan? Enter manually</span>
+              <button
+                class="btn-toggle"
+                (click)="toggleSecretKeyVisibility()">
+                {{ showSecretKey() ? 'Hide' : 'Show' }} Key
+              </button>
+            </div>
+
+            @if (showSecretKey()) {
+              <div class="secret-section">
+                <div class="secret-field">
+                  <input
+                    type="text"
+                    [value]="getFormattedSecretKey()"
+                    readonly
+                    class="secret-input">
+                  <button
+                    class="btn-copy"
+                    (click)="copySecretKey()"
+                    title="Copy secret key">
+                    📋
+                  </button>
+                </div>
+                <p class="secret-help">
+                  Enter this key manually in your authenticator app
+                </p>
+              </div>
+            }
+          </div>
+
+          <!-- Step 3: Test Setup -->
+          <div class="setup-step">
+            <div class="step-header">
+              <span class="step-number">3</span>
+              <h4 class="step-title">Test Setup</h4>
+            </div>
+            <p class="step-description">
+              Test that your authenticator app is working correctly:
+            </p>
+
+            <!-- Success Message -->
+            @if (successMessage()) {
+              <div class="success-message">
+                <span class="success-icon">✅</span>
+                <span class="success-text">{{ successMessage() }}</span>
+              </div>
+            }
+
+            <!-- Verification Form -->
+            <form [formGroup]="verificationForm" (ngSubmit)="onVerifyCode()">
+              <div class="code-input-section">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    formControlName="verificationCode"
+                    placeholder="000000"
+                    maxlength="6"
+                    class="code-input"
+                    [class.error]="hasVerificationError('required') || hasVerificationError('pattern')"
+                    autocomplete="one-time-code">
+
+                  <button
+                    type="submit"
+                    class="btn-verify"
+                    [disabled]="verificationForm.invalid || isVerifying()">
+                    @if (isVerifying()) {
+                      <span class="verify-spinner"></span>
+                      Testing...
+                    } @else {
+                      Test & Complete
+                    }
+                  </button>
+                </div>
+
+                <!-- Form Validation Errors -->
+                @if (hasVerificationError('required')) {
+                  <div class="field-error">Verification code is required</div>
+                }
+                @if (hasVerificationError('pattern')) {
+                  <div class="field-error">Please enter a 6-digit code</div>
+                }
+
+                <!-- API Error -->
+                @if (errorMessage()) {
+                  <div class="field-error">{{ errorMessage() }}</div>
+                }
+              </div>
+            </form>
+
+            <div class="verify-help">
+              <p>✅ <strong>TOTP is already enabled</strong> - this test verifies your setup</p>
+              <p>💡 The code changes every 30 seconds</p>
+              <p>🕒 Make sure your device's time is accurate</p>
+            </div>
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-cancel"
+        (click)="onCancel()"
+        [disabled]="isVerifying()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>

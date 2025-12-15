@@ -1,0 +1,724 @@
+// src/app/features/account/pages/two-factor/totp-two-factor/components/totp-setup-modal/totp-setup-modal.component.scss
+
+// Variables
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
+$white: #ffffff;
+$gray-50: #f8f9fa;
+$gray-100: #f1f3f4;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+$shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+$shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+// ===========================================================================
+// MODAL OVERLAY & CONTAINER
+// ===========================================================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm;
+  z-index: 1050;
+  backdrop-filter: blur(2px);
+}
+
+.modal-container {
+  background: $white;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-lg;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+// ===========================================================================
+// MODAL HEADER
+// ===========================================================================
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-md $spacing-sm $spacing-md;
+  border-bottom: 1px solid $gray-200;
+  background: linear-gradient(135deg, $gray-50 0%, $white 100%);
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $gray-900;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    &::before {
+      content: '🔐';
+      font-size: 1.25rem;
+    }
+  }
+
+  .close-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: none;
+    color: $gray-600;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: $gray-100;
+      color: $gray-900;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// ===========================================================================
+// MODAL CONTENT
+// ===========================================================================
+
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+}
+
+// ===========================================================================
+// LOADING STATE
+// ===========================================================================
+
+.loading-section {
+  text-align: center;
+  padding: $spacing-xl $spacing-md;
+
+  .spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid $gray-200;
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto $spacing-sm auto;
+  }
+
+  p {
+    color: $gray-600;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+// ===========================================================================
+// ERROR STATE
+// ===========================================================================
+
+.error-section {
+  text-align: center;
+  padding: $spacing-lg $spacing-md;
+
+  .error-icon {
+    font-size: 3rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  .error-message {
+    color: $danger-color;
+    font-size: 1.1rem;
+    margin: 0 0 $spacing-sm 0;
+  }
+
+  .btn-retry {
+    background-color: $primary-color;
+    color: $white;
+    border: none;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// ===========================================================================
+// SETUP CONTENT
+// ===========================================================================
+
+.setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+// ===========================================================================
+// SETUP STEPS
+// ===========================================================================
+
+.setup-step {
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+
+    .step-number {
+      width: 2rem;
+      height: 2rem;
+      background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+      color: $white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+      box-shadow: $shadow-sm;
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $gray-900;
+      margin: 0;
+    }
+  }
+
+  .step-description {
+    color: $gray-700;
+    line-height: 1.6;
+    margin: 0 0 $spacing-sm 0;
+    padding-left: 3rem; // Align with step content
+  }
+}
+
+// ===========================================================================
+// APPS GRID
+// ===========================================================================
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-xs;
+  margin-left: 3rem; // Align with step content
+
+  .app-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs;
+    background: $gray-50;
+    border: 1px solid $gray-200;
+    border-radius: $border-radius;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-400;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    .app-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .app-info {
+      flex: 1;
+      min-width: 0;
+
+      .app-name {
+        display: block;
+        font-weight: 500;
+        color: $gray-900;
+        font-size: 0.875rem;
+        margin-bottom: 0.125rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .app-platforms {
+        font-size: 0.75rem;
+        color: $gray-500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// QR CODE SECTION
+// ===========================================================================
+
+.qr-section {
+  text-align: center;
+  margin-left: 3rem; // Align with step content
+
+  .qr-container {
+    display: inline-block;
+    padding: $spacing-sm;
+    background: $white;
+    border: 2px solid $gray-200;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-md;
+    margin-bottom: $spacing-sm;
+
+    .qr-image {
+      width: 200px;
+      height: 200px;
+      display: block;
+      border-radius: $border-radius;
+    }
+  }
+
+  .qr-help {
+    color: $gray-600;
+    font-size: 0.875rem;
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.qr-loading {
+  text-align: center;
+  margin-left: 3rem;
+
+  .qr-placeholder {
+    width: 200px;
+    height: 200px;
+    background: $gray-100;
+    border: 2px dashed $gray-300;
+    border-radius: $border-radius-lg;
+    margin: 0 auto $spacing-sm auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::before {
+      content: '⏳';
+      font-size: 2rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  }
+
+  p {
+    color: $gray-600;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+// ===========================================================================
+// MANUAL ENTRY
+// ===========================================================================
+
+.manual-entry {
+  background: $gray-50;
+  border: 1px solid $gray-200;
+  border-radius: $border-radius-lg;
+  padding: $spacing-sm $spacing-md;
+  margin-left: 3rem; // Align with step content
+
+  .manual-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .manual-icon {
+      font-size: 1.125rem;
+    }
+
+    .manual-text {
+      flex: 1;
+      font-weight: 500;
+      color: $gray-700;
+    }
+
+    .btn-toggle {
+      background: $primary-color;
+      color: $white;
+      border: none;
+      padding: 0.25rem $spacing-xs;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+
+  .secret-section {
+    margin-top: $spacing-sm;
+
+    .secret-field {
+      display: flex;
+      gap: $spacing-xs;
+      margin-bottom: $spacing-xs;
+
+      .secret-input {
+        flex: 1;
+        padding: $spacing-xs;
+        border: 1px solid $gray-300;
+        border-radius: $border-radius;
+        background: $white;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+        color: $gray-900;
+        letter-spacing: 0.05em;
+      }
+
+      .btn-copy {
+        background: $secondary-color;
+        color: $white;
+        border: none;
+        padding: $spacing-xs;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .secret-help {
+      font-size: 0.75rem;
+      color: $gray-500;
+      margin: 0;
+      font-style: italic;
+    }
+  }
+}
+
+// ===========================================================================
+// SUCCESS MESSAGE
+// ===========================================================================
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: rgba($success-color, 0.1);
+  border: 1px solid rgba($success-color, 0.3);
+  border-radius: $border-radius;
+  margin: 0 0 $spacing-sm 3rem; // Align with step content
+
+  .success-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .success-text {
+    color: $success-color;
+    font-weight: 500;
+  }
+}
+
+// ===========================================================================
+// VERIFICATION FORM
+// ===========================================================================
+
+.code-input-section {
+  margin-left: 3rem; // Align with step content
+
+  .input-group {
+    display: flex;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-xs;
+
+    .code-input {
+      flex: 1;
+      padding: $spacing-sm;
+      border: 2px solid $gray-300;
+      border-radius: $border-radius;
+      font-size: 1.25rem;
+      text-align: center;
+      letter-spacing: 0.2em;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+      }
+
+      &.error {
+        border-color: $danger-color;
+        box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+      }
+
+      &::placeholder {
+        color: $gray-400;
+        letter-spacing: 0.1em;
+      }
+    }
+
+    .btn-verify {
+      background: $success-color;
+      color: $white;
+      border: none;
+      padding: $spacing-sm $spacing-md;
+      border-radius: $border-radius;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      min-width: 140px;
+      justify-content: center;
+
+      &:hover:not(:disabled) {
+        background-color: darken($success-color, 10%);
+        transform: translateY(-1px);
+        box-shadow: $shadow-sm;
+      }
+
+      &:disabled {
+        background-color: $gray-400;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .verify-spinner {
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba($white, 0.3);
+        border-top: 2px solid $white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+
+  .field-error {
+    color: $danger-color;
+    font-size: 0.875rem;
+    margin: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &::before {
+      content: '⚠️';
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.verify-help {
+  margin: $spacing-sm 0 0 3rem;
+  padding: $spacing-sm;
+  background: rgba($info-color, 0.1);
+  border-left: 4px solid $info-color;
+  border-radius: 0 $border-radius $border-radius 0;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $gray-700;
+    line-height: 1.4;
+
+    &:not(:last-child) {
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+// ===========================================================================
+// MODAL FOOTER
+// ===========================================================================
+
+.modal-footer {
+  padding: $spacing-sm $spacing-md $spacing-md $spacing-md;
+  border-top: 1px solid $gray-200;
+  background: $gray-50;
+
+  .btn-cancel {
+    background: none;
+    color: $gray-600;
+    border: 1px solid $gray-300;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: $gray-100;
+      color: $gray-900;
+      border-color: $gray-500;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// ===========================================================================
+// RESPONSIVE DESIGN
+// ===========================================================================
+
+@media (max-width: 768px) {
+  .modal-container {
+    margin: $spacing-sm;
+    max-height: 95vh;
+  }
+
+  .apps-grid {
+    grid-template-columns: 1fr;
+    margin-left: 2rem;
+  }
+
+  .qr-section,
+  .qr-loading,
+  .manual-entry,
+  .success-message,
+  .code-input-section,
+  .verify-help {
+    margin-left: 2rem;
+  }
+
+  .step-description {
+    padding-left: 2rem;
+  }
+
+  .code-input-section {
+    .input-group {
+      flex-direction: column;
+
+      .code-input {
+        margin-bottom: $spacing-xs;
+      }
+    }
+  }
+
+  .qr-section .qr-container .qr-image {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: $spacing-xs;
+  }
+
+  .modal-header {
+    padding: $spacing-sm;
+
+    .modal-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .modal-content {
+    padding: $spacing-sm;
+  }
+
+  .apps-grid,
+  .qr-section,
+  .qr-loading,
+  .manual-entry,
+  .success-message,
+  .code-input-section,
+  .verify-help {
+    margin-left: $spacing-sm;
+  }
+
+  .step-description {
+    padding-left: $spacing-sm;
+  }
+}

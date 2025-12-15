@@ -1,0 +1,407 @@
+// src/app/features/account/pages/two-factor/totp-two-factor/totp-two-factor.component.scss
+
+// Variables (adjust based on your project's design system)
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
+$gray-50: #f8f9fa;
+$gray-100: #f1f3f4;
+$gray-300: #dee2e6;
+$gray-500: #6c757d;
+$gray-700: #495057;
+$gray-900: #212529;
+
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+
+.totp-two-factor {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  // ===========================================================================
+  // PAGE HEADER
+  // ===========================================================================
+
+  .page-header {
+    margin-bottom: $spacing-lg;
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-sm;
+      background: none;
+      border: 1px solid $gray-300;
+      border-radius: $border-radius;
+      color: $gray-700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: $spacing-md;
+
+      &:hover {
+        background-color: $gray-50;
+        border-color: $gray-500;
+        color: $gray-900;
+      }
+
+      .icon {
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+    }
+
+    .header-content {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-sm;
+
+      .header-icon {
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $gray-900;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        font-size: 1.125rem;
+        color: $gray-500;
+        margin: 0;
+      }
+    }
+  }
+
+  // ===========================================================================
+  // LOADING & ERROR STATES
+  // ===========================================================================
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    text-align: center;
+
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid $gray-100;
+      border-radius: 50%;
+      border-top-color: $primary-color;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: $spacing-sm;
+    }
+
+    p {
+      color: $gray-500;
+      margin: 0;
+    }
+  }
+
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    background-color: rgba($danger-color, 0.1);
+    border: 1px solid rgba($danger-color, 0.2);
+    border-radius: $border-radius-lg;
+    text-align: center;
+
+    .error-message {
+      color: $danger-color;
+      font-weight: 500;
+      margin: 0 0 $spacing-sm 0;
+    }
+
+    .btn-primary {
+      background-color: $primary-color;
+      border: none;
+      color: white;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+
+  // ===========================================================================
+  // CONTENT SECTIONS
+  // ===========================================================================
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  // ===========================================================================
+  // STATUS CARD
+  // ===========================================================================
+
+  .status-card {
+    background: white;
+    border: 2px solid $gray-300;
+    border-radius: $border-radius-lg;
+    padding: $spacing-md;
+    transition: all 0.3s ease;
+
+    &.enabled {
+      border-color: $success-color;
+      background-color: rgba($success-color, 0.05);
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-md;
+
+      .status-label {
+        font-weight: 600;
+        color: $gray-700;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+
+        &.enabled {
+          background-color: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+
+        &.disabled {
+          background-color: $gray-100;
+          color: $gray-500;
+        }
+      }
+    }
+
+    .status-details {
+      display: grid;
+      gap: $spacing-sm;
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-xs 0;
+
+        .detail-label {
+          color: $gray-500;
+          font-size: 0.875rem;
+        }
+
+        .detail-value {
+          font-weight: 500;
+          color: $gray-900;
+
+          &.primary {
+            color: $primary-color;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  // ===========================================================================
+  // INFO SECTION
+  // ===========================================================================
+
+  .info-section {
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $gray-900;
+      margin: 0 0 $spacing-sm 0;
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 $spacing-md 0;
+
+      li {
+        position: relative;
+        padding: 0.5rem 0 0.5rem 2rem;
+        color: $gray-700;
+        line-height: 1.6;
+
+        &::before {
+          content: '✓';
+          position: absolute;
+          left: 0;
+          top: 0.5rem;
+          color: $success-color;
+          font-weight: bold;
+        }
+      }
+    }
+
+    // Popular Apps Grid
+    .popular-apps {
+      margin-top: $spacing-md;
+      padding-top: $spacing-md;
+      border-top: 1px solid $gray-300;
+
+      h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $gray-900;
+        margin: 0 0 $spacing-sm 0;
+      }
+
+      .app-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-sm;
+
+        .app-item {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          padding: $spacing-sm;
+          background-color: $gray-50;
+          border: 1px solid $gray-300;
+          border-radius: $border-radius;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: $gray-100;
+            border-color: $gray-500;
+          }
+
+          .app-icon {
+            font-size: 1.5rem;
+            line-height: 1;
+          }
+
+          .app-info {
+            flex: 1;
+
+            .app-name {
+              display: block;
+              font-weight: 500;
+              color: $gray-900;
+              margin-bottom: 0.125rem;
+            }
+
+            .app-platforms {
+              font-size: 0.75rem;
+              color: $gray-500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ===========================================================================
+  // ACTION SECTION
+  // ===========================================================================
+
+  .action-section {
+    text-align: center;
+
+    .btn-primary,
+    .btn-danger {
+      padding: $spacing-sm $spacing-md;
+      border: none;
+      border-radius: $border-radius;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 200px;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-primary {
+      background-color: $primary-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: darken($primary-color, 10%);
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-danger {
+      background-color: $danger-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: darken($danger-color, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ===========================================================================
+// RESPONSIVE DESIGN
+// ===========================================================================
+
+@media (max-width: 768px) {
+  .totp-two-factor {
+    padding: $spacing-sm;
+
+    .page-header {
+      .header-content {
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .popular-apps {
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

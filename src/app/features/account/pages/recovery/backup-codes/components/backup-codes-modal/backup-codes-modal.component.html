@@ -1,0 +1,208 @@
+<!-- src/app/features/account/pages/recovery/backup-codes/components/backup-codes-modal/backup-codes-modal.component.html -->
+
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="onModalClick($event)">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <span class="header-icon">🗝️</span>
+        <div>
+          <h3 class="modal-title">Your Backup Recovery Codes</h3>
+          <p class="modal-subtitle">Save these codes securely - they will only be shown once</p>
+        </div>
+      </div>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content">
+
+      <!-- Security Warning -->
+      <div class="security-warning">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+          <h4>Important Security Notice</h4>
+          <ul>
+            <li><strong>Single use:</strong> Each code can only be used once</li>
+            <li><strong>Store safely:</strong> Keep them in a secure location (password manager, safe)</li>
+            <li><strong>One-time display:</strong> These codes will not be shown again</li>
+            <li><strong>Emergency only:</strong> Use when your 2FA device is unavailable</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      @if (successMessage()) {
+        <div class="success-message">
+          <span class="success-icon">✅</span>
+          <span class="success-text">{{ successMessage() }}</span>
+        </div>
+      }
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button
+          class="btn-copy"
+          (click)="copyAllCodes()"
+          [disabled]="isCopying()"
+          title="Copy all codes to clipboard with formatting">
+          @if (isCopying()) {
+            <span class="loading-spinner"></span>
+            Copying...
+          } @else {
+            📋 Copy All
+          }
+        </button>
+
+        <button
+          class="btn-download"
+          (click)="downloadCodes()"
+          [disabled]="isDownloading()"
+          title="Download codes as a secure text file">
+          @if (isDownloading()) {
+            <span class="loading-spinner"></span>
+            Downloading...
+          } @else {
+            💾 Download
+          }
+        </button>
+
+        <button
+          class="btn-print"
+          (click)="printCodes()"
+          [disabled]="isPrinting()"
+          title="Print codes for offline storage">
+          @if (isPrinting()) {
+            <span class="loading-spinner"></span>
+            Printing...
+          } @else {
+            🖨️ Print
+          }
+        </button>
+      </div>
+
+      <!-- Backup Codes Display -->
+      <div class="codes-section">
+        <h4 class="codes-title">
+          <span class="codes-icon">🔢</span>
+          Your Backup Codes ({{ backupCodes.length }} codes)
+        </h4>
+
+        <div class="codes-grid">
+          @for (code of backupCodes; track $index) {
+            <div class="code-item">
+              <span class="code-number">{{ formatNumber($index + 1) }}.</span>
+              <span class="code-value">{{ code }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="codes-info">
+          <p>
+            <strong>💡 Tip:</strong> Each code is formatted as <code>ABCD-EFGH-1234-5678</code>
+            for easier reading and entry.
+          </p>
+        </div>
+      </div>
+
+      <!-- How to Use -->
+      <div class="instructions-section">
+        <h4 class="instructions-title">
+          <span class="instructions-icon">📖</span>
+          How to use these codes
+        </h4>
+        <ol class="instructions-list">
+          <li>Go to the login page and enter your username and password</li>
+          <li>When prompted for 2FA, look for "Use backup code" or "Can't access your device?"</li>
+          <li>Enter one of the codes above exactly as shown</li>
+          <li>The code will be consumed and cannot be used again</li>
+          <li>Generate new codes before running out (recommended when 3 or fewer remain)</li>
+        </ol>
+      </div>
+
+      <!-- Storage Recommendations -->
+      <div class="storage-section">
+        <h4 class="storage-title">
+          <span class="storage-icon">🛡️</span>
+          Secure Storage Options
+        </h4>
+        <div class="storage-grid">
+          <div class="storage-option recommended">
+            <div class="option-header">
+              <span class="option-icon">🔐</span>
+              <span class="option-name">Password Manager</span>
+              <span class="recommended-badge">Recommended</span>
+            </div>
+            <p class="option-description">Store in your password manager's secure notes</p>
+          </div>
+
+          <div class="storage-option">
+            <div class="option-header">
+              <span class="option-icon">📝</span>
+              <span class="option-name">Physical Copy</span>
+            </div>
+            <p class="option-description">Write down and store in a safe location</p>
+          </div>
+
+          <div class="storage-option">
+            <div class="option-header">
+              <span class="option-icon">🏦</span>
+              <span class="option-name">Safe Deposit Box</span>
+            </div>
+            <p class="option-description">Ultimate security for long-term storage</p>
+          </div>
+
+          <div class="storage-option avoid">
+            <div class="option-header">
+              <span class="option-icon">❌</span>
+              <span class="option-name">Avoid These</span>
+            </div>
+            <p class="option-description">Email, cloud text files, photos, unsecured notes</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+
+      <!-- Acknowledgment Checkbox -->
+      <div class="acknowledgment">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            class="checkbox"
+            [checked]="hasAcknowledged()"
+            (change)="toggleAcknowledgment()">
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-text">
+            I have securely saved these backup codes and understand they will not be shown again
+          </span>
+        </label>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="footer-buttons">
+        <button
+          class="btn-cancel"
+          (click)="onCancel()">
+          Cancel
+        </button>
+
+        <button
+          class="btn-confirm"
+          (click)="onConfirmSaved()"
+          [disabled]="!hasAcknowledged()"
+          [class.enabled]="hasAcknowledged()">
+          ✅ I've Saved Them Securely
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
