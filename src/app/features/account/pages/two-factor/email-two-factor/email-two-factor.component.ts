@@ -11,7 +11,7 @@ import { AuthStore } from '../../../../../core/auth/state/auth.store';
 import { TwoFactorMethod } from '../../../../../core/auth/models/two-factor.model';
 import { ConfirmDialogService } from '../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { FeedbackService } from '../../../../../shared/feedback/tools/feedback.service';
-import { EmailSetupModalComponent } from '../../../components/security-tab/components/two-factor-section/components/email-setup-modal/email-setup-modal.component';
+import { EmailSetupModalComponent } from './components/email-setup-modal/email-setup-modal.component';
 
 /**
  * Email Two-Factor Configuration Component.

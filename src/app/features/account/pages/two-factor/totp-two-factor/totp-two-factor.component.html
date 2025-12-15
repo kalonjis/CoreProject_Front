@@ -1,0 +1,144 @@
+<!-- src/app/features/account/pages/two-factor/totp-two-factor/totp-two-factor.component.html -->
+
+<div class="totp-two-factor">
+
+  <!-- Header -->
+  <div class="page-header">
+    <button class="back-button" (click)="goBack()">
+      <span class="icon">←</span>
+      Back to Two-Factor Methods
+    </button>
+    <div class="header-content">
+      <span class="header-icon">🔐</span>
+      <div>
+        <h2>Authenticator App</h2>
+        <p class="subtitle">Generate time-based verification codes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <!-- Error State -->
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="btn-primary" (click)="retryLoading()">Retry</button>
+    </div>
+  } @else {
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Status Card -->
+      <div class="status-card" [class.enabled]="totpMethod()?.isEnabled">
+        <div class="status-header">
+          <span class="status-label">Status</span>
+          @if (totpMethod()?.isEnabled) {
+            <span class="status-badge enabled">Enabled</span>
+          } @else {
+            <span class="status-badge disabled">Disabled</span>
+          }
+        </div>
+
+        <div class="status-details">
+          <div class="detail-row">
+            <span class="detail-label">Account</span>
+            <span class="detail-value">{{ getUserDisplayName() }}</span>
+          </div>
+          @if (totpMethod()?.isEnabled && totpMethod()?.isPrimary) {
+            <div class="detail-row">
+              <span class="detail-label">Priority</span>
+              <span class="detail-value primary">Primary method</span>
+            </div>
+          }
+          @if (totpMethod()?.isEnabled) {
+            <div class="detail-row">
+              <span class="detail-label">Code length</span>
+              <span class="detail-value">6 digits</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Update interval</span>
+              <span class="detail-value">30 seconds</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="info-section">
+        <h3>How it works</h3>
+        <ul class="info-list">
+          <li>Install an authenticator app on your mobile device</li>
+          <li>Scan the QR code or enter the secret key manually</li>
+          <li>Your app generates a new 6-digit code every 30 seconds</li>
+          <li>Enter the current code when signing in to complete authentication</li>
+        </ul>
+
+        @if (!totpMethod()?.isEnabled) {
+          <!-- Popular Apps Section -->
+          <div class="popular-apps">
+            <h4>Popular Authenticator Apps</h4>
+            <div class="app-grid">
+              <div class="app-item">
+                <span class="app-icon">🔐</span>
+                <div class="app-info">
+                  <span class="app-name">Google Authenticator</span>
+                  <span class="app-platforms">iOS, Android</span>
+                </div>
+              </div>
+              <div class="app-item">
+                <span class="app-icon">🛡️</span>
+                <div class="app-info">
+                  <span class="app-name">Microsoft Authenticator</span>
+                  <span class="app-platforms">iOS, Android, Windows</span>
+                </div>
+              </div>
+              <div class="app-item">
+                <span class="app-icon">🔑</span>
+                <div class="app-info">
+                  <span class="app-name">Authy</span>
+                  <span class="app-platforms">iOS, Android, Desktop</span>
+                </div>
+              </div>
+              <div class="app-item">
+                <span class="app-icon">🗝️</span>
+                <div class="app-info">
+                  <span class="app-name">1Password</span>
+                  <span class="app-platforms">All platforms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Action Button -->
+      <div class="action-section">
+        @if (totpMethod()?.isEnabled) {
+          <button class="btn-danger" (click)="disableTotp()">
+            Disable Authenticator App
+          </button>
+        } @else {
+          <button class="btn-primary" (click)="enableTotp()">
+            Enable Authenticator App
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
+
+<!-- Setup Modal -->
+@if (showSetupModal()) {
+  <app-totp-setup-modal
+    [userDisplayName]="getUserDisplayName()"
+    (setupComplete)="onSetupComplete()"
+    (cancel)="onSetupCancel()">
+  </app-totp-setup-modal>
+}

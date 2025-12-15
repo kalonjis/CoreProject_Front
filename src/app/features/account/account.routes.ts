@@ -1,4 +1,4 @@
-// src/app/features/account/account.routes.ts
+// src/app/features/account/account.recovery.routes.ts
 
 import { Routes } from '@angular/router';
 import { AccountContainerComponent } from './account-container.component';
@@ -33,6 +33,11 @@ export const ACCOUNT_ROUTES: Routes = [
         path: 'security/two-factor',
         loadChildren: () => import('./pages/two-factor/two-factor.routes')
           .then(m => m.TWO_FACTOR_ROUTES)
+      },
+      {
+        path: 'security/recovery',
+        loadChildren: () => import('./pages/recovery/recovery.routes')
+          .then(m => m.RECOVERY_ROUTES)
       },
       {
         path: 'devices',

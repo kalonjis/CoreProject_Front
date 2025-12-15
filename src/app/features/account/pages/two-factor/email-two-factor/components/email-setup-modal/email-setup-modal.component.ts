@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VerifyCodeComponent } from '../../../../../../../../features/auth/two-factor/components/verify-code/verify-code.component';
-import { AuthFacade } from '../../../../../../../../core/auth/services/auth.facade';
+import { VerifyCodeComponent } from '../../../../../../auth/two-factor/components/verify-code/verify-code.component';
+import { AuthFacade } from '../../../../../../../core/auth/services/auth.facade';
 
 /**
  * Email 2FA Setup Modal Component.

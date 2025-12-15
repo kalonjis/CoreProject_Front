@@ -141,6 +141,12 @@ export class SecurityTabComponent implements OnInit {
       return;
     }
 
+    // Route-based navigation for twofactor
+    if (sectionId === 'recovery') {
+      this.router.navigate(['/account/security/recovery']);
+      return;
+    }
+
     // Internal navigation for other sections (for now)
     this.selectedSection.set(sectionId);
   }

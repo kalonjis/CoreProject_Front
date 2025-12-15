@@ -1,0 +1,160 @@
+<!-- src/app/features/account/pages/recovery/recovery-overview/recovery-overview.component.html -->
+
+<div class="recovery-overview">
+
+  <!-- Header -->
+  <div class="page-header">
+    <button class="back-button" (click)="goBack()">
+      <span class="icon">←</span>
+      Back to Security
+    </button>
+    <div class="header-content">
+      <span class="header-icon">🛡️</span>
+      <div>
+        <h2>Recovery Options</h2>
+        <p class="subtitle">Secure ways to recover your account when you can't access your primary authentication</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading recovery options...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <!-- Error State -->
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="btn-primary" (click)="retryLoading()">Retry</button>
+    </div>
+  } @else {
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Prerequisites Check -->
+      @if (!hasPrimary2FA()) {
+        <div class="prerequisite-notice">
+          <div class="notice-icon">ℹ️</div>
+          <div class="notice-content">
+            <h3>Two-Factor Authentication Required</h3>
+            <p>
+              Recovery options are only available once you have enabled at least one two-factor authentication method.
+              <a href="/account/security/two-factor" class="inline-link">Set up 2FA first</a>.
+            </p>
+          </div>
+        </div>
+      } @else {
+        <!-- Status Summary -->
+        <div class="status-summary">
+          <div class="summary-card primary-2fa">
+            <div class="summary-icon">🔐</div>
+            <div class="summary-content">
+              <h3>Primary Authentication</h3>
+              <p class="summary-value">{{ getPrimary2FACount() }} method(s) enabled</p>
+              <p class="summary-description">Your main security methods</p>
+            </div>
+          </div>
+
+          <div class="summary-card recovery">
+            <div class="summary-icon">🛡️</div>
+            <div class="summary-content">
+              <h3>Recovery Methods</h3>
+              <p class="summary-value">{{ getEnabledRecoveryCount() }} method(s) enabled</p>
+              <p class="summary-description">Emergency access options</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recovery Methods Grid -->
+        <div class="methods-section">
+          <h3>Available Recovery Methods</h3>
+
+          <div class="methods-grid">
+            @for (option of recoveryOptions; track option.type) {
+              <div
+                class="method-card"
+                [class.enabled]="getMethodStatus(option.type)?.isEnabled"
+                [class.disabled]="!option.available"
+                [class.clickable]="option.available"
+                (click)="navigateToMethod(option)">
+
+                <div class="method-header">
+                  <span class="method-icon">{{ option.icon }}</span>
+                  <div class="method-info">
+                    <h4>{{ option.name }}</h4>
+                    <p class="method-description">{{ option.description }}</p>
+                  </div>
+                  <div class="method-status">
+                    @if (!option.available) {
+                      <span class="status-badge coming-soon">Coming Soon</span>
+                    } @else if (getMethodStatus(option.type)?.isEnabled) {
+                      <span class="status-badge enabled">Enabled</span>
+                    } @else {
+                      <span class="status-badge disabled">Not configured</span>
+                    }
+                  </div>
+                </div>
+
+                @if (option.available) {
+                  <div class="method-footer">
+                    <span class="configure-link">
+                      Configure →
+                    </span>
+                  </div>
+                }
+
+                @if (!option.available) {
+                  <div class="coming-soon-overlay">
+                    <span class="coming-soon-text">Coming Soon</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Recovery Best Practices -->
+        <div class="best-practices">
+          <h3>Recovery Best Practices</h3>
+          <div class="practices-grid">
+            <div class="practice-item">
+              <span class="practice-icon">💾</span>
+              <div class="practice-content">
+                <h4>Store Securely</h4>
+                <p>Keep recovery codes in a safe location separate from your main device</p>
+              </div>
+            </div>
+
+            <div class="practice-item">
+              <span class="practice-icon">📝</span>
+              <div class="practice-content">
+                <h4>Multiple Copies</h4>
+                <p>Consider keeping backup codes in multiple secure locations</p>
+              </div>
+            </div>
+
+            <div class="practice-item">
+              <span class="practice-icon">🔄</span>
+              <div class="practice-content">
+                <h4>Regular Updates</h4>
+                <p>Generate new recovery codes if you suspect they've been compromised</p>
+              </div>
+            </div>
+
+            <div class="practice-item">
+              <span class="practice-icon">⚠️</span>
+              <div class="practice-content">
+                <h4>Emergency Use Only</h4>
+                <p>Use recovery methods only when your primary 2FA is unavailable</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

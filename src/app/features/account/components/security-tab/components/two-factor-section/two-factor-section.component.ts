@@ -14,7 +14,7 @@ import { MethodsOverviewComponent } from './components/methods-overview/methods-
 import { TotpDetailComponent } from './components/totp-detail/totp-detail.component';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
-import { EmailSetupModalComponent } from './components/email-setup-modal/email-setup-modal.component';
+import { EmailSetupModalComponent } from '../../../../pages/two-factor/email-two-factor/components/email-setup-modal/email-setup-modal.component';
 import {AuthStore} from '../../../../../../core/auth';
 
 /**
