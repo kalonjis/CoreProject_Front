@@ -11,21 +11,23 @@
   <!-- Code Input -->
   <div class="verify-code__input">
     @if (type === 'BACKUP_CODES') {
-      <!-- Input spécialisé pour backup codes -->
+      <!-- Specialized input for backup codes -->
       <app-backup-code-input
         [disabled]="isSubmitting"
         [autoFocus]="true"
-        (codeComplete)="onCodeComplete($event)">
+        (codeComplete)="onCodeComplete($event)"
+        (codeChange)="onCodeChange($event)">
       </app-backup-code-input>
     } @else {
-      <!-- Input standard pour les autres types -->
+      <!-- Standard input for other types -->
       <app-code-input
         [length]="codeLength()"
         [inputType]="inputType()"
         [disabled]="isSubmitting"
         [autoFocus]="true"
-        [autoSubmit]="true"
-        (codeComplete)="onCodeComplete($event)">
+        [autoSubmit]="autoSubmitEnabled()"
+        (codeComplete)="onCodeComplete($event)"
+        (codeChange)="onCodeChange($event)">
       </app-code-input>
     }
   </div>
@@ -38,8 +40,24 @@
     </div>
   }
 
-  <!-- Submitting Indicator -->
-  @if (isSubmitting) {
+  <!-- Manual Submit Button (appears after first error) -->
+  @if (requireManualSubmit()) {
+    <button
+      type="button"
+      class="verify-code__submit-button"
+      [disabled]="!canManualSubmit()"
+      (click)="onManualSubmit()">
+      @if (isSubmitting) {
+        <span class="verify-code__spinner"></span>
+        Verifying...
+      } @else {
+        Verify Code
+      }
+    </button>
+  }
+
+  <!-- Submitting Indicator (only for auto-submit mode) -->
+  @if (isSubmitting && !requireManualSubmit()) {
     <div class="verify-code__loading">
       <span class="verify-code__spinner"></span>
       <span>Verifying...</span>
@@ -60,8 +78,7 @@
             type="button"
             class="verify-code__resend-button"
             [disabled]="isResending()"
-            (click)="onResendClick()"
-          >
+            (click)="onResendClick()">
             @if (isResending()) {
               Sending...
             } @else {

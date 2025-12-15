@@ -13,6 +13,9 @@ import {
 import { MethodsOverviewComponent } from './components/methods-overview/methods-overview.component';
 import { TotpDetailComponent } from './components/totp-detail/totp-detail.component';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
+import { EmailSetupModalComponent } from './components/email-setup-modal/email-setup-modal.component';
+import {AuthStore} from '../../../../../../core/auth';
 
 /**
  * Two-Factor Authentication section container.
@@ -26,14 +29,17 @@ import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/to
 @Component({
   selector: 'app-two-factor-section',
   standalone: true,
-  imports: [CommonModule, MethodsOverviewComponent, TotpDetailComponent],
+  imports: [CommonModule, MethodsOverviewComponent, EmailSetupModalComponent, TotpDetailComponent],
   templateUrl: './two-factor-section.component.html',
   styleUrl: './two-factor-section.component.scss'
 })
 export class TwoFactorSectionComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authFacade = inject(AuthFacade);
+  private authStore = inject(AuthStore);
   private confirmDialogService = inject(ConfirmDialogService);
+  private confirmDialog = inject(ConfirmDialogService);
+  private feedbackService = inject(FeedbackService);
 
   // Navigation state
   currentView = signal<'overview' | 'detail'>('overview');
@@ -43,6 +49,8 @@ export class TwoFactorSectionComponent implements OnInit {
   twoFactorMethods = signal<TwoFactorMethod[]>([]);
   isLoading = signal(true);
   errorMessage = signal<string | null>(null);
+  // Email setup modal state
+  showEmailSetupModal = signal(false);
 
   ngOnInit(): void {
     this.loadTwoFactorMethods();
@@ -82,6 +90,22 @@ export class TwoFactorSectionComponent implements OnInit {
     return icons[type];
   }
 
+
+  /**
+   * Get masked email from current user session.
+   * Example: "john.doe@example.com" → "j***@example.com"
+   */
+  private getMaskedEmail(): string {
+    const user = this.authStore.user();
+    if (!user?.email) return 'your email';
+
+    const [local, domain] = user.email.split('@');
+    if (!domain) return 'your email';
+
+    const maskedLocal = local.charAt(0) + '***';
+    return `${maskedLocal}@${domain}`;
+  }
+
   /**
    * Get enabled 2FA methods count.
    */
@@ -107,52 +131,125 @@ export class TwoFactorSectionComponent implements OnInit {
 
   /**
    * Handle enabling a 2FA method.
-   * For TOTP, this is handled by the TotpDetailComponent itself.
-   * For other methods, we handle the enable logic here.
+   * For EMAIL: Uses two-step flow with confirmation dialog then verification modal.
+   * For other types: Direct enable (to be implemented).
    */
   enableMethod(method: TwoFactorMethod): void {
-    if (method.type === 'TOTP') {
-      // TOTP enable is handled by TotpDetailComponent
+    if (method.type === 'EMAIL') {
+      this.initiateEmailSetup();
+    } else {
+      // TODO: Implement enable logic for other 2FA types
+      console.log('Enable method:', method.type);
       this.showMethodDetail(method);
-      return;
     }
+  }
 
-    // For other methods, show confirmation and enable
-    this.confirmDialogService.confirm({
-      title: `Enable ${method.displayName}`,
-      message: `Are you sure you want to enable ${method.displayName}?`,
-      confirmButtonText: 'Enable',
+  /**
+   * Initiate Email 2FA setup flow.
+   * Step 1: Show confirmation dialog
+   * Step 2: Call initiate endpoint
+   * Step 3: Show verification modal
+   */
+  private initiateEmailSetup(): void {
+    const maskedEmail = this.getMaskedEmail();
+
+    this.confirmDialog.confirm({
+      title: 'Enable Email Authentication',
+      message: `A verification code will be sent to your ${maskedEmail} address. Do you want to continue?`,
+      confirmButtonText: 'Send Code',
+      cancelButtonText: 'Cancel',
       type: 'info'
-    }).then(() => {
-      this.performEnableMethod(method);
-    }).catch(() => {
-      // User cancelled
-      console.log('Enable cancelled by user');
-    });
+    })
+      .then(() => {
+        // User confirmed - call initiate endpoint
+        this.authFacade.initiateEmailTwoFactorSetup()
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              // Success - show verification modal
+              this.showEmailSetupModal.set(true);
+            },
+            error: (err) => {
+              console.error('Failed to initiate email 2FA setup', err);
+              this.feedbackService.showError(
+                err.error?.message || 'Failed to send verification code. Please try again.'
+              );
+            }
+          });
+      })
+      .catch(() => {
+        // User cancelled - do nothing
+      });
+  }
+
+  /**
+   * Handle successful email 2FA setup completion.
+   */
+  onEmailSetupComplete(): void {
+    this.showEmailSetupModal.set(false);
+    this.feedbackService.showSuccess('Email two-factor authentication has been enabled successfully!');
+
+    // Refresh the methods list to show updated status
+    this.loadTwoFactorMethods();
+
+    // Navigate back to overview
+    this.showOverview();
+  }
+
+  /**
+   * Handle email setup modal cancellation.
+   */
+  onEmailSetupCancel(): void {
+    this.showEmailSetupModal.set(false);
   }
 
   /**
    * Handle disabling a 2FA method.
+   * Shows confirmation dialog then calls disable endpoint.
    */
   disableMethod(method: TwoFactorMethod): void {
-    // Check if this is the last enabled method
-    const enabledCount = this.getEnabledMethodsCount();
-    if (method.isPrimary && enabledCount === 1) {
-      this.errorMessage.set('Cannot disable your only 2FA method. Enable another method first.');
-      return;
+    if (method.type === 'EMAIL') {
+      this.disableEmailTwoFactor();
+    } else {
+      // TODO: Implement disable logic for other 2FA types
+      console.log('Disable method:', method.type);
     }
+  }
 
-    this.confirmDialogService.confirm({
-      title: `Disable ${method.displayName}`,
-      message: `Are you sure you want to disable ${method.displayName}? This will reduce your account security.`,
+  /**
+   * Disable Email 2FA with confirmation.
+   */
+  private disableEmailTwoFactor(): void {
+    const maskedEmail = this.getMaskedEmail();
+
+    this.confirmDialog.confirm({
+      title: 'Disable Email Authentication',
+      message: `Are you sure you want to disable two-factor authentication for ${maskedEmail}? Your account will be less secure.`,
       confirmButtonText: 'Disable',
-      type: 'danger'
-    }).then(() => {
-      this.performDisableMethod(method);
-    }).catch(() => {
-      // User cancelled
-      console.log('Disable cancelled by user');
-    });
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    })
+      .then(() => {
+        // User confirmed - call disable endpoint
+        this.authFacade.disableTwoFactorMethod('EMAIL')
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.feedbackService.showSuccess('Email two-factor authentication has been disabled.');
+              this.loadTwoFactorMethods();
+              this.showOverview();
+            },
+            error: (err) => {
+              console.error('Failed to disable email 2FA', err);
+              this.feedbackService.showError(
+                err.error?.message || 'Failed to disable email authentication. Please try again.'
+              );
+            }
+          });
+      })
+      .catch(() => {
+        // User cancelled - do nothing
+      });
   }
 
   /**

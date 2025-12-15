@@ -1,0 +1,96 @@
+<!-- src/app/features/account/pages/two-factor/email-two-factor/email-two-factor.component.html -->
+
+<div class="email-two-factor">
+
+  <!-- Header -->
+  <div class="page-header">
+    <button class="back-button" (click)="goBack()">
+      <span class="icon">←</span>
+      Back to Two-Factor Methods
+    </button>
+    <div class="header-content">
+      <span class="header-icon">📧</span>
+      <div>
+        <h2>Email Authentication</h2>
+        <p class="subtitle">Receive verification codes via email</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <!-- Error State -->
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="btn-primary" (click)="retryLoading()">Retry</button>
+    </div>
+  } @else {
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Status Card -->
+      <div class="status-card" [class.enabled]="emailMethod()?.isEnabled">
+        <div class="status-header">
+          <span class="status-label">Status</span>
+          @if (emailMethod()?.isEnabled) {
+            <span class="status-badge enabled">Enabled</span>
+          } @else {
+            <span class="status-badge disabled">Disabled</span>
+          }
+        </div>
+
+        <div class="status-details">
+          <div class="detail-row">
+            <span class="detail-label">Email address</span>
+            <span class="detail-value">{{ getMaskedEmail() }}</span>
+          </div>
+          @if (emailMethod()?.isEnabled && emailMethod()?.isPrimary) {
+            <div class="detail-row">
+              <span class="detail-label">Priority</span>
+              <span class="detail-value primary">Primary method</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="info-section">
+        <h3>How it works</h3>
+        <ul class="info-list">
+          <li>When you sign in, we'll send a 6-digit code to your email</li>
+          <li>Enter the code to complete your sign-in</li>
+          <li>Codes expire after 10 minutes for security</li>
+        </ul>
+      </div>
+
+      <!-- Action Button -->
+      <div class="action-section">
+        @if (emailMethod()?.isEnabled) {
+          <button class="btn-danger" (click)="disableEmail()">
+            Disable Email Authentication
+          </button>
+        } @else {
+          <button class="btn-primary" (click)="enableEmail()">
+            Enable Email Authentication
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
+
+<!-- Setup Modal -->
+@if (showSetupModal()) {
+  <app-email-setup-modal
+    [maskedEmail]="getMaskedEmail()"
+    (setupComplete)="onSetupComplete()"
+    (cancel)="onSetupCancel()">
+  </app-email-setup-modal>
+}

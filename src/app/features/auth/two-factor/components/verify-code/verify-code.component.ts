@@ -8,6 +8,8 @@ import {
   ViewChild,
   OnInit,
   OnDestroy,
+  OnChanges,
+  SimpleChanges,
   signal,
   computed,
 } from '@angular/core';
@@ -15,7 +17,7 @@ import { CommonModule } from '@angular/common';
 
 import { CodeInputComponent } from '../../../../../shared/code-input/code-input.component';
 import { TwoFactorType, getTwoFactorConfig } from '../../../../../core/auth';
-import {BackupCodeInputComponent} from '../../../../../shared/backup-code-input/backup-code-input.component';
+import { BackupCodeInputComponent } from '../../../../../shared/backup-code-input/backup-code-input.component';
 
 /**
  * VerifyCodeComponent - Presentational component for 2FA code verification.
@@ -25,6 +27,10 @@ import {BackupCodeInputComponent} from '../../../../../shared/backup-code-input/
  * - EMAIL: Shows masked email, resend button with cooldown
  * - SMS: Shows masked phone, resend button with cooldown
  * - BACKUP_CODE: Shows backup code hint, no resend, alphanumeric input
+ *
+ * Submit behavior:
+ * - First attempt: Auto-submit when code is complete (smooth UX for copy-paste)
+ * - After error: Manual submit required (prevents spam requests during correction)
  *
  * Uses shared CodeInputComponent for the actual input.
  *
@@ -47,7 +53,7 @@ import {BackupCodeInputComponent} from '../../../../../shared/backup-code-input/
   templateUrl: './verify-code.component.html',
   styleUrl: './verify-code.component.scss'
 })
-export class VerifyCodeComponent implements OnInit, OnDestroy {
+export class VerifyCodeComponent implements OnInit, OnDestroy, OnChanges {
 
   // ===========================================================================
   // INPUTS
@@ -94,6 +100,12 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
   /** Whether resend is in progress */
   isResending = signal(false);
 
+  /** Whether manual submit is required (after first failed attempt) */
+  requireManualSubmit = signal(false);
+
+  /** Stored code for manual submission */
+  pendingCode = signal<string | null>(null);
+
   /** Cooldown interval reference */
   private cooldownInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -104,7 +116,7 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
   /** Code length based on type */
   codeLength = computed(() => {
     try {
-      if (!this.type) return 6; // temporaire
+      if (!this.type) return 6;
       const config = getTwoFactorConfig(this.type);
       return config.codeLength;
     } catch (e) {
@@ -143,6 +155,15 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
     }
   });
 
+  /** Whether auto-submit is enabled (only on first attempt) */
+  autoSubmitEnabled = computed(() => !this.requireManualSubmit());
+
+  /** Whether the verify button should be enabled */
+  canManualSubmit = computed(() => {
+    const code = this.pendingCode();
+    return code !== null && code.length === this.codeLength() && !this.isSubmitting;
+  });
+
   // ===========================================================================
   // LIFECYCLE
   // ===========================================================================
@@ -159,18 +180,58 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
     this.clearCooldownInterval();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // Detect error changes to switch to manual submit mode
+    if (changes['error'] && this.error) {
+      this.requireManualSubmit.set(true);
+      this.pendingCode.set(null);
+    }
+  }
+
   // ===========================================================================
-  // METHODS
+  // CODE HANDLING
   // ===========================================================================
 
   /**
    * Handle code completion from CodeInputComponent.
+   * Auto-submits on first attempt, stores code for manual submit after error.
    */
   onCodeComplete(code: string): void {
-    if (!this.isSubmitting) {
+    if (this.isSubmitting) return;
+
+    if (this.requireManualSubmit()) {
+      // After error: store code, wait for manual submit
+      this.pendingCode.set(code);
+    } else {
+      // First attempt: auto-submit
       this.codeSubmitted.emit(code);
     }
   }
+
+  /**
+   * Handle code change from CodeInputComponent.
+   * Updates pending code for manual submission.
+   */
+  onCodeChange(code: string): void {
+    if (this.requireManualSubmit()) {
+      this.pendingCode.set(code);
+    }
+  }
+
+  /**
+   * Handle manual verify button click.
+   * Used after a failed attempt when auto-submit is disabled.
+   */
+  onManualSubmit(): void {
+    const code = this.pendingCode() || this.codeInput?.getCode();
+    if (code && code.length === this.codeLength() && !this.isSubmitting) {
+      this.codeSubmitted.emit(code);
+    }
+  }
+
+  // ===========================================================================
+  // RESEND HANDLING
+  // ===========================================================================
 
   /**
    * Handle resend button click.
@@ -184,21 +245,36 @@ export class VerifyCodeComponent implements OnInit, OnDestroy {
 
   /**
    * Called by parent after resend completes.
-   * Restarts the cooldown timer.
+   * Restarts the cooldown timer and resets to auto-submit mode.
    */
   onResendComplete(success: boolean): void {
     this.isResending.set(false);
     if (success) {
       this.startCooldown(this.defaultCooldown());
-      this.resetInput();
+      this.fullReset();
     }
   }
 
+  // ===========================================================================
+  // RESET METHODS
+  // ===========================================================================
+
   /**
-   * Reset the code input.
+   * Reset the code input (keeps manual submit state).
    */
   resetInput(): void {
     this.codeInput?.reset();
+    this.pendingCode.set(null);
+  }
+
+  /**
+   * Full reset including manual submit state.
+   * Called when a new code is sent (resend).
+   */
+  fullReset(): void {
+    this.codeInput?.reset();
+    this.pendingCode.set(null);
+    this.requireManualSubmit.set(false);
   }
 
   /**

@@ -1,0 +1,71 @@
+<!-- src/app/features/account/pages/two-factor/two-factor-overview/two-factor-overview.component.html -->
+
+<div class="two-factor-overview">
+
+  <!-- Header -->
+  <div class="overview-header">
+    <button class="back-button" (click)="goBack()">
+      <span class="icon">←</span>
+      Back to Security
+    </button>
+    <h2>Two-Factor Authentication</h2>
+    <p class="subtitle">
+      Add an extra layer of security to your account.
+      {{ getEnabledMethodsCount() }} method(s) enabled.
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading authentication methods...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <!-- Error State -->
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="btn-primary" (click)="retryLoading()">Retry</button>
+    </div>
+  } @else {
+    <!-- Methods List -->
+    <div class="methods-list">
+      @for (method of twoFactorMethods(); track method.type) {
+        <div
+          class="method-card"
+          [class.enabled]="method.isEnabled"
+          (click)="navigateToMethod(method)">
+
+          <div class="method-info">
+            <div class="method-icon">{{ getMethodIcon(method.type) }}</div>
+            <div class="method-details">
+              <h3 class="method-name">{{ method.displayName }}</h3>
+              <p class="method-description">{{ method.description }}</p>
+            </div>
+          </div>
+
+          <div class="method-status">
+            @if (method.isEnabled) {
+              <span class="status-badge enabled">Enabled</span>
+              @if (method.isPrimary) {
+                <span class="primary-badge">Primary</span>
+              }
+            } @else {
+              <span class="status-badge disabled">Disabled</span>
+            }
+            <span class="chevron">→</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Help Text -->
+    <div class="help-text">
+      <p>
+        <strong>Tip:</strong> We recommend enabling at least two methods
+        for better account security.
+      </p>
+    </div>
+  }
+
+</div>
