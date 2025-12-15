@@ -1,0 +1,52 @@
+<!-- src/app/features/account/components/security-tab/components/two-factor-section/components/email-setup-modal/email-setup-modal.component.html -->
+
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="onModalClick($event)">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">Verify Your Email</h3>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content">
+      <p class="modal-description">
+        We've sent a 6-digit verification code to your email
+        @if (maskedEmail) {
+          <strong>{{ maskedEmail }}</strong>
+        }
+      </p>
+
+      <!-- Resend success message -->
+      @if (resendSuccess()) {
+        <div class="resend-success">
+          ✓ A new code has been sent to your email
+        </div>
+      }
+
+      <!-- Verify Code Component -->
+      <app-verify-code
+        [type]="'EMAIL'"
+        [maskedDestination]="maskedEmail"
+        [isSubmitting]="isSubmitting() || isResending()"
+        [error]="error()"
+        (codeSubmitted)="onCodeSubmitted($event)"
+        (resendRequested)="onResendRequested()">
+      </app-verify-code>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -39,44 +39,6 @@
         }
       </div>
     </div>
-  } @else if (selectedSection() === 'twofactor') {
-    <!-- Two-Factor Authentication Detail -->
-    <div class="section-detail">
-      <!-- Back navigation -->
-      <div class="detail-nav">
-        <button class="back-button" (click)="showOverview()">
-          <span class="icon">←</span>
-          Back to Security
-        </button>
-      </div>
-
-      <!-- Section Header with icon and status -->
-      <div class="section-header-banner">
-        <div class="header-content">
-          <div class="section-icon">🔐</div>
-          <div class="header-text">
-            <h2>Two-Factor Authentication</h2>
-            <p class="section-description">
-              Add an extra layer of security to your account
-            </p>
-          </div>
-        </div>
-        <div class="section-status">
-          @if (enabledMethodsCount() > 0) {
-            <span class="status-badge enabled">
-              {{ enabledMethodsCount() }} method{{ enabledMethodsCount() > 1 ? 's' : '' }} active
-            </span>
-          } @else {
-            <span class="status-badge disabled">Not configured</span>
-          }
-        </div>
-      </div>
-
-      <!-- Two-Factor Section Component -->
-      <div class="detail-content">
-        <app-two-factor-section />
-      </div>
-    </div>
   } @else if (selectedSection() === 'password') {
     <!-- Password Detail -->
     <div class="section-detail">

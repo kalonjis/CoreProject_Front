@@ -192,4 +192,35 @@
       }
     }
   }
+
+  // ===========================================================================
+  // SUBMIT BUTTON (manual mode after error)
+  // ===========================================================================
+
+  &__submit-button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    margin-top: 1rem;
+    background-color: var(--color-primary, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-primary-dark, #2563eb);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
 }

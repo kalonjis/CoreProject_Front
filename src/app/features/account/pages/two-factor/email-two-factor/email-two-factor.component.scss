@@ -1,0 +1,236 @@
+// src/app/features/account/pages/two-factor/email-two-factor/email-two-factor.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+.email-two-factor {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+// Header
+.page-header {
+  margin-bottom: 2rem;
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
+    color: $primary-color;
+    font-size: 0.875rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $light-color;
+    border-radius: 50%;
+  }
+
+  h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $secondary-color;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: $gray-dark;
+    font-size: 0.95rem;
+  }
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  color: $gray-dark;
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+// Error
+.error-container {
+  text-align: center;
+  padding: 2rem;
+
+  .error-message {
+    color: $danger-color;
+    margin-bottom: 1rem;
+  }
+}
+
+// Status Card
+.status-card {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &.enabled {
+    border-left: 4px solid $success-color;
+  }
+
+  .status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $border-color;
+
+    .status-label {
+      font-weight: 500;
+      color: $secondary-color;
+    }
+
+    .status-badge {
+      padding: 0.375rem 0.875rem;
+      border-radius: 1rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+
+      &.enabled {
+        background: rgba($success-color, 0.1);
+        color: $success-color;
+      }
+
+      &.disabled {
+        background: $light-color;
+        color: $gray-dark;
+      }
+    }
+  }
+
+  .status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .detail-label {
+      color: $gray-dark;
+      font-size: 0.875rem;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: $secondary-color;
+
+      &.primary {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Info Section
+.info-section {
+  background: rgba($info-color, 0.05);
+  border-radius: $border-radius;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $secondary-color;
+  }
+
+  .info-list {
+    margin: 0;
+    padding-left: 1.25rem;
+
+    li {
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: $gray-dark;
+      line-height: 1.5;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Action Section
+.action-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Buttons
+.btn-primary,
+.btn-danger {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: $primary-color;
+  color: white;
+
+  &:hover {
+    background: darken($primary-color, 8%);
+  }
+}
+
+.btn-danger {
+  background: white;
+  color: $danger-color;
+  border: 1px solid $danger-color;
+
+  &:hover {
+    background: rgba($danger-color, 0.05);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

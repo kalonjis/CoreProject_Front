@@ -135,6 +135,42 @@ export class TwoFactorApiService {
     return this.http.post<TwoFactorOperationResponse>(`${this.baseUrl}/2fa/email/disable`, {});
   }
 
+
+  // ===========================================================================
+// SETTINGS - EMAIL SETUP (authenticated) - Two-step activation flow
+// ===========================================================================
+
+  /**
+   * Initiate Email 2FA setup process.
+   *
+   * Step 1 of 2: Generates a verification code and sends it to user's email.
+   * The activation token is stored in an HttpOnly cookie by the backend.
+   *
+   * @returns Observable with initiation success response
+   */
+  initiateEmailSetup(): Observable<TwoFactorOperationResponse> {
+    return this.http.post<TwoFactorOperationResponse>(
+      `${this.baseUrl}/2fa/email/setup/initiate`,
+      {}
+    );
+  }
+
+  /**
+   * Verify code and activate Email 2FA.
+   *
+   * Step 2 of 2: Validates the code against the hashed value in the activation token.
+   * On success, email 2FA is enabled and the activation cookie is cleared.
+   *
+   * @param code - The 6-digit verification code from the email
+   * @returns Observable with enabled success response
+   */
+  verifyEmailSetup(code: string): Observable<TwoFactorOperationResponse> {
+    return this.http.post<TwoFactorOperationResponse>(
+      `${this.baseUrl}/2fa/email/setup/verify`,
+      { verificationCode: code }
+    );
+  }
+
   // ===========================================================================
   // SETTINGS - SMS (authenticated)
   // ===========================================================================

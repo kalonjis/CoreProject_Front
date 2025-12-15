@@ -166,30 +166,14 @@
                 </div>
 
                 <div class="placeholder-content">
-                  <h4>Email Configuration (Coming Soon)</h4>
-                  <p class="placeholder-text">
-                    Detailed email configuration options will be implemented here.
-                  </p>
-                  <ul class="config-hints">
-                    <li>Email verification settings</li>
-                    <li>Test email delivery</li>
-                    <li>Backup email options</li>
-                  </ul>
 
                   <div class="placeholder-actions">
                     @if (selectedMethod()!.isEnabled) {
                       <button
                         class="btn btn--danger"
-                        (click)="disableMethod(selectedMethod()!)"
-                        [disabled]="selectedMethod()!.isPrimary && getEnabledMethodsCount() === 1"
-                      >
+                        (click)="disableMethod(selectedMethod()!)">
                         Disable Method
                       </button>
-                      @if (selectedMethod()!.isPrimary && getEnabledMethodsCount() === 1) {
-                        <small class="action-note">
-                          Enable another method before disabling your primary method
-                        </small>
-                      }
                     } @else {
                       <button
                         class="btn btn--primary"
@@ -202,7 +186,6 @@
                 </div>
               </div>
             }
-
             @case ('BACKUP_CODES') {
               <!-- Placeholder for BACKUP_CODES - will be replaced in next iteration -->
               <div class="method-config-placeholder">
@@ -273,5 +256,12 @@
         </div>
       }
     </div>
+  }
+  <!-- Email Setup Modal -->
+  @if (showEmailSetupModal()) {
+    <app-email-setup-modal
+      (setupComplete)="onEmailSetupComplete()"
+      (cancel)="onEmailSetupCancel()">
+    </app-email-setup-modal>
   }
 </div>

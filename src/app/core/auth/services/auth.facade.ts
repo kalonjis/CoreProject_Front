@@ -163,6 +163,32 @@ export class AuthFacade {
   }
 
   // ===========================================================================
+  // TWO-FACTOR EMAIL SETUP (two-step activation flow)
+  // ===========================================================================
+
+  /**
+   * Initiate Email 2FA setup.
+   *
+   * Triggers verification code generation and email sending.
+   * The activation token is automatically stored in an HttpOnly cookie.
+   *
+   * @returns Observable with initiation response
+   */
+  initiateEmailTwoFactorSetup(): Observable<TwoFactorOperationResponse> {
+    return this.twoFactorApi.initiateEmailSetup();
+  }
+
+  /**
+   * Verify code and complete Email 2FA activation.
+   *
+   * @param code - The 6-digit verification code from email
+   * @returns Observable with enabled response
+   */
+  verifyEmailTwoFactorSetup(code: string): Observable<TwoFactorOperationResponse> {
+    return this.twoFactorApi.verifyEmailSetup(code);
+  }
+
+  // ===========================================================================
   // AUTHENTICATION - TWO-FACTOR LOGIN FLOW
   // ===========================================================================
 

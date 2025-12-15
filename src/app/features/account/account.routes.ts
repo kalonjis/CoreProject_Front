@@ -30,6 +30,11 @@ export const ACCOUNT_ROUTES: Routes = [
         .then(m => m.SecurityTabComponent)
       },
       {
+        path: 'security/two-factor',
+        loadChildren: () => import('./pages/two-factor/two-factor.routes')
+          .then(m => m.TWO_FACTOR_ROUTES)
+      },
+      {
         path: 'devices',
         loadComponent: () => import('./components/device-tab/device-tab.component')
           .then(m => m.DeviceTabComponent)

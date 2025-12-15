@@ -2,13 +2,12 @@
 
 import { Component, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthFacade } from '../../../../core/auth/services/auth.facade';
 import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
-import { TwoFactorSectionComponent } from './components/two-factor-section/two-factor-section.component';
 
 /**
  * Security tab component for account management.
@@ -22,13 +21,14 @@ import { TwoFactorSectionComponent } from './components/two-factor-section/two-f
 @Component({
   selector: 'app-security-tab',
   standalone: true,
-  imports: [CommonModule, RouterLink, TwoFactorSectionComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './security-tab.component.html',
   styleUrl: './security-tab.component.scss'
 })
 export class SecurityTabComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authFacade = inject(AuthFacade);
+  private router = inject(Router);
 
   // Navigation state
   selectedSection = signal<'overview' | 'twofactor' | 'password' | 'recovery'>('overview');
@@ -134,6 +134,14 @@ export class SecurityTabComponent implements OnInit {
     if (!section?.enabled) {
       return;
     }
+
+    // Route-based navigation for twofactor
+    if (sectionId === 'twofactor') {
+      this.router.navigate(['/account/security/two-factor']);
+      return;
+    }
+
+    // Internal navigation for other sections (for now)
     this.selectedSection.set(sectionId);
   }
 
