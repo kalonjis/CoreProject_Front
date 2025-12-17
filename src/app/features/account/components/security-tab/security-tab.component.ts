@@ -98,7 +98,7 @@ export class SecurityTabComponent implements OnInit {
       description: 'Account recovery methods',
       icon: '🆘',
       status: 'Coming Soon',
-      enabled: false
+      enabled: true
     }
   ]);
 
