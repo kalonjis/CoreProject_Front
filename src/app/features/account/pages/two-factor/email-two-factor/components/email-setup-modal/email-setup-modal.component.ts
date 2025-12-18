@@ -1,4 +1,4 @@
-// src/app/features/account/components/security-tab/components/two-factor-section/components/email-setup-modal/email-setup-modal.component.ts
+// src/app/features/account/pages/two-factor/email-two-factor/components/email-setup-modal/email-setup-modal.component.ts
 
 import {
   Component,
@@ -12,7 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 
 import { VerifyCodeComponent } from '../../../../../../auth/two-factor/components/verify-code/verify-code.component';
-import { AuthFacade } from '../../../../../../../core/auth/services/auth.facade';
+import { TwoFactorApiService } from '../../../../../../../core/auth/services/two-factor-api.service';
 
 /**
  * Email 2FA Setup Modal Component.
@@ -36,7 +36,7 @@ import { AuthFacade } from '../../../../../../../core/auth/services/auth.facade'
   styleUrl: './email-setup-modal.component.scss'
 })
 export class EmailSetupModalComponent implements OnInit {
-  private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
 
   // ===========================================================================
   // INPUTS
@@ -93,7 +93,7 @@ export class EmailSetupModalComponent implements OnInit {
     this.error.set(null);
     this.resendSuccess.set(false);
 
-    this.authFacade.verifyEmailTwoFactorSetup(code).subscribe({
+    this.twoFactorApi.verifyEmailSetup(code).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.setupComplete.emit();
@@ -116,7 +116,7 @@ export class EmailSetupModalComponent implements OnInit {
     this.error.set(null);
     this.resendSuccess.set(false);
 
-    this.authFacade.initiateEmailTwoFactorSetup().subscribe({
+    this.twoFactorApi.initiateEmailSetup().subscribe({
       next: () => {
         this.isResending.set(false);
         this.resendSuccess.set(true);

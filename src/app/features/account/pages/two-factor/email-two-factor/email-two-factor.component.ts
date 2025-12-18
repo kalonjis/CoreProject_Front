@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, finalize } from 'rxjs';
 
-import { AuthFacade } from '../../../../../core/auth/services/auth.facade';
+import { TwoFactorApiService } from '../../../../../core/auth/services/two-factor-api.service';
 import { AuthStore } from '../../../../../core/auth/state/auth.store';
 import { TwoFactorMethod } from '../../../../../core/auth/models/two-factor.model';
 import { ConfirmDialogService } from '../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
@@ -33,20 +33,31 @@ import { EmailSetupModalComponent } from './components/email-setup-modal/email-s
 export class EmailTwoFactorComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
   private authStore = inject(AuthStore);
   private confirmDialog = inject(ConfirmDialogService);
   private feedbackService = inject(FeedbackService);
 
-  // State
+  // ===========================================================================
+  // STATE
+  // ===========================================================================
+
   emailMethod = signal<TwoFactorMethod | null>(null);
   isLoading = signal(true);
   errorMessage = signal<string | null>(null);
   showSetupModal = signal(false);
 
+  // ===========================================================================
+  // LIFECYCLE
+  // ===========================================================================
+
   ngOnInit(): void {
     this.loadEmailMethodStatus();
   }
+
+  // ===========================================================================
+  // PRIVATE METHODS
+  // ===========================================================================
 
   /**
    * Load email 2FA method status.
@@ -55,7 +66,7 @@ export class EmailTwoFactorComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authFacade.loadTwoFactorSettings()
+    this.twoFactorApi.getSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
@@ -70,6 +81,10 @@ export class EmailTwoFactorComponent implements OnInit {
         this.emailMethod.set(emailMethod || null);
       });
   }
+
+  // ===========================================================================
+  // PUBLIC METHODS
+  // ===========================================================================
 
   /**
    * Get masked email from current user session.
@@ -97,7 +112,7 @@ export class EmailTwoFactorComponent implements OnInit {
       type: 'info'
     })
       .then(() => {
-        this.authFacade.initiateEmailTwoFactorSetup()
+        this.twoFactorApi.initiateEmailSetup()
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
@@ -128,7 +143,7 @@ export class EmailTwoFactorComponent implements OnInit {
       type: 'warning'
     })
       .then(() => {
-        this.authFacade.disableTwoFactorMethod('EMAIL')
+        this.twoFactorApi.disableEmail()
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {

@@ -19,7 +19,7 @@ import {
   TwoFactorMethod,
   TWO_FACTOR_REQUIRED_MESSAGE,
   TwoFactorMethodChosenResponse,
-  buildVerifyRequest, TwoFactorOperationResponse, TotpSetupResponse, BackupCodesSetupResponse,
+  buildVerifyRequest
 } from '../models/two-factor.model';
 
 /**
@@ -131,6 +131,11 @@ export class AuthFacade {
     );
   }
 
+
+  // ===========================================================================
+  // AUTHENTICATION - TWO-FACTOR LOGIN FLOW
+  // ===========================================================================
+
   /**
    * Initiate login with 2FA check.
    * Returns whether 2FA is required. If so, navigates to 2FA page.
@@ -161,36 +166,6 @@ export class AuthFacade {
       catchError(err => this.handleLoginError(err))
     );
   }
-
-  // ===========================================================================
-  // TWO-FACTOR EMAIL SETUP (two-step activation flow)
-  // ===========================================================================
-
-  /**
-   * Initiate Email 2FA setup.
-   *
-   * Triggers verification code generation and email sending.
-   * The activation token is automatically stored in an HttpOnly cookie.
-   *
-   * @returns Observable with initiation response
-   */
-  initiateEmailTwoFactorSetup(): Observable<TwoFactorOperationResponse> {
-    return this.twoFactorApi.initiateEmailSetup();
-  }
-
-  /**
-   * Verify code and complete Email 2FA activation.
-   *
-   * @param code - The 6-digit verification code from email
-   * @returns Observable with enabled response
-   */
-  verifyEmailTwoFactorSetup(code: string): Observable<TwoFactorOperationResponse> {
-    return this.twoFactorApi.verifyEmailSetup(code);
-  }
-
-  // ===========================================================================
-  // AUTHENTICATION - TWO-FACTOR LOGIN FLOW
-  // ===========================================================================
 
   /**
    * Get available 2FA methods for the current login session.
@@ -254,34 +229,6 @@ export class AuthFacade {
   resend2FACode(): Observable<AuthOperationResponse> {
     return this.twoFactorApi.resendCode();
   }
-
-
-  // ===========================================================================
-// TWO-FACTOR SETTINGS
-// ===========================================================================
-
-  /**
-   * Load all 2FA methods with their status for settings page.
-   */
-  loadTwoFactorSettings(): Observable<TwoFactorMethod[]> {
-    return this.twoFactorApi.getSettings();
-  }
-
-  /**
-   * Enable a 2FA method.
-   * Returns different response types based on method (TOTP, BACKUP_CODES have setup data).
-   */
-  enableTwoFactorMethod(type: TwoFactorType): Observable<TwoFactorOperationResponse | TotpSetupResponse | BackupCodesSetupResponse> {
-    return this.twoFactorApi.enableMethod(type);
-  }
-
-  /**
-   * Disable a 2FA method.
-   */
-  disableTwoFactorMethod(type: TwoFactorType): Observable<TwoFactorOperationResponse> {
-    return this.twoFactorApi.disableMethod(type);
-  }
-
 
   // ===========================================================================
   // AUTHENTICATION - LOGOUT

@@ -13,7 +13,7 @@ import {
   TwoFactorMethodChosenResponse,
   TwoFactorVerifyRequest,
   TotpSetupResponse,
-  BackupCodesSetupResponse,
+  BackupCodesSetupResponse, TotpSetupInitiateResponse,
 } from '../models/two-factor.model';
 
 /**
@@ -108,6 +108,43 @@ export class TwoFactorApiService {
   enableTotp(): Observable<TotpSetupResponse> {
     return this.http.post<TotpSetupResponse>(`${this.baseUrl}/2fa/totp/enable`, {});
   }
+
+
+  // ===========================================================================
+  // SETTINGS - TOTP SETUP (authenticated) - Two-step activation flow
+  // ===========================================================================
+
+  /**
+   * Initiate TOTP 2FA setup process.
+   *
+   * Step 1 of 2: Generates secret key and QR code for authenticator app setup.
+   * The activation token is stored in an HttpOnly cookie by the backend.
+   *
+   * @returns Observable with setup data (QR code, secret key)
+   */
+  initiateTotpSetup(): Observable<TotpSetupInitiateResponse> {
+    return this.http.post<TotpSetupInitiateResponse>(
+      `${this.baseUrl}/2fa/totp/setup/initiate`,
+      {}
+    );
+  }
+
+  /**
+   * Verify TOTP code and activate TOTP 2FA.
+   *
+   * Step 2 of 2: Validates the code from user's authenticator app.
+   * On success, TOTP 2FA is enabled and the activation cookie is cleared.
+   *
+   * @param code - The 6-digit TOTP code from authenticator app
+   * @returns Observable with enabled success response
+   */
+  verifyTotpSetup(code: string): Observable<TwoFactorOperationResponse> {
+    return this.http.post<TwoFactorOperationResponse>(
+      `${this.baseUrl}/2fa/totp/setup/verify`,
+      { verificationCode: code }
+    );
+  }
+
 
   /**
    * Disable TOTP 2FA.

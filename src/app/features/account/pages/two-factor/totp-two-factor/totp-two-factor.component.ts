@@ -3,10 +3,11 @@
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, finalize } from 'rxjs';
 
-import { AuthFacade } from '../../../../../core/auth/services/auth.facade';
+import { TwoFactorApiService } from '../../../../../core/auth/services/two-factor-api.service';
 import { AuthStore } from '../../../../../core/auth/state/auth.store';
 import { TwoFactorMethod } from '../../../../../core/auth/models/two-factor.model';
 import { ConfirmDialogService } from '../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
@@ -40,7 +41,7 @@ import { TotpSetupModalComponent } from './components/totp-setup-modal/totp-setu
 export class TotpTwoFactorComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
   private authStore = inject(AuthStore);
   private confirmDialog = inject(ConfirmDialogService);
   private feedbackService = inject(FeedbackService);
@@ -81,7 +82,7 @@ export class TotpTwoFactorComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authFacade.loadTwoFactorSettings()
+    this.twoFactorApi.getSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
@@ -91,7 +92,7 @@ export class TotpTwoFactorComponent implements OnInit {
         }),
         finalize(() => this.isLoading.set(false))
       )
-      .subscribe(methods => {
+      .subscribe((methods: TwoFactorMethod[]) => {
         const totpMethod = methods.find(m => m.type === 'TOTP');
         this.totpMethod.set(totpMethod || null);
       });
@@ -124,8 +125,6 @@ export class TotpTwoFactorComponent implements OnInit {
     })
       .then(() => {
         // User confirmed - open setup modal
-        // Note: Unlike email, TOTP doesn't need "initiate" API call
-        // The QR code and secret are generated in the setup modal
         this.showSetupModal.set(true);
       })
       .catch(() => {
@@ -146,14 +145,14 @@ export class TotpTwoFactorComponent implements OnInit {
       type: 'warning'
     })
       .then(() => {
-        this.authFacade.disableTwoFactorMethod('TOTP')
+        this.twoFactorApi.disableTotp()
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
               this.feedbackService.showSuccess('TOTP authentication has been disabled.');
               this.loadTotpMethodStatus();
             },
-            error: (err) => {
+            error: (err: HttpErrorResponse) => {
               console.error('Failed to disable TOTP 2FA', err);
               this.feedbackService.showError(
                 err.error?.message || 'Failed to disable TOTP authentication. Please try again.'

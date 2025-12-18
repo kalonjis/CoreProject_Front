@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, finalize } from 'rxjs';
 
-import { AuthFacade } from '../../../../../core/auth/services/auth.facade';
+import { TwoFactorApiService } from '../../../../../core/auth/services/two-factor-api.service';
 import { TwoFactorMethod, TwoFactorType } from '../../../../../core/auth/models/two-factor.model';
 
 /**
@@ -30,7 +30,7 @@ import { TwoFactorMethod, TwoFactorType } from '../../../../../core/auth/models/
 })
 export class RecoveryOverviewComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
   private router = inject(Router);
 
   // State
@@ -77,7 +77,7 @@ export class RecoveryOverviewComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authFacade.loadTwoFactorSettings()
+    this.twoFactorApi.getSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
@@ -87,7 +87,7 @@ export class RecoveryOverviewComponent implements OnInit {
         }),
         finalize(() => this.isLoading.set(false))
       )
-      .subscribe(methods => this.twoFactorMethods.set(methods));
+      .subscribe((methods: TwoFactorMethod[]) => this.twoFactorMethods.set(methods));
   }
 
   /**
