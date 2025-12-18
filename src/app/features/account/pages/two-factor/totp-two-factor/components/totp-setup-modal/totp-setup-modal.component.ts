@@ -16,8 +16,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, finalize } from 'rxjs';
 import * as QRCode from 'qrcode';
 
-import { AuthFacade } from '../../../../../../../core/auth/services/auth.facade';
-import { TotpSetupResponse } from '../../../../../../../core/auth/models/two-factor.model';
+import { TwoFactorApiService  } from '../../../../../../../core/auth/services/two-factor-api.service';
+import {TotpSetupInitiateResponse, TotpSetupResponse} from '../../../../../../../core/auth/models/two-factor.model';
 
 /**
  * TOTP Setup Modal Component.
@@ -45,7 +45,7 @@ import { TotpSetupResponse } from '../../../../../../../core/auth/models/two-fac
 })
 export class TotpSetupModalComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
   private destroyRef = inject(DestroyRef);
 
   // ===========================================================================
@@ -88,7 +88,7 @@ export class TotpSetupModalComponent implements OnInit {
   qrCodeDataUrl = signal<string | null>(null);
 
   /** TOTP setup data from backend */
-  setupData = signal<TotpSetupResponse | null>(null);
+  setupData = signal<TotpSetupInitiateResponse | null>(null);
 
   /** Form for code verification */
   verificationForm: FormGroup;
@@ -147,27 +147,29 @@ export class TotpSetupModalComponent implements OnInit {
   // ===========================================================================
 
   /**
-   * Initiate TOTP setup by generating secret key and QR code.
+   * Initiate TOTP setup by calling the 2-step flow API.
+   * Step 1: Generate secret key and QR code (activation token stored in cookie).
    */
   protected initiateTotpSetup(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authFacade.enableTwoFactorMethod('TOTP')
+    this.twoFactorApi.initiateTotpSetup()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
           console.error('Failed to initiate TOTP setup', err);
-          this.errorMessage.set('Failed to generate TOTP configuration. Please try again.');
+          this.errorMessage.set(
+            err.error?.message || 'Failed to generate TOTP configuration. Please try again.'
+          );
           return of(null);
         }),
         finalize(() => this.isLoading.set(false))
       )
       .subscribe(response => {
         if (response) {
-          const totpResponse = response as TotpSetupResponse;
-          this.setupData.set(totpResponse);
-          this.generateQrCode(totpResponse.qrCodeUri);
+          this.setupData.set(response);
+          this.generateQrCode(response.qrCodeUri);
         }
       });
   }
@@ -239,7 +241,7 @@ export class TotpSetupModalComponent implements OnInit {
 
   /**
    * Handle verification code submission.
-   * Since TOTP is already activated, this is just a test to verify the user's app works.
+   * Step 2: Verify the TOTP code and activate 2FA.
    */
   onVerifyCode(): void {
     if (this.verificationForm.invalid) {
@@ -251,16 +253,24 @@ export class TotpSetupModalComponent implements OnInit {
     this.isVerifying.set(true);
     this.clearMessages();
 
-    // Note: Similar to existing totp-detail.component.ts
-    // This would need a specific API endpoint for testing TOTP codes during setup
-    // For now, we'll simulate success to match existing pattern
-    setTimeout(() => {
-      this.isVerifying.set(false);
-      this.successMessage.set('Code verified successfully! Your authenticator app is working correctly.');
-      setTimeout(() => {
-        this.setupComplete.emit();
-      }, 1500);
-    }, 1000);
+    this.twoFactorApi.verifyTotpSetup(verificationCode)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(err => {
+          console.error('Failed to verify TOTP code', err);
+          this.errorMessage.set(
+            err.error?.message || 'Invalid verification code. Please try again.'
+          );
+          return of(null);
+        }),
+        finalize(() => this.isVerifying.set(false))
+      )
+      .subscribe(response => {
+        if (response) {
+          this.successMessage.set('TOTP authentication enabled successfully!');
+          setTimeout(() => this.setupComplete.emit(), 1000);
+        }
+      });
   }
 
   /**

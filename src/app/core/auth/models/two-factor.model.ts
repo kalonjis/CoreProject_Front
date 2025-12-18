@@ -170,6 +170,22 @@ export interface TotpSetupResponse {
   manualEntryKey: string; // Human-readable key for manual entry
 }
 
+
+/**
+ * Response when initiating TOTP 2FA setup (step 1 of 2-step flow).
+ * Contains QR code and secret for authenticator app configuration.
+ * Maps to: TotpSetupInitiateResponse.java
+ */
+export interface TotpSetupInitiateResponse {
+  message: string;
+  type: string;
+  status: string;
+  qrCodeUri: string;      // otpauth:// URI for QR code generation
+  secretKey: string;      // Base32 encoded secret
+  manualEntryKey: string; // Formatted key for manual entry
+  instructions: string;
+}
+
 /**
  * Response when enabling backup codes 2FA.
  * Contains the generated codes (shown only once).

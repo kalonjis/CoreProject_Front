@@ -12,6 +12,7 @@ import { TwoFactorMethod, BackupCodesSetupResponse } from '../../../../../core/a
 import { ConfirmDialogService } from '../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { FeedbackService } from '../../../../../shared/feedback/tools/feedback.service';
 import { BackupCodesModalComponent } from './components/backup-codes-modal/backup-codes-modal.component';
+import {TwoFactorApiService} from '../../../../../core/auth';
 
 /**
  * Backup Codes Configuration Component.
@@ -34,7 +35,7 @@ import { BackupCodesModalComponent } from './components/backup-codes-modal/backu
 export class BackupCodesComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  private authFacade = inject(AuthFacade);
+  twoFactorApi = inject(TwoFactorApiService)
   private authStore = inject(AuthStore);
   private confirmDialog = inject(ConfirmDialogService);
   private feedbackService = inject(FeedbackService);
@@ -83,7 +84,7 @@ export class BackupCodesComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authFacade.loadTwoFactorSettings()
+    this.twoFactorApi.getSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
@@ -187,7 +188,7 @@ export class BackupCodesComponent implements OnInit {
       .then(() => {
         this.isOperating.set(true);
 
-        this.authFacade.disableTwoFactorMethod('BACKUP_CODES')
+        this.twoFactorApi.disableBackupCodes()
           .pipe(
             takeUntilDestroyed(this.destroyRef),
             catchError(err => {
@@ -251,7 +252,7 @@ export class BackupCodesComponent implements OnInit {
   private generateBackupCodes(): void {
     this.isOperating.set(true);
 
-    this.authFacade.enableTwoFactorMethod('BACKUP_CODES')
+    this.twoFactorApi.enableBackupCodes()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {

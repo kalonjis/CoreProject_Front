@@ -7,6 +7,7 @@ import { catchError, of } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthFacade } from '../../../../core/auth/services/auth.facade';
+import { TwoFactorApiService } from '../../../../core/auth/services/two-factor-api.service';
 import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
 
 /**
@@ -21,13 +22,14 @@ import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
 @Component({
   selector: 'app-security-tab',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './security-tab.component.html',
   styleUrl: './security-tab.component.scss'
 })
 export class SecurityTabComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authFacade = inject(AuthFacade);
+  private twoFactorApi = inject(TwoFactorApiService);
   private router = inject(Router);
 
   // Navigation state
@@ -39,7 +41,7 @@ export class SecurityTabComponent implements OnInit {
 
   // Computed: count enabled 2FA methods
   enabledMethodsCount = computed(() =>
-    this.twoFactorMethods().filter(m => m.isEnabled).length
+    this.twoFactorMethods().filter(m => m.isEnabled && m.type !== "BACKUP_CODES").length
   );
 
   // Computed: 2FA status text
@@ -57,6 +59,19 @@ export class SecurityTabComponent implements OnInit {
   // Computed: 2FA section enabled
   twoFactorEnabled = computed(() => !this.twoFactorLoading());
 
+
+  // Computed: 2FA status text
+  recoveryStatus = computed(() => {
+    if (this.twoFactorLoading()) {
+      return 'Loading...';
+    }
+    const count = this.twoFactorMethods().filter(m =>  m.isEnabled && m.type === "BACKUP_CODES").length;
+    if (count === 0) {
+      return 'Not configured';
+    }
+    return `${count} method${count > 1 ? 's' : ''} active`;
+  });
+
   // Password status (from user session)
   passwordStatus = computed(() => {
     const user = this.authFacade.user();
@@ -68,11 +83,10 @@ export class SecurityTabComponent implements OnInit {
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit'
-      })}`; // → "Last changed: Dec 5, 2024, 3:45 PM"
+      })}`;
     }
     return 'Configured';
   });
-
 
   // Security sections configuration (computed for dynamic status)
   securitySections = computed(() => [
@@ -89,7 +103,7 @@ export class SecurityTabComponent implements OnInit {
       title: 'Password',
       description: 'Manage your account password',
       icon: '🔑',
-      status: this.passwordStatus(),  // ← dynamique
+      status: this.passwordStatus(),
       enabled: true
     },
     {
@@ -97,7 +111,7 @@ export class SecurityTabComponent implements OnInit {
       title: 'Recovery Options',
       description: 'Account recovery methods',
       icon: '🆘',
-      status: 'Coming Soon',
+      status: this.recoveryStatus(),
       enabled: true
     }
   ]);
@@ -112,7 +126,7 @@ export class SecurityTabComponent implements OnInit {
   private loadTwoFactorStatus(): void {
     this.twoFactorLoading.set(true);
 
-    this.authFacade.loadTwoFactorSettings()
+    this.twoFactorApi.getSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(err => {
@@ -120,7 +134,7 @@ export class SecurityTabComponent implements OnInit {
           return of([]);
         })
       )
-      .subscribe(methods => {
+      .subscribe((methods: TwoFactorMethod[]) => {
         this.twoFactorMethods.set(methods);
         this.twoFactorLoading.set(false);
       });
@@ -135,19 +149,16 @@ export class SecurityTabComponent implements OnInit {
       return;
     }
 
-    // Route-based navigation for twofactor
     if (sectionId === 'twofactor') {
       this.router.navigate(['/account/security/two-factor']);
       return;
     }
 
-    // Route-based navigation for twofactor
     if (sectionId === 'recovery') {
       this.router.navigate(['/account/security/recovery']);
       return;
     }
 
-    // Internal navigation for other sections (for now)
     this.selectedSection.set(sectionId);
   }
 
@@ -156,7 +167,6 @@ export class SecurityTabComponent implements OnInit {
    */
   showOverview(): void {
     this.selectedSection.set('overview');
-    // Refresh 2FA status when returning to overview
     this.loadTwoFactorStatus();
   }
 
