@@ -41,6 +41,15 @@ export interface ChangePasswordRequest {
 }
 
 /**
+ * Request to set a password (authenticated user).
+ * POST /api/password/define
+ */
+export interface DefinePasswordRequest {
+  password: string;
+  confirmPassword: string;
+}
+
+/**
  * Request to verify SMS code for password reset.
  * POST /api/password/verify-code-code
  */

@@ -25,6 +25,12 @@ export const PASSWORD_ROUTES: Routes = [
       .then(m => m.ChangePasswordComponent)
   },
   {
+    path: 'define',
+    canActivate: [() => authGuard(true)], // Requires authentication
+    loadComponent: () => import('./define-password/define-password.component')
+      .then(m => m.DefinePasswordComponent)
+  },
+  {
     path: 'verify-code',
     loadComponent: () => import('./verify-code/verify-code.component')
       .then(m => m.VerifyCodeComponent)

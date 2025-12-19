@@ -72,9 +72,15 @@ export class SecurityTabComponent implements OnInit {
     return `${count} method${count > 1 ? 's' : ''} active`;
   });
 
+  hasPassword = computed(() => this.authFacade.hasPassword());
+
   // Password status (from user session)
   passwordStatus = computed(() => {
+    if  (!this.hasPassword()){
+      return 'Not configured';
+    }
     const user = this.authFacade.user();
+
     if (user?.passwordChangedAt) {
       const date = new Date(user.passwordChangedAt);
       return `Last changed: ${date.toLocaleDateString('en-US', {
@@ -86,6 +92,11 @@ export class SecurityTabComponent implements OnInit {
       })}`;
     }
     return 'Configured';
+  });
+
+  // Computed: password button text
+  passwordButtonText = computed(() => {
+    return this.hasPassword() ? 'Change Password' : 'Define Password';
   });
 
   // Security sections configuration (computed for dynamic status)
@@ -171,10 +182,14 @@ export class SecurityTabComponent implements OnInit {
   }
 
   /**
-   * Navigate to password change page.
+   * Navigate to the appropriated password page.
    */
   changePassword(): void {
-    window.location.href = '/password/change';
+    if (this.hasPassword()) {
+      window.location.href = '/password/change';
+    } else {
+      window.location.href = '/password/define';
+    }
   }
 
   /**
