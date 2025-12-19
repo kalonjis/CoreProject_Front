@@ -7,7 +7,7 @@ import {
   ResetPasswordRequest,
   ResetPasswordWithPermissionRequest,
   ChangePasswordRequest,
-  VerifySmsCodeRequest
+  VerifySmsCodeRequest, DefinePasswordRequest
 } from '../models/password-request.model';
 import { PasswordOperationResponse } from '../models/password-response.model';
 
@@ -91,5 +91,17 @@ export class PasswordApiService {
    */
   changePassword(request: ChangePasswordRequest): Observable<PasswordOperationResponse> {
     return this.http.put(`${this.baseUrl}/change`, request);
+  }
+
+  // =========================================================================
+  // DEFINE PASSWORD (OAUTH USERS)
+  // =========================================================================
+
+  /**
+   * Define password for OAuth users who don't have one yet.
+   * Does NOT require current password.
+   */
+  definePassword(request: DefinePasswordRequest): Observable<PasswordOperationResponse> {
+    return this.http.put(`${this.baseUrl}/define`, request);
   }
 }
