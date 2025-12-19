@@ -22,5 +22,6 @@ export interface UserSession {
   twoFactorEnabled: boolean;
   emailVerified: boolean;
   phoneNumberVerified: boolean;
-  passwordChangedAt: string | null;  // ISO date string
+  passwordChangedAt: string | null;
+  hasPassword: boolean;
 }

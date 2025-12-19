@@ -60,6 +60,7 @@ export class AuthFacade {
   readonly displayName = this.authStore.displayName;
   readonly roles = this.authStore.roles;
   readonly isAdmin = this.authStore.isAdmin;
+  readonly hasPassword = this.authStore.hasPassword;
   readonly mustChangePassword = this.authStore.mustChangePassword;
   readonly twoFactorEnabled = this.authStore.twoFactorEnabled;
 

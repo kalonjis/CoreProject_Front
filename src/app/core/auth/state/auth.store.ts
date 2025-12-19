@@ -59,6 +59,9 @@ export class AuthStore {
     return user?.firstname || user?.username || null;
   });
 
+  /** True if user has a password defined (false for OAuth-only users) */
+  readonly hasPassword = computed(() => this._state().user?.hasPassword ?? false);
+
   /** User roles array */
   readonly roles = computed(() => this._state().user?.userRoles ?? []);
 
