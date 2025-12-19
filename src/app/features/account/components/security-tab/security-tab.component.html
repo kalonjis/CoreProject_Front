@@ -68,8 +68,8 @@
 
           <div class="password-actions">
             <button class="btn-outline" (click)="changePassword()">
-              <span class="btn-icon">🔄</span>
-              Change Password
+              <span class="btn-icon">{{ hasPassword() ? '🔄' : '🔑' }}</span>
+              {{ passwordButtonText() }}
             </button>
           </div>
         </section>
