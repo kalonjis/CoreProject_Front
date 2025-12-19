@@ -18,6 +18,7 @@
             class="section-card"
             [class.enabled]="section.enabled"
             [class.disabled]="!section.enabled"
+            [class.warning]="section.id === 'password' && !hasPassword()"
             (click)="selectSection(section.id)"
           >
             <div class="section-icon">{{ section.icon }}</div>
@@ -25,7 +26,13 @@
               <h3 class="section-title">{{ section.title }}</h3>
               <p class="section-description">{{ section.description }}</p>
               <div class="section-status">
-                <span class="status-text">{{ section.status }}</span>
+                @if (section.id === 'password') {
+                  <span class="status-text" [class.status-warning]="!hasPassword()">
+                    {{ passwordStatus() }}
+                  </span>
+                } @else {
+                  <span class="status-text">{{ section.status }}</span>
+                }
               </div>
             </div>
             <div class="section-arrow">
@@ -60,41 +67,94 @@
               <div class="header-text">
                 <h3>Account Password</h3>
                 <p class="section-description">
-                  Manage and update your account password
+                  @if (hasPassword()) {
+                    Manage and update your account password
+                  } @else {
+                    Set a password to also login with your email
+                  }
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="password-actions">
-            <button class="btn-outline" (click)="changePassword()">
-              <span class="btn-icon">🔄</span>
-              Change Password
-            </button>
+          <div class="section-body">
+            <!-- OAuth user without password -->
+            @if (!hasPassword()) {
+              <div class="oauth-notice">
+                <div class="notice-icon">ℹ️</div>
+                <div class="notice-content">
+                  <h4>You signed in with a social account</h4>
+                  <p>
+                    Your account was created using Google, GitHub, or Microsoft.
+                    You can set a password to also sign in with your email and password.
+                  </p>
+                </div>
+              </div>
+
+              <div class="password-action">
+                <div class="action-info">
+                  <span class="action-label">Password</span>
+                  <span class="action-status not-set">Not set</span>
+                </div>
+                <button class="btn-primary" (click)="navigateToPassword()">
+                  Set Password
+                </button>
+              </div>
+            } @else {
+              <!-- User with password -->
+              <div class="password-action">
+                <div class="action-info">
+                  <span class="action-label">Password</span>
+                  <span class="action-status set">
+                    Last changed: {{ passwordLastChanged() }}
+                  </span>
+                </div>
+                <button class="btn-secondary" (click)="navigateToPassword()">
+                  Change Password
+                </button>
+              </div>
+
+              <!-- Password security tips -->
+              <div class="security-tips">
+                <h4>Password Security Tips</h4>
+                <ul>
+                  <li>Use a unique password for each account</li>
+                  <li>Include uppercase, lowercase, numbers, and symbols</li>
+                  <li>Avoid personal information like birthdays or names</li>
+                  <li>Consider using a password manager</li>
+                </ul>
+              </div>
+            }
           </div>
         </section>
-      </div>
-    </div>
-  } @else if (selectedSection() === 'recovery') {
-    <!-- Recovery Options Detail -->
-    <div class="section-detail">
-      <!-- Back navigation -->
-      <div class="detail-header">
-        <button class="back-button" (click)="showOverview()">
-          <span class="icon">←</span>
-          Back to Security
-        </button>
-        <h2>Recovery Options</h2>
-      </div>
 
-      <!-- Recovery Section Content -->
-      <div class="detail-content">
-        <section class="security-section future-section">
-          <div class="recovery-placeholder">
-            <div class="placeholder-content">
-              <div class="placeholder-icon">🚧</div>
-              <h3>Coming Soon</h3>
-              <p>Recovery email and phone options will be available in a future update.</p>
+        <!-- Connected accounts section -->
+        <section class="security-section">
+          <div class="section-header">
+            <div class="header-content">
+              <div class="section-icon">🔗</div>
+              <div class="header-text">
+                <h3>Connected Accounts</h3>
+                <p class="section-description">
+                  Social accounts linked to your profile
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-body">
+            <div class="connected-accounts">
+              @for (provider of connectedProviders(); track provider.name) {
+                <div class="provider-item">
+                  <div class="provider-info">
+                    <span class="provider-icon">{{ provider.icon }}</span>
+                    <span class="provider-name">{{ provider.name }}</span>
+                  </div>
+                  <span class="provider-status connected">Connected</span>
+                </div>
+              } @empty {
+                <p class="no-providers">No social accounts connected</p>
+              }
             </div>
           </div>
         </section>

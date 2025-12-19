@@ -41,6 +41,16 @@ export interface ChangePasswordRequest {
 }
 
 /**
+ * Request to define password for OAuth users (no current password).
+ * PUT /api/password/define
+ */
+export interface DefinePasswordRequest {
+  password: string;
+  confirmPassword: string;
+}
+
+
+/**
  * Request to verify SMS code for password reset.
  * POST /api/password/verify-code-code
  */

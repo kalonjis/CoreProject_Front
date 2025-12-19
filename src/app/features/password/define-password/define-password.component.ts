@@ -1,4 +1,4 @@
-// src/app/features/password/change-password/change-password.component.ts
+// src/app/features/password/define-password/define-password.component.ts
 
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -8,39 +8,26 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { AuthFacade } from '../../../core/auth/services/auth.facade';
 import { PasswordApiService } from '../services/password-api.service';
+import {AuthFacade} from '../../../core/auth';
 
-/**
- * Component for changing password (authenticated users with existing password).
- *
- * OAuth-only users (hasPassword = false) are redirected to /password/define
- * since they don't have a current password to verify.
- *
- * Flow:
- * 1. Check if user has password → redirect to /define if not
- * 2. Validate current password
- * 3. Set new password
- * 4. Logout user for security
- */
 @Component({
-  selector: 'app-change-password',
+  selector: 'app-define-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
-  templateUrl: './change-password.component.html',
-  styleUrl: './change-password.component.scss'
+  templateUrl: './define-password.component.html',
+  styleUrl: './define-password.component.scss'
 })
-export class ChangePasswordComponent extends FeedbackBase implements OnInit {
+export class DefinePasswordComponent extends FeedbackBase implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly authFacade = inject(AuthFacade);
   private readonly passwordApi = inject(PasswordApiService);
+  private readonly authFacade = inject(AuthFacade);
 
   // Component state
   isSubmitting = signal(false);
   showPassword = signal(false);
-  showCurrentPassword = signal(false);
 
   // Password strength indicators
   passwordHasMinLength = signal(false);
@@ -60,26 +47,21 @@ export class ChangePasswordComponent extends FeedbackBase implements OnInit {
     return null;
   };
 
-  // Form
-  changePasswordForm = this.fb.group({
-    currentPassword: ['', [Validators.required]],
+  // Form - NO currentPassword field (OAuth users don't have one)
+  definePasswordForm = this.fb.group({
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: [this.passwordMatchValidator] });
 
-  constructor() {
-    super();
-  }
-
   ngOnInit(): void {
-    // Redirect OAuth-only users to define password page
-    if (!this.authFacade.hasPassword()) {
-      this.router.navigate(['/password/define']);
+    // Redirect if user already has a password
+    if (this.authFacade.hasPassword()) {
+      this.router.navigate(['/password/change']);
       return;
     }
 
     // Subscribe to password changes for strength indicators
-    this.changePasswordForm.get('password')?.valueChanges.subscribe(password => {
+    this.definePasswordForm.get('password')?.valueChanges.subscribe(password => {
       if (password) {
         this.updatePasswordStrength(password);
       } else {
@@ -89,17 +71,10 @@ export class ChangePasswordComponent extends FeedbackBase implements OnInit {
   }
 
   /**
-   * Toggle new password visibility.
+   * Toggle password visibility.
    */
   togglePasswordVisibility(): void {
     this.showPassword.update(value => !value);
-  }
-
-  /**
-   * Toggle current password visibility.
-   */
-  toggleCurrentPasswordVisibility(): void {
-    this.showCurrentPassword.update(value => !value);
   }
 
   /**
@@ -128,9 +103,9 @@ export class ChangePasswordComponent extends FeedbackBase implements OnInit {
    * Handle form submission.
    */
   onSubmit(): void {
-    if (this.changePasswordForm.invalid) {
-      Object.keys(this.changePasswordForm.controls).forEach(key => {
-        this.changePasswordForm.get(key)?.markAsTouched();
+    if (this.definePasswordForm.invalid) {
+      Object.keys(this.definePasswordForm.controls).forEach(key => {
+        this.definePasswordForm.get(key)?.markAsTouched();
       });
       return;
     }
@@ -139,27 +114,22 @@ export class ChangePasswordComponent extends FeedbackBase implements OnInit {
     this.clearFeedback();
 
     const request = {
-      currentPassword: this.changePasswordForm.value.currentPassword || '',
-      password: this.changePasswordForm.value.password || '',
-      confirmPassword: this.changePasswordForm.value.confirmPassword || ''
+      password: this.definePasswordForm.value.password!,
+      confirmPassword: this.definePasswordForm.value.confirmPassword!
     };
 
-    this.passwordApi.changePassword(request).subscribe({
-      next: () => {
+    this.passwordApi.definePassword(request).subscribe({
+      next: (response) => {
         this.isSubmitting.set(false);
-
         this.displaySuccess(
-          'Votre mot de passe a été modifié avec succès. Vous allez être déconnecté pour des raisons de sécurité.',
-          'OK',
+          response.message || 'Your password has been set successfully. You can now login with your email and password.',
+          'Go to Dashboard',
           null
         );
+        this.buttonAction = () => this.router.navigate(['/']);
 
-        this.buttonAction = () => this.logoutAndRedirect();
-
-        // Auto logout after 5 seconds
-        setTimeout(() => {
-          this.logoutAndRedirect();
-        }, 5000);
+        // Refresh user session to update hasPassword flag
+        this.authFacade.reloadSession().subscribe();
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
@@ -172,57 +142,25 @@ export class ChangePasswordComponent extends FeedbackBase implements OnInit {
    * Handle API errors.
    */
   private handleError(error: HttpErrorResponse): void {
-    let message = 'Une erreur est survenue lors du changement de mot de passe.';
+    let message = 'An error occurred. Please try again.';
 
     if (error.status === 400) {
-      const errorCode = error.error?.error;
-
-      switch (errorCode) {
-        case 'INVALID_CURRENT_PASSWORD':
-          message = 'Le mot de passe actuel est incorrect.';
-          break;
-        case 'INVALID_PASSWORD':
-          message = 'Le nouveau mot de passe ne respecte pas les critères de sécurité.';
-          break;
-        case 'PASSWORD_SAME_AS_CURRENT':
-          message = 'Le nouveau mot de passe doit être différent de l\'actuel.';
-          break;
-        default:
-          message = error.error?.message || message;
-      }
+      message = error.error?.message || 'Invalid password. Please check the requirements.';
     } else if (error.status === 401) {
-      message = 'Session expirée. Veuillez vous reconnecter.';
+      message = 'Session expired. Please login again.';
       this.router.navigate(['/auth/login']);
-      return;
+    } else if (error.status === 403) {
+      message = 'You already have a password defined.';
     }
 
     this.displayError(message);
   }
 
   /**
-   * Logout user and redirect to login page.
-   */
-  private logoutAndRedirect(): void {
-    this.authFacade.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/auth/login'], {
-          queryParams: { passwordChanged: 'true' }
-        });
-      },
-      error: () => {
-        // Even if logout fails, redirect to login
-        this.router.navigate(['/auth/login'], {
-          queryParams: { passwordChanged: 'true' }
-        });
-      }
-    });
-  }
-
-  /**
-   * Check if a field is invalid and touched.
+   * Check if a field is invalid.
    */
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.changePasswordForm.get(fieldName);
+    const field = this.definePasswordForm.get(fieldName);
     return !!(field?.invalid && field?.touched);
   }
 }
