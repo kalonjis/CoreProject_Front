@@ -2,12 +2,12 @@ import {Component, EventEmitter, Input, Output, inject, signal} from '@angular/c
 import { CommonModule } from '@angular/common';
 import { Device } from '../../../data/models/device/device';
 import { DeviceTrustLevel } from '../../../data/models/device/device-trust-level';
-import { DeviceService } from '../../../data/services/device-service';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
 import {ConfirmDialogService} from '../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import {DeviceFacade} from '../../../core/device';
 
 @Component({
   selector: 'app-device-detail',
@@ -17,7 +17,7 @@ import {ConfirmDialogService} from '../../../shared/confirm-dialog/tools/confirm
   styleUrl: './device-detail.component.scss'
 })
 export class DeviceDetailComponent extends FeedbackBase {
-  private deviceService = inject(DeviceService);
+  private deviceFacade = inject(DeviceFacade);
   protected deviceUtils = inject(DeviceUtilsService);
   private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
@@ -46,7 +46,7 @@ export class DeviceDetailComponent extends FeedbackBase {
     }
 
     this.isProcessing.set(true);
-    this.deviceService.disconnectDevice(this.device.id).subscribe({
+    this.deviceFacade.disconnectDevice(this.device.publicId).subscribe({
       next: () => {
 
         this.displaySuccess('Appareil déconnecté avec succès', '');
@@ -76,7 +76,7 @@ export class DeviceDetailComponent extends FeedbackBase {
     })
       .then(() =>{
         this.isProcessing.set(true);
-        this.deviceService.updateTrustLevel(this.device.id, newLevel).subscribe({
+        this.deviceFacade.updateTrustLevel(this.device.publicId, newLevel).subscribe({
           next: () => {
 
             this.displaySuccess(`Niveau de confiance mis à jour vers ${this.deviceUtils.getTrustLevelLabel(newLevel)}`, '');

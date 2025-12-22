@@ -5,7 +5,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-email-confirmation',
@@ -20,7 +19,6 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private authService: AuthService = inject(AuthService);
 
   isProcessing = false;
   token: string | null = null;
@@ -76,7 +74,7 @@ export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
   verifyEmailChange(): void {
     if (!this.token) return;
 
-    this.authService.verifyEmailChange(this.token).subscribe({
+    /*this.authService.verifyEmailChange(this.token).subscribe({
       next: () => {
         this.isProcessing = false;
         this.displaySuccess(
@@ -89,13 +87,13 @@ export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.handleError(error, 'Une erreur est survenue lors de la vérification de votre email.');
       }
-    });
+    });*/
   }
 
   confirmEmailChange(): void {
     if (!this.token) return;
 
-    this.authService.confirmEmailChange(this.token).subscribe({
+   /* this.authService.confirmEmailChange(this.token).subscribe({
       next: () => {
         this.isProcessing = false;
         this.displaySuccess(
@@ -108,13 +106,13 @@ export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.handleError(error, 'Une erreur est survenue lors de la confirmation de votre nouvelle adresse email.');
       }
-    });
+    });*/
   }
 
   cancelEmailChange(): void {
     if (!this.token) return;
 
-    this.authService.cancelEmailChange(this.token).subscribe({
+    /*this.authService.cancelEmailChange(this.token).subscribe({
       next: () => {
         this.isProcessing = false;
         this.displayWarning(
@@ -127,7 +125,7 @@ export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.handleError(error, 'Une erreur est survenue lors de l\'annulation du changement d\'email.');
       }
-    });
+    });*/
   }
 
   private handleError(error: HttpErrorResponse, defaultMessage: string): void {

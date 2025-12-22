@@ -1,10 +1,10 @@
 import { Component, inject, DestroyRef, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/services/auth.service';
-import { DeviceService } from '../../data/services/device-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+import {AuthFacade} from '../../core/auth';
+import {DeviceFacade} from '../../core/device';
 
 @Component({
   selector: 'app-device-alert-banner',
@@ -14,8 +14,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './device-alert-banner.component.scss'
 })
 export class DeviceAlertBannerComponent implements OnInit {
-  private authService = inject(AuthService);
-  private deviceService = inject(DeviceService);
+  private authFacade = inject(AuthFacade);
+  private deviceFacade = inject(DeviceFacade);
   private destroyRef = inject(DestroyRef);
 
   // État local
@@ -47,8 +47,8 @@ export class DeviceAlertBannerComponent implements OnInit {
    * de confirmation de l'appareil et de l'état de rejet de la bannière
    */
   showBanner(): boolean {
-    return this.authService.isAuthenticated() &&
-      !this.authService.isDeviceConfirmed() &&
+    return this.authFacade.isAuthenticated() &&
+      !this.deviceFacade.isConfirmed() &&
       !this.bannerDismissed();
   }
 
@@ -56,9 +56,8 @@ export class DeviceAlertBannerComponent implements OnInit {
    * Rafraîchit l'état de l'appareil auprès du serveur
    */
   refreshDeviceStatus(): void {
-    if (!this.authService.isAuthenticated()) return;
-
-    this.authService.refreshDeviceStatus();
+    if (!this.authFacade.isAuthenticated()) return;
+    this.deviceFacade.reloadSession().subscribe();
   }
 
   /**
@@ -69,7 +68,7 @@ export class DeviceAlertBannerComponent implements OnInit {
 
     this.isRequestingLink.set(true);
 
-    this.deviceService.requestDeviceConfirmationLink()
+    this.deviceFacade.requestConfirmationLink()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -6,7 +6,8 @@
   import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
   import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
   import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
-  import { AuthService } from '../../../core/auth/services/auth.service';
+  import {AuthFacade} from '../../../core/auth';
+  import {PasswordApiService} from '../services/password-api.service';
 
   @Component({
     selector: 'app-reset-password',
@@ -19,7 +20,8 @@
     private fb = inject(FormBuilder);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
-    private authService: AuthService = inject(AuthService);
+    private authFacade: AuthFacade = inject(AuthFacade);
+    private passwordApiService: PasswordApiService = inject(PasswordApiService);
     private feedbackService = inject(FeedbackService);
 
     // État local du composant
@@ -110,6 +112,11 @@
         return;
       }
 
+      const formData = {
+        password: this.resetPasswordForm.value.password || '',
+        confirmPassword: this.resetPasswordForm.value.confirmPassword || ''
+      };
+
       this.isSubmitting.set(true);
       this.clearFeedback();
 
@@ -124,7 +131,7 @@
         return;
       }
 
-      this.authService.resetPassword(token, password, confirmPassword)
+      this.passwordApiService.resetPassword(token, formData)
         .subscribe({
           next: (response: any) => {
             this.isSubmitting.set(false);
@@ -176,7 +183,7 @@
 
       this.isSubmitting.set(true);
 
-      this.authService.requestNewPasswordToken(this.token)
+      this.passwordApiService.resendResetToken(this.token)
       .subscribe({
         next: (response: any) => {
           this.isSubmitting.set(false);

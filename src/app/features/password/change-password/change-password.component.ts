@@ -5,7 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import {PasswordApiService} from '../services/password-api.service';
+import {AuthFacade} from '../../../core/auth';
 
 @Component({
   selector: 'app-change-password',
@@ -17,7 +18,8 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class ChangePasswordComponent extends FeedbackBase {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private authFacade: AuthFacade = inject(AuthFacade);
+  private passwordApiService: PasswordApiService = inject(PasswordApiService);
 
   // État local du composant
   isSubmitting = signal(false);
@@ -110,7 +112,7 @@ export class ChangePasswordComponent extends FeedbackBase {
     };
 
     // Appeler le service d'authentification
-    this.authService.changePassword(formData).subscribe({
+    this.passwordApiService.changePassword(formData).subscribe({
       next: () => {
         this.isSubmitting.set(false);
 
@@ -149,7 +151,7 @@ export class ChangePasswordComponent extends FeedbackBase {
 
 // Méthode pour gérer la déconnexion et redirection
   private logoutAndRedirect(): void {
-    this.authService.logout().subscribe({
+    this.authFacade.logout().subscribe({
       next: () => {
         // Rediriger vers la page de connexion avec un paramètre indiquant le changement de mot de passe
         this.router.navigate(['/auth/login'], {

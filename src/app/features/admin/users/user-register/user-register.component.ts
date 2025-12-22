@@ -7,7 +7,7 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../../data/models/user/user-role';
 import { AdminService } from '../../../../data/services/admin.service';
-import { AuthService } from '../../../../core/auth/services/auth.service';
+import {AuthFacade} from '../../../../core/auth';
 
 @Component({
   selector: 'app-user-register',
@@ -19,8 +19,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
 export class UserRegisterComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private http = inject(HttpClient);
-  protected authService: AuthService = inject(AuthService);
+  private authFacade: AuthFacade = inject(AuthFacade);
   private adminService: AdminService = inject(AdminService);
 
   // État local du composant
@@ -58,6 +57,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
   initializeAvailableRoles(): void {
     // Définition des rôles de base
     const rolesList = [
+      { value: UserRole.SUPER_ADMIN, label: 'Super_Administrateur', selected: false },
       { value: UserRole.ADMIN, label: 'Administrateur', selected: false },
       { value: UserRole.MODERATOR, label: 'Modérateur', selected: false },
       { value: UserRole.USER, label: 'Utilisateur', selected: true }, // Sélectionné par défaut
@@ -65,7 +65,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
     ];
 
     // Ajouter le rôle SUPER_ADMIN uniquement si l'utilisateur est lui-même SUPER_ADMIN
-    if (this.authService.hasRole('SUPER_ADMIN')) {
+    if (this.authFacade.hasRole( UserRole.SUPER_ADMIN)) {
       rolesList.unshift({ value: UserRole.SUPER_ADMIN, label: 'Super Administrateur', selected: false });
     }
 

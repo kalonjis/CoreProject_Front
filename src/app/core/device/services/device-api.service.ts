@@ -54,8 +54,8 @@ export class DeviceApiService {
   }
 
   /** Get specific device by ID */
-  getDevice(deviceId: number): Observable<Device> {
-    return this.http.get(`${this.baseUrl}/${deviceId}`);
+  getDevice(publicId: string): Observable<Device> {
+    return this.http.get(`${this.baseUrl}/${publicId}`);
   }
 
   // =========================================================================
@@ -82,13 +82,13 @@ export class DeviceApiService {
   // =========================================================================
 
   /** Update device trust level */
-  updateTrustLevel(deviceId: number, level: DeviceTrustLevel): Observable<DeviceOperationResponse> {
-    return this.http.put(`${this.baseUrl}/${deviceId}/trust-level`, { level });
+  updateTrustLevel(publicId: string, level: DeviceTrustLevel): Observable<DeviceOperationResponse> {
+    return this.http.put(`${this.baseUrl}/${publicId}/trust-level`, { level });
   }
 
   /** Disconnect a specific device */
-  disconnectDevice(deviceId: number): Observable<DeviceOperationResponse> {
-    return this.http.post(`${this.baseUrl}/${deviceId}/disconnect`, {});
+  disconnectDevice(publicId: string): Observable<DeviceOperationResponse> {
+    return this.http.post(`${this.baseUrl}/${publicId}/disconnect`, {});
   }
 
   /** Disconnect all other devices */

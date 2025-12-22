@@ -1,7 +1,7 @@
 import {DeviceTrustLevel} from './device-trust-level';
 
 export interface Device {
-  id: number;
+  publicId: string;
   deviceType: string;
   browser: string;
   browserVersion: string;

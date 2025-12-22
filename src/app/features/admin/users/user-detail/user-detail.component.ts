@@ -7,13 +7,13 @@ import { AdminService } from '../../../../data/services/admin.service';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
-import {AuthService} from '../../../../core/auth/services/auth.service';
 import {ActivityLogDto, LogPagination} from '../../../../data/models/log/activity-log-dto';
 import {Device} from '../../../../data/models/device/device';
 import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
 import {UserRole} from '../../../../data/models/user/user-role';
 import {FormsModule} from '@angular/forms';
 import {DeviceUtilsService} from '../../../../shared/services/device-utils.service';
+import {AuthFacade} from '../../../../core/auth';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -30,7 +30,7 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 export class UserDetailComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private adminService = inject(AdminService);
-  protected authService: AuthService = inject(AuthService);
+  protected authFacade: AuthFacade = inject(AuthFacade);
   private router: Router = inject(Router);
 
 
@@ -205,7 +205,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       return false;
     }
 
-    const currentUsername = this.authService.username();
+    const currentUsername = this.authFacade.username();
     return currentUsername === this.user()?.username;
   }
 
@@ -434,8 +434,8 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     }
 
     // Vérifier les règles de gestion des rôles
-    const isSuperAdmin = this.authService.hasRole('SUPER_ADMIN');
-    const isAdmin = this.authService.hasRole('ADMIN');
+    const isSuperAdmin = this.authFacade.hasRole(UserRole.SUPER_ADMIN);
+    const isAdmin = this.authFacade.hasRole(UserRole.ADMIN);
     const targetIsSuperAdmin = this.user()?.userRoles.includes(UserRole.SUPER_ADMIN);
 
     // Un SUPER_ADMIN peut gérer tous les utilisateurs
@@ -517,7 +517,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   }
 
 // Méthode pour blacklister un appareil (à implémenter)
-  blacklistDevice(deviceId: number): void {
+  blacklistDevice(publicId: string): void {
     if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) {
       return;
     }
@@ -529,7 +529,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     );
 
     // Fermer le panneau de détails si ouvert
-    if (this.selectedDevice && this.selectedDevice.id === deviceId) {
+    if (this.selectedDevice && this.selectedDevice.publicId === publicId) {
       this.closeDeviceDetail();
     }
   }

@@ -20,7 +20,7 @@
           <span class="icon">🔒</span> Confirmer cet appareil
         </button>
       }
-      <button class="refresh-button" (click)="loadDevices()" [disabled]="isLoading()">
+      <button class="refresh-button" (click)="reloadDevices()" [disabled]="isLoading()">
         <span class="icon">↻</span> Actualiser
       </button>
     </div>
@@ -31,14 +31,14 @@
       <div class="spinner"></div>
       <p>Chargement de vos appareils...</p>
     </div>
-  } @else if (devices().length === 0) {
+  } @else if (sortedDevices().length === 0) {
     <div class="empty-state">
       <p>Aucun appareil associé à votre compte.</p>
     </div>
   } @else {
     <div class="devices-grid">
-      @for (device of devices(); track device.id) {
-        <div class="device-card" [class.current-device]="isCurrentDevice(device.id)">
+      @for (device of sortedDevices(); track device.publicId) {
+        <div class="device-card" [class.current-device]="isCurrentDevice(device.publicId)">
           <div class="device-header">
             <div class="device-icon">{{ deviceUtils.getDeviceIcon(device.deviceType) }}</div>
             <div class="device-info">
@@ -67,13 +67,13 @@
             <div class="action-buttons">
               <button class="btn btn-info view-btn" (click)="selectDevice(device)" title="Voir les détails">
 
-                @if (isCurrentDevice(device.id)) {
+                @if (isCurrentDevice(device.publicId)) {
                   <div class="current-badge">Appareil actuel</div>
                 }
                 Voir détails
               </button>
-              @if (!isCurrentDevice(device.id) && !device.loggedOut) {
-                <button class="btn btn-danger disconnect-btn" (click)="disconnectDevice(device.id)">
+              @if (!isCurrentDevice(device.publicId) && !device.loggedOut) {
+                <button class="btn btn-danger disconnect-btn" (click)="disconnectDevice(device.publicId)">
                   Se déconnecter
                 </button>
               }
@@ -94,8 +94,8 @@
       <div class="side-panel-body">
         <app-device-detail
           [device]="selectedDevice()!"
-          [isCurrentDevice]="isCurrentDevice(selectedDevice()!.id)"
-          (deviceUpdated)="loadDevices()"
+          [isCurrentDevice]="isCurrentDevice(selectedDevice()!.publicId)"
+          (deviceUpdated)="reloadDevices()"
           (close)="closeDeviceDetail()">
         </app-device-detail>
       </div>
