@@ -11,3 +11,4 @@ export { DeviceStore } from './state/device.store';
 
 // Services
 export { DeviceApiService } from './services/device-api.service';
+export { DeviceFacade } from './services/device.facade';

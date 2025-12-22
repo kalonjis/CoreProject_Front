@@ -4,17 +4,16 @@ import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../../../core/auth/services/auth.service';
-import { DeviceService } from '../../../../data/services/device-service';
-import { Device } from '../../../../data/models/device/device';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, retry, of, finalize } from 'rxjs';
 import {HttpUtilService} from '../../../../core/http/http-util.service';
+import {DeviceFacade} from '../../../../core/device';
+import {AuthFacade} from '../../../../core/auth';
 
 @Component({
   selector: 'app-profile-tab',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile-tab.component.html',
   styleUrl: './profile-tab.component.scss'
 })
@@ -24,8 +23,8 @@ export class ProfileTabComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  authService = inject(AuthService);
-  deviceService = inject(DeviceService);
+  authFacade = inject(AuthFacade);
+  deviceFacade = inject(DeviceFacade);
 
   // User profile information
   userInfo = signal<any>(null);
@@ -179,7 +178,7 @@ export class ProfileTabComponent implements OnInit {
   }
 
 
-  requestEmailChange(): void {
+  /*requestEmailChange(): void {
     if (this.emailForm.invalid) {
       // Mark all fields as touched to trigger validation messages
       Object.keys(this.emailForm.controls).forEach(key => {
@@ -198,7 +197,7 @@ export class ProfileTabComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.authService.changeEmailRequest(
+    this.authFacade.(
       this.emailForm.value.email || '',
       this.emailForm.value.confirmEmail || ''
     ).pipe(
@@ -219,7 +218,7 @@ export class ProfileTabComponent implements OnInit {
         }
       }
     });
-  }
+  } */
 
   formatDate(date: string): string {
     if (!date) return 'Unknown';

@@ -2,6 +2,7 @@ import {computed, Injectable, signal} from '@angular/core';
 import {DeviceState, initialDeviceState} from '../models/device.state';
 import {DeviceSession} from '../models/device-session.model';
 import {DeviceTrustLevel} from '../../../data/models/device/device-trust-level';
+import {Device} from '../../../data/models/device/device';
 
 /**
  * DeviceStore - Signal-based state management for current device.
@@ -33,6 +34,9 @@ export class DeviceStore {
 
   /** Current device session */
   readonly currentDevice = computed(() => this._state().currentDevice);
+
+  /** List of user's devices */
+  readonly devices = computed(() => this._state().devices);
 
   /** True during async operations */
   readonly isLoading = computed(() => this._state().isLoading);
@@ -134,5 +138,28 @@ export class DeviceStore {
   /** Reset to initial state (logout) */
   reset(): void {
     this._state.set(initialDeviceState);
+  }
+
+  /** Set devices list after fetch */
+  setDevices(devices: Device[]): void {
+    this._state.update(state => ({ ...state, devices }));
+  }
+
+  /** Update a single device in the list */
+  updateDeviceInList(updatedDevice: Device): void {
+    this._state.update(state => ({
+      ...state,
+      devices: state.devices.map(d =>
+        d.publicId === updatedDevice.publicId ? updatedDevice : d
+      )
+    }));
+  }
+
+  /** Remove a device from the list */
+  removeDeviceFromList(publicId: string): void {
+    this._state.update(state => ({
+      ...state,
+      devices: state.devices.filter(d => d.publicId !== publicId)
+    }));
   }
 }

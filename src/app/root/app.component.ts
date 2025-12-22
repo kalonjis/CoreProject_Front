@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../core/auth/services/auth.service';
 import { FooterComponent } from '../core/layout/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../core/layout/header/header.component';
 import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
 import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-alert-banner.component';
+import {AuthFacade} from '../core/auth';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +15,11 @@ import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-a
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  authService = inject(AuthService);
+  private authFacade = inject(AuthFacade);
 
   // Utilisation d'un effect pour gérer le thème basé sur les préférences
   themeEffect = effect(() => {
-    const user = this.authService.user();
+    const user = this.authFacade.user();
     if (user) {
       // Exemple: appliquer le thème préféré de l'utilisateur
       const savedTheme = localStorage.getItem('theme') || 'light';
@@ -29,11 +29,11 @@ export class AppComponent implements OnInit {
 
   // Utilisation d'un effect pour afficher le statut d'authentification en dev
   logEffect = effect(() => {
-    const isAuth = this.authService.isAuthenticated();
+    const isAuth = this.authFacade.isAuthenticated();
     console.log(`État d'authentification: ${isAuth ? 'Connecté' : 'Non connecté'}`);
 
     if (isAuth) {
-      console.log('Utilisateur:', this.authService.user()?.username);
+      console.log('Utilisateur:', this.authFacade.user()?.username);
     }
   });
 

@@ -3,7 +3,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../../../core/auth/services/auth.service';
 import { AuthFacade } from '../../../../core/auth/services/auth.facade';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
@@ -32,7 +31,6 @@ export interface LoginFormData {
 export class LoginContainerComponent extends FeedbackBase implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private authService = inject(AuthService);
   private authFacade = inject(AuthFacade);
 
   // Container state

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import {Component, OnInit, inject, signal, DestroyRef, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Device } from '../../../../data/models/device/device';
@@ -6,10 +6,10 @@ import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmDialogService } from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
-import {DeviceService} from '../../../../data/services/device-service';
 import {FeedbackComponent} from '../../../../shared/feedback/feedback.component';
 import {DeviceDetailComponent} from '../../../devices/device-detail/device-detail.component';
 import {DeviceUtilsService} from '../../../../shared/services/device-utils.service';
+import {DeviceFacade} from '../../../../core/device';
 
 @Component({
   selector: 'device-tab',
@@ -19,16 +19,23 @@ import {DeviceUtilsService} from '../../../../shared/services/device-utils.servi
   styleUrls: ['./device-tab.component.scss']
 })
 export class DeviceTabComponent extends FeedbackBase implements OnInit {
-  private deviceService = inject(DeviceService);
+  private deviceFacade = inject(DeviceFacade);
   protected deviceUtils = inject(DeviceUtilsService);
   private destroyRef = inject(DestroyRef);
   private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
-  devices = signal<Device[]>([]);
-  isLoading = signal(true);
+  // Read from store (auto-sync)
+  readonly devices = this.deviceFacade.devices;
+  readonly isLoading = this.deviceFacade.isLoading;
+  readonly currentDeviceId = computed(() => this.deviceFacade.currentDevice()?.publicId ?? null);
+  readonly currentDeviceIsConfirmed = computed(() => this.deviceFacade.isConfirmed());
+
+  // Derived (sorted/filtered)
+  readonly sortedDevices = computed(() =>
+    this.deviceUtils.sortDevices(this.devices(), this.sortField, this.sortDirection)
+  );
+
   isProcessing = signal(false);
-  currentDeviceId = signal<number | null>(null);
-  currentDeviceIsConfirmed = signal<boolean>(false);
   selectedDevice = signal<Device | null>(null);
   filterText = '';
   sortField: keyof Device = 'lastSeen';
@@ -36,39 +43,15 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
   confirmDisconnectAll:  boolean = false;
 
   ngOnInit(): void {
-    this.loadDevices();
-
-    // Detect current device
-    this.deviceService.getCurrentDevice().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(device => {
-      this.currentDeviceId.set(device.id);
-      this.currentDeviceIsConfirmed.set(device.confirmed)
-    });
+    this.deviceFacade.loadDevices();
   }
 
-  loadDevices(): void {
-    this.isLoading.set(true);
-
-    this.deviceService.getMyDevices().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (devices) => {
-        // Trier par date (le plus récent en premier) en utilisant deviceUtils
-        this.devices.set(this.deviceUtils.sortDevices(devices, 'lastSeen', 'desc'));
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading devices', err);
-        this.displayError('Unable to load your devices list', 'Retry');
-        this.buttonAction = () => this.loadDevices();
-        this.isLoading.set(false);
-      }
-    });
+  reloadDevices(): void {
+    this.deviceFacade.loadDevices();
   }
 
-  disconnectDevice(deviceId: number): void {
-    if (this.currentDeviceId() === deviceId) {
+  disconnectDevice(publicId: string): void {
+    if (this.currentDeviceId() === publicId) {
       this.displayWarning(
         'You cannot disconnect the device you are currently using.',
         'Understood'
@@ -85,12 +68,11 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
     })
       .then(() => {
         this.isProcessing.set(true);
-        this.deviceService.disconnectDevice(deviceId).pipe(
+        this.deviceFacade.disconnectDevice(publicId).pipe(
           takeUntilDestroyed(this.destroyRef)
         ).subscribe({
           next: () => {
             this.displaySuccess('Device successfully disconnected', '');
-            this.loadDevices(); // Reload the list
             this.isProcessing.set(false);
           },
           error: (err) => {
@@ -115,7 +97,7 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
         // Action si l'utilisateur confirme
         this.isProcessing.set(true);
 
-        this.deviceService.disconnectAllDevices().pipe(
+        this.deviceFacade.disconnectAllOthers().pipe(
           takeUntilDestroyed(this.destroyRef)
         ).subscribe({
           next: () => {
@@ -123,7 +105,6 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
               'Tous les autres appareils ont été déconnectés avec succès. Seul votre appareil actuel reste connecté.',
               ''
             );
-            this.loadDevices();
             this.isProcessing.set(false);
           },
           error: (err) => {
@@ -140,7 +121,7 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
 
   requestConfirmationLink(): void {
     this.isProcessing.set(true);
-    this.deviceService.requestDeviceConfirmationLink().pipe(
+    this.deviceFacade.requestConfirmationLink().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {
@@ -162,8 +143,8 @@ export class DeviceTabComponent extends FeedbackBase implements OnInit {
     this.selectedDevice.set(null);
   }
 
-  isCurrentDevice(deviceId: number): boolean {
-    return this.currentDeviceId() === deviceId;
+  isCurrentDevice(publicId: string): boolean {
+    return this.currentDeviceId() === publicId;
   }
 
   // Error handling

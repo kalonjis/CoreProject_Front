@@ -1,4 +1,5 @@
 import { DeviceSession } from './device-session.model';
+import {Device} from '../../../data/models/device/device';
 
 /**
  * Device state managed by DeviceStore.
@@ -7,8 +8,12 @@ import { DeviceSession } from './device-session.model';
  * Note: Auth state is managed separately by AuthStore (SoC).
  */
 export interface DeviceState {
+
   /** Current device session, null if not loaded or not authenticated */
   currentDevice: DeviceSession | null;
+
+  /** List of user's devices */
+  devices: Device[];
 
   /** True during async operations (fetch, update) */
   isLoading: boolean;
@@ -22,6 +27,7 @@ export interface DeviceState {
  */
 export const initialDeviceState: DeviceState = {
   currentDevice: null,
+  devices: [],
   isLoading: false,
   error: null
 };

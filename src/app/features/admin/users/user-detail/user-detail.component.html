@@ -192,8 +192,8 @@
                       </tr>
                       </thead>
                       <tbody>
-                        @for (device of getSortedAndFilteredDevices(); track device.id) {
-                          <tr [class.highlighted]="selectedDevice?.id === device.id">
+                        @for (device of getSortedAndFilteredDevices(); track device.publicId) {
+                          <tr [class.highlighted]="selectedDevice?.publicId === device.publicId">
                             <td>
                               <div class="device-type">
                     <span [class]="'device-icon ' + device.deviceType.toLowerCase()">
@@ -220,7 +220,7 @@
                                 <button class="action-btn view" (click)="selectDeviceDetail(device)" title="Voir les détails">
                                   <span class="icon">👁️</span>
                                 </button>
-                                <button class="action-btn blacklist" (click)="blacklistDevice(device.id)"
+                                <button class="action-btn blacklist" (click)="blacklistDevice(device.publicId)"
                                         title="Blacklister l'appareil"
                                         [disabled]="device.blacklisted">
                                   <span class="icon">🚫</span>
@@ -318,7 +318,7 @@
                     </div>
 
                     <div class="device-actions">
-                      <button class="btn-danger" (click)="blacklistDevice(selectedDevice.id)" [disabled]="selectedDevice.blacklisted">
+                      <button class="btn-danger" (click)="blacklistDevice(selectedDevice.publicId)" [disabled]="selectedDevice.blacklisted">
                         <span class="icon">🚫</span> Blacklister cet appareil
                       </button>
                       <button class="btn-secondary" (click)="closeDeviceDetail()">Fermer</button>
@@ -455,7 +455,7 @@
                     <div class="message">
                       @if (isCurrentUserProfile()) {
                         <p>Vous ne pouvez pas modifier vos propres rôles.</p>
-                      } @else if (user()!.userRoles.includes(UserRole.SUPER_ADMIN) && !authService.hasRole('SUPER_ADMIN')) {
+                      } @else if (user()!.userRoles.includes(UserRole.SUPER_ADMIN) && !authFacade.hasRole(UserRole.SUPER_ADMIN)) {
                         <p>Seul un Super Administrateur peut modifier les rôles d'un autre Super Administrateur.</p>
                       } @else {
                         <p>Vous n'avez pas les droits nécessaires pour modifier les rôles de cet utilisateur.</p>

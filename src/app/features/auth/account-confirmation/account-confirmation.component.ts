@@ -4,7 +4,6 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
-import {AuthService} from '../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-account-confirmation',
@@ -19,7 +18,6 @@ import {AuthService} from '../../../core/auth/services/auth.service';
 export class AccountConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private authService: AuthService = inject(AuthService);
 
   isProcessing = false;
   token: string | null = null;
@@ -50,7 +48,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
     this.isProcessing = true;
     this.showConfirmationButton = false;
 
-    this.authService.confirmAccount(this.token)
+    /*this.authService.confirmAccount(this.token)
       .subscribe({
         next: (response: any) => {
           console.log('Activation réussie', response);
@@ -79,7 +77,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
               this.handleError(error, 'Une erreur est survenue lors de la confirmation du compte.');
           }
         }
-      });
+      });*/
   }
 
   // Méthode pour demander un nouveau token
@@ -91,7 +89,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
     this.isProcessing = true;
 
     // Appel direct à l'API
-    this.authService.requestNewConfirmationToken(this.token)
+   /* this.authService.requestNewConfirmationToken(this.token)
       .subscribe({
         next: (response: any) => {
           console.log('Demande de nouveau token réussie', response);
@@ -122,7 +120,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
           }
           this.handleError(error, 'Une erreur est survenue lors de la demande d\'un nouveau lien.' );
         }
-      });
+      });*/
   }
 
 

@@ -1,10 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FeedbackBase} from '../../../shared/feedback/tools/feedback.base';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DeviceService} from '../../../data/services/device-service';
-import {AuthService} from '../../../core/auth/services/auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FeedbackComponent} from '../../../shared/feedback/feedback.component';
+import {DeviceFacade} from '../../../core/device';
+import {AuthFacade} from '../../../core/auth';
 
 @Component({
   selector: 'app-device-confirmation',
@@ -18,8 +18,8 @@ import {FeedbackComponent} from '../../../shared/feedback/feedback.component';
 export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private deviceService = inject(DeviceService);
-  private authService = inject(AuthService);
+  private deviceFacade = inject(DeviceFacade);
+  private authFacade = inject(AuthFacade);
 
   isProcessing = false;
   token: string | null = null;
@@ -53,14 +53,10 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   confirmDevice(): void {
     if (!this.token) return;
 
-    this.deviceService.confirmDevice(this.token).subscribe({
+    this.deviceFacade.confirmDevice(this.token).subscribe({
       next: (response) => {
-        // Obtenez l'ID de l'appareil depuis la réponse (si disponible)
-        const deviceId = response?.['deviceId']; // Assurez-vous que votre API renvoie l'ID
 
-        console.log("device confirmed: ", deviceId)
-        // Mettre à jour le statut de confirmation avec l'ID
-        this.authService.updateDeviceConfirmation(true, deviceId);
+        console.log("device confirmed: ", response?.message);
 
         this.isProcessing = false;
         this.displaySuccess(
@@ -69,7 +65,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
           null
         );
         this.buttonAction = () => {
-          this.router.navigate(['/profile'])
+          this.router.navigate(['/'])
         };
       },
       error: (error: HttpErrorResponse) => {
@@ -82,7 +78,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   rejectDevice(): void {
     if (!this.token) return;
 
-    this.deviceService.rejectDevice(this.token).subscribe({
+    this.deviceFacade.rejectDevice(this.token).subscribe({
       next: () => {
         this.isProcessing = false;
         this.displayWarning(

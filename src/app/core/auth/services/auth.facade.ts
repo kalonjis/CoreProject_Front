@@ -2,13 +2,12 @@
 
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, throwError, finalize, switchMap } from 'rxjs';
+import {Observable, tap, catchError, throwError, finalize, switchMap, of} from 'rxjs';
 
 import { AuthStore } from '../state/auth.store';
 import { AuthApiService } from './auth-api.service';
 import { TwoFactorApiService } from './two-factor-api.service';
-import { DeviceStore } from '../../device/state/device.store';
-import { DeviceApiService } from '../../device/services/device-api.service';
+import { DeviceFacade } from '../../device/services/device.facade';
 import { AuthSyncService } from './auth-sync.service';
 
 import { LoginRequest } from '../models/login-request.model';
@@ -42,8 +41,7 @@ export class AuthFacade {
   private readonly authStore = inject(AuthStore);
   private readonly authApi = inject(AuthApiService);
   private readonly twoFactorApi = inject(TwoFactorApiService);
-  private readonly deviceStore = inject(DeviceStore);
-  private readonly deviceApi = inject(DeviceApiService);
+  private readonly deviceFacade = inject(DeviceFacade);
   private readonly syncService = inject(AuthSyncService);
 
   // ===========================================================================
@@ -65,10 +63,10 @@ export class AuthFacade {
   readonly twoFactorEnabled = this.authStore.twoFactorEnabled;
 
   // Device state
-  readonly currentDevice = this.deviceStore.currentDevice;
-  readonly isDeviceConfirmed = this.deviceStore.isConfirmed;
-  readonly isDeviceBlacklisted = this.deviceStore.isBlacklisted;
-  readonly deviceTrustLevel = this.deviceStore.trustLevel;
+  readonly currentDevice = this.deviceFacade.currentDevice;
+  readonly isDeviceConfirmed = this.deviceFacade.isConfirmed;
+  readonly isDeviceBlacklisted = this.deviceFacade.isBlacklisted;
+  readonly deviceTrustLevel = this.deviceFacade.trustLevel;
 
   // ===========================================================================
   // INITIALIZATION
@@ -293,7 +291,7 @@ export class AuthFacade {
    */
   clearSession(): void {
     this.authStore.reset();
-    this.deviceStore.reset();
+    this.deviceFacade.clearSession();
     this.syncService.stopListening();
   }
 
@@ -305,24 +303,15 @@ export class AuthFacade {
    * Load current device session.
    */
   loadDeviceSession(): void {
-    this.deviceStore.setLoading(true);
-
-    this.deviceApi.getSession().pipe(
-      tap(device => this.deviceStore.setDevice(device)),
-      catchError(err => {
-        this.deviceStore.setError('Failed to load device');
-        return throwError(() => err);
-      })
-    ).subscribe();
+    this.deviceFacade.loadSession();
   }
 
   /**
    * Reload device session from server.
    */
   reloadDeviceSession(): Observable<void> {
-    return this.deviceApi.getSession().pipe(
-      tap(device => this.deviceStore.setDevice(device)),
-      switchMap(() => [void 0])
+    return this.deviceFacade.reloadSession().pipe(
+      switchMap(() => of(void 0))
     );
   }
 
@@ -332,7 +321,7 @@ export class AuthFacade {
 
   hasRole = this.authStore.hasRole.bind(this.authStore);
   hasAnyRole = this.authStore.hasAnyRole.bind(this.authStore);
-  hasTrustLevel = this.deviceStore.hasTrustLevel.bind(this.deviceStore);
+  hasTrustLevel = this.deviceFacade.hasTrustLevel;
 
   // ===========================================================================
   // PRIVATE HELPERS
