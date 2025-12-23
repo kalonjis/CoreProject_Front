@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
-import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
+import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
+import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
+import {AccountApiService} from '../../../../core/account';
 
 @Component({
   selector: 'app-account-confirmation',
@@ -18,6 +19,7 @@ import { CommonModule } from '@angular/common';
 export class AccountConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private accountApiService: AccountApiService = inject(AccountApiService);
 
   isProcessing = false;
   token: string | null = null;
@@ -48,7 +50,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
     this.isProcessing = true;
     this.showConfirmationButton = false;
 
-    /*this.authService.confirmAccount(this.token)
+    this.accountApiService.activateAccount(this.token)
       .subscribe({
         next: (response: any) => {
           console.log('Activation réussie', response);
@@ -77,7 +79,7 @@ export class AccountConfirmationComponent extends FeedbackBase implements OnInit
               this.handleError(error, 'Une erreur est survenue lors de la confirmation du compte.');
           }
         }
-      });*/
+      });
   }
 
   // Méthode pour demander un nouveau token

@@ -18,15 +18,6 @@ export const AUTH_ROUTES: Routes = [
       .then(m => m.ConfirmDeviceComponent)
   },
   {
-    path: 'signup',
-    loadComponent: () => import('./signup/signup.component').then(m => m.SignupComponent)
-  },
-  {
-    path: 'account-confirmation',
-    loadComponent: () => import('./account-confirmation/account-confirmation.component').then(m => m.AccountConfirmationComponent)
-  },
-
-  {
     path: 'verify-email',
     canActivate: [() => authGuard()],
     loadComponent: () => import('./email-confirmation/email-confirmation.component').then(m => m.EmailConfirmationComponent)

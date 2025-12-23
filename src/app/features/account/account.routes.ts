@@ -12,6 +12,11 @@ export const ACCOUNT_ROUTES: Routes = [
     path: '',
     component: AccountContainerComponent,
     children: [
+      {
+        path: 'signup',
+        loadComponent: () => import('./components/signup/signup.component')
+          .then(m => m.SignupComponent),
+      },
       // Default redirect to profile tab
       {
         path: '',
