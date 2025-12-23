@@ -2,6 +2,7 @@
 
 import { Routes } from '@angular/router';
 import { AccountContainerComponent } from './account-container.component';
+import {authGuard} from '../../core/auth';
 
 /**
  * Account management routes.
@@ -11,12 +12,8 @@ export const ACCOUNT_ROUTES: Routes = [
   {
     path: '',
     component: AccountContainerComponent,
+    canActivate: [() => authGuard()],
     children: [
-      {
-        path: 'signup',
-        loadComponent: () => import('./components/signup/signup.component')
-          .then(m => m.SignupComponent),
-      },
       // Default redirect to profile tab
       {
         path: '',
@@ -50,5 +47,15 @@ export const ACCOUNT_ROUTES: Routes = [
           .then(m => m.DeviceTabComponent)
       }
     ]
-  }
+  },
+  {
+    path: 'signup',
+    loadComponent: () => import('./components/signup/signup.component')
+      .then(m => m.SignupComponent),
+  },
+  {
+    path: 'confirmation',
+    loadComponent: () => import('./components/account-confirmation/account-confirmation.component')
+      .then(m => m.AccountConfirmationComponent)
+  },
 ];

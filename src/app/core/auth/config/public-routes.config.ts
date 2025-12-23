@@ -44,7 +44,7 @@ export const PUBLIC_FRONTEND_ROUTES = [
   '/auth/login',
   '/auth/two-factor',
   '/account/signup',
-  '/account/account-confirmation',
+  '/account/confirmation',
   '/auth/device-confirmation',
   '/password/forgot',
   '/password/reset',
