@@ -2,9 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
+import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {UserSignupForm} from '../../../data/models/auth/user-signup-form';
+import {UserSignupForm} from '../../../../data/models/auth/user-signup-form';
+import {AccountApiService, SignupRequest} from '../../../../core/account';
 
 @Component({
   selector: 'app-signup',
@@ -17,6 +18,7 @@ export class SignupComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private feedbackService = inject(FeedbackService);
+  private accountApi = inject(AccountApiService);
 
   // État local du composant
   isSubmitting = signal(false);
@@ -90,15 +92,15 @@ export class SignupComponent {
   // Soumission du formulaire
   onSubmit(): void {
     if (this.signupForm.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
+      // Mark all fields as touched to display errors
       Object.keys(this.signupForm.controls).forEach(key => {
         this.signupForm.get(key)?.markAsTouched();
       });
       return;
     }
 
-    // Préparation des données pour l'API
-    const formData: UserSignupForm = {
+    // Prepare request payload
+    const request: SignupRequest = {
       username: this.signupForm.value.username || '',
       email: this.signupForm.value.email || '',
       password: this.signupForm.value.password || '',
@@ -107,43 +109,42 @@ export class SignupComponent {
 
     this.isSubmitting.set(true);
     this.signupError.set(null);
-  }
-}
 
-    /*this.authService.signup(formData).subscribe({
-      next: () => {
+    this.accountApi.signup(request).subscribe({
+      next: (response) => {
         this.isSubmitting.set(false);
 
-        // Afficher un message de succès
+        // Display success message
         this.feedbackService.showSuccess(
-          "Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé.",
-          "Se connecter",
-          10000 // 10 secondes
+          'Your account has been created successfully! A confirmation email has been sent.',
+          'Login',
+          10000 // 10 seconds
         );
 
-        // Reset du formulaire
+        // Reset form
         this.signupForm.reset();
 
-        // Rediriger vers la page de connexion après un court délai
+        // Redirect to login after short delay
         setTimeout(() => {
           this.router.navigate(['/auth/login']);
-        }, 5000);
+        }, 3000);
       },
-      error: (err:HttpErrorResponse) => {
+      error: (err: HttpErrorResponse) => {
         this.isSubmitting.set(false);
 
-        // Gestion des erreurs de validation
+        // Handle validation errors from backend
         if (err.error?.errors && Array.isArray(err.error.errors)) {
           this.signupError.set(err.error.errors.join('\n'));
-          this.feedbackService.showError(err.error.errors.join('\n'));
+          //this.feedbackService.showError(err.error.errors.join('\n'));
         } else if (err.error?.globalErrors && Array.isArray(err.error.globalErrors)) {
           this.signupError.set(err.error.globalErrors.join('\n'));
-          this.feedbackService.showError(err.error.globalErrors.join('\n'));
+          //this.feedbackService.showError(err.error.globalErrors.join('\n'));
         } else {
-          const errorMsg = err.error?.message || 'Une erreur s\'est produite lors de l\'inscription.';
+          const errorMsg = err.error?.message || 'An error occurred during signup.';
           this.signupError.set(errorMsg);
-          this.feedbackService.showError(errorMsg);
+          //this.feedbackService.showError(errorMsg);
         }
       }
     });
-}*/
+  }
+}

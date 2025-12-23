@@ -16,8 +16,6 @@ export const PUBLIC_API_ROUTES = [
   '/api/auth/logout',
   '/api/auth/session',
   '/api/auth/status',
-  '/api/auth/signup',
-  // 2FA (during login flow - user not yet authenticated)
   '/api/auth/2fa-status',
   '/api/auth/2fa/choose-method',
   '/api/auth/2fa/available-methods',
@@ -25,6 +23,11 @@ export const PUBLIC_API_ROUTES = [
   '/api/auth/verify-2fa',
   '/api/auth/resend-2fa-code',
   // Account & Device
+  '/api/account/signup',
+  '/api/account/activate',
+  '/api/account/resend-activation',
+  '/api/account/request-reactivation',
+  '/api/account/confirm-reactivation',
   '/api/account-confirmation/',
   '/api/user/device/confirm',
   '/api/user/device/reject',
@@ -39,9 +42,9 @@ export const PUBLIC_API_ROUTES = [
 export const PUBLIC_FRONTEND_ROUTES = [
   '/',
   '/auth/login',
-  '/auth/signup',
   '/auth/two-factor',
-  '/auth/account-confirmation',
+  '/account/signup',
+  '/account/account-confirmation',
   '/auth/device-confirmation',
   '/password/forgot',
   '/password/reset',
