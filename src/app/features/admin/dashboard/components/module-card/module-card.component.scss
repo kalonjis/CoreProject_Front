@@ -1,0 +1,146 @@
+.module-card {
+  background: #fff;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+
+  &:not(.disabled) {
+    cursor: pointer;
+
+    &:hover {
+      border-color: #3498db;
+      box-shadow: 0 8px 24px rgba(52, 152, 219, 0.15);
+      transform: translateY(-4px);
+
+      .card-action {
+        .action-arrow {
+          transform: translateX(4px);
+        }
+      }
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f8f9fa;
+  }
+
+  .card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .card-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    min-height: 280px;
+    position: relative;
+
+    &.disabled-content {
+      cursor: not-allowed;
+    }
+  }
+
+  .card-icon {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+  }
+
+  .card-description {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+  }
+
+  .card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.badge-primary {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    &.badge-success {
+      background: #e8f5e9;
+      color: #388e3c;
+    }
+
+    &.badge-warning {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    &.badge-info {
+      background: #e1f5fe;
+      color: #0277bd;
+    }
+  }
+
+  .card-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #3498db;
+    margin-top: auto;
+
+    .action-arrow {
+      transition: transform 0.3s ease;
+      font-size: 1.25rem;
+    }
+
+    &.disabled-action {
+      color: #999;
+      font-style: italic;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .module-card {
+    .card-content {
+      padding: 1.5rem;
+      min-height: 220px;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+    }
+
+    .card-description {
+      font-size: 0.9rem;
+    }
+  }
+}

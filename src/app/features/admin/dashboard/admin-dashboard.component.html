@@ -1,195 +1,24 @@
 <div class="admin-dashboard">
   <!-- Header -->
   <div class="dashboard-header">
-    <h1>Tableau de bord administrateur</h1>
-    <div class="header-actions">
-      @if (lastUpdate()) {
-        <span class="last-update">{{ getLastUpdateText() }}</span>
-      }
-      <button
-        class="btn-refresh"
-        (click)="refreshStats()"
-        [disabled]="isLoading()"
-        title="Actualiser les statistiques">
-        <span class="icon">🔄</span>
-        Actualiser
-      </button>
+    <div class="header-content">
+      <h1>Admin Dashboard</h1>
+      <p class="header-subtitle">Manage your application from here</p>
     </div>
   </div>
 
-  <!-- Error Banner -->
-  @if (error()) {
-    <div class="error-banner">
-      <span class="error-icon">⚠️</span>
-      <span class="error-message">{{ error() }}</span>
-      <button class="btn-retry" (click)="refreshStats()">Réessayer</button>
-    </div>
-  }
+  <!-- Module Cards Grid -->
+  <div class="modules-grid">
+    @for (module of modules; track module.id) {
+      <app-module-card [config]="module"></app-module-card>
+    }
+  </div>
 
-  <!-- Loading State -->
-  @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Chargement des statistiques...</p>
-    </div>
-  }
-
-  <!-- Stats Grid -->
-  @if (!isLoading() && !error()) {
-    <div class="stats-grid">
-
-      <!-- USER STATS CARD -->
-      <div class="stat-card user-card">
-        <div class="card-header">
-          <span class="card-icon">👥</span>
-          <h2>Utilisateurs</h2>
-          <span class="card-total">{{ userStats()?.totalUsers || 0 }}</span>
-        </div>
-
-        <div class="card-body">
-          <!-- État des comptes -->
-          <div class="stat-section">
-            <h3 class="section-title">État des comptes</h3>
-            <div class="stat-row">
-              <span class="stat-icon success">✅</span>
-              <span class="stat-label">Actifs</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.activeUsers || 0 }}</span>
-              <span class="stat-percent success">({{ activeUsersPercent() }}%)</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-icon warning">⏸️</span>
-              <span class="stat-label">Désactivés</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.deactivatedUsers || 0 }}</span>
-              <span class="stat-percent warning">({{ deactivatedUsersPercent() }}%)</span>
-            </div>
-          </div>
-
-          <!-- Vérification email -->
-          <div class="stat-section">
-            <h3 class="section-title">Vérification email</h3>
-            <div class="stat-row">
-              <span class="stat-icon success">✔️</span>
-              <span class="stat-label">Vérifiés</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.verifiedUsers || 0 }}</span>
-              <span class="stat-percent success">({{ verifiedUsersPercent() }}%)</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-icon warning">✉️</span>
-              <span class="stat-label">Non vérifiés</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.unverifiedUsers || 0 }}</span>
-              <span class="stat-percent warning">({{ unverifiedUsersPercent() }}%)</span>
-            </div>
-          </div>
-
-          <!-- Rôles administratifs -->
-          <div class="stat-section">
-            <h3 class="section-title">Rôles administratifs</h3>
-            <div class="stat-row">
-              <span class="stat-icon info">🔑</span>
-              <span class="stat-label">Administrateurs</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.adminUsers || 0 }}</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-icon neutral">👤</span>
-              <span class="stat-label">Utilisateurs standards</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ userStats()?.regularUsers || 0 }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <a routerLink="/admin/users" class="card-link">
-            Gérer les utilisateurs →
-          </a>
-        </div>
-      </div>
-
-      <!-- DEVICE STATS CARD -->
-      <div class="stat-card device-card">
-        <div class="card-header">
-          <span class="card-icon">📱</span>
-          <h2>Appareils</h2>
-          <span class="card-total">{{ deviceStats()?.totalDevices || 0 }}</span>
-        </div>
-
-        <div class="card-body">
-          <!-- Niveau de confiance -->
-          <div class="stat-section">
-            <h3 class="section-title">Niveau de confiance</h3>
-            <div class="stat-row">
-              <span class="stat-icon success">✅</span>
-              <span class="stat-label">Fiables</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.trustedDevices || 0 }}</span>
-              <span class="stat-percent success">({{ trustedDevicesPercent() }}%)</span>
-            </div>
-            <div class="stat-row sub-row">
-              <span class="stat-icon-placeholder"></span>
-              <span class="stat-label sub-label">├─ Hautement fiables</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.highlyTrustedOnly || 0 }}</span>
-            </div>
-            <div class="stat-row sub-row">
-              <span class="stat-icon-placeholder"></span>
-              <span class="stat-label sub-label">└─ Fiables standard</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.trustedOnly || 0 }}</span>
-            </div>
-
-            <div class="stat-row">
-              <span class="stat-icon warning">⚠️</span>
-              <span class="stat-label">Nouveaux / Non vérifiés</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.untrustedDevices || 0 }}</span>
-              <span class="stat-percent warning">({{ untrustedDevicesPercent() }}%)</span>
-            </div>
-            <div class="stat-row sub-row">
-              <span class="stat-icon-placeholder"></span>
-              <span class="stat-label sub-label">├─ Non vérifiés</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.untrustedOnly || 0 }}</span>
-            </div>
-            <div class="stat-row sub-row">
-              <span class="stat-icon-placeholder"></span>
-              <span class="stat-label sub-label">└─ Basiques</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.basicOnly || 0 }}</span>
-            </div>
-          </div>
-
-          <!-- Activité -->
-          <div class="stat-section">
-            <h3 class="section-title">Activité (30 derniers jours)</h3>
-            <div class="stat-row">
-              <span class="stat-icon success">🟢</span>
-              <span class="stat-label">Actifs</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.activeDevices || 0 }}</span>
-              <span class="stat-percent success">({{ activeDevicesPercent() }}%)</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-icon neutral">⚪</span>
-              <span class="stat-label">Inactifs</span>
-              <span class="stat-spacer"></span>
-              <span class="stat-value">{{ deviceStats()?.inactiveDevices || 0 }}</span>
-              <span class="stat-percent neutral">({{ inactiveDevicesPercent() }}%)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <a routerLink="/admin/devices" class="card-link">
-            Gérer les appareils →
-          </a>
-        </div>
-      </div>
-
-    </div>
-  }
+  <!-- Info Banner (optional) -->
+  <div class="info-banner">
+    <span class="info-icon">💡</span>
+    <span class="info-text">
+      More modules coming soon. Stay tuned for updates!
+    </span>
+  </div>
 </div>

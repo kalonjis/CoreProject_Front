@@ -1,0 +1,170 @@
+<div class="users-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb">
+    <a routerLink="/admin" class="breadcrumb-link">
+      <span class="breadcrumb-icon">🏠</span>
+      <span>Dashboard</span>
+    </a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">
+      <span class="breadcrumb-icon">👥</span>
+      <span>User Management</span>
+    </span>
+  </nav>
+
+  <!-- Header -->
+  <div class="container-header">
+    <div class="header-content">
+      <h1>User Management</h1>
+      <p class="header-subtitle">Manage user accounts, roles, and permissions</p>
+    </div>
+    <div class="header-actions">
+      @if (lastUpdate()) {
+        <span class="last-update">{{ getLastUpdateText() }}</span>
+      }
+      <button
+        class="btn-refresh"
+        (click)="refreshStats()"
+        [disabled]="isLoading()"
+        title="Refresh statistics">
+        <span class="icon">🔄</span>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Banner -->
+  @if (error()) {
+    <div class="error-banner">
+      <span class="error-icon">⚠️</span>
+      <span class="error-message">{{ error() }}</span>
+      <button class="btn-retry" (click)="refreshStats()">Retry</button>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading statistics...</p>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !error()) {
+    <!-- Statistics Overview -->
+    <div class="stats-section">
+      <h2 class="section-title">
+        <span class="section-icon">📊</span>
+        Statistics Overview
+      </h2>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span class="card-icon">👥</span>
+          <h3>Users</h3>
+          <span class="card-total">{{ userStats()?.totalUsers || 0 }}</span>
+        </div>
+
+        <div class="card-body">
+          <!-- Account Status -->
+          <div class="stat-section">
+            <h4 class="subsection-title">Account Status</h4>
+            <div class="stat-row">
+              <span class="stat-icon success">✅</span>
+              <span class="stat-label">Active</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.activeUsers || 0 }}</span>
+              <span class="stat-percent success">({{ activeUsersPercent() }}%)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon warning">⏸️</span>
+              <span class="stat-label">Deactivated</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.deactivatedUsers || 0 }}</span>
+              <span class="stat-percent warning">({{ deactivatedUsersPercent() }}%)</span>
+            </div>
+          </div>
+
+          <!-- Email Verification -->
+          <div class="stat-section">
+            <h4 class="subsection-title">Email Verification</h4>
+            <div class="stat-row">
+              <span class="stat-icon success">✔️</span>
+              <span class="stat-label">Verified</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.verifiedUsers || 0 }}</span>
+              <span class="stat-percent success">({{ verifiedUsersPercent() }}%)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon warning">✉️</span>
+              <span class="stat-label">Unverified</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.unverifiedUsers || 0 }}</span>
+              <span class="stat-percent warning">({{ unverifiedUsersPercent() }}%)</span>
+            </div>
+          </div>
+
+          <!-- Administrative Roles -->
+          <div class="stat-section">
+            <h4 class="subsection-title">Administrative Roles</h4>
+            <div class="stat-row">
+              <span class="stat-icon info">🔑</span>
+              <span class="stat-label">Administrators</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.adminUsers || 0 }}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon neutral">👤</span>
+              <span class="stat-label">Standard Users</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ userStats()?.regularUsers || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h2 class="section-title">
+        <span class="section-icon">🎯</span>
+        Quick Actions
+      </h2>
+
+      <div class="actions-grid">
+        <a routerLink="/admin/users/new" class="action-card primary">
+          <div class="action-icon">➕</div>
+          <div class="action-content">
+            <h3>Create User</h3>
+            <p>Add a new user account</p>
+          </div>
+        </a>
+
+        <a routerLink="/admin/users/list" class="action-card">
+          <div class="action-icon">📋</div>
+          <div class="action-content">
+            <h3>View All Users</h3>
+            <p>Browse complete user list</p>
+          </div>
+        </a>
+
+        <a routerLink="/admin/users/list" class="action-card">
+          <div class="action-icon">🔍</div>
+          <div class="action-content">
+            <h3>Advanced Search</h3>
+            <p>Search users by criteria</p>
+          </div>
+        </a>
+
+        <button class="action-card" disabled>
+          <div class="action-icon">📊</div>
+          <div class="action-content">
+            <h3>Export Report</h3>
+            <p>Coming soon...</p>
+          </div>
+        </button>
+      </div>
+    </div>
+  }
+</div>

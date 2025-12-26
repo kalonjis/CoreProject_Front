@@ -1,184 +1,87 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { ModuleCardComponent } from './components/module-card/module-card.component';
+import { ModuleCardConfig } from '../models/module-card-config.model';
 
 /**
- * Interface pour les statistiques utilisateurs
- */
-interface UserStats {
-  totalUsers: number;
-  activeUsers: number;
-  deactivatedUsers: number;
-  verifiedUsers: number;
-  unverifiedUsers: number;
-  adminUsers: number;
-  regularUsers: number;
-  timestamp?: string;
-}
-
-/**
- * Interface pour les statistiques devices
- */
-interface DeviceStats {
-  totalDevices: number;
-  trustedDevices: number;        // TRUSTED + HIGHLY_TRUSTED
-  untrustedDevices: number;      // UNTRUSTED + BASIC
-  untrustedOnly: number;
-  basicOnly: number;
-  trustedOnly: number;
-  highlyTrustedOnly: number;
-  activeDevices: number;
-  inactiveDevices: number;
-  timestamp?: string;
-}
-
-/**
- * Admin dashboard component displaying comprehensive system statistics.
+ * Admin dashboard component - Main entry point for admin section.
  *
- * Provides at-a-glance overview of:
- * - User accounts (status, verification, roles)
- * - Device trust levels and activity
+ * Displays a grid of module cards representing different admin functionalities.
+ * Each card navigates to its respective management container.
  *
- * Stats are loaded in parallel for optimal performance.
- * Uses signals for reactive state management.
+ * Currently available modules:
+ * - User Management
+ * - Device Management
+ *
+ * Future modules can be easily added by extending the modules array.
  */
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, ModuleCardComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
 })
 export class AdminDashboardComponent implements OnInit {
-  private http = inject(HttpClient);
 
-  // User statistics
-  userStats = signal<UserStats | null>(null);
-
-  // Device statistics
-  deviceStats = signal<DeviceStats | null>(null);
-
-  // UI state
-  isLoading = signal(true);
-  error = signal<string | null>(null);
-  lastUpdate = signal<Date | null>(null);
-
-  // Computed percentages for users
-  activeUsersPercent = computed(() => {
-    const stats = this.userStats();
-    if (!stats || stats.totalUsers === 0) return 0;
-    return Math.round((stats.activeUsers / stats.totalUsers) * 100);
-  });
-
-  deactivatedUsersPercent = computed(() => {
-    const stats = this.userStats();
-    if (!stats || stats.totalUsers === 0) return 0;
-    return Math.round((stats.deactivatedUsers / stats.totalUsers) * 100);
-  });
-
-  verifiedUsersPercent = computed(() => {
-    const stats = this.userStats();
-    if (!stats || stats.totalUsers === 0) return 0;
-    return Math.round((stats.verifiedUsers / stats.totalUsers) * 100);
-  });
-
-  unverifiedUsersPercent = computed(() => {
-    const stats = this.userStats();
-    if (!stats || stats.totalUsers === 0) return 0;
-    return Math.round((stats.unverifiedUsers / stats.totalUsers) * 100);
-  });
-
-  // Computed percentages for devices
-  trustedDevicesPercent = computed(() => {
-    const stats = this.deviceStats();
-    if (!stats || stats.totalDevices === 0) return 0;
-    return Math.round((stats.trustedDevices / stats.totalDevices) * 100);
-  });
-
-  untrustedDevicesPercent = computed(() => {
-    const stats = this.deviceStats();
-    if (!stats || stats.totalDevices === 0) return 0;
-    return Math.round((stats.untrustedDevices / stats.totalDevices) * 100);
-  });
-
-  activeDevicesPercent = computed(() => {
-    const stats = this.deviceStats();
-    if (!stats || stats.totalDevices === 0) return 0;
-    return Math.round((stats.activeDevices / stats.totalDevices) * 100);
-  });
-
-  inactiveDevicesPercent = computed(() => {
-    const stats = this.deviceStats();
-    if (!stats || stats.totalDevices === 0) return 0;
-    return Math.round((stats.inactiveDevices / stats.totalDevices) * 100);
-  });
+  /**
+   * Configuration for all admin modules.
+   * Defines which modules are available and their display properties.
+   */
+  modules: ModuleCardConfig[] = [
+    {
+      id: 'users',
+      icon: '👥',
+      title: 'User Management',
+      description: 'Manage user accounts, roles, permissions, and activity',
+      route: '/admin/users',
+      enabled: true,
+      color: 'primary'
+    },
+    {
+      id: 'devices',
+      icon: '📱',
+      title: 'Device Management',
+      description: 'Monitor and manage registered devices and trust levels',
+      route: '/admin/devices',
+      enabled: true,
+      color: 'info'
+    },
+    {
+      id: 'suppliers',
+      icon: '🏢',
+      title: 'Supplier Management',
+      description: 'Manage suppliers and vendor relationships',
+      route: '/admin/suppliers',
+      enabled: false // Coming soon
+    },
+    {
+      id: 'products',
+      icon: '📦',
+      title: 'Product Management',
+      description: 'Manage product catalog and inventory',
+      route: '/admin/products',
+      enabled: false // Coming soon
+    },
+    {
+      id: 'clients',
+      icon: '🤝',
+      title: 'Client Management',
+      description: 'Manage client accounts and relationships',
+      route: '/admin/clients',
+      enabled: false // Coming soon
+    },
+    {
+      id: 'settings',
+      icon: '⚙️',
+      title: 'System Settings',
+      description: 'Configure system parameters and preferences',
+      route: '/admin/settings',
+      enabled: false // Coming soon
+    }
+  ];
 
   ngOnInit(): void {
-    this.loadDashboardStats();
-  }
-
-  /**
-   * Loads all dashboard statistics in parallel.
-   * Uses forkJoin to make concurrent API calls for better performance.
-   */
-  loadDashboardStats(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    // Load user and device stats in parallel
-    forkJoin({
-      userStats: this.http.get<UserStats>('/api/admin/users/stats'),
-      deviceStats: this.http.get<DeviceStats>('/api/admin/device/stats')
-    }).subscribe({
-      next: ({ userStats, deviceStats }) => {
-        // Update user statistics
-        this.userStats.set(userStats);
-
-        // Update device statistics
-        this.deviceStats.set(deviceStats);
-
-        // Update timestamp
-        this.lastUpdate.set(new Date());
-
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading dashboard stats', err);
-        this.error.set('Impossible de charger les statistiques du tableau de bord');
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  /**
-   * Refreshes dashboard statistics manually.
-   * Can be triggered by a refresh button in the template.
-   */
-  refreshStats(): void {
-    this.loadDashboardStats();
-  }
-
-  /**
-   * Returns a human-readable "time ago" string for last update.
-   */
-  getLastUpdateText(): string {
-    const lastUpdate = this.lastUpdate();
-    if (!lastUpdate) return '';
-
-    const now = new Date();
-    const diffMs = now.getTime() - lastUpdate.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 1) return 'À l\'instant';
-    if (diffMins === 1) return 'Il y a 1 minute';
-    if (diffMins < 60) return `Il y a ${diffMins} minutes`;
-
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours === 1) return 'Il y a 1 heure';
-    if (diffHours < 24) return `Il y a ${diffHours} heures`;
-
-    return lastUpdate.toLocaleDateString('fr-FR');
+    // Dashboard initialization logic if needed
   }
 }

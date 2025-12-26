@@ -2,13 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from '../../../../data/services/admin.service';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { UserRole } from '../../../../data/models/user/user-role';
 import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import {AdminUserApiService} from '../../services/admin-user-api.service';
 
 interface PaginationInfo {
   totalPages: number;
@@ -25,7 +25,7 @@ interface PaginationInfo {
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent extends FeedbackBase implements OnInit {
-  private adminService = inject(AdminService);
+  private adminUserApi = inject(AdminUserApiService);
   private fb = inject(FormBuilder);
   private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
@@ -66,9 +66,11 @@ export class UserListComponent extends FeedbackBase implements OnInit {
   loadUsers(page = 0): void {
     this.isLoading.set(true);
 
-    this.adminService.getAllUsers(page, this.pagination().pageSize)
+    this.adminUserApi.getAllUsers(page, this.pagination().pageSize)
       .subscribe({
         next: (response) => {
+          console.log("trying to load users page"),
+            console.log("Response from backend:", response);
           this.processUserResponse(response);
         },
         error: (error: HttpErrorResponse) => {
@@ -87,7 +89,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
 
     this.isLoading.set(true);
 
-    this.adminService.searchUsers(query, 0, this.pagination().pageSize)
+    this.adminUserApi.searchUsers(query, 0, this.pagination().pageSize)
       .subscribe({
         next: (response) => {
           this.processUserResponse(response);
@@ -117,7 +119,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
 
     this.isLoading.set(true);
 
-    this.adminService.searchUsersByCriteria(criteria, 0, this.pagination().pageSize)
+    this.adminUserApi.searchUsersByCriteria(criteria, 0, this.pagination().pageSize)
       .subscribe({
         next: (response) => {
           this.processUserResponse(response);
@@ -236,7 +238,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
         event.preventDefault();
         event.stopPropagation();
 
-        this.adminService.activateUser(id).subscribe({
+        this.adminUserApi.activateUser(id).subscribe({
           next: () => {
             this.displaySuccess('Utilisateur activé avec succès', '');
             this.loadUsers(this.pagination().pageNumber);
@@ -264,7 +266,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
         event.preventDefault();
         event.stopPropagation();
 
-        this.adminService.deactivateUser(id).subscribe({
+        this.adminUserApi.deactivateUser(id).subscribe({
           next: () => {
             this.displaySuccess('Utilisateur désactivé avec succès', '');
             this.loadUsers(this.pagination().pageNumber);
@@ -285,7 +287,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
     event.stopPropagation();
 
     if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
-      this.adminService.deleteUser(id).subscribe({
+      this.adminUserApi.deleteUser(id).subscribe({
         next: () => {
           this.displaySuccess('Utilisateur supprimé avec succès', '');
           this.loadUsers(this.pagination().pageNumber);
@@ -305,7 +307,7 @@ export class UserListComponent extends FeedbackBase implements OnInit {
     event.stopPropagation();
 
     if (confirm('Êtes-vous sûr de vouloir réinitialiser le mot de passe de cet utilisateur ?')) {
-      this.adminService.forceResetPassword(id).subscribe({
+      this.adminUserApi.forceResetPassword(id).subscribe({
         next: () => {
           this.displaySuccess(
             'Un email de réinitialisation de mot de passe a été envoyé à l\'utilisateur',
