@@ -1,0 +1,186 @@
+<div class="devices-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb">
+    <a routerLink="/admin" class="breadcrumb-link">
+      <span class="breadcrumb-icon">🏠</span>
+      <span>Dashboard</span>
+    </a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">
+      <span class="breadcrumb-icon">📱</span>
+      <span>Device Management</span>
+    </span>
+  </nav>
+
+  <!-- Header -->
+  <div class="container-header">
+    <div class="header-content">
+      <h1>Device Management</h1>
+      <p class="header-subtitle">Monitor and manage registered devices</p>
+    </div>
+    <div class="header-actions">
+      @if (lastUpdate()) {
+        <span class="last-update">{{ getLastUpdateText() }}</span>
+      }
+      <button
+        class="btn-refresh"
+        (click)="refreshStats()"
+        [disabled]="isLoading()"
+        title="Refresh statistics">
+        <span class="icon">🔄</span>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Banner -->
+  @if (error()) {
+    <div class="error-banner">
+      <span class="error-icon">⚠️</span>
+      <span class="error-message">{{ error() }}</span>
+      <button class="btn-retry" (click)="refreshStats()">Retry</button>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading statistics...</p>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !error()) {
+    <!-- Statistics Overview -->
+    <div class="stats-section">
+      <h2 class="section-title">
+        <span class="section-icon">📊</span>
+        Statistics Overview
+      </h2>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span class="card-icon">📱</span>
+          <h3>Devices</h3>
+          <span class="card-total">{{ deviceStats()?.totalDevices || 0 }}</span>
+        </div>
+
+        <div class="card-body">
+          <!-- Trust Level -->
+          <div class="stat-section">
+            <h4 class="subsection-title">Trust Level</h4>
+            <div class="stat-row">
+              <span class="stat-icon success">✅</span>
+              <span class="stat-label">Trusted</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.trustedDevices || 0 }}</span>
+              <span class="stat-percent success">({{ trustedDevicesPercent() }}%)</span>
+            </div>
+            <div class="stat-row sub-row">
+              <span class="stat-icon-placeholder"></span>
+              <span class="stat-label sub-label">├─ Highly Trusted</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.highlyTrustedOnly || 0 }}</span>
+            </div>
+            <div class="stat-row sub-row">
+              <span class="stat-icon-placeholder"></span>
+              <span class="stat-label sub-label">└─ Trusted Standard</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.trustedOnly || 0 }}</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-icon warning">⚠️</span>
+              <span class="stat-label">New / Unverified</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.untrustedDevices || 0 }}</span>
+              <span class="stat-percent warning">({{ untrustedDevicesPercent() }}%)</span>
+            </div>
+            <div class="stat-row sub-row">
+              <span class="stat-icon-placeholder"></span>
+              <span class="stat-label sub-label">├─ Untrusted</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.untrustedOnly || 0 }}</span>
+            </div>
+            <div class="stat-row sub-row">
+              <span class="stat-icon-placeholder"></span>
+              <span class="stat-label sub-label">└─ Basic</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.basicOnly || 0 }}</span>
+            </div>
+          </div>
+
+          <!-- Activity -->
+          <div class="stat-section">
+            <h4 class="subsection-title">Activity (Last 30 Days)</h4>
+            <div class="stat-row">
+              <span class="stat-icon success">🟢</span>
+              <span class="stat-label">Active</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.activeDevices || 0 }}</span>
+              <span class="stat-percent success">({{ activeDevicesPercent() }}%)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon neutral">⚪</span>
+              <span class="stat-label">Inactive</span>
+              <span class="stat-spacer"></span>
+              <span class="stat-value">{{ deviceStats()?.inactiveDevices || 0 }}</span>
+              <span class="stat-percent neutral">({{ inactiveDevicesPercent() }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h2 class="section-title">
+        <span class="section-icon">🎯</span>
+        Quick Actions
+      </h2>
+
+      <div class="actions-grid">
+        <button class="action-card" disabled>
+          <div class="action-icon">📋</div>
+          <div class="action-content">
+            <h3>View All Devices</h3>
+            <p>Browse complete device list</p>
+          </div>
+        </button>
+
+        <button class="action-card" disabled>
+          <div class="action-icon">🔍</div>
+          <div class="action-content">
+            <h3>Search Devices</h3>
+            <p>Find devices by criteria</p>
+          </div>
+        </button>
+
+        <button class="action-card" disabled>
+          <div class="action-icon">🔒</div>
+          <div class="action-content">
+            <h3>Manage Trust Levels</h3>
+            <p>Update device trust settings</p>
+          </div>
+        </button>
+
+        <button class="action-card" disabled>
+          <div class="action-icon">📊</div>
+          <div class="action-content">
+            <h3>Export Report</h3>
+            <p>Coming soon...</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Info Note -->
+    <div class="info-note">
+      <span class="note-icon">💡</span>
+      <span class="note-text">
+        Device management features are being developed. Full functionality coming soon.
+      </span>
+    </div>
+  }
+</div>

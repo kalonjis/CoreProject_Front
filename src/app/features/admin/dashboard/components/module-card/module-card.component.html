@@ -1,0 +1,32 @@
+<div class="module-card" [class.disabled]="!config.enabled">
+  @if (config.enabled) {
+    <a [routerLink]="config.route" class="card-link">
+      <div class="card-content">
+        <div class="card-icon">{{ config.icon }}</div>
+        <h3 class="card-title">{{ config.title }}</h3>
+        <p class="card-description">{{ config.description }}</p>
+
+        @if (config.badge) {
+          <span class="card-badge" [class]="'badge-' + (config.color || 'primary')">
+            {{ config.badge }}
+          </span>
+        }
+
+        <div class="card-action">
+          <span class="action-text">Access</span>
+          <span class="action-arrow">→</span>
+        </div>
+      </div>
+    </a>
+  } @else {
+    <div class="card-content disabled-content">
+      <div class="card-icon">{{ config.icon }}</div>
+      <h3 class="card-title">{{ config.title }}</h3>
+      <p class="card-description">{{ config.description }}</p>
+
+      <div class="card-action disabled-action">
+        <span class="action-text">Coming soon...</span>
+      </div>
+    </div>
+  }
+</div>

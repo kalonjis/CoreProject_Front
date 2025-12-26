@@ -6,9 +6,10 @@ import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeviceUtilsService } from '../../../shared/services/device-utils.service';
-import { AdminService } from '../../../data/services/admin.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import { DeviceDetailComponent } from '../../devices/device-detail/device-detail.component';
+import {AdminDeviceApiService} from '../../admin/services/admin-device-api.service';
+import {AdminUserApiService} from '../../admin/services/admin-user-api.service';
 
 @Component({
   selector: 'app-admin-device-list',
@@ -18,7 +19,8 @@ import { DeviceDetailComponent } from '../../devices/device-detail/device-detail
   styleUrls: ['./admin-device-list.component.scss']
 })
 export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
-  private adminService = inject(AdminService);
+  private adminDeviceApi = inject(AdminDeviceApiService);
+  private adminUserApi = inject(AdminUserApiService);
   protected deviceUtils = inject(DeviceUtilsService);
   private route = inject(ActivatedRoute);
 
@@ -47,7 +49,7 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
 
   loadUserDevices(userId: number): void {
     this.isLoading.set(true);
-    this.adminService.getUserDevices(userId).subscribe({
+    this.adminDeviceApi.getUserDevices(userId).subscribe({
       next: (devices) => {
         this.devices.set(devices);
         this.isLoading.set(false);
@@ -60,7 +62,7 @@ export class AdminDeviceListComponent extends FeedbackBase implements OnInit {
   }
 
   loadUserInfo(userId: number): void {
-    this.adminService.getUserById(userId).subscribe({
+    this.adminUserApi.getUserById(userId).subscribe({
       next: (user) => {
         this.userName.set(`${user.firstname || ''} ${user.lastname || ''} (${user.username})`);
       },

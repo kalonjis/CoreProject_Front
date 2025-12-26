@@ -6,8 +6,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../../data/models/user/user-role';
-import { AdminService } from '../../../../data/services/admin.service';
 import {AuthFacade} from '../../../../core/auth';
+import {AdminUserApiService} from '../../services/admin-user-api.service';
 
 @Component({
   selector: 'app-user-register',
@@ -20,7 +20,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authFacade: AuthFacade = inject(AuthFacade);
-  private adminService: AdminService = inject(AdminService);
+  private adminUserApi = inject(AdminUserApiService);
 
   // État local du composant
   isSubmitting = signal(false);
@@ -111,7 +111,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
     };
 
     // Envoi de la requête
-    this.adminService.createUser(formData)
+    this.adminUserApi.createUser(formData)
       .subscribe({
         next: (response: any) => {
           this.isSubmitting.set(false);

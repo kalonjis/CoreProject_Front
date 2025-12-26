@@ -3,7 +3,6 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AdminService } from '../../../../data/services/admin.service';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
@@ -14,6 +13,8 @@ import {UserRole} from '../../../../data/models/user/user-role';
 import {FormsModule} from '@angular/forms';
 import {DeviceUtilsService} from '../../../../shared/services/device-utils.service';
 import {AuthFacade} from '../../../../core/auth';
+import {AdminUserApiService} from '../../services/admin-user-api.service';
+import {AdminDeviceApiService} from '../../services/admin-device-api.service';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -29,7 +30,8 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 
 export class UserDetailComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
-  private adminService = inject(AdminService);
+  private adminUserApi = inject(AdminUserApiService);
+  private adminDeviceApi = inject(AdminDeviceApiService);
   protected authFacade: AuthFacade = inject(AuthFacade);
   private router: Router = inject(Router);
 
@@ -73,7 +75,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   loadUserDetails(userId: number): void {
     this.isLoading.set(true);
 
-    this.adminService.getUserById(userId).subscribe({
+    this.adminUserApi.getUserById(userId).subscribe({
       next: (user) => {
         this.user.set(user);
         this.isLoading.set(false);
@@ -111,7 +113,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       return;
     }
 
-    this.adminService.activateUser(this.userId()!).subscribe({
+    this.adminUserApi.activateUser(this.userId()!).subscribe({
       next: () => {
         this.displaySuccess('Utilisateur activé avec succès');
         // Mettre à jour l'état local
@@ -133,7 +135,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       return;
     }
 
-    this.adminService.deactivateUser(this.userId()!).subscribe({
+    this.adminUserApi.deactivateUser(this.userId()!).subscribe({
       next: () => {
         this.displaySuccess('Utilisateur désactivé avec succès');
         // Mettre à jour l'état local
@@ -157,7 +159,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     }
 
     if (confirm('Êtes-vous sûr de vouloir réinitialiser le mot de passe de cet utilisateur ? Un email lui sera envoyé.')) {
-      this.adminService.forceResetPassword(this.userId()!).subscribe({
+      this.adminUserApi.forceResetPassword(this.userId()!).subscribe({
         next: () => {
           this.displaySuccess(
             'Un email de réinitialisation de mot de passe a été envoyé à l\'utilisateur'
@@ -181,7 +183,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     }
 
     if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
-      this.adminService.deleteUser(this.userId()!).subscribe({
+      this.adminUserApi.deleteUser(this.userId()!).subscribe({
         next: () => {
           this.displaySuccess('Utilisateur supprimé avec succès');
           // Rediriger vers la liste des utilisateurs après un court délai
@@ -219,7 +221,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     this.isLoadingDevices = true;
 
     // Vérifiez si userId a une valeur
-    this.adminService.getUserDevices(this.userId()!).subscribe({
+    this.adminDeviceApi.getUserDevices(this.userId()!).subscribe({
       next: (devices) => {
         this.devices = devices;
         this.isLoadingDevices = false;
@@ -282,7 +284,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
     this.isLoadingLogs.set(true);
 
-    this.adminService.getUserActivityHistory(
+    this.adminUserApi.getUserActivityHistory(
       this.userId()!,
       page,
       this.activityPagination().pageSize
@@ -359,7 +361,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     this.isUpdatingRole.set(true);
     this.roleUpdateError.set(null);
 
-    this.adminService.grantUserRole(this.userId()!, role).subscribe({
+    this.adminUserApi.grantUserRole(this.userId()!, role).subscribe({
       next: () => {
         // Mettre à jour le modèle local
         this.user.update(user => {
@@ -393,7 +395,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     this.isUpdatingRole.set(true);
     this.roleUpdateError.set(null);
 
-    this.adminService.revokeUserRole(this.userId()!, role).subscribe({
+    this.adminUserApi.revokeUserRole(this.userId()!, role).subscribe({
       next: () => {
         // Mettre à jour le modèle local
         this.user.update(user => {
