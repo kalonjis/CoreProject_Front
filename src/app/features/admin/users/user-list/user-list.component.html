@@ -1,195 +1,247 @@
-<div class="admin-container">
-  <div class="admin-content">
-    <div class="admin-header">
-      <h1>Gestion des utilisateurs</h1>
-      <p class="description">Consultez et gérez tous les utilisateurs du système.</p>
+<div class="user-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button routerLink="/admin/users" class="btn-back">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Retour
+        </button>
+        <div class="header-title-group">
+          <h1 class="page-title">Gestion des utilisateurs</h1>
+          <p class="page-subtitle">{{ pagination().totalElements }} utilisateur{{ pagination().totalElements > 1 ? 's' : '' }}</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button routerLink="/admin/users/new" class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Nouvel utilisateur
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Feedback pour les messages d'erreur ou de succès -->
-    @if (showFeedback()) {
-      <app-feedback
-        [message]="feedbackMessage()"
-        [type]="feedbackType()"
-        [buttonText]="buttonText()"
-        [timeout]="feedbackTimeout()"
-        (buttonClicked)="handleFeedbackButtonClick()">
-      </app-feedback>
-    }
+  <!-- Feedback messages -->
+  @if (showFeedback()) {
+    <app-feedback
+      [message]="feedbackMessage()"
+      [type]="feedbackType()"
+      [buttonText]="buttonText()"
+      [timeout]="feedbackTimeout()"
+      (dismissed)="clearFeedback()">
+    </app-feedback>
+  }
 
-    <!-- Actions et recherche -->
-    <div class="actions-bar">
-      <div class="left-actions">
-        <a routerLink="/admin/users/new" class="btn-primary">
-          <span class="icon">+</span> Nouvel utilisateur
-        </a>
+  <!-- Search Section -->
+  <div class="search-card">
+    <form [formGroup]="searchForm">
+      <div class="search-header">
+        <h2 class="search-title">Rechercher</h2>
+        <button type="button" class="btn-toggle" (click)="toggleAdvancedSearch()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8H13M8 3V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          {{ showAdvancedSearch() ? 'Recherche simple' : 'Recherche avancée' }}
+        </button>
       </div>
 
-      <div class="search-container">
-        <form [formGroup]="searchForm" (ngSubmit)="search()">
-          <div class="search-basic">
+      @if (!showAdvancedSearch()) {
+        <!-- Simple Search -->
+        <div class="simple-search">
+          <div class="search-input-group">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/>
+              <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
             <input
               type="text"
-              formControlName="query"
-              placeholder="Rechercher un utilisateur..."
+              formControlName="searchQuery"
+              placeholder="Rechercher par nom, email, téléphone..."
               class="search-input"
-            >
-            <button type="submit" class="search-btn">
-              <span class="search-icon">🔍</span>
-            </button>
-            <button type="button" class="toggle-advanced" (click)="toggleAdvancedSearch()">
-              {{ showAdvancedSearch() ? 'Recherche simple' : 'Recherche avancée' }}
-            </button>
+              (keyup.enter)="searchUsers()"
+            />
+            @if (searchForm.get('searchQuery')?.value) {
+              <button type="button" class="btn-clear" (click)="resetSearch()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            }
           </div>
-
-          @if (showAdvancedSearch()) {
-            <div class="search-advanced">
-              <div class="search-row">
-                <div class="search-field">
-                  <label for="username">Nom d'utilisateur</label>
-                  <input type="text" id="username" formControlName="username">
-                </div>
-
-                <div class="search-field">
-                  <label for="email">Email</label>
-                  <input type="text" id="email" formControlName="email">
-                </div>
-              </div>
-
-              <div class="search-row">
-                <div class="search-field">
-                  <label for="firstname">Prénom</label>
-                  <input type="text" id="firstname" formControlName="firstname">
-                </div>
-
-                <div class="search-field">
-                  <label for="lastname">Nom</label>
-                  <input type="text" id="lastname" formControlName="lastname">
-                </div>
-
-                <div class="search-field">
-                  <label for="phoneNumber">Téléphone</label>
-                  <input type="text" id="phoneNumber" formControlName="phoneNumber">
-                </div>
-              </div>
-
-              <div class="search-actions">
-                <button type="button" class="btn-secondary" (click)="resetSearch()">
-                  Réinitialiser
-                </button>
-                <button type="button" class="btn-primary" (click)="advancedSearch()">
-                  Rechercher
-                </button>
-              </div>
-            </div>
-          }
-        </form>
-      </div>
-    </div>
-
-    <!-- Tableau des utilisateurs -->
-    <div class="users-table-container">
-      @if (isLoading()) {
-        <div class="loading-container">
-          <div class="spinner"></div>
-          <p>Chargement des utilisateurs...</p>
-        </div>
-      } @else if (users().length === 0) {
-        <div class="no-data">
-          <p>Aucun utilisateur trouvé</p>
+          <button type="button" class="btn-search" (click)="searchUsers()">
+            Rechercher
+          </button>
         </div>
       } @else {
-        <table class="users-table">
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Utilisateur</th>
-            <th>Email</th>
-            <th>Nom</th>
-            <th>Rôle principal</th>
-            <th>Statut</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-            @for (user of users(); track user.id) {
-              <tr class="user-row" [routerLink]="['/admin/users', user.id]">
-                <td class="user-id">{{ user.id }}</td>
-                <td class="user-username">{{ user.username }}</td>
-                <td class="user-email">{{ user.email }}</td>
-                <td class="user-name">{{ (user.firstname || '') + ' ' + (user.lastname || '') }}</td>
-                <td class="user-role">
-        <span class="role-badge" [class]="getRoleClass(getTopRole(user.userRoles))">
-          {{ getTopRole(user.userRoles) }}
-        </span>
-                </td>
-                <td class="user-status">
-        <span class="status-badge" [class.status-active]="user.enabled" [class.status-inactive]="!user.enabled">
-          {{ user.enabled ? 'Actif' : 'Inactif' }}
-        </span>
-                </td>
-                <td class="user-actions" (click)="$event.stopPropagation()"> <!-- Empêche la propagation du clic -->
-                  <div class="action-buttons">
-                    <a [routerLink]="['/admin/users', user.id]" class="action-btn view-btn" title="Voir les détails">
-                      👁️
-                    </a>
-                    @if (user.enabled) {
-                      <button class="action-btn deactivate-btn" title="Désactiver" (click)="deactivateUser(user.id, $event)">
-                        🔒
-                      </button>
-                    } @else {
-                      <button class="action-btn activate-btn" title="Activer" (click)="activateUser(user.id, $event)">
-                        🔓
-                      </button>
-                    }
-                    <button class="action-btn reset-btn" title="Réinitialiser le mot de passe" (click)="resetPassword(user.id, $event)">
-                      🔑
-                    </button>
-                    <button class="action-btn delete-btn" title="Supprimer" (click)="deleteUser(user.id, $event)">
-                      ❌
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-
-        <!-- Pagination -->
-        @if (pagination().totalPages > 1) {
-          <div class="pagination">
-            <button
-              class="pagination-btn"
-              [disabled]="pagination().pageNumber === 0"
-              (click)="changePage(0)">
-              ⟪
-            </button>
-            <button
-              class="pagination-btn"
-              [disabled]="pagination().pageNumber === 0"
-              (click)="changePage(pagination().pageNumber - 1)">
-              ⟨
-            </button>
-
-            <div class="pagination-info">
-              Page {{ pagination().pageNumber + 1 }} sur {{ pagination().totalPages }}
-              ({{ pagination().totalElements }} utilisateurs)
+        <!-- Advanced Search -->
+        <div class="advanced-search">
+          <div class="search-grid">
+            <div class="form-field">
+              <label for="username">Nom d'utilisateur</label>
+              <input type="text" id="username" formControlName="username" placeholder="Rechercher...">
             </div>
-
-            <button
-              class="pagination-btn"
-              [disabled]="pagination().pageNumber === pagination().totalPages - 1"
-              (click)="changePage(pagination().pageNumber + 1)">
-              ⟩
+            <div class="form-field">
+              <label for="firstname">Prénom</label>
+              <input type="text" id="firstname" formControlName="firstname" placeholder="Rechercher...">
+            </div>
+            <div class="form-field">
+              <label for="lastname">Nom</label>
+              <input type="text" id="lastname" formControlName="lastname" placeholder="Rechercher...">
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input type="text" id="email" formControlName="email" placeholder="Rechercher...">
+            </div>
+            <div class="form-field">
+              <label for="phoneNumber">Téléphone</label>
+              <input type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="Rechercher...">
+            </div>
+          </div>
+          <div class="search-actions">
+            <button type="button" class="btn-secondary" (click)="resetSearch()">
+              Réinitialiser
             </button>
-            <button
-              class="pagination-btn"
-              [disabled]="pagination().pageNumber === pagination().totalPages - 1"
-              (click)="changePage(pagination().totalPages - 1)">
-              ⟫
+            <button type="button" class="btn-search" (click)="advancedSearch()">
+              Rechercher
             </button>
           </div>
-        }
+        </div>
       }
-    </div>
+    </form>
+  </div>
+
+  <!-- Users Content -->
+  <div class="users-content">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des utilisateurs...</p>
+      </div>
+    } @else if (users().length === 0) {
+      <div class="empty-state">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+          <path d="M32 20V36M32 44H32.02" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h3>Aucun utilisateur trouvé</h3>
+        <p>Essayez de modifier vos critères de recherche</p>
+      </div>
+    } @else {
+      <!-- Users Grid -->
+      <div class="users-grid">
+        @for (user of users(); track user.id) {
+          <div class="user-card" [routerLink]="['/admin/users', user.id]">
+            <div class="user-card-header">
+              <div class="user-avatar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                  <path d="M6 21C6 17.686 8.686 15 12 15C15.314 15 18 17.686 18 21" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="user-status-badge" [class.active]="user.enabled">
+                <span class="status-dot"></span>
+                {{ user.enabled ? 'Actif' : 'Inactif' }}
+              </div>
+            </div>
+
+            <div class="user-card-body">
+              <div class="user-info">
+                <h3 class="user-name">{{ user.username }}</h3>
+                <p class="user-email">{{ user.email }}</p>
+                @if (user.firstname || user.lastname) {
+                  <p class="user-fullname">{{ user.firstname }} {{ user.lastname }}</p>
+                }
+              </div>
+
+              <div class="user-meta">
+                <div class="user-role">
+                  <span class="role-badge" [class]="getRoleClass(getTopRole(user.userRoles))">
+                    {{ getTopRole(user.userRoles) }}
+                  </span>
+                </div>
+
+                <div class="user-badges">
+                  @if (user.mustChangePassword) {
+                    <span class="info-badge warning" title="Doit changer le mot de passe">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M7 9V5M7 11H7.006" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                      MDP
+                    </span>
+                  }
+                  @if (user.twoFactorEnabled) {
+                    <span class="info-badge success" title="2FA activé">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="currentColor" stroke-width="1.5"/>
+                      </svg>
+                      2FA
+                    </span>
+                  }
+                  @if (user.emailVerified) {
+                    <span class="info-badge verified" title="Email vérifié">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 7L6 10L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                      Email
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="user-footer">
+                <div class="user-date">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M7 4V7L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <span>{{ formatDate(user.createdAt) }}</span>
+                </div>
+                @if (user.phoneNumber) {
+                  <div class="user-phone">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M3 2H5L6 5L4.5 6C5.5 8 6.5 9 8.5 9.5L10 8L13 9V11C13 11.5 12.5 12 12 12C6.5 12 2 7.5 2 2C2 1.5 2.5 1 3 1Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <span>{{ user.phoneNumber }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (pagination().totalPages > 1) {
+        <div class="pagination">
+          <button
+            class="pagination-btn"
+            (click)="changePage(pagination().pageNumber - 1)"
+            [disabled]="pagination().pageNumber === 0">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="pagination-info">
+            <span class="page-current">{{ pagination().pageNumber + 1 }}</span>
+            <span class="page-separator">/</span>
+            <span class="page-total">{{ pagination().totalPages }}</span>
+          </div>
+
+          <button
+            class="pagination-btn"
+            (click)="changePage(pagination().pageNumber + 1)"
+            [disabled]="pagination().pageNumber >= pagination().totalPages - 1">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      }
+    }
   </div>
 </div>

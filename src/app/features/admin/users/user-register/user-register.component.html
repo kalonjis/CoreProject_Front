@@ -22,28 +22,31 @@
         <div class="form-section">
           <h2>Informations de base</h2>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="username">Nom d'utilisateur*</label>
-              <input
-                type="text"
-                id="username"
-                formControlName="username"
-                placeholder="Nom d'utilisateur unique"
-                autocomplete="off"
-              >
-              @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-                <div class="validation-error">
-                  @if (registerForm.get('username')?.errors?.['required']) {
-                    Le nom d'utilisateur est requis
-                  } @else if (registerForm.get('username')?.errors?.['minlength']) {
-                    Le nom d'utilisateur doit contenir au moins 2 caractères
-                  } @else if (registerForm.get('username')?.errors?.['maxlength']) {
-                    Le nom d'utilisateur ne peut pas dépasser 50 caractères
-                  }
-                </div>
-              }
-            </div>
+          <div class="form-group">
+            <label for="username">
+              Nom d'utilisateur
+              <span class="optional-badge">(optionnel)</span>
+            </label>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              [placeholder]="getGeneratedUsernamePlaceholder()"
+              autocomplete="off"
+            >
+            <small class="field-hint">
+              💡 Laissez vide pour générer automatiquement : <strong>{{ getGeneratedUsernamePlaceholder() }}</strong>
+            </small>
+
+            @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+              <div class="validation-error">
+                @if (registerForm.get('username')?.errors?.['minlength']) {
+                  Le nom d'utilisateur doit contenir au moins 2 caractères
+                } @else if (registerForm.get('username')?.errors?.['maxlength']) {
+                  Le nom d'utilisateur ne peut pas dépasser 50 caractères
+                }
+              </div>
+            }
           </div>
 
           <div class="form-row">

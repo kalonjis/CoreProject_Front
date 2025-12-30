@@ -82,6 +82,7 @@ export class UsersContainerComponent implements OnInit {
 
     this.statsApi.getUserStats().subscribe({
       next: (stats) => {
+        console.log("stat : " + stats)
         this.userStats.set(stats);
         this.lastUpdate.set(new Date());
         this.isLoading.set(false);

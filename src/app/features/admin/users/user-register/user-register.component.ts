@@ -8,6 +8,7 @@ import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../../data/models/user/user-role';
 import {AuthFacade} from '../../../../core/auth';
 import {AdminUserApiService} from '../../services/admin-user-api.service';
+import {combineLatest, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-user-register',
@@ -36,7 +37,7 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
 
     // Initialisation du formulaire
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      username: ['', [Validators.minLength(2), Validators.maxLength(50)]],
       firstname: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       lastname: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
@@ -47,6 +48,39 @@ export class UserRegisterComponent extends FeedbackBase implements OnInit {
         Validators.pattern(/^[0-9]+$/)
       ]]
     });
+
+    // ✅ Écouter les changements de firstname/lastname pour mettre à jour le placeholder
+    this.setupUsernamePlaceholder();
+  }
+
+  /**
+   * Met à jour le placeholder du username quand firstname/lastname changent
+   */
+  private setupUsernamePlaceholder(): void {
+    combineLatest([
+      this.registerForm.get('firstname')!.valueChanges.pipe(startWith('')),
+      this.registerForm.get('lastname')!.valueChanges.pipe(startWith(''))
+    ]).subscribe(([firstname, lastname]) => {
+    });
+  }
+
+  /**
+   * Génère un aperçu du username professionnel
+   * Simule la logique backend
+   */
+  getGeneratedUsernamePlaceholder(): string {
+    const firstname = this.registerForm.get('firstname')?.value?.trim() || '';
+    const lastname = this.registerForm.get('lastname')?.value?.trim() || '';
+
+    if (!firstname || !lastname) {
+      return 'Ex: dupont.j';
+    }
+
+    // Simuler la logique du UsernameGeneratorService
+    // Format: lastname.firstLetterOfFirstname
+    const usernameSuggestion = `${lastname.toLowerCase()}.${firstname.charAt(0).toLowerCase()}`;
+
+    return usernameSuggestion;
   }
 
   ngOnInit(): void {
