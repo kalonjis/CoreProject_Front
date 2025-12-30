@@ -102,7 +102,7 @@ export class AdminUserApiService {
    * @returns Observable of creation response
    */
   createUser(user: UserRegisterForm): Observable<any> {
-    return this.httpUtil.post<any>('/api/admin/users', user);
+    return this.httpUtil.post<any>('/api/admin/users/create', user);
   }
 
   /**
