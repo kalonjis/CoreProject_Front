@@ -1,0 +1,112 @@
+<!-- src/app/shared/address/components/address-card/address-card.component.html -->
+
+<div
+  class="address-card"
+  [class.address-card--compact]="config.compact"
+  [class.address-card--clickable]="config.clickable"
+  [class.address-card--selected]="selected"
+  [class.address-card--inactive]="!address.active"
+  (click)="handleCardClick()">
+
+  <!-- Header -->
+  <div class="address-card__header">
+    <div class="address-card__title-row">
+      <!-- Type Icon -->
+      @if (config.showType) {
+        <span class="address-card__type-icon" [title]="typeLabel">
+          <i class="lucide lucide-{{ typeIcon }}"></i>
+        </span>
+      }
+
+      <!-- Display Name -->
+      <h4 class="address-card__title">{{ displayName }}</h4>
+    </div>
+
+    <!-- Badges -->
+    @if (config.showBadges) {
+      <div class="address-card__badges">
+        @if (showPrimaryBadge) {
+          <span class="badge badge--primary">
+            <i class="lucide lucide-home"></i>
+            Principale
+          </span>
+        }
+
+        @if (showDefaultBadge) {
+          <span class="badge badge--default">
+            <i class="lucide lucide-star"></i>
+            Par défaut
+          </span>
+        }
+
+        @if (showInactiveBadge) {
+          <span class="badge badge--inactive">
+            <i class="lucide lucide-eye-off"></i>
+            Inactive
+          </span>
+        }
+
+        @if (showExpiredBadge) {
+          <span class="badge badge--expired">
+            <i class="lucide lucide-clock"></i>
+            Expirée
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Address Content -->
+  <div class="address-card__content">
+    @if (config.showFullAddress) {
+      <div class="address-card__address">
+        @for (line of addressLines; track $index) {
+          <p class="address-card__line">{{ line }}</p>
+        }
+      </div>
+    } @else {
+      <!-- Compact: une seule ligne -->
+      <p class="address-card__line address-card__line--single">
+        {{ addressLines[0] }}
+        @if (addressLines.length > 1) {
+          <span class="address-card__more">+{{ addressLines.length - 1 }}</span>
+        }
+      </p>
+    }
+
+    <!-- Eligibility indicators (UserAddress only) -->
+    @if (config.showBadges && isUserAddr && !config.compact) {
+      <div class="address-card__eligibility">
+        @if (showBillingBadge) {
+          <span class="eligibility-tag eligibility-tag--billing" title="Éligible facturation">
+            <i class="lucide lucide-credit-card"></i>
+          </span>
+        }
+        @if (showShippingBadge) {
+          <span class="eligibility-tag eligibility-tag--shipping" title="Éligible livraison">
+            <i class="lucide lucide-truck"></i>
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Actions -->
+  @if (config.showActions && availableActions.length > 0) {
+    <div class="address-card__actions">
+      @for (action of availableActions; track action) {
+        <button
+          type="button"
+          class="action-btn"
+          [class.action-btn--danger]="action === 'delete'"
+          [title]="getActionLabel(action)"
+          (click)="handleAction(action, $event)">
+          <i class="lucide lucide-{{ getActionIcon(action) }}"></i>
+          @if (!config.compact) {
+            <span class="action-btn__label">{{ getActionLabel(action) }}</span>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

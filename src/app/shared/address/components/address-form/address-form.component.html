@@ -1,0 +1,300 @@
+<!-- src/app/shared/address/components/address-form/address-form.component.html -->
+
+<form class="address-form" [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+  <!-- Header -->
+  <div class="address-form__header">
+    <h3 class="address-form__title">{{ formTitle }}</h3>
+  </div>
+
+  <!-- Form content -->
+  <div class="address-form__content">
+
+    <!-- Type & Label section -->
+    <section class="form-section">
+      <h4 class="form-section__title">Type d'adresse</h4>
+
+      <div class="form-row">
+        <!-- Address Type -->
+        <div class="form-group form-group--half">
+          <label for="addressType" class="form-label">
+            Type <span class="required">*</span>
+          </label>
+          <select
+            id="addressType"
+            class="form-select"
+            formControlName="addressType"
+            [class.is-invalid]="isFieldInvalid('addressType')">
+            @for (opt of typeOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          @if (isFieldInvalid('addressType')) {
+            <span class="form-error">{{ getFieldError('addressType') }}</span>
+          }
+        </div>
+
+        <!-- Label -->
+        @if (config.showLabel) {
+          <div class="form-group form-group--half">
+            <label for="label" class="form-label">Label personnalisé</label>
+            <input
+              id="label"
+              type="text"
+              class="form-input"
+              formControlName="label"
+              placeholder="Ex: Maison, Bureau..."
+              [class.is-invalid]="isFieldInvalid('label')">
+            @if (isFieldInvalid('label')) {
+              <span class="form-error">{{ getFieldError('label') }}</span>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Address section -->
+    <section class="form-section">
+      <h4 class="form-section__title">Adresse postale</h4>
+
+      <!-- Street -->
+      <div class="form-row">
+        <div class="form-group form-group--small">
+          <label for="streetNumber" class="form-label">Numéro</label>
+          <input
+            id="streetNumber"
+            type="text"
+            class="form-input"
+            formControlName="streetNumber"
+            placeholder="12"
+            [class.is-invalid]="isFieldInvalid('streetNumber')">
+          @if (isFieldInvalid('streetNumber')) {
+            <span class="form-error">{{ getFieldError('streetNumber') }}</span>
+          }
+        </div>
+
+        <div class="form-group form-group--large">
+          <label for="streetName" class="form-label">
+            Rue <span class="required">*</span>
+          </label>
+          <input
+            id="streetName"
+            type="text"
+            class="form-input"
+            formControlName="streetName"
+            placeholder="Rue de la Loi"
+            [class.is-invalid]="isFieldInvalid('streetName')">
+          @if (isFieldInvalid('streetName')) {
+            <span class="form-error">{{ getFieldError('streetName') }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Complement -->
+      @if (config.showComplement) {
+        <div class="form-group">
+          <label for="complement" class="form-label">Complément</label>
+          <input
+            id="complement"
+            type="text"
+            class="form-input"
+            formControlName="complement"
+            placeholder="Appartement, étage, bâtiment..."
+            [class.is-invalid]="isFieldInvalid('complement')">
+          @if (isFieldInvalid('complement')) {
+            <span class="form-error">{{ getFieldError('complement') }}</span>
+          }
+        </div>
+      }
+
+      <!-- Postal code & City -->
+      <div class="form-row">
+        <div class="form-group form-group--small">
+          <label for="postalCode" class="form-label">
+            Code postal <span class="required">*</span>
+          </label>
+          <input
+            id="postalCode"
+            type="text"
+            class="form-input"
+            formControlName="postalCode"
+            placeholder="1000"
+            [class.is-invalid]="isFieldInvalid('postalCode')">
+          @if (isFieldInvalid('postalCode')) {
+            <span class="form-error">{{ getFieldError('postalCode') }}</span>
+          }
+        </div>
+
+        <div class="form-group form-group--large">
+          <label for="city" class="form-label">
+            Ville <span class="required">*</span>
+          </label>
+          <input
+            id="city"
+            type="text"
+            class="form-input"
+            formControlName="city"
+            placeholder="Bruxelles"
+            [class.is-invalid]="isFieldInvalid('city')">
+          @if (isFieldInvalid('city')) {
+            <span class="form-error">{{ getFieldError('city') }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- State/Province & Country -->
+      <div class="form-row">
+        @if (config.showStateProvince) {
+          <div class="form-group form-group--half">
+            <label for="stateProvince" class="form-label">
+              Province / Région
+              @if (config.requireStateProvince) {
+                <span class="required">*</span>
+              }
+            </label>
+            <input
+              id="stateProvince"
+              type="text"
+              class="form-input"
+              formControlName="stateProvince"
+              placeholder="Brabant wallon"
+              [class.is-invalid]="isFieldInvalid('stateProvince')">
+            @if (isFieldInvalid('stateProvince')) {
+              <span class="form-error">{{ getFieldError('stateProvince') }}</span>
+            }
+          </div>
+        }
+
+        <div class="form-group" [class.form-group--half]="config.showStateProvince">
+          <label for="countryCode" class="form-label">
+            Pays <span class="required">*</span>
+          </label>
+          <select
+            id="countryCode"
+            class="form-select"
+            formControlName="countryCode"
+            [class.is-invalid]="isFieldInvalid('countryCode')">
+            @for (country of countries; track country.code) {
+              @if (country.code.startsWith('-')) {
+                <option disabled>{{ country.name }}</option>
+              } @else {
+                <option [value]="country.code">{{ country.name }}</option>
+              }
+            }
+          </select>
+          @if (isFieldInvalid('countryCode')) {
+            <span class="form-error">{{ getFieldError('countryCode') }}</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Options section (create mode only or config enabled) -->
+    @if (mode === 'create' || config.showDefaultCheckbox || config.showPrimaryCheckbox) {
+      <section class="form-section">
+        <h4 class="form-section__title">Options</h4>
+
+        <div class="checkbox-group">
+          @if (config.showDefaultCheckbox) {
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="isDefault"
+                class="checkbox-input">
+              <span class="checkbox-text">
+                <strong>Adresse par défaut</strong>
+                <small>Pour ce type d'adresse</small>
+              </span>
+            </label>
+          }
+
+          @if (config.showPrimaryCheckbox) {
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="isPrimary"
+                class="checkbox-input">
+              <span class="checkbox-text">
+                <strong>Adresse principale</strong>
+                <small>Adresse de contact principale</small>
+              </span>
+            </label>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Eligibility section (UserAddress specific) -->
+    @if (config.showEligibilityFlags) {
+      <section class="form-section">
+        <h4 class="form-section__title">Éligibilité</h4>
+
+        <div class="checkbox-group checkbox-group--row">
+          <label class="checkbox-label checkbox-label--compact">
+            <input
+              type="checkbox"
+              formControlName="billingEligible"
+              class="checkbox-input">
+            <span class="checkbox-text">
+              <i class="lucide lucide-credit-card"></i>
+              Facturation
+            </span>
+          </label>
+
+          <label class="checkbox-label checkbox-label--compact">
+            <input
+              type="checkbox"
+              formControlName="shippingEligible"
+              class="checkbox-input">
+            <span class="checkbox-text">
+              <i class="lucide lucide-truck"></i>
+              Livraison
+            </span>
+          </label>
+        </div>
+      </section>
+    }
+
+    <!-- Notes section -->
+    @if (config.showNotes) {
+      <section class="form-section">
+        <h4 class="form-section__title">Notes</h4>
+
+        <div class="form-group">
+          <textarea
+            id="notes"
+            class="form-textarea"
+            formControlName="notes"
+            rows="3"
+            placeholder="Instructions de livraison, code d'entrée..."
+            [class.is-invalid]="isFieldInvalid('notes')">
+          </textarea>
+          @if (isFieldInvalid('notes')) {
+            <span class="form-error">{{ getFieldError('notes') }}</span>
+          }
+          <span class="form-hint">Maximum 500 caractères</span>
+        </div>
+      </section>
+    }
+  </div>
+
+  <!-- Actions -->
+  <div class="address-form__actions">
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="handleCancel()"
+      [disabled]="isSubmitting">
+      Annuler
+    </button>
+    <button
+      type="submit"
+      class="btn-primary"
+      [disabled]="isSubmitting || form.invalid">
+      @if (isSubmitting) {
+        <i class="lucide lucide-loader-2 spin"></i>
+      }
+      {{ submitLabel }}
+    </button>
+  </div>
+</form>

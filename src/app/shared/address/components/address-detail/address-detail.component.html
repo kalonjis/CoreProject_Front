@@ -1,0 +1,213 @@
+<!-- src/app/shared/address/components/address-detail/address-detail.component.html -->
+
+<div class="address-detail" [class.address-detail--inactive]="!address.active">
+
+  <!-- Header -->
+  <div class="address-detail__header">
+    <div class="address-detail__title-section">
+      <span class="address-detail__type-icon">
+        <i class="lucide lucide-{{ typeIcon }}"></i>
+      </span>
+      <div>
+        <h3 class="address-detail__title">{{ displayName }}</h3>
+        <span class="address-detail__type">{{ typeLabel }}</span>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-close"
+      title="Fermer"
+      (click)="handleClose()">
+      <i class="lucide lucide-x"></i>
+    </button>
+  </div>
+
+  <!-- Status badges -->
+  <div class="address-detail__badges">
+    @if (isUserAddr && userAddr?.isPrimary) {
+      <span class="badge badge--primary">
+        <i class="lucide lucide-home"></i>
+        Adresse principale
+      </span>
+    }
+
+    @if (address.isDefault) {
+      <span class="badge badge--default">
+        <i class="lucide lucide-star"></i>
+        Par défaut pour ce type
+      </span>
+    }
+
+    @if (!address.active) {
+      <span class="badge badge--inactive">
+        <i class="lucide lucide-eye-off"></i>
+        Inactive
+      </span>
+    } @else if (!isValid) {
+      <span class="badge badge--expired">
+        <i class="lucide lucide-clock"></i>
+        Expirée
+      </span>
+    }
+
+    @if (address.verifiedByOwner) {
+      <span class="badge badge--verified">
+        <i class="lucide lucide-check-circle"></i>
+        Vérifiée
+      </span>
+    }
+
+    @if (address.address.validated) {
+      <span class="badge badge--validated">
+        <i class="lucide lucide-map-pin-check"></i>
+        Validée
+      </span>
+    }
+  </div>
+
+  <!-- Address content -->
+  <div class="address-detail__content">
+
+    <!-- Main address -->
+    <section class="detail-section">
+      <h4 class="detail-section__title">
+        <i class="lucide lucide-map-pin"></i>
+        Adresse postale
+      </h4>
+      <div class="detail-section__body">
+        <div class="address-block">
+          @for (line of addressLines; track $index) {
+            <p class="address-block__line">{{ line }}</p>
+          }
+        </div>
+
+        @if (hasCoordinates) {
+          <button
+            type="button"
+            class="btn-map"
+            (click)="openInMaps()">
+            <i class="lucide lucide-external-link"></i>
+            Voir sur Google Maps
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- Metadata -->
+    @if (address.label || address.notes) {
+      <section class="detail-section">
+        <h4 class="detail-section__title">
+          <i class="lucide lucide-tag"></i>
+          Informations
+        </h4>
+        <div class="detail-section__body">
+          @if (address.label) {
+            <div class="info-row">
+              <span class="info-row__label">Label</span>
+              <span class="info-row__value">{{ address.label }}</span>
+            </div>
+          }
+          @if (address.notes) {
+            <div class="info-row info-row--notes">
+              <span class="info-row__label">Notes</span>
+              <span class="info-row__value">{{ address.notes }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Eligibility (UserAddress only) -->
+    @if (isUserAddr && userAddr) {
+      <section class="detail-section">
+        <h4 class="detail-section__title">
+          <i class="lucide lucide-check-square"></i>
+          Éligibilité
+        </h4>
+        <div class="detail-section__body">
+          <div class="eligibility-grid">
+            <div class="eligibility-item" [class.eligibility-item--active]="userAddr.billingEligible">
+              <i class="lucide lucide-{{ userAddr.billingEligible ? 'check-circle' : 'x-circle' }}"></i>
+              <span>Facturation</span>
+            </div>
+            <div class="eligibility-item" [class.eligibility-item--active]="userAddr.shippingEligible">
+              <i class="lucide lucide-{{ userAddr.shippingEligible ? 'check-circle' : 'x-circle' }}"></i>
+              <span>Livraison</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Validity period -->
+    @if (formattedValidFrom || formattedValidTo) {
+      <section class="detail-section">
+        <h4 class="detail-section__title">
+          <i class="lucide lucide-calendar"></i>
+          Période de validité
+        </h4>
+        <div class="detail-section__body">
+          <div class="validity-grid">
+            @if (formattedValidFrom) {
+              <div class="info-row">
+                <span class="info-row__label">Début</span>
+                <span class="info-row__value">{{ formattedValidFrom }}</span>
+              </div>
+            }
+            @if (formattedValidTo) {
+              <div class="info-row">
+                <span class="info-row__label">Fin</span>
+                <span class="info-row__value">{{ formattedValidTo }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Technical info -->
+    <section class="detail-section detail-section--muted">
+      <h4 class="detail-section__title">
+        <i class="lucide lucide-info"></i>
+        Informations techniques
+      </h4>
+      <div class="detail-section__body">
+        <div class="info-row">
+          <span class="info-row__label">ID</span>
+          <code class="info-row__value info-row__value--code">{{ address.publicId }}</code>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">Créée le</span>
+          <span class="info-row__value">{{ formattedCreatedAt }}</span>
+        </div>
+        @if (hasCoordinates && coordinates) {
+          <div class="info-row">
+            <span class="info-row__label">Coordonnées</span>
+            <span class="info-row__value">{{ coordinates.lat }}, {{ coordinates.lng }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Actions -->
+  @if (showActions) {
+    <div class="address-detail__actions">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="handleEdit()">
+        <i class="lucide lucide-pencil"></i>
+        Modifier
+      </button>
+      <button
+        type="button"
+        class="btn-danger"
+        (click)="handleDelete()">
+        <i class="lucide lucide-trash-2"></i>
+        Supprimer
+      </button>
+    </div>
+  }
+</div>
