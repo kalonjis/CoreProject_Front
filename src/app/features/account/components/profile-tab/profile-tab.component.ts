@@ -9,11 +9,12 @@ import { catchError, retry, of, finalize } from 'rxjs';
 import {HttpUtilService} from '../../../../core/http/http-util.service';
 import {DeviceFacade} from '../../../../core/device';
 import {AuthFacade} from '../../../../core/auth';
+import {AddressSummaryCardComponent} from './components/address-summary-card/address-summary-card.component';
 
 @Component({
   selector: 'app-profile-tab',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent],
   templateUrl: './profile-tab.component.html',
   styleUrl: './profile-tab.component.scss'
 })

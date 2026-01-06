@@ -45,6 +45,11 @@ export const ACCOUNT_ROUTES: Routes = [
         path: 'devices',
         loadComponent: () => import('./components/device-tab/device-tab.component')
           .then(m => m.DeviceTabComponent)
+      },
+      {
+        path: 'addresses',
+        loadComponent: () => import('./pages/addresses/account-addresses/account-addresses.component')
+          .then(m => m.AccountAddressesComponent)
       }
     ]
   },
