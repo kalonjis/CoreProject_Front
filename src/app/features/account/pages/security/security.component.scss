@@ -1,8 +1,8 @@
-// src/app/features/account/components/security-tab/security-tab.component.scss
+// src/app/features/account/components/security-tab/security.component.scss
 
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@import '../../../../../style/variables';
+@import '../../../../../style/mixins';
 
 .security-tab {
   padding: 1.5rem;

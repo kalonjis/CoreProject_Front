@@ -11,8 +11,8 @@ import {
   formatAddressOneLine,
   getAddressTypeLabel,
   getAddressTypeIcon
-} from '../../../../../../shared/address';
-import { UserAddressApiService } from '../../../../../profile/addresses/services/user-address-api.service';
+} from '../../../../shared/address';
+import { UserAddressApiService } from '../../services/user-address-api.service';
 
 /**
  * Carte résumé des adresses pour l'onglet Profile.

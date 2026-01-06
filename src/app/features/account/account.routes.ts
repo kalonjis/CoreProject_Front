@@ -23,13 +23,13 @@ export const ACCOUNT_ROUTES: Routes = [
       // Profile tab - temporarily redirect to old profile component
       {
         path: 'profile',
-        loadComponent: () => import('./components/profile-tab/profile-tab.component')
-          .then(m => m.ProfileTabComponent)
+        loadComponent: () => import('./pages/profile/profile.component')
+          .then(m => m.ProfileComponent)
       },
       {
         path: 'security',
-        loadComponent: () => import('./components/security-tab/security-tab.component')
-        .then(m => m.SecurityTabComponent)
+        loadComponent: () => import('./pages/security/security.component')
+        .then(m => m.SecurityComponent)
       },
       {
         path: 'security/two-factor',
@@ -43,13 +43,13 @@ export const ACCOUNT_ROUTES: Routes = [
       },
       {
         path: 'devices',
-        loadComponent: () => import('./components/device-tab/device-tab.component')
-          .then(m => m.DeviceTabComponent)
+        loadComponent: () => import('./pages/devices/device.component')
+          .then(m => m.DeviceComponent)
       },
       {
         path: 'addresses',
-        loadComponent: () => import('./pages/addresses/account-addresses/account-addresses.component')
-          .then(m => m.AccountAddressesComponent)
+        loadComponent: () => import('./pages/addresses/addresses.component')
+          .then(m => m.AddressesComponent)
       }
     ]
   },

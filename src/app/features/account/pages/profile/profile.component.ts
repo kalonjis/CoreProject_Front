@@ -9,16 +9,16 @@ import { catchError, retry, of, finalize } from 'rxjs';
 import {HttpUtilService} from '../../../../core/http/http-util.service';
 import {DeviceFacade} from '../../../../core/device';
 import {AuthFacade} from '../../../../core/auth';
-import {AddressSummaryCardComponent} from './components/address-summary-card/address-summary-card.component';
+import {AddressSummaryCardComponent} from '../../components/profile-tab/components/address-summary-card/address-summary-card.component';
 
 @Component({
   selector: 'app-profile-tab',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent],
-  templateUrl: './profile-tab.component.html',
-  styleUrl: './profile-tab.component.scss'
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
 })
-export class ProfileTabComponent implements OnInit {
+export class ProfileComponent implements OnInit {
   private http = inject(HttpClient);
   private httpUtil = inject(HttpUtilService);
   private fb = inject(FormBuilder);

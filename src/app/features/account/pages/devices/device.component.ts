@@ -15,10 +15,10 @@ import {DeviceFacade} from '../../../../core/device';
   selector: 'device-tab',
   standalone: true,
   imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
-  templateUrl: './device-tab.component.html',
-  styleUrls: ['./device-tab.component.scss']
+  templateUrl: './device.component.html',
+  styleUrls: ['./device.component.scss']
 })
-export class DeviceTabComponent extends FeedbackBase implements OnInit {
+export class DeviceComponent extends FeedbackBase implements OnInit {
   private deviceFacade = inject(DeviceFacade);
   protected deviceUtils = inject(DeviceUtilsService);
   private destroyRef = inject(DestroyRef);

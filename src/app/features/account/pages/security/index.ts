@@ -8,4 +8,4 @@
  */
 
 // Main security tab component
-export { SecurityTabComponent } from './security-tab.component';
+export { SecurityComponent } from './security.component';

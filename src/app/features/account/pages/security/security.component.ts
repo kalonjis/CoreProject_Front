@@ -1,4 +1,4 @@
-// src/app/features/account/components/security-tab/security-tab.component.ts
+// src/app/features/account/components/security-tab/security.component.ts
 
 import { Component, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -23,10 +23,10 @@ import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
   selector: 'app-security-tab',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './security-tab.component.html',
-  styleUrl: './security-tab.component.scss'
+  templateUrl: './security.component.html',
+  styleUrl: './security.component.scss'
 })
-export class SecurityTabComponent implements OnInit {
+export class SecurityComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authFacade = inject(AuthFacade);
   private twoFactorApi = inject(TwoFactorApiService);

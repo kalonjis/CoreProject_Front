@@ -1,4 +1,4 @@
-// src/app/features/account/pages/addresses/account-addresses.component.ts
+// src/app/features/account/pages/addresses/addresses.component.ts
 
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -18,11 +18,11 @@ import {
   UpdateAddressRequest,
   DEFAULT_USER_LIST_CONFIG,
   DEFAULT_USER_FORM_CONFIG, AddressLink
-} from '../../../../../shared/address';
+} from '../../../../shared/address';
 
-import { UserAddressApiService } from '../services/user-address-api.service';
-import { FeedbackService } from '../../../../../shared/feedback/tools/feedback.service';
-import { ConfirmDialogService } from '../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { UserAddressApiService } from '../../services/user-address-api.service';
+import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
+import { ConfirmDialogService } from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 type ModalMode = 'create' | 'edit';
 
@@ -41,10 +41,10 @@ type ModalMode = 'create' | 'edit';
     AddressDetailComponent,
     AddressFormModalComponent
   ],
-  templateUrl: './account-addresses.component.html',
-  styleUrl: './account-addresses.component.scss'
+  templateUrl: './addresses.component.html',
+  styleUrl: './addresses.component.scss'
 })
-export class AccountAddressesComponent implements OnInit {
+export class AddressesComponent implements OnInit {
 
   // ===========================================================================
   // DEPENDENCIES
