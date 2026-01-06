@@ -1,0 +1,235 @@
+<!-- src/app/shared/address/components/address-list/address-list.component.html -->
+
+<div class="address-list" [class.address-list--loading]="isLoading">
+
+  <!-- Toolbar -->
+  <div class="address-list__toolbar">
+    <!-- Filters -->
+    @if (config.showFilters) {
+      <div class="address-list__filters">
+        <!-- Type filter -->
+        <div class="filter-group">
+          <label for="filter-type" class="filter-label">Type</label>
+          <select
+            id="filter-type"
+            class="filter-select"
+            [value]="filterType() ?? ''"
+            (change)="handleFilterTypeChange($event)">
+            <option value="">Tous les types</option>
+            @for (opt of typeOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Active filter -->
+        <div class="filter-group">
+          <label for="filter-active" class="filter-label">Statut</label>
+          <select
+            id="filter-active"
+            class="filter-select"
+            [value]="filterActive() === null ? '' : filterActive()"
+            (change)="handleFilterActiveChange($event)">
+            <option value="">Tous</option>
+            <option value="true">Actives</option>
+            <option value="false">Inactives</option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        @if (config.showSearch) {
+          <div class="filter-group filter-group--search">
+            <label for="filter-search" class="filter-label">Recherche</label>
+            <input
+              id="filter-search"
+              type="text"
+              class="filter-input"
+              placeholder="Ville, rue, code postal..."
+              [value]="searchQuery()"
+              (input)="handleSearchChange($event)">
+          </div>
+        }
+
+        <!-- Clear filters -->
+        @if (hasFilters) {
+          <button
+            type="button"
+            class="btn-clear-filters"
+            (click)="clearFilters()">
+            <i class="lucide lucide-x"></i>
+            Effacer les filtres
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="address-list__actions">
+      @if (config.canCreate) {
+        <button
+          type="button"
+          class="btn-create"
+          (click)="handleCreate()">
+          <i class="lucide lucide-plus"></i>
+          Ajouter une adresse
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="address-list__content">
+    <!-- Loading state -->
+    @if (isLoading) {
+      <div class="address-list__loading">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @else if (isEmpty) {
+      <div class="address-list__empty">
+        <div class="empty-state">
+          <i class="lucide lucide-{{ config.emptyStateIcon }} empty-state__icon"></i>
+          <p class="empty-state__message">{{ config.emptyStateMessage }}</p>
+          @if (hasFilters) {
+            <p class="empty-state__hint">Essayez de modifier vos filtres</p>
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="clearFilters()">
+              Effacer les filtres
+            </button>
+          } @else if (config.canCreate) {
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="handleCreate()">
+              <i class="lucide lucide-plus"></i>
+              Ajouter votre première adresse
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Cards Grid -->
+    @else if (config.displayMode === 'cards' || config.displayMode === 'compact') {
+      <div class="address-list__grid" [class.address-list__grid--compact]="config.displayMode === 'compact'">
+        @for (address of filteredAddresses; track trackByPublicId($index, address)) {
+          <app-address-card
+            [address]="address"
+            [config]="cardConfig"
+            [selected]="isSelected(address)"
+            (onAction)="handleCardAction($event)"
+            (onClick)="handleCardClick($event)">
+          </app-address-card>
+        }
+      </div>
+    }
+
+    <!-- Table View -->
+    @else if (config.displayMode === 'table') {
+      <div class="address-list__table-wrapper">
+        <table class="address-table">
+          <thead>
+          <tr>
+            <th>Label</th>
+            <th>Type</th>
+            <th>Adresse</th>
+            <th>Ville</th>
+            <th>Code postal</th>
+            @if (config.showEligibilityFlags) {
+              <th>Éligibilité</th>
+            }
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (address of filteredAddresses; track trackByPublicId($index, address)) {
+              <tr
+                [class.row--selected]="isSelected(address)"
+                [class.row--inactive]="!address.active"
+                (click)="handleCardClick(address)">
+                <td class="cell-label">
+                  {{ address.label || '-' }}
+                </td>
+                <td class="cell-type">
+                  <span class="type-badge">{{ getTypeLabel(address.addressType) }}</span>
+                </td>
+                <td class="cell-address">
+                  {{ address.address.streetNumber }} {{ address.address.streetName }}
+                </td>
+                <td class="cell-city">{{ address.address.city }}</td>
+                <td class="cell-postal">{{ address.address.postalCode }}</td>
+                @if (config.showEligibilityFlags) {
+                  <td class="cell-eligibility">
+                    <!-- Note: cast nécessaire pour UserAddress -->
+                    @if ($any(address).billingEligible) {
+                      <span class="eligibility-icon" title="Facturation">
+                        <i class="lucide lucide-credit-card"></i>
+                      </span>
+                    }
+                    @if ($any(address).shippingEligible) {
+                      <span class="eligibility-icon" title="Livraison">
+                        <i class="lucide lucide-truck"></i>
+                      </span>
+                    }
+                  </td>
+                }
+                <td class="cell-status">
+                  @if (address.isDefault) {
+                    <span class="status-badge status-badge--default">Par défaut</span>
+                  }
+                  @if ($any(address).isPrimary) {
+                    <span class="status-badge status-badge--primary">Principale</span>
+                  }
+                  @if (!address.active) {
+                    <span class="status-badge status-badge--inactive">Inactive</span>
+                  }
+                </td>
+                <td class="cell-actions">
+                  <div class="table-actions">
+                    @if (config.canEdit) {
+                      <button
+                        type="button"
+                        class="action-icon"
+                        title="Modifier"
+                        (click)="handleCardAction({ action: 'edit', publicId: address.publicId }); $event.stopPropagation()">
+                        <i class="lucide lucide-pencil"></i>
+                      </button>
+                    }
+                    @if (config.canDelete) {
+                      <button
+                        type="button"
+                        class="action-icon action-icon--danger"
+                        title="Supprimer"
+                        (click)="handleCardAction({ action: 'delete', publicId: address.publicId }); $event.stopPropagation()">
+                        <i class="lucide lucide-trash-2"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Footer / Pagination (si nécessaire) -->
+  @if (!isLoading && !isEmpty) {
+    <div class="address-list__footer">
+      <p class="address-list__count">
+        {{ filteredAddresses.length }} adresse(s)
+        @if (hasFilters) {
+          <span>sur {{ addresses.length }}</span>
+        }
+      </p>
+    </div>
+  }
+</div>

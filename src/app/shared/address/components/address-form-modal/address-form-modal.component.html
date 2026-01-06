@@ -1,0 +1,48 @@
+<!-- src/app/shared/address/components/address-form-modal/address-form-modal.component.html -->
+
+@if (isVisible) {
+  <div
+    class="modal-backdrop"
+    [class.modal-backdrop--entering]="isOpen && isAnimating"
+    [class.modal-backdrop--leaving]="!isOpen && isAnimating"
+    (click)="handleBackdropClick($event)"
+    (keydown)="handleKeydown($event)">
+
+    <div
+      class="modal-container"
+      [class.modal-container--entering]="isOpen && isAnimating"
+      [class.modal-container--leaving]="!isOpen && isAnimating"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'modal-title'">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">
+          <i class="lucide lucide-{{ mode === 'edit' ? 'pencil' : 'plus' }}"></i>
+          {{ modalTitle }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [disabled]="isSubmitting"
+          (click)="handleClose()"
+          aria-label="Fermer">
+          <i class="lucide lucide-x"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <app-address-form
+          [mode]="mode"
+          [initialData]="address"
+          [config]="config"
+          [isSubmitting]="isSubmitting"
+          (onSubmit)="handleFormSubmit($event)"
+          (onCancel)="handleFormCancel()">
+        </app-address-form>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,76 @@
+<!-- src/app/features/account/components/profile-tab/components/address-summary-card/address-summary-card.component.html -->
+
+<div class="address-summary-card">
+  <div class="card-header">
+    <h3 class="card-title">
+      <span class="card-icon">📍</span>
+      Mes Adresses
+    </h3>
+    <a routerLink="/account/addresses" class="card-action">
+      Gérer
+      <i class="lucide lucide-chevron-right"></i>
+    </a>
+  </div>
+
+  <div class="card-content">
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="skeleton-item"></div>
+        <div class="skeleton-item"></div>
+      </div>
+    }
+
+    <!-- Error -->
+    @else if (hasError()) {
+      <div class="error-state">
+        <p>Impossible de charger les adresses</p>
+        <button type="button" class="btn-retry" (click)="retry()">
+          Réessayer
+        </button>
+      </div>
+    }
+
+    <!-- Empty -->
+    @else if (totalCount === 0) {
+      <div class="empty-state">
+        <p class="empty-message">Aucune adresse enregistrée</p>
+        <a routerLink="/account/addresses" class="btn-add">
+          <i class="lucide lucide-plus"></i>
+          Ajouter une adresse
+        </a>
+      </div>
+    }
+
+    <!-- Address list -->
+    @else {
+      <ul class="address-list">
+        @for (address of displayedAddresses; track address.publicId) {
+          <li class="address-item">
+            <span class="address-icon" [title]="getTypeLabel(address.addressType)">
+              <i class="lucide lucide-{{ getTypeIcon(address.addressType) }}"></i>
+            </span>
+            <div class="address-info">
+              <span class="address-label">
+                {{ address.label || getTypeLabel(address.addressType) }}
+                @if (address.isPrimary) {
+                  <span class="badge-primary">Principale</span>
+                }
+                @if (address.isDefault) {
+                  <span class="badge-default">Par défaut</span>
+                }
+              </span>
+              <span class="address-line">{{ formatAddress(address) }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (hasMore) {
+        <a routerLink="/account/addresses" class="show-more">
+          +{{ remainingCount }} autre(s) adresse(s)
+        </a>
+      }
+    }
+  </div>
+</div>
