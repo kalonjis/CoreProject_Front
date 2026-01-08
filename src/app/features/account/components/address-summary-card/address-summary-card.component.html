@@ -1,6 +1,9 @@
-<!-- src/app/features/account/components/profile-tab/components/address-summary-card/address-summary-card.component.html -->
+<!-- ============================================================================
+     ADDRESS SUMMARY CARD
+     ============================================================================ -->
 
 <div class="address-summary-card">
+  <!-- HEADER -->
   <div class="card-header">
     <h3 class="card-title">
       <span class="card-icon">📍</span>
@@ -12,27 +15,41 @@
     </a>
   </div>
 
+  <!-- CONTENT -->
   <div class="card-content">
-    <!-- Loading -->
+
+    <!-- ========================================
+         LOADING STATE
+         ======================================== -->
     @if (isLoading()) {
       <div class="loading-state">
         <div class="skeleton-item"></div>
         <div class="skeleton-item"></div>
+        <div class="skeleton-item"></div>
       </div>
-    }<!-- Error -->
+    }
+
+    <!-- ========================================
+         ERROR STATE
+         ======================================== -->
     @else if (hasError()) {
       <div class="error-state">
-        <p>Impossible de charger les adresses</p>
+        <p>❌ Impossible de charger les adresses</p>
         <button type="button" class="btn-retry" (click)="retry()">
+          <i class="lucide lucide-refresh-cw"></i>
           Réessayer
         </button>
       </div>
     }
 
-    <!-- Empty -->
+    <!-- ========================================
+         EMPTY STATE
+         ======================================== -->
     @else if (totalCount === 0) {
       <div class="empty-state">
-        <p class="empty-message">Aucune adresse enregistrée</p>
+        <p class="empty-message">
+          Aucune adresse enregistrée
+        </p>
         <a routerLink="/account/address" class="btn-add">
           <i class="lucide lucide-plus"></i>
           Ajouter une adresse
@@ -40,33 +57,46 @@
       </div>
     }
 
-    <!-- Address list -->
+    <!-- ========================================
+         ADDRESS LIST
+         ======================================== -->
     @else {
       <ul class="address-list">
         @for (address of displayedAddresses; track address.publicId) {
           <li class="address-item">
-            <span class="address-icon" [title]="getTypeLabel(address.addressType)">
+            <!-- Icon -->
+            <span
+              class="address-icon"
+              [title]="getTypeLabel(address.addressType)">
               <i class="lucide lucide-{{ getTypeIcon(address.addressType) }}"></i>
             </span>
+
+            <!-- Info -->
             <div class="address-info">
-              <span class="address-label">
+              <div class="address-label">
                 {{ address.label || getTypeLabel(address.addressType) }}
+
+                <!-- Badges -->
                 @if (address.isPrimary) {
                   <span class="badge-primary">Principale</span>
                 }
                 @if (address.isDefault) {
-                  <span class="badge-default">Par défaut</span>
+                  <span class="badge-default">Défaut</span>
                 }
-              </span>
-              <span class="address-line">{{ formatAddress(address) }}</span>
+              </div>
+
+              <div class="address-line">
+                {{ formatAddress(address) }}
+              </div>
             </div>
           </li>
         }
       </ul>
 
+      <!-- Show More Link -->
       @if (hasMore) {
         <a routerLink="/account/addresses" class="show-more">
-          +{{ remainingCount }} autre(s) adresse(s)
+          Voir {{ remainingCount }} autre{{ remainingCount > 1 ? 's' : '' }} adresse{{ remainingCount > 1 ? 's' : '' }}
         </a>
       }
     }

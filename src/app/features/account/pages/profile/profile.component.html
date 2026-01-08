@@ -151,11 +151,6 @@
           }
         </div>
 
-        <!-- Addresses Section -->
-        <section class="addresses-section">
-          <app-address-summary-card></app-address-summary-card>
-        </section>
-
         <!-- Email Change Form -->
         @if (changeEmailMode()) {
           <div class="profile-section email-change">
@@ -187,6 +182,11 @@
           </div>
         }
       </div>
+
+      <!-- Addresses Section -->
+      <section class="addresses-section">
+        <app-address-summary-card></app-address-summary-card>
+      </section>
     }
   }
 
