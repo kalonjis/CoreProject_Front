@@ -3,8 +3,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { AddressApiBaseService } from '../../../../shared/address/services/address-api-base.service';
-import { UserAddress, AddressType } from '../../../../shared/address/models';
+import { AddressApiBaseService } from '../../../shared/address/services/address-api-base.service';
+import { UserAddress, AddressType } from '../../../shared/address/models';
 
 /**
  * Service API pour les adresses de l'utilisateur connecté.

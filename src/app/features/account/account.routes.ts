@@ -23,13 +23,13 @@ export const ACCOUNT_ROUTES: Routes = [
       // Profile tab - temporarily redirect to old profile component
       {
         path: 'profile',
-        loadComponent: () => import('./components/profile-tab/profile-tab.component')
-          .then(m => m.ProfileTabComponent)
+        loadComponent: () => import('./pages/profile/profile.component')
+          .then(m => m.ProfileComponent)
       },
       {
         path: 'security',
-        loadComponent: () => import('./components/security-tab/security-tab.component')
-        .then(m => m.SecurityTabComponent)
+        loadComponent: () => import('./pages/security/security.component')
+        .then(m => m.SecurityComponent)
       },
       {
         path: 'security/two-factor',
@@ -43,24 +43,24 @@ export const ACCOUNT_ROUTES: Routes = [
       },
       {
         path: 'devices',
-        loadComponent: () => import('./components/device-tab/device-tab.component')
-          .then(m => m.DeviceTabComponent)
+        loadComponent: () => import('./pages/device/device.component')
+          .then(m => m.DeviceComponent)
       },
       {
-        path: 'addresses',
-        loadComponent: () => import('./pages/addresses/account-addresses/account-addresses.component')
-          .then(m => m.AccountAddressesComponent)
+        path: 'address',
+        loadComponent: () => import('./pages/address/address.component')
+          .then(m => m.AddressComponent)
       }
     ]
   },
   {
     path: 'signup',
-    loadComponent: () => import('./components/signup/signup.component')
+    loadComponent: () => import('./pages/signup/signup.component')
       .then(m => m.SignupComponent),
   },
   {
     path: 'confirmation',
-    loadComponent: () => import('./components/account-confirmation/account-confirmation.component')
+    loadComponent: () => import('./pages/account-confirmation/account-confirmation.component')
       .then(m => m.AccountConfirmationComponent)
   },
 ];
