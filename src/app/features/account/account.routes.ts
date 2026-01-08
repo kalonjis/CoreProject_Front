@@ -42,7 +42,7 @@ export const ACCOUNT_ROUTES: Routes = [
           .then(m => m.RECOVERY_ROUTES)
       },
       {
-        path: 'devices',
+        path: 'device',
         loadComponent: () => import('./pages/device/device.component')
           .then(m => m.DeviceComponent)
       },

@@ -39,7 +39,7 @@ export class AccountTabsComponent {
     },
     {
       label: 'Devices',
-      route: '/account/devices',
+      route: '/account/device',
       icon: '📱',
       description: 'Manage your devices and sessions'
     }
