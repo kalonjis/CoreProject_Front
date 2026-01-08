@@ -1,0 +1,446 @@
+// src/app/features/account/components/security-tab/security-tab.component.scss
+
+// Import variables and mixins
+@import 'variables';
+@import 'mixins';
+
+.security-tab {
+  padding: 1.5rem;
+
+  // ==========================================================================
+  // OVERVIEW SECTION
+  // ==========================================================================
+
+  .security-overview {
+    .overview-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+
+      h1 {
+        color: $secondary-color;
+        font-size: 1.75rem;
+        margin: 0 0 0.5rem 0;
+        font-weight: $font-weight-bold;
+      }
+
+      .overview-description {
+        color: $gray-dark;
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+
+    .sections-grid {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+
+      @media (min-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .section-card {
+      display: flex;
+      align-items: center;
+      padding: 1.5rem;
+      background: white;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-lg;
+      box-shadow: $box-shadow;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      animation: fadeInUp 0.4s ease-out;
+
+      &.enabled {
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          border-color: rgba($primary-color, 0.3);
+        }
+      }
+
+      &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: linear-gradient(135deg, rgba($gray-light, 0.5), rgba(white, 0.8));
+
+        &:hover {
+          transform: none;
+          box-shadow: $box-shadow;
+        }
+      }
+
+      .section-icon {
+        font-size: 2rem;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba($primary-color, 0.1);
+        border-radius: 50%;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .section-content {
+        flex: 1;
+
+        .section-title {
+          color: $secondary-color;
+          font-size: 1.25rem;
+          margin: 0 0 0.5rem 0;
+          font-weight: $font-weight-bold;
+        }
+
+        .section-description {
+          color: $gray-dark;
+          margin: 0 0 0.75rem 0;
+          line-height: 1.4;
+          font-size: 0.95rem;
+        }
+
+        .section-status {
+          .status-text {
+            color: $primary-color;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .section-arrow {
+        margin-left: 1rem;
+
+        .arrow-icon {
+          font-size: 1.5rem;
+          color: $primary-color;
+          transition: transform 0.2s ease;
+        }
+
+        .coming-soon-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background-color: rgba($info-color, 0.15);
+          color: darken($info-color, 15%);
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+      }
+
+      &.enabled:hover .section-arrow .arrow-icon {
+        transform: translateX(4px);
+      }
+
+      @media (max-width: 768px) {
+        padding: 1.25rem;
+
+        .section-icon {
+          width: 50px;
+          height: 50px;
+          font-size: 1.75rem;
+          margin-right: 1rem;
+        }
+
+        .section-content {
+          .section-title {
+            font-size: 1.1rem;
+          }
+
+          .section-description {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+
+  // ==========================================================================
+  // DETAIL SECTION
+  // ==========================================================================
+
+  .section-detail {
+
+    // Back navigation (standalone)
+    .detail-nav {
+      margin-bottom: 1.5rem;
+    }
+
+    // Back button (shared style)
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba($gray-light, 0.7);
+      color: $gray-dark;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      .icon {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: $gray-light;
+        color: $secondary-color;
+        border-color: $gray-medium;
+        transform: translateX(-2px);
+      }
+    }
+
+    // Section header banner (icon + title + status)
+    .section-header-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem;
+      background-color: white;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-lg;
+      box-shadow: $box-shadow;
+      margin-bottom: 1.5rem;
+
+      .header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .section-icon {
+          font-size: 2.5rem;
+          line-height: 1;
+        }
+
+        .header-text {
+          h2 {
+            font-size: 1.5rem;
+            font-weight: $font-weight-bold;
+            color: $secondary-color;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .section-description {
+            font-size: 0.95rem;
+            color: $gray-dark;
+            margin: 0;
+          }
+        }
+      }
+
+      .section-status {
+        .status-badge {
+          display: inline-block;
+          padding: 0.5rem 1rem;
+          border-radius: 2rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.025em;
+
+          &.enabled {
+            background-color: rgba($success-color, 0.1);
+            color: $success-color;
+          }
+
+          &.disabled {
+            background-color: rgba($gray-dark, 0.1);
+            color: $gray-dark;
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 1rem;
+
+        .header-content {
+          width: 100%;
+        }
+
+        .section-status {
+          align-self: flex-start;
+        }
+      }
+    }
+
+    // Legacy detail header (for password, recovery sections)
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid $border-color;
+
+      h2 {
+        color: $secondary-color;
+        font-size: 1.5rem;
+        margin: 0;
+        font-weight: $font-weight-bold;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+    }
+
+    .detail-content {
+      // Security sections in detail view
+      .security-section {
+        background: white;
+        border-radius: $border-radius-lg;
+        box-shadow: $box-shadow;
+        overflow: hidden;
+        animation: fadeInUp 0.4s ease-out;
+
+        &.future-section {
+          opacity: 0.8;
+          background: linear-gradient(135deg, rgba($gray-light, 0.5), rgba(white, 0.8));
+        }
+      }
+
+      // Section headers in detail view (for password, etc.)
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem;
+        border-bottom: 1px solid $border-color;
+        background: linear-gradient(135deg, rgba($primary-color, 0.02), transparent);
+
+        .header-content {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          .section-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba($primary-color, 0.1);
+            border-radius: 50%;
+          }
+
+          .header-text {
+            h3 {
+              color: $secondary-color;
+              font-size: 1.25rem;
+              margin: 0 0 0.25rem 0;
+              font-weight: $font-weight-bold;
+            }
+
+            .section-description {
+              color: $gray-dark;
+              margin: 0;
+              font-size: 0.9rem;
+            }
+          }
+        }
+
+        .section-info {
+          .info-text {
+            color: $gray-dark;
+            font-size: 0.875rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+
+          .header-content {
+            width: 100%;
+          }
+        }
+      }
+
+      // Password actions in detail view
+      .password-actions {
+        padding: 1.5rem;
+
+        .btn-outline {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          background-color: transparent;
+          color: $secondary-color;
+          border: 1px solid $border-color;
+          border-radius: $border-radius;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-decoration: none;
+
+          .btn-icon {
+            font-size: 1rem;
+          }
+
+          &:hover {
+            background-color: rgba($primary-color, 0.05);
+            border-color: $primary-color;
+            color: $primary-color;
+          }
+        }
+      }
+
+      // Recovery placeholder in detail view
+      .recovery-placeholder {
+        padding: 3rem 2rem;
+
+        .placeholder-content {
+          text-align: center;
+          color: $gray-dark;
+
+          .placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+          }
+
+          h3 {
+            font-size: 1.25rem;
+            margin: 0 0 1rem 0;
+            color: $secondary-color;
+          }
+
+          p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  // ==========================================================================
+  // ANIMATIONS
+  // ==========================================================================
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
