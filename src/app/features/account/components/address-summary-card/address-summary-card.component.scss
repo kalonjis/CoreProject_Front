@@ -1,94 +1,137 @@
+// ============================================================================
+// ADDRESS SUMMARY CARD
+// ============================================================================
 
 .address-summary-card {
-  background: var(--color-surface, #fff);
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
 }
 
-// Header
+// ============================================================================
+// HEADER
+// ============================================================================
+
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .card-title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--color-text, #1e293b);
+  color: #1e293b;
+  letter-spacing: -0.01em;
 }
 
 .card-icon {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .card-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-primary, #3b82f6);
+  color: #3b82f6;
   text-decoration: none;
-  transition: color 0.15s ease;
+  background: #eff6ff;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 
   &:hover {
-    color: var(--color-primary-dark, #2563eb);
+    background: #dbeafe;
+    color: #2563eb;
+    transform: translateX(2px);
   }
 
   i {
     font-size: 1rem;
+    transition: transform 0.15s ease;
+  }
+
+  &:hover i {
+    transform: translateX(2px);
   }
 }
 
-// Content
+// ============================================================================
+// CONTENT
+// ============================================================================
+
 .card-content {
-  padding: 1rem 1.25rem;
+  padding: 1.5rem;
 }
 
-// Address list
+// ============================================================================
+// ADDRESS LIST
+// ============================================================================
+
 .address-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .address-item {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateX(2px);
+  }
 }
 
 .address-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: var(--color-muted, #f1f5f9);
-  border-radius: 0.375rem;
-  color: var(--color-text-muted, #64748b);
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 8px;
+  color: #2563eb;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
 
   i {
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
 }
 
 .address-info {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.375rem;
   min-width: 0;
   flex: 1;
 }
@@ -96,126 +139,257 @@
 .address-label {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text, #1e293b);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
 }
 
 .address-line {
-  font-size: 0.8125rem;
-  color: var(--color-text-muted, #64748b);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+
+  // Permet le retour à la ligne sur mobile
+  @media (max-width: 640px) {
+    white-space: normal;
+  }
+
+  // Sur desktop, limite à 2 lignes avec ellipsis
+  @media (min-width: 641px) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// ============================================================================
+// BADGES
+// ============================================================================
+
+.badge-primary,
+.badge-default {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   white-space: nowrap;
 }
 
-// Badges
-.badge-primary,
-.badge-default {
-  padding: 0.0625rem 0.375rem;
-  font-size: 0.625rem;
-  font-weight: 500;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
 .badge-primary {
-  background: var(--color-primary-light, #dbeafe);
-  color: var(--color-primary-dark, #1d4ed8);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .badge-default {
-  background: var(--color-warning-light, #fef3c7);
-  color: var(--color-warning-dark, #b45309);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
-// Show more link
+// ============================================================================
+// SHOW MORE LINK
+// ============================================================================
+
 .show-more {
-  display: block;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border-light, #f1f5f9);
-  font-size: 0.8125rem;
-  color: var(--color-primary, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #3b82f6;
   text-decoration: none;
-  text-align: center;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  transition: all 0.15s ease;
 
   &:hover {
-    color: var(--color-primary-dark, #2563eb);
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #2563eb;
+  }
+
+  &::after {
+    content: '→';
+    font-size: 1rem;
+    transition: transform 0.15s ease;
+  }
+
+  &:hover::after {
+    transform: translateX(3px);
   }
 }
 
-// States
+// ============================================================================
+// STATES
+// ============================================================================
+
 .loading-state {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  padding: 0.5rem 0;
 }
 
 .skeleton-item {
-  height: 2.5rem;
+  height: 5rem;
   background: linear-gradient(
       90deg,
-      var(--color-muted, #f1f5f9) 25%,
-      var(--color-surface, #fff) 50%,
-      var(--color-muted, #f1f5f9) 75%
+      #f1f5f9 0%,
+      #e2e8f0 50%,
+      #f1f5f9 100%
   );
   background-size: 200% 100%;
-  border-radius: 0.375rem;
-  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  animation: shimmer 1.5s ease-in-out infinite;
 }
 
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.error-state,
-.empty-state {
-  text-align: center;
-  padding: 1rem 0;
-}
-
-.error-state p,
-.empty-message {
-  margin: 0 0 0.75rem 0;
-  font-size: 0.875rem;
-  color: var(--color-text-muted, #64748b);
-}
-
-.btn-retry,
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-retry {
-  color: var(--color-text, #1e293b);
-  background: var(--color-muted, #f8fafc);
-  border: 1px solid var(--color-border, #e2e8f0);
-
-  &:hover {
-    border-color: var(--color-primary, #3b82f6);
-    color: var(--color-primary, #3b82f6);
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 
-.btn-add {
-  color: #fff;
-  background: var(--color-primary, #3b82f6);
-  border: none;
-  text-decoration: none;
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+  text-align: center;
 
-  &:hover {
-    background: var(--color-primary-dark, #2563eb);
+  p {
+    margin: 0;
+    color: #dc2626;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .btn-retry {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #ffffff;
+    background: #dc2626;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+
+  .empty-message {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9375rem;
+    font-weight: 500;
+
+    &::before {
+      content: '📭';
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+  }
+
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #ffffff;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 640px) {
+  .card-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .card-content {
+    padding: 1.25rem;
+  }
+
+  .address-item {
+    padding: 0.875rem;
+    gap: 0.875rem;
+  }
+
+  .address-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .address-label {
+    font-size: 0.875rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.375rem;
+  }
+
+  .badge-primary,
+  .badge-default {
+    font-size: 0.625rem;
+    padding: 0.1875rem 0.5rem;
   }
 }
