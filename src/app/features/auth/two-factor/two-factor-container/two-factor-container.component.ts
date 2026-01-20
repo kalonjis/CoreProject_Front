@@ -13,6 +13,7 @@ import {
 
 import { MethodSelectorComponent } from '../components/method-selector/method-selector.component';
 import { VerifyCodeComponent } from '../components/verify-code/verify-code.component';
+import {HttpErrorResponse} from '@angular/common/http';
 
 /**
  * TwoFactorContainerComponent - Smart component orchestrating 2FA login flow.
@@ -71,6 +72,9 @@ export class TwoFactorContainerComponent implements OnInit {
 
   /** Currently selected method */
   selectedMethod = signal<TwoFactorType | null>(null);
+
+  /** Alternative methods when delivery fails */
+  alternativeMethods = signal<TwoFactorType[]>([]);
 
   /** Masked destination (email/phone) for display */
   maskedDestination = signal<string | undefined>(undefined);
@@ -146,8 +150,8 @@ export class TwoFactorContainerComponent implements OnInit {
   private selectMethod(type: TwoFactorType): void {
     this.isLoading.set(true);
     this.error.set(null);
+    this.alternativeMethods.set([]);
     this.selectedMethod.set(type);
-
 
     this.authFacade.choose2FAMethod(type).subscribe({
       next: (response) => {
@@ -155,10 +159,29 @@ export class TwoFactorContainerComponent implements OnInit {
         this.maskedDestination.set(response.maskedDestination);
         this.flowState.set('verifying');
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.isLoading.set(false);
         console.error('Failed to select 2FA method:', err);
-        this.error.set(err.error?.message || 'Failed to initiate verification. Please try again.');
+
+        // Handle 503 - delivery failed
+        if (err.status === 503 && err.error?.deliveryFailed) {
+          const alternatives: TwoFactorType[] = err.error.alternativeMethods || [];
+          this.alternativeMethods.set(alternatives);
+
+          if (alternatives.length > 0) {
+            // Has alternatives - stay on selection screen
+            this.error.set(`Impossible d'envoyer le code par ${type}. Veuillez choisir une autre méthode.`);
+            this.selectedMethod.set(null);
+            this.flowState.set('selecting');
+          } else {
+            // No alternatives - show error state
+            this.error.set(`Impossible d'envoyer le code de vérification. Aucune méthode alternative disponible. Veuillez réessayer plus tard ou contacter le support.`);
+            this.flowState.set('error');
+          }
+        } else {
+          // Other errors
+          this.error.set(err.error?.message || 'Failed to initiate verification. Please try again.');
+        }
       }
     });
   }
