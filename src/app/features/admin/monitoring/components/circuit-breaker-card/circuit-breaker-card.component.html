@@ -1,0 +1,159 @@
+<!-- src/app/features/admin/system-health/components/circuit-breaker-card/circuit-breaker-card.component.html -->
+
+<div class="circuit-breaker-card">
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-title">
+      <span class="icon">⚡</span>
+      <h2>Circuit Breakers</h2>
+    </div>
+
+    <div class="header-summary" [class.all-closed]="allClosed()" [class.has-open]="hasOpenBreaker()">
+      @if (isLoading) {
+        <span class="loading-text">Loading...</span>
+      } @else {
+        <span class="count">{{ closedCount() }}/{{ totalCount() }}</span>
+        <span class="label">closed</span>
+      }
+    </div>
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content">
+    @if (circuitBreakers$().length === 0 && !isLoading) {
+      <div class="empty-state">
+        <span class="icon">⚡</span>
+        <p>No circuit breakers configured</p>
+      </div>
+    } @else {
+      <div class="breakers-list">
+        @for (cb of circuitBreakers$(); track trackByName($index, cb)) {
+          <div class="breaker-item" [class]="getStateClass(cb.state)">
+
+            <!-- Breaker Header -->
+            <div class="breaker-header">
+              <div class="breaker-identity">
+                <span class="breaker-icon">{{ getIcon(cb.name) }}</span>
+                <div class="breaker-name-container">
+                  <span class="breaker-name">{{ getDisplayName(cb.name) }}</span>
+                  <span class="breaker-id">{{ cb.name }}</span>
+                </div>
+              </div>
+
+              <div class="breaker-state">
+                <span class="state-indicator"></span>
+                <span class="state-label">{{ getStateLabel(cb.state) }}</span>
+              </div>
+            </div>
+
+            <!-- Breaker Metrics -->
+            <div class="breaker-metrics">
+              <div class="metric">
+                <span class="metric-value" [class.warning]="cb.failureRate > 25 && cb.failureRate >= 0">
+                  {{ formatFailureRate(cb.failureRate) }}
+                </span>
+                <span class="metric-label">Failure Rate</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-value">{{ cb.numberOfBufferedCalls }}</span>
+                <span class="metric-label">Buffered</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-value success">{{ cb.numberOfSuccessfulCalls }}</span>
+                <span class="metric-label">Success</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-value" [class.error]="cb.numberOfFailedCalls > 0">
+                  {{ cb.numberOfFailedCalls }}
+                </span>
+                <span class="metric-label">Failed</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-value" [class.warning]="cb.numberOfNotPermittedCalls > 0">
+                  {{ cb.numberOfNotPermittedCalls }}
+                </span>
+                <span class="metric-label">Rejected</span>
+              </div>
+            </div>
+
+            <!-- Breaker Actions -->
+            <div class="breaker-actions">
+              <button
+                class="btn-action btn-reset"
+                (click)="initiateAction(cb, 'reset')"
+                [disabled]="isActionInProgress(cb.name)"
+                title="Reset circuit breaker to initial state">
+                @if (isActionInProgress(cb.name)) {
+                  <span class="spinner-sm"></span>
+                } @else {
+                  <span class="icon">🔄</span>
+                }
+                <span class="label">Reset</span>
+              </button>
+
+              @if (cb.state !== 'OPEN' && cb.state !== 'FORCED_OPEN') {
+                <button
+                  class="btn-action btn-force-open"
+                  (click)="initiateAction(cb, 'forceOpen')"
+                  [disabled]="isActionInProgress(cb.name)"
+                  title="Force circuit breaker to OPEN state (block all requests)">
+                  <span class="icon">🚫</span>
+                  <span class="label">Force Open</span>
+                </button>
+              }
+
+              @if (cb.state === 'OPEN' || cb.state === 'FORCED_OPEN' || cb.state === 'HALF_OPEN') {
+                <button
+                  class="btn-action btn-force-close"
+                  (click)="initiateAction(cb, 'forceClose')"
+                  [disabled]="isActionInProgress(cb.name)"
+                  title="Force circuit breaker to CLOSED state (resume normal operation)">
+                  <span class="icon">✅</span>
+                  <span class="label">Force Close</span>
+                </button>
+              }
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Confirmation Modal -->
+  @if (pendingAction()) {
+    <div class="modal-overlay" (click)="cancelAction()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span class="modal-icon">⚠️</span>
+          <h3>Confirm Action</h3>
+        </div>
+
+        <div class="modal-body">
+          <p>
+            Are you sure you want to <strong>force open</strong> the circuit breaker
+            <strong>{{ getDisplayName(pendingAction()!.cb.name) }}</strong>?
+          </p>
+          <p class="warning-text">
+            This will block all requests to this service until manually closed or reset.
+          </p>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelAction()">
+            Cancel
+          </button>
+          <button class="btn-confirm" (click)="confirmAction()">
+            Yes, Force Open
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

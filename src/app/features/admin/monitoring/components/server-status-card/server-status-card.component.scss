@@ -1,0 +1,293 @@
+// src/app/features/admin/system-health/components/server-status-card/server-status-card.component.scss
+
+.server-status-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// ===========================================================================
+// CARD HEADER
+// ===========================================================================
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .icon {
+      font-size: 1.25rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a2e);
+    }
+  }
+
+  .header-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-bg-secondary, #f3f4f6);
+    border-radius: 20px;
+    font-size: 0.8125rem;
+
+    .count {
+      font-weight: 600;
+      color: var(--color-text-primary, #374151);
+    }
+
+    .label {
+      color: var(--color-text-secondary, #6b7280);
+    }
+
+    .loading-text {
+      color: var(--color-text-secondary, #6b7280);
+      font-style: italic;
+    }
+
+    &.all-healthy {
+      background: var(--color-success-light, #d1fae5);
+
+      .count {
+        color: var(--color-success-dark, #065f46);
+      }
+    }
+
+    &.has-down {
+      background: var(--color-error-light, #fee2e2);
+
+      .count {
+        color: var(--color-error-dark, #991b1b);
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// CARD CONTENT
+// ===========================================================================
+
+.card-content {
+  flex: 1;
+  padding: 1.25rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-text-secondary, #6b7280);
+
+  .icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+}
+
+// ===========================================================================
+// SERVICES GRID
+// ===========================================================================
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.service-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-bg-secondary, #f9fafb);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--color-bg-hover, #f3f4f6);
+  }
+
+  // Status-based border colors
+  &.status-up {
+    border-left-color: var(--color-success, #10b981);
+  }
+
+  &.status-down {
+    border-left-color: var(--color-error, #ef4444);
+    background: var(--color-error-light, #fef2f2);
+  }
+
+  &.status-warning {
+    border-left-color: var(--color-warning, #f59e0b);
+    background: var(--color-warning-light, #fffbeb);
+  }
+
+  &.status-recovering {
+    border-left-color: var(--color-info, #3b82f6);
+    background: var(--color-info-light, #eff6ff);
+  }
+
+  &.status-unknown {
+    border-left-color: var(--color-text-secondary, #9ca3af);
+  }
+}
+
+.service-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-bg-primary, #ffffff);
+  border-radius: 8px;
+  font-size: 1.25rem;
+}
+
+.service-info {
+  flex: 1;
+  min-width: 0;
+
+  .service-name {
+    display: block;
+    font-weight: 500;
+    color: var(--color-text-primary, #374151);
+    font-size: 0.9rem;
+  }
+
+  .service-message {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #6b7280);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.service-status {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-secondary, #9ca3af);
+  }
+
+  .status-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-secondary, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+}
+
+// Status indicator colors
+.status-up .status-indicator {
+  background: var(--color-success, #10b981);
+  box-shadow: 0 0 0 2px var(--color-success-light, #d1fae5);
+}
+
+.status-down .status-indicator {
+  background: var(--color-error, #ef4444);
+  box-shadow: 0 0 0 2px var(--color-error-light, #fee2e2);
+  animation: pulse-error 2s infinite;
+}
+
+.status-warning .status-indicator {
+  background: var(--color-warning, #f59e0b);
+  box-shadow: 0 0 0 2px var(--color-warning-light, #fef3c7);
+}
+
+.status-recovering .status-indicator {
+  background: var(--color-info, #3b82f6);
+  box-shadow: 0 0 0 2px var(--color-info-light, #dbeafe);
+  animation: pulse-info 2s infinite;
+}
+
+// ===========================================================================
+// CARD FOOTER
+// ===========================================================================
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  background: var(--color-bg-secondary, #f9fafb);
+}
+
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #6b7280);
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+
+      &.status-up {
+        background: var(--color-success, #10b981);
+      }
+
+      &.status-warning {
+        background: var(--color-warning, #f59e0b);
+      }
+
+      &.status-down {
+        background: var(--color-error, #ef4444);
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes pulse-error {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-info {
+  0%, 100% {
+    box-shadow: 0 0 0 2px var(--color-info-light, #dbeafe);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-info-light, #dbeafe);
+  }
+}

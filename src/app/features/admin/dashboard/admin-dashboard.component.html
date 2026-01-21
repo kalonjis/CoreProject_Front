@@ -1,3 +1,5 @@
+<!-- src/app/features/admin/dashboard/admin-dashboard.component.html -->
+
 <div class="admin-dashboard">
   <!-- Header -->
   <div class="dashboard-header">
@@ -5,20 +7,31 @@
       <h1>Admin Dashboard</h1>
       <p class="header-subtitle">Manage your application from here</p>
     </div>
+
+    @if (isSuperAdmin()) {
+      <div class="super-admin-badge">
+        <span class="badge-icon">👑</span>
+        <span class="badge-text">Super Admin</span>
+      </div>
+    }
   </div>
 
   <!-- Module Cards Grid -->
   <div class="modules-grid">
-    @for (module of modules; track module.id) {
+    @for (module of modules(); track module.id) {
       <app-module-card [config]="module"></app-module-card>
     }
   </div>
 
-  <!-- Info Banner (optional) -->
+  <!-- Info Banner -->
   <div class="info-banner">
     <span class="info-icon">💡</span>
     <span class="info-text">
-      More modules coming soon. Stay tuned for updates!
+      @if (isSuperAdmin()) {
+        You have full access to all admin modules.
+      } @else {
+        More modules coming soon. Contact a Super Admin for extended access.
+      }
     </span>
   </div>
 </div>

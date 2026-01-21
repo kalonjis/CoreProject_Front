@@ -1,0 +1,314 @@
+// src/app/features/admin/system-health/components/health-metrics-card/health-metrics-card.component.scss
+
+.health-metrics-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// ===========================================================================
+// CARD HEADER
+// ===========================================================================
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .icon {
+      font-size: 1.25rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a2e);
+    }
+  }
+
+  .header-uptime {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-bg-secondary, #f3f4f6);
+    border-radius: 20px;
+    font-size: 0.8125rem;
+
+    .uptime-icon {
+      font-size: 0.875rem;
+    }
+
+    .uptime-label {
+      color: var(--color-text-secondary, #6b7280);
+    }
+
+    .uptime-value {
+      font-weight: 600;
+      color: var(--color-text-primary, #374151);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+// ===========================================================================
+// CARD CONTENT
+// ===========================================================================
+
+.card-content {
+  flex: 1;
+  padding: 1.25rem;
+  overflow-y: auto;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-text-secondary, #6b7280);
+
+  .icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .skeleton-metric {
+    height: 80px;
+    background: linear-gradient(
+        90deg,
+        var(--color-bg-secondary, #f3f4f6) 25%,
+        var(--color-bg-hover, #e5e7eb) 50%,
+        var(--color-bg-secondary, #f3f4f6) 75%
+    );
+    background-size: 200% 100%;
+    border-radius: 8px;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+// ===========================================================================
+// METRICS GRID
+// ===========================================================================
+
+.metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.metric-item {
+  padding: 1rem;
+  background: var(--color-bg-secondary, #f9fafb);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--color-bg-hover, #f3f4f6);
+  }
+}
+
+// ===========================================================================
+// METRIC HEADER
+// ===========================================================================
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.625rem;
+}
+
+.metric-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .metric-icon {
+    font-size: 1.125rem;
+  }
+
+  .metric-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #374151);
+  }
+}
+
+.metric-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+
+  &.usage-healthy {
+    color: var(--color-success, #10b981);
+  }
+
+  &.usage-warning {
+    color: var(--color-warning, #f59e0b);
+  }
+
+  &.usage-critical {
+    color: var(--color-error, #ef4444);
+  }
+}
+
+// ===========================================================================
+// PROGRESS BAR
+// ===========================================================================
+
+.progress-bar {
+  height: 8px;
+  background: var(--color-bg-primary, #ffffff);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease, background-color 0.3s ease;
+
+    &.usage-healthy {
+      background: linear-gradient(90deg, var(--color-success, #10b981), #34d399);
+    }
+
+    &.usage-warning {
+      background: linear-gradient(90deg, var(--color-warning, #f59e0b), #fbbf24);
+    }
+
+    &.usage-critical {
+      background: linear-gradient(90deg, var(--color-error, #ef4444), #f87171);
+      animation: pulse-bar 2s infinite;
+    }
+  }
+
+  &.inverted {
+    .progress-fill {
+      // For disk space, fill represents used space
+      // so we keep the same logic but display is inverted
+    }
+  }
+}
+
+// ===========================================================================
+// METRIC DETAIL
+// ===========================================================================
+
+.metric-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #6b7280);
+
+  .separator {
+    margin: 0 0.125rem;
+    color: var(--color-border, #d1d5db);
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .detail-label {
+      color: var(--color-text-secondary, #9ca3af);
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: var(--color-text-primary, #6b7280);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &.pool-detail {
+    justify-content: space-between;
+  }
+}
+
+// ===========================================================================
+// CARD FOOTER
+// ===========================================================================
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  background: var(--color-bg-secondary, #f9fafb);
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    color: var(--color-text-secondary, #6b7280);
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+
+      &.healthy {
+        background: var(--color-success, #10b981);
+      }
+
+      &.warning {
+        background: var(--color-warning, #f59e0b);
+      }
+
+      &.critical {
+        background: var(--color-error, #ef4444);
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-bar {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

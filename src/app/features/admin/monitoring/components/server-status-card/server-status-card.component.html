@@ -1,0 +1,77 @@
+<!-- src/app/features/admin/system-health/components/server-status-card/server-status-card.component.html -->
+
+<div class="server-status-card">
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-title">
+      <span class="icon">🌐</span>
+      <h2>Services Status</h2>
+    </div>
+
+    <div class="header-summary" [class.all-healthy]="allHealthy()" [class.has-down]="hasDownService()">
+      @if (isLoading) {
+        <span class="loading-text">Checking...</span>
+      } @else {
+        <span class="count">{{ healthyCount() }}/{{ totalCount() }}</span>
+        <span class="label">services healthy</span>
+      }
+    </div>
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content">
+    @if (statuses$().length === 0 && !isLoading) {
+      <div class="empty-state">
+        <span class="icon">📡</span>
+        <p>No services to monitor</p>
+      </div>
+    } @else {
+      <div class="services-grid">
+        @for (service of statuses$(); track trackByStatus($index, service)) {
+          <div class="service-item" [class]="getStatusClass(service.status)">
+            <!-- Service Icon -->
+            <div class="service-icon">
+              <span>{{ service.icon }}</span>
+            </div>
+
+            <!-- Service Info -->
+            <div class="service-info">
+              <span class="service-name">{{ service.name }}</span>
+              @if (service.message) {
+                <span class="service-message">{{ service.message }}</span>
+              }
+            </div>
+
+            <!-- Status Badge -->
+            <div class="service-status">
+              <span class="status-indicator"></span>
+              <span class="status-label">{{ getStatusLabel(service.status) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Card Footer -->
+  @if (statuses$().length > 0) {
+    <div class="card-footer">
+      <div class="legend">
+        <div class="legend-item">
+          <span class="dot status-up"></span>
+          <span>Online</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot status-warning"></span>
+          <span>Degraded</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot status-down"></span>
+          <span>Offline</span>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
