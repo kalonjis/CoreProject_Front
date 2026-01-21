@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from '../../core/auth/guards/admin.guard';
+import {superAdminGuard} from '../../core/auth/guards';
 
 /**
  * Admin module routes configuration.
@@ -88,6 +89,16 @@ export const ADMIN_ROUTES: Routes = [
       //     .then(m => m.DeviceDetailComponent)
       // }
     ]
+  },
+
+  // ===========================================================================
+  // SYSTEM HEALTH MODULE (SUPER_ADMIN ONLY)
+  // ===========================================================================
+  {
+    path: 'system-health',
+    canActivate: [() => superAdminGuard()],
+    loadComponent: () => import('./monitoring/system-health-container/system-health-container.component')
+      .then(m => m.SystemHealthContainerComponent)
   },
 
   // =========================================================================

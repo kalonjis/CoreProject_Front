@@ -1,0 +1,184 @@
+<!-- src/app/features/admin/system-health/components/health-metrics-card/health-metrics-card.component.html -->
+
+<div class="health-metrics-card">
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-title">
+      <span class="icon">📊</span>
+      <h2>Health Metrics</h2>
+    </div>
+
+    @if (hasMetrics()) {
+      <div class="header-uptime">
+        <span class="uptime-icon">⏱️</span>
+        <span class="uptime-label">Uptime:</span>
+        <span class="uptime-value">{{ formatUptime(metrics$()!.uptime) }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content">
+    @if (!hasMetrics() && !isLoading) {
+      <div class="empty-state">
+        <span class="icon">📊</span>
+        <p>No metrics available</p>
+      </div>
+    } @else if (isLoading && !hasMetrics()) {
+      <div class="loading-state">
+        <div class="skeleton-metric"></div>
+        <div class="skeleton-metric"></div>
+        <div class="skeleton-metric"></div>
+        <div class="skeleton-metric"></div>
+      </div>
+    } @else {
+      <div class="metrics-grid">
+
+        <!-- JVM Heap Memory -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <div class="metric-title">
+              <span class="metric-icon">🧠</span>
+              <span class="metric-name">JVM Heap Memory</span>
+            </div>
+            <span class="metric-value" [class]="getUsageClass(metrics$()!.jvm.heapUsedPercent)">
+              {{ formatPercent(metrics$()!.jvm.heapUsedPercent) }}
+            </span>
+          </div>
+
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [class]="getUsageClass(metrics$()!.jvm.heapUsedPercent)"
+              [style.width.%]="metrics$()!.jvm.heapUsedPercent">
+            </div>
+          </div>
+
+          <div class="metric-detail">
+            <span>{{ formatBytes(metrics$()!.jvm.heapUsed) }}</span>
+            <span class="separator">/</span>
+            <span>{{ formatBytes(metrics$()!.jvm.heapMax) }}</span>
+          </div>
+        </div>
+
+        <!-- CPU Usage -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <div class="metric-title">
+              <span class="metric-icon">⚙️</span>
+              <span class="metric-name">CPU Usage</span>
+            </div>
+            <span class="metric-value" [class]="getUsageClass(metrics$()!.cpu.processUsage)">
+              {{ formatPercent(metrics$()!.cpu.processUsage) }}
+            </span>
+          </div>
+
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [class]="getUsageClass(metrics$()!.cpu.processUsage)"
+              [style.width.%]="metrics$()!.cpu.processUsage">
+            </div>
+          </div>
+
+          <div class="metric-detail">
+            <span class="detail-item">
+              <span class="detail-label">Process:</span>
+              <span class="detail-value">{{ formatPercent(metrics$()!.cpu.processUsage) }}</span>
+            </span>
+            <span class="detail-item">
+              <span class="detail-label">System:</span>
+              <span class="detail-value">{{ formatPercent(metrics$()!.cpu.systemUsage) }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Disk Space -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <div class="metric-title">
+              <span class="metric-icon">💾</span>
+              <span class="metric-name">Disk Space</span>
+            </div>
+            <span class="metric-value" [class]="getUsageClass(metrics$()!.disk.freePercent, true)">
+              {{ formatPercent(metrics$()!.disk.freePercent) }} free
+            </span>
+          </div>
+
+          <div class="progress-bar inverted">
+            <div
+              class="progress-fill"
+              [class]="getUsageClass(metrics$()!.disk.freePercent, true)"
+              [style.width.%]="100 - metrics$()!.disk.freePercent">
+            </div>
+          </div>
+
+          <div class="metric-detail">
+            <span>{{ formatBytes(metrics$()!.disk.free) }} free</span>
+            <span class="separator">/</span>
+            <span>{{ formatBytes(metrics$()!.disk.total) }} total</span>
+          </div>
+        </div>
+
+        <!-- Database Pool -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <div class="metric-title">
+              <span class="metric-icon">🗄️</span>
+              <span class="metric-name">DB Connection Pool</span>
+            </div>
+            <span
+              class="metric-value"
+              [class]="getPoolUsageClass(metrics$()!.dbPool.active, metrics$()!.dbPool.max)">
+              {{ metrics$()!.dbPool.active }}/{{ metrics$()!.dbPool.max }}
+            </span>
+          </div>
+
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [class]="getPoolUsageClass(metrics$()!.dbPool.active, metrics$()!.dbPool.max)"
+              [style.width.%]="getPoolUsagePercent(metrics$()!.dbPool.active, metrics$()!.dbPool.max)">
+            </div>
+          </div>
+
+          <div class="metric-detail pool-detail">
+            <span class="detail-item">
+              <span class="detail-label">Active:</span>
+              <span class="detail-value">{{ metrics$()!.dbPool.active }}</span>
+            </span>
+            <span class="detail-item">
+              <span class="detail-label">Idle:</span>
+              <span class="detail-value">{{ metrics$()!.dbPool.idle }}</span>
+            </span>
+            <span class="detail-item">
+              <span class="detail-label">Max:</span>
+              <span class="detail-value">{{ metrics$()!.dbPool.max }}</span>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    }
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <div class="legend">
+      <div class="legend-item">
+        <span class="dot healthy"></span>
+        <span>Healthy (&lt;70%)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot warning"></span>
+        <span>Warning (70-90%)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot critical"></span>
+        <span>Critical (&gt;90%)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
