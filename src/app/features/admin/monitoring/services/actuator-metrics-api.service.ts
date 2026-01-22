@@ -25,7 +25,7 @@ export class ActuatorMetricsApiService {
   private readonly http = inject(HttpClient);
 
   /** Base URL for actuator endpoints */
-  private readonly actuatorUrl = `/actuator`;
+  private readonly actuatorUrl = `/api/monitoring`;
 
   // ===========================================================================
   // API CALLS

@@ -24,7 +24,7 @@ export class CircuitBreakerApiService {
   private readonly http = inject(HttpClient);
 
   /** Base URL for circuit breaker admin endpoints */
-  private readonly baseUrl = `api/admin/circuit-breaker`;
+  private readonly baseUrl = `/api/monitoring/circuit-breaker`;
 
   // ===========================================================================
   // STATUS ENDPOINTS
