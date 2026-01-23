@@ -1,20 +1,20 @@
-// src/app/features/admin/system-health/services/circuit-breaker-api.service.ts
+// src/app/features/admin/monitoring/services/circuit-breaker-api.service.ts
 
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import {HttpClient} from '@angular/common/http';
-import {CircuitBreakerActionResponse, CircuitBreakerStatus, CircuitBreakerStatusResponse} from '../models';
-
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { CircuitBreakerStatus } from '../models';
 
 /**
- * API service for Circuit Breaker admin operations.
+ * API service for Circuit Breaker monitoring operations.
  *
  * Provides access to:
  * - Circuit breaker status monitoring
  * - Manual circuit breaker control (reset, force open, force close)
  *
- * All endpoints require ADMIN or SUPER_ADMIN authority.
- * Used by the Circuit Breaker card in System Health dashboard.
+ * Uses:
+ * - /api/monitoring/circuit-breakers for read operations
+ * - /api/admin/circuit-breaker for admin actions (reset, open, close)
  */
 @Injectable({
   providedIn: 'root'
@@ -23,107 +23,83 @@ export class CircuitBreakerApiService {
 
   private readonly http = inject(HttpClient);
 
-  /** Base URL for circuit breaker admin endpoints */
-  private readonly baseUrl = `/api/monitoring/circuit-breaker`;
+  /** Monitoring endpoint (read-only) */
+  private readonly monitoringUrl = `/api/monitoring/circuit-breakers`;
+
+  /** Admin endpoint (actions) */
+  private readonly adminUrl = `/api/admin/circuit-breaker`;
 
   // ===========================================================================
-  // STATUS ENDPOINTS
+  // STATUS ENDPOINTS (via MonitoringController)
   // ===========================================================================
 
   /**
    * Retrieves status of all circuit breakers.
-   * GET /api/admin/circuit-breaker/status
+   * GET /api/monitoring/circuit-breakers
    *
    * @returns Observable with array of CircuitBreakerStatus
    */
   getAll(): Observable<CircuitBreakerStatus[]> {
-    return this.http.get<CircuitBreakerStatusResponse>(`${this.baseUrl}/status`).pipe(
-      map(response => this.mapResponse(response))
-    );
+    return this.http.get<CircuitBreakerStatus[]>(this.monitoringUrl);
   }
 
   /**
    * Retrieves status of a specific circuit breaker.
-   * GET /api/admin/circuit-breaker/{name}/status
+   * GET /api/monitoring/circuit-breakers/{name}
    *
    * @param name Circuit breaker name (e.g., 'smtpBackend', 'twilioBackend')
    * @returns Observable with CircuitBreakerStatus
    */
   getByName(name: string): Observable<CircuitBreakerStatus> {
-    return this.http.get<CircuitBreakerStatus>(`${this.baseUrl}/${name}/status`);
+    return this.http.get<CircuitBreakerStatus>(`${this.monitoringUrl}/${name}`);
   }
 
   // ===========================================================================
-  // ACTION ENDPOINTS
+  // ACTION ENDPOINTS (via CircuitBreakerAdminController)
   // ===========================================================================
 
   /**
    * Resets a circuit breaker to CLOSED state.
-   * Clears all metrics and returns to normal operation.
    * POST /api/admin/circuit-breaker/{name}/reset
-   *
-   * @param name Circuit breaker name
-   * @returns Observable with action response
    */
   reset(name: string): Observable<CircuitBreakerActionResponse> {
     return this.http.post<CircuitBreakerActionResponse>(
-      `${this.baseUrl}/${name}/reset`,
+      `${this.adminUrl}/${name}/reset`,
       {}
     );
   }
 
   /**
    * Forces a circuit breaker to OPEN state.
-   * All calls will be rejected until manually closed or reset.
-   * Use for maintenance or testing.
    * POST /api/admin/circuit-breaker/{name}/open
-   *
-   * @param name Circuit breaker name
-   * @returns Observable with action response
    */
   forceOpen(name: string): Observable<CircuitBreakerActionResponse> {
     return this.http.post<CircuitBreakerActionResponse>(
-      `${this.baseUrl}/${name}/open`,
+      `${this.adminUrl}/${name}/open`,
       {}
     );
   }
 
   /**
    * Forces a circuit breaker to CLOSED state.
-   * Resumes normal operation immediately.
    * POST /api/admin/circuit-breaker/{name}/close
-   *
-   * @param name Circuit breaker name
-   * @returns Observable with action response
    */
   forceClose(name: string): Observable<CircuitBreakerActionResponse> {
     return this.http.post<CircuitBreakerActionResponse>(
-      `${this.baseUrl}/${name}/close`,
+      `${this.adminUrl}/${name}/close`,
       {}
     );
   }
+}
 
-  // ===========================================================================
-  // PRIVATE HELPERS
-  // ===========================================================================
+// ===========================================================================
+// RESPONSE INTERFACES
+// ===========================================================================
 
-  /**
-   * Maps the raw API response to an array of CircuitBreakerStatus.
-   *
-   * @param response Raw response from API (Record<name, status>)
-   * @returns Array of CircuitBreakerStatus with name included
-   */
-  private mapResponse(response: CircuitBreakerStatusResponse): CircuitBreakerStatus[] {
-    return Object.entries(response).map(([name, status]) => ({
-      name,
-      state: status.state,
-      failureRate: status.failureRate,
-      slowCallRate: status.slowCallRate,
-      numberOfBufferedCalls: status.numberOfBufferedCalls,
-      numberOfFailedCalls: status.numberOfFailedCalls,
-      numberOfSuccessfulCalls: status.numberOfSuccessfulCalls,
-      numberOfSlowCalls: status.numberOfSlowCalls,
-      numberOfNotPermittedCalls: status.numberOfNotPermittedCalls
-    }));
-  }
+/**
+ * Response from circuit breaker action endpoints.
+ */
+interface CircuitBreakerActionResponse {
+  message: string;
+  newState: string;
 }
