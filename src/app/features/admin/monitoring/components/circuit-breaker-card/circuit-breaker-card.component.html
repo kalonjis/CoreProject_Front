@@ -57,25 +57,25 @@
               </div>
 
               <div class="metric">
-                <span class="metric-value">{{ cb.numberOfBufferedCalls }}</span>
+                <span class="metric-value">{{ cb.bufferedCalls }}</span>
                 <span class="metric-label">Buffered</span>
               </div>
 
               <div class="metric">
-                <span class="metric-value success">{{ cb.numberOfSuccessfulCalls }}</span>
+                <span class="metric-value success">{{ cb.successfulCalls }}</span>
                 <span class="metric-label">Success</span>
               </div>
 
               <div class="metric">
-                <span class="metric-value" [class.error]="cb.numberOfFailedCalls > 0">
-                  {{ cb.numberOfFailedCalls }}
+                <span class="metric-value" [class.error]="cb.failedCalls > 0">
+                  {{ cb.failedCalls }}
                 </span>
                 <span class="metric-label">Failed</span>
               </div>
 
               <div class="metric">
-                <span class="metric-value" [class.warning]="cb.numberOfNotPermittedCalls > 0">
-                  {{ cb.numberOfNotPermittedCalls }}
+                <span class="metric-value" [class.warning]="cb.notPermittedCalls > 0">
+                  {{ cb.notPermittedCalls }}
                 </span>
                 <span class="metric-label">Rejected</span>
               </div>
