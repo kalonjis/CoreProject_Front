@@ -228,6 +228,44 @@ export class TwoFactorApiService {
   }
 
   // ===========================================================================
+  // SETTINGS - SMS SETUP (authenticated) - Two-step activation flow
+  // ===========================================================================
+
+  /**
+   * Initiate SMS 2FA setup process.
+   *
+   * Step 1 of 2: Generates a verification code and sends it to user's phone.
+   * The activation token is stored in an HttpOnly cookie by the backend.
+   *
+   * Prerequisites:
+   * - User must have a verified phone number
+   *
+   * @returns Observable with initiation success response
+   */
+  initiateSmsSetup(): Observable<TwoFactorOperationResponse> {
+    return this.http.post<TwoFactorOperationResponse>(
+      `${this.baseUrl}/2fa/sms/setup/initiate`,
+      {}
+    );
+  }
+
+  /**
+   * Verify code and activate SMS 2FA.
+   *
+   * Step 2 of 2: Validates the code against the hashed value in the activation token.
+   * On success, SMS 2FA is enabled and the activation cookie is cleared.
+   *
+   * @param code - The 6-digit verification code from SMS
+   * @returns Observable with enabled success response
+   */
+  verifySmsSetup(code: string): Observable<TwoFactorOperationResponse> {
+    return this.http.post<TwoFactorOperationResponse>(
+      `${this.baseUrl}/2fa/sms/setup/verify`,
+      { verificationCode: code }
+    );
+  }
+
+  // ===========================================================================
   // SETTINGS - BACKUP CODES (authenticated)
   // ===========================================================================
 
