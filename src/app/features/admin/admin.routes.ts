@@ -33,7 +33,7 @@ export const ADMIN_ROUTES: Routes = [
   // =========================================================================
   {
     path: 'users',
-    canActivate: [adminGuard],
+    canActivate: [() => adminGuard()],
     children: [
       // Users container (landing page)
       {
@@ -67,7 +67,7 @@ export const ADMIN_ROUTES: Routes = [
   // =========================================================================
   {
     path: 'devices',
-    canActivate: [adminGuard],
+    canActivate: [() => adminGuard()],
     children: [
       // Devices container (landing page)
       {
