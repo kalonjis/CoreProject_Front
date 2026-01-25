@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import {AuthFacade} from '../../core/auth';
 import {DeviceFacade} from '../../core/device';
+import {FeedbackService} from '../feedback/tools/feedback.service';
 
 @Component({
   selector: 'app-device-alert-banner',
@@ -17,6 +18,7 @@ export class DeviceAlertBannerComponent implements OnInit {
   private authFacade = inject(AuthFacade);
   private deviceFacade = inject(DeviceFacade);
   private destroyRef = inject(DestroyRef);
+  private feedbackService = inject(FeedbackService);
 
   // État local
   private bannerDismissed = signal(false);
@@ -72,14 +74,18 @@ export class DeviceAlertBannerComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          // Notification de succès (pourrait utiliser un service de feedback global)
-          alert('Un nouveau lien de confirmation a été envoyé à votre adresse email.');
+          this.feedbackService.showSuccess(
+            'Un nouveau lien de confirmation a été envoyé à votre adresse email',
+            undefined,
+            5000
+          );
           this.isRequestingLink.set(false);
         },
         error: (error: HttpErrorResponse) => {
-          // Gestion des erreurs
           console.error('Erreur lors de la demande de nouveau lien', error);
-          alert('Une erreur est survenue lors de la demande du lien de confirmation. Veuillez réessayer plus tard.');
+          this.feedbackService.showError(
+            'Une erreur est survenue lors de la demande du lien de confirmation'
+          );
           this.isRequestingLink.set(false);
         }
       });
