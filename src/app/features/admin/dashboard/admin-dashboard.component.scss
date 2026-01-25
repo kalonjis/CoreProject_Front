@@ -1,4 +1,18 @@
-// Ajouter dans admin-dashboard.component.scss
+// src/app/features/admin/dashboard/admin-dashboard.component.scss
+
+// ============================================================================
+// ADMIN DASHBOARD - MAIN CONTAINER
+// ============================================================================
+
+.admin-dashboard {
+  padding: 2rem;
+  min-height: calc(100vh - 80px); // Ajuster selon la hauteur du header
+  background-color: #f5f7fa;
+}
+
+// ============================================================================
+// DASHBOARD HEADER
+// ============================================================================
 
 .dashboard-header {
   display: flex;
@@ -6,9 +20,27 @@
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 1rem;
-
-  // ... existing styles ...
+  margin-bottom: 2rem;
 }
+
+.header-content {
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+  }
+}
+
+.header-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+// ============================================================================
+// SUPER ADMIN BADGE
+// ============================================================================
 
 .super-admin-badge {
   display: flex;
@@ -29,5 +61,89 @@
   .badge-text {
     text-transform: uppercase;
     letter-spacing: 0.025em;
+  }
+}
+
+// ============================================================================
+// MODULES GRID - THE KEY FIX!
+// ============================================================================
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+// ============================================================================
+// INFO BANNER
+// ============================================================================
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 1px solid #7dd3fc;
+  border-radius: 12px;
+  color: #0369a1;
+
+  .info-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .info-text {
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+}
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-content {
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .modules-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard {
+    padding: 0.75rem;
+  }
+
+  .header-content {
+    h1 {
+      font-size: 1.25rem;
+    }
+  }
+
+  .header-subtitle {
+    font-size: 0.875rem;
   }
 }

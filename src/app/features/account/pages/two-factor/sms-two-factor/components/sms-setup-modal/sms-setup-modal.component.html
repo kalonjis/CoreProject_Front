@@ -1,0 +1,52 @@
+<!-- src/app/features/account/pages/two-factor/sms-two-factor/components/sms-setup-modal/sms-setup-modal.component.html -->
+
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="onModalClick($event)">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">Verify Your Phone Number</h3>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content">
+      <p class="modal-description">
+        We've sent a 6-digit verification code to your phone
+        @if (maskedPhone) {
+          <strong>{{ maskedPhone }}</strong>
+        }
+      </p>
+
+      <!-- Resend success message -->
+      @if (resendSuccess()) {
+        <div class="resend-success">
+          ✓ A new code has been sent to your phone
+        </div>
+      }
+
+      <!-- Verify Code Component (shared, supports SMS type) -->
+      <app-verify-code
+        [type]="'SMS'"
+        [maskedDestination]="maskedPhone"
+        [isSubmitting]="isSubmitting() || isResending()"
+        [error]="error()"
+        (codeSubmitted)="onCodeSubmitted($event)"
+        (resendRequested)="onResendRequested()">
+      </app-verify-code>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>

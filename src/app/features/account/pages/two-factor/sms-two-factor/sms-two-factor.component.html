@@ -1,0 +1,116 @@
+<!-- src/app/features/account/pages/two-factor/sms-two-factor/sms-two-factor.component.html -->
+
+<div class="sms-two-factor">
+
+  <!-- Header with back button -->
+  <header class="page-header">
+    <button class="back-button" (click)="goBack()" aria-label="Go back">
+      ← Back
+    </button>
+    <h1 class="page-title">SMS Authentication</h1>
+  </header>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading SMS authentication status...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>{{ errorMessage() }}</p>
+      <button class="btn-primary" (click)="retryLoading()">
+        Retry
+      </button>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !errorMessage()) {
+    <div class="content">
+
+      <!-- Method Card -->
+      <div class="method-card">
+        <div class="method-icon">📱</div>
+        <div class="method-info">
+          <h2 class="method-title">SMS Verification</h2>
+          <p class="method-description">
+            Receive a verification code via SMS to your phone number when signing in.
+          </p>
+
+          <!-- Status Badge -->
+          <div class="status-badge" [class.enabled]="smsMethod()?.isEnabled">
+            @if (smsMethod()?.isEnabled) {
+              <span class="status-dot"></span>
+              Enabled
+            } @else {
+              <span class="status-dot"></span>
+              Disabled
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Number Info -->
+      @if (hasVerifiedPhone()) {
+        <div class="info-card">
+          <span class="info-icon">ℹ️</span>
+          <p>
+            SMS codes will be sent to <strong>{{ getMaskedPhone() }}</strong>
+          </p>
+        </div>
+      } @else {
+        <div class="warning-card">
+          <span class="warning-icon">⚠️</span>
+          <p>
+            You need to verify your phone number before enabling SMS authentication.
+            <a routerLink="/account/profile">Go to Profile</a> to add and verify your phone number.
+          </p>
+        </div>
+      }
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        @if (smsMethod()?.isEnabled) {
+          <button
+            class="btn-danger"
+            (click)="disableSms()">
+            Disable SMS Authentication
+          </button>
+        } @else {
+          <button
+            class="btn-primary"
+            [disabled]="!hasVerifiedPhone()"
+            (click)="enableSms()">
+            Enable SMS Authentication
+          </button>
+        }
+      </div>
+
+      <!-- Additional Info -->
+      <div class="help-section">
+        <h3>How it works</h3>
+        <ol class="help-list">
+          <li>When you sign in, we'll send a 6-digit code to your phone</li>
+          <li>Enter the code to complete your sign-in</li>
+          <li>Codes expire after a few minutes for security</li>
+        </ol>
+      </div>
+
+    </div>
+  }
+
+  <!-- Setup Modal -->
+  @if (showSetupModal()) {
+    <app-sms-setup-modal
+      [maskedPhone]="getMaskedPhone()"
+      (setupComplete)="onSetupComplete()"
+      (cancel)="onSetupCancel()">
+    </app-sms-setup-modal>
+  }
+
+</div>
