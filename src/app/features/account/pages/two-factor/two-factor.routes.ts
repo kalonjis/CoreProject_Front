@@ -1,6 +1,7 @@
 // src/app/features/account/pages/two-factor/two-factor.recovery.routes.ts
 
 import { Routes } from '@angular/router';
+import {SmsTwoFactorComponent} from './sms-two-factor/sms-two-factor.component';
 
 export const TWO_FACTOR_ROUTES: Routes = [
   {
@@ -12,6 +13,10 @@ export const TWO_FACTOR_ROUTES: Routes = [
     path: 'email',
     loadComponent: () => import('./email-two-factor/email-two-factor.component')
       .then(m => m.EmailTwoFactorComponent)
+  },
+  { path: 'sms',
+    loadComponent: () => import('./sms-two-factor/sms-two-factor.component')
+    .then(m => m.SmsTwoFactorComponent)
   },
   {
     path: 'totp',
