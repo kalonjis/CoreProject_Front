@@ -53,14 +53,6 @@ export class ActuatorHealthApiService {
     const statuses: ServerStatus[] = [];
     const now = new Date();
 
-    // Application status
-    statuses.push({
-      id: 'app',
-      name: 'Application',
-      status: health.status,
-      icon: '🚀',
-      lastChecked: now
-    });
 
     // Database
     if (health.components?.db) {
