@@ -101,6 +101,19 @@
     }
   }
 
+
+
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+
+    .section-header {
+      margin-bottom: 1rem;
+    }
+  }
+
   @keyframes slideIn {
     from {
       transform: translateY(-10px);

@@ -10,11 +10,13 @@ import {HttpUtilService} from '../../../../core/http/http-util.service';
 import {DeviceFacade} from '../../../../core/device';
 import {AuthFacade} from '../../../../core/auth';
 import {AddressSummaryCardComponent} from '../../components/address-summary-card/address-summary-card.component';
+import {AvatarUploadComponent} from './components/avatar-upload/avatar-upload.component';
+import {AvatarResponse, FileUploadResponse} from '../../../../core/storage';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent],
+  imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent, AvatarUploadComponent ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -385,4 +387,21 @@ export class ProfileComponent implements OnInit {
     this.codeArray.set(['', '', '', '', '', '']);
   }
 
+  // ===========================================================================
+  // AVATAR
+  // ===========================================================================
+
+  /**
+   * Handles successful avatar upload.
+   * Updates local userInfo with new avatar URL.
+   */
+  onAvatarUploaded(response: AvatarResponse): void {
+    const current = this.userInfo();
+    if (current) {
+      this.userInfo.set({
+        ...current,
+        avatarUrl: response.avatarUrl
+      });
+    }
+  }
 }

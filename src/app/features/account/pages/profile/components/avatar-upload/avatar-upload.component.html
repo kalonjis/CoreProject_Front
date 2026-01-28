@@ -1,0 +1,50 @@
+<!-- src/app/features/account/pages/profile/components/avatar-upload/avatar-upload.component.html -->
+
+<div class="avatar-upload">
+
+  <!-- Current Avatar Display -->
+  <div class="avatar-preview">
+    @if (previewUrl()) {
+      <!-- Preview of selected file -->
+      <img [src]="previewUrl()" alt="Avatar preview" class="avatar-image preview" />
+    } @else if (currentAvatarUrl()) {
+      <!-- Current avatar -->
+      <img [src]="currentAvatarUrl()" alt="Current avatar" class="avatar-image" />
+    } @else {
+      <!-- Placeholder -->
+      <div class="avatar-placeholder">
+        <span class="placeholder-icon">👤</span>
+      </div>
+    }
+
+    <!-- Upload overlay -->
+    <button
+      type="button"
+      class="upload-overlay"
+      [class.uploading]="isUploading()"
+      [disabled]="isUploading()"
+      (click)="openFileExplorer(fileInput)">
+      @if (isUploading()) {
+        <span class="spinner"></span>
+        <span class="overlay-text">Uploading...</span>
+      } @else {
+        <span class="overlay-icon">📷</span>
+        <span class="overlay-text">Change photo</span>
+      }
+    </button>
+  </div>
+
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    hidden
+    (change)="onFileSelected($event)" />
+
+  <!-- Help text -->
+  <p class="help-text">JPEG, PNG or WebP. Max 2MB.</p>
+
+
+
+</div>
