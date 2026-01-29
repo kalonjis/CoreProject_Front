@@ -2,8 +2,8 @@
 
 import { Component, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FileCategory, FileUploadResponse, StorageApiService} from '../../../../core/storage';
-import {FeedbackService} from '../../../feedback/tools/feedback.service';
+import {FileCategory, FileUploadResponse, StorageApiService} from '../../../core/storage';
+import {FeedbackService} from '../../feedback/tools/feedback.service';
 
 
 /**
