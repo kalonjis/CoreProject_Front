@@ -1,0 +1,106 @@
+<!-- src/app/features/sport/components/track-detail/track-detail.component.html -->
+
+<div class="track-detail">
+
+  <!-- Header -->
+  <header class="track-detail__header">
+    <div class="track-detail__meta">
+      <span class="track-detail__type">{{ sportTypeInfo.icon }} {{ sportTypeInfo.displayName }}</span>
+      <span class="track-detail__date">{{ date }}</span>
+      <span class="track-detail__time">{{ startTime }} - {{ endTime }}</span>
+    </div>
+    <div class="track-detail__actions">
+      <button class="btn-icon" title="Modifier" (click)="onEdit.emit()">
+        ✏️
+      </button>
+      <button class="btn-icon btn-icon--danger" title="Supprimer" (click)="onDelete.emit()">
+        🗑️
+      </button>
+    </div>
+  </header>
+
+  <!-- Title -->
+  <h1 class="track-detail__title">{{ track().name }}</h1>
+
+  <!-- Main metrics -->
+  <section class="metrics-grid">
+
+    <div class="metric-card metric-card--primary">
+      <span class="metric-card__icon">📏</span>
+      <div class="metric-card__content">
+        <span class="metric-card__value">{{ distance }}</span>
+        <span class="metric-card__label">Distance</span>
+      </div>
+    </div>
+
+    <div class="metric-card metric-card--primary">
+      <span class="metric-card__icon">⏱️</span>
+      <div class="metric-card__content">
+        <span class="metric-card__value">{{ duration }}</span>
+        <span class="metric-card__label">Durée</span>
+      </div>
+    </div>
+
+    <div class="metric-card metric-card--primary">
+      <span class="metric-card__icon">⚡</span>
+      <div class="metric-card__content">
+        <span class="metric-card__value">{{ avgSpeed }}</span>
+        <span class="metric-card__label">{{ speedLabel }}</span>
+      </div>
+    </div>
+
+    @if (track().maxSpeedKmh) {
+      <div class="metric-card">
+        <span class="metric-card__icon">🚀</span>
+        <div class="metric-card__content">
+          <span class="metric-card__value">{{ maxSpeed }}</span>
+          <span class="metric-card__label">Vitesse max</span>
+        </div>
+      </div>
+    }
+
+  </section>
+
+  <!-- Elevation metrics -->
+  @if (hasElevation) {
+    <section class="metrics-section">
+      <h3 class="metrics-section__title">Dénivelé</h3>
+      <div class="metrics-grid metrics-grid--small">
+
+        <div class="metric-card">
+          <span class="metric-card__icon">📈</span>
+          <div class="metric-card__content">
+            <span class="metric-card__value">{{ elevationGain }}</span>
+            <span class="metric-card__label">D+ (montée)</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-card__icon">📉</span>
+          <div class="metric-card__content">
+            <span class="metric-card__value">{{ elevationLoss }}</span>
+            <span class="metric-card__label">D- (descente)</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-card__icon">⬇️</span>
+          <div class="metric-card__content">
+            <span class="metric-card__value">{{ elevationMin }}</span>
+            <span class="metric-card__label">Alt. min</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-card__icon">⬆️</span>
+          <div class="metric-card__content">
+            <span class="metric-card__value">{{ elevationMax }}</span>
+            <span class="metric-card__label">Alt. max</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  }
+
+</div>

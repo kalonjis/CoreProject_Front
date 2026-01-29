@@ -11,10 +11,11 @@ export const SPORT_ROUTES: Routes = [
     title: 'Mes activités'
   },
   {
-    /*path: ':publicId',
+    path: ':publicId',
     loadComponent: () =>
       import('./pages/sport-track-view/sport-track-view.component')
         .then(m => m.SportTrackViewComponent),
-    title: 'Détail activité'*/
+    title: 'Détail activité'
   }
+
 ];

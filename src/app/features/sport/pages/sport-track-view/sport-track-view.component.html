@@ -1,0 +1,63 @@
+<!-- src/app/features/sport/pages/sport-track-view/sport-track-view.component.html -->
+
+<div class="track-view">
+
+  <!-- Back button -->
+  <nav class="track-view__nav">
+    <button class="back-btn" (click)="goBack()">
+      ← Retour aux activités
+    </button>
+  </nav>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="track-view__loading">
+      <div class="spinner"></div>
+      <p>Chargement de l'activité...</p>
+    </div>
+  } @else if (error()) {
+    <!-- Error state -->
+    <div class="track-view__error">
+      <span class="track-view__error-icon">❌</span>
+      <h2>Erreur</h2>
+      <p>{{ error() }}</p>
+      <button class="btn-primary" (click)="goBack()">
+        Retour au tableau de bord
+      </button>
+    </div>
+  } @else if (track()) {
+    <!-- Content -->
+    <div class="track-view__content">
+
+      <!-- Map -->
+      <section class="track-view__section">
+        <app-track-map
+          [track]="track()!.simplifiedTrack"
+          [boundsCenter]="track()!.boundsCenter"
+          [height]="400" />
+      </section>
+
+      <!-- Elevation chart -->
+      @if (track()!.elevationProfile && track()!.elevationProfile.length > 0) {
+        <section class="track-view__section">
+          <h2 class="section-title">Profil d'élévation</h2>
+          <div class="chart-container">
+            <app-elevation-chart
+              [profile]="track()!.elevationProfile"
+              [height]="200" />
+          </div>
+        </section>
+      }
+
+      <!-- Details -->
+      <section class="track-view__section">
+        <app-track-detail
+          [track]="track()!"
+          (onEdit)="openEdit()"
+          (onDelete)="confirmDelete()" />
+      </section>
+
+    </div>
+  }
+
+</div>
