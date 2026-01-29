@@ -1,0 +1,80 @@
+<!-- src/app/features/sport/components/track-list/track-list.component.html -->
+
+<div class="track-list">
+
+  <!-- Filters -->
+  <div class="track-list__filters">
+    <button
+      class="filter-chip"
+      [class.filter-chip--active]="currentFilter() === null"
+      (click)="applyFilter(null)">
+      Tous
+    </button>
+    @for (type of sportTypes; track type.value) {
+      <button
+        class="filter-chip"
+        [class.filter-chip--active]="currentFilter() === type.value"
+        (click)="applyFilter(type.value)">
+        {{ type.icon }} {{ type.displayName }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading state (initial) -->
+  @if (isLoading() && tracks().length === 0) {
+    <div class="track-list__loading">
+      <div class="spinner"></div>
+      <p>Chargement des activités...</p>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @else if (!isLoading() && tracks().length === 0) {
+    <div class="track-list__empty">
+      <span class="track-list__empty-icon">🏃</span>
+      <h3 class="track-list__empty-title">
+        @if (currentFilter()) {
+          Aucune activité de ce type
+        } @else {
+          Aucune activité
+        }
+      </h3>
+      <p class="track-list__empty-text">
+        @if (currentFilter()) {
+          Essayez un autre filtre ou importez une nouvelle activité.
+        } @else {
+          Importez votre premier fichier GPX pour commencer !
+        }
+      </p>
+    </div>
+  }
+
+  <!-- Track cards -->
+  @else {
+    <div class="track-list__grid">
+      @for (track of tracks(); track track.publicId) {
+        <app-track-card
+          [track]="track"
+          (onClick)="selectTrack($event)" />
+      }
+    </div>
+
+    <!-- Load more -->
+    @if (hasMore()) {
+      <div class="track-list__load-more">
+        <button
+          class="load-more-btn"
+          [disabled]="isLoading()"
+          (click)="loadMore()">
+          @if (isLoading()) {
+            <span class="spinner spinner--small"></span>
+            Chargement...
+          } @else {
+            Voir plus d'activités
+          }
+        </button>
+      </div>
+    }
+  }
+
+</div>

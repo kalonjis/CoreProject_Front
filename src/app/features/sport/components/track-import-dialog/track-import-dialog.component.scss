@@ -1,0 +1,301 @@
+// src/app/features/sport/components/track-import-dialog/track-import-dialog.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+// =============================================================================
+// OVERLAY
+// =============================================================================
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+// =============================================================================
+// CONTAINER
+// =============================================================================
+
+.dialog-container {
+  background: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-lg;
+  width: 100%;
+  max-width: 500px;
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+
+  @include respond-to('mobile') {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $border-color;
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $secondary-color;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: $gray-dark;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  border-radius: $border-radius-sm;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $gray-light;
+    color: $secondary-color;
+  }
+}
+
+// =============================================================================
+// CONTENT
+// =============================================================================
+
+.dialog-content {
+  padding: 1.5rem;
+}
+
+// Upload step
+.upload-step {
+  // GpxUploadComponent styling is handled internally
+}
+
+// Config step
+.config-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// File info badge
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba($success-color, 0.1);
+  border: 1px solid rgba($success-color, 0.3);
+  border-radius: $border-radius;
+  color: darken($success-color, 15%);
+
+  .file-icon {
+    font-size: 1.25rem;
+  }
+
+  .file-name {
+    flex: 1;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-check {
+    font-weight: bold;
+    color: $success-color;
+  }
+}
+
+// Form groups
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $secondary-color;
+}
+
+.form-input,
+.form-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  color: $secondary-color;
+  background: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+  }
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+// Name display (read-only mode)
+.name-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: $gray-light;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background: white;
+
+    .edit-button {
+      opacity: 1;
+    }
+  }
+
+  .name-text {
+    flex: 1;
+    font-size: 1rem;
+    color: $secondary-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .edit-button {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    font-size: 1rem;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.name-input-wrapper {
+  .form-input {
+    width: 100%;
+  }
+}
+
+// =============================================================================
+// FOOTER
+// =============================================================================
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: $gray-light;
+  border-top: 1px solid $border-color;
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: $border-radius;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: white;
+  color: $gray-dark;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: darken(white, 3%);
+  }
+}
+
+.btn-primary {
+  background: $primary-color;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: darken($primary-color, 5%);
+  }
+}
+
+// Spinner
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(white, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+// =============================================================================
+// ANIMATIONS
+// =============================================================================
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

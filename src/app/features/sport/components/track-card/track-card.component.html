@@ -1,0 +1,68 @@
+<!-- src/app/features/sport/components/track-card/track-card.component.html -->
+
+<article
+  class="track-card"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Voir l\'activité ' + track().name"
+  (click)="handleClick()"
+  (keydown)="handleKeydown($event)">
+
+  <!-- Header: Sport type badge + Date -->
+  <header class="track-card__header">
+    <span class="track-card__type" [title]="sportTypeInfo.displayName">
+      {{ sportTypeInfo.icon }}
+    </span>
+    <div class="track-card__date">
+      <span class="track-card__date-text">{{ date }}</span>
+      <span class="track-card__time">{{ time }}</span>
+    </div>
+  </header>
+
+  <!-- Title -->
+  <h3 class="track-card__title">{{ track().name }}</h3>
+
+  <!-- Metrics grid -->
+  <div class="track-card__metrics">
+
+    <!-- Distance -->
+    <div class="track-card__metric">
+      <span class="track-card__metric-icon">📏</span>
+      <div class="track-card__metric-content">
+        <span class="track-card__metric-value">{{ distance }}</span>
+        <span class="track-card__metric-label">Distance</span>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="track-card__metric">
+      <span class="track-card__metric-icon">⏱️</span>
+      <div class="track-card__metric-content">
+        <span class="track-card__metric-value">{{ duration }}</span>
+        <span class="track-card__metric-label">Durée</span>
+      </div>
+    </div>
+
+    <!-- Speed/Pace -->
+    <div class="track-card__metric">
+      <span class="track-card__metric-icon">⚡</span>
+      <div class="track-card__metric-content">
+        <span class="track-card__metric-value">{{ speed }}</span>
+        <span class="track-card__metric-label">{{ speedLabel }}</span>
+      </div>
+    </div>
+
+    <!-- Elevation -->
+    @if (track().elevationGain !== null) {
+      <div class="track-card__metric">
+        <span class="track-card__metric-icon">⛰️</span>
+        <div class="track-card__metric-content">
+          <span class="track-card__metric-value">{{ elevation }}</span>
+          <span class="track-card__metric-label">Dénivelé +</span>
+        </div>
+      </div>
+    }
+
+  </div>
+
+</article>

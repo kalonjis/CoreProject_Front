@@ -1,0 +1,129 @@
+<!-- src/app/features/sport/components/track-import-dialog/track-import-dialog.component.html -->
+
+@if (isVisible()) {
+  <div
+    class="dialog-overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="close()">
+
+    <div class="dialog-container" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+
+      <!-- Header -->
+      <div class="dialog-header">
+        <h2 id="dialog-title" class="dialog-title">
+          @if (!uploadedFile()) {
+            Importer une activité
+          } @else {
+            Configurer l'activité
+          }
+        </h2>
+        <button
+          type="button"
+          class="close-button"
+          (click)="close()"
+          aria-label="Fermer">
+          ✕
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="dialog-content">
+
+        @if (!uploadedFile()) {
+          <!-- Step 1: Upload GPX -->
+          <div class="upload-step">
+            <app-gpx-upload
+              (uploaded)="onFileUploaded($event)"
+              (error)="onUploadError($event)" />
+          </div>
+        } @else {
+          <!-- Step 2: Configure & Import -->
+          <div class="config-step">
+
+            <!-- File info -->
+            <div class="file-info">
+              <span class="file-icon">📄</span>
+              <span class="file-name">{{ uploadedFile()!.originalFilename }}</span>
+              <span class="file-check">✓</span>
+            </div>
+
+            <!-- Track name -->
+            <div class="form-group">
+              <label for="track-name" class="form-label">Nom de l'activité</label>
+
+              @if (isEditingName()) {
+                <div class="name-input-wrapper">
+                  <input
+                    id="track-name"
+                    type="text"
+                    class="form-input"
+                    [ngModel]="trackName()"
+                    (ngModelChange)="trackName.set($event)"
+                    (blur)="stopEditingName()"
+                    (keydown)="onNameKeydown($event)"
+                    autofocus />
+                </div>
+              } @else {
+                <div class="name-display" (click)="startEditingName()">
+                  <span class="name-text">{{ trackName() }}</span>
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="startEditingName()"
+                    aria-label="Modifier le nom">
+                    ✏️
+                  </button>
+                </div>
+              }
+            </div>
+
+            <!-- Sport type -->
+            <div class="form-group">
+              <label for="sport-type" class="form-label">Type de sport</label>
+              <select
+                id="sport-type"
+                class="form-select"
+                [ngModel]="sportType()"
+                (ngModelChange)="sportType.set($event)">
+                @for (type of sportTypes; track type.value) {
+                  <option [value]="type.value">
+                    {{ type.icon }} {{ type.displayName }}
+                  </option>
+                }
+              </select>
+            </div>
+
+          </div>
+        }
+
+      </div>
+
+      <!-- Footer -->
+      <div class="dialog-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="close()"
+          [disabled]="isImporting()">
+          Annuler
+        </button>
+
+        @if (uploadedFile()) {
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="importTrack()"
+            [disabled]="!canImport">
+            @if (isImporting()) {
+              <span class="spinner"></span>
+              Import en cours...
+            } @else {
+              Importer l'activité
+            }
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+}

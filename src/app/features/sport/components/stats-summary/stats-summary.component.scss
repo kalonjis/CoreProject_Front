@@ -1,0 +1,79 @@
+// src/app/features/sport/components/stats-summary/stats-summary.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @include respond-to('tablet') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: white;
+  border-radius: $border-radius-lg;
+  border: 1px solid $border-color;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-sm;
+  }
+
+  &__icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  &__value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $secondary-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.skeleton {
+      width: 60px;
+      height: 1.25rem;
+      background: linear-gradient(
+          90deg,
+          $gray-light 25%,
+          darken($gray-light, 5%) 50%,
+          $gray-light 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: $border-radius-sm;
+    }
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: $gray-dark;
+    white-space: nowrap;
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

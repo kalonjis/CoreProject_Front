@@ -1,0 +1,183 @@
+// src/app/features/sport/components/track-list/track-list.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  // ===========================================================================
+  // FILTERS
+  // ===========================================================================
+
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $border-color;
+  }
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: 2rem;
+  background: white;
+  color: $gray-dark;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &--active {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: white;
+
+    &:hover {
+      background: darken($primary-color, 5%);
+      color: white;
+    }
+  }
+}
+
+// ===========================================================================
+// LOADING STATE
+// ===========================================================================
+
+.track-list__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: $gray-dark;
+
+  p {
+    margin: 1rem 0 0;
+    font-size: 0.95rem;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+
+  &--small {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+  }
+}
+
+// ===========================================================================
+// EMPTY STATE
+// ===========================================================================
+
+.track-list__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: $gray-light;
+  border-radius: $border-radius-lg;
+  border: 2px dashed $border-color;
+}
+
+.track-list__empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.track-list__empty-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $secondary-color;
+}
+
+.track-list__empty-text {
+  margin: 0;
+  color: $gray-dark;
+  max-width: 300px;
+}
+
+// ===========================================================================
+// GRID
+// ===========================================================================
+
+.track-list__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @include respond-to('tablet') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('desktop') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===========================================================================
+// LOAD MORE
+// ===========================================================================
+
+.track-list__load-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: white;
+  color: $secondary-color;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// ===========================================================================
+// ANIMATIONS
+// ===========================================================================
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
