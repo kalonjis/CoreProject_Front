@@ -1,0 +1,57 @@
+<!-- src/app/features/sport/components/stats-summary/stats-summary.component.html -->
+
+<div class="stats-summary" [class.stats-summary--loading]="loading()">
+
+  <!-- Total Tracks -->
+  <div class="stat-card">
+    <span class="stat-card__icon">🏆</span>
+    <div class="stat-card__content">
+      @if (loading()) {
+        <span class="stat-card__value skeleton"></span>
+      } @else {
+        <span class="stat-card__value">{{ trackCount }}</span>
+      }
+      <span class="stat-card__label">Activités</span>
+    </div>
+  </div>
+
+  <!-- Total Distance -->
+  <div class="stat-card">
+    <span class="stat-card__icon">📏</span>
+    <div class="stat-card__content">
+      @if (loading()) {
+        <span class="stat-card__value skeleton"></span>
+      } @else {
+        <span class="stat-card__value">{{ distance }}</span>
+      }
+      <span class="stat-card__label">Distance totale</span>
+    </div>
+  </div>
+
+  <!-- Total Duration -->
+  <div class="stat-card">
+    <span class="stat-card__icon">⏱️</span>
+    <div class="stat-card__content">
+      @if (loading()) {
+        <span class="stat-card__value skeleton"></span>
+      } @else {
+        <span class="stat-card__value">{{ duration }}</span>
+      }
+      <span class="stat-card__label">Temps total</span>
+    </div>
+  </div>
+
+  <!-- Total Elevation -->
+  <div class="stat-card">
+    <span class="stat-card__icon">⛰️</span>
+    <div class="stat-card__content">
+      @if (loading()) {
+        <span class="stat-card__value skeleton"></span>
+      } @else {
+        <span class="stat-card__value">{{ elevation }}</span>
+      }
+      <span class="stat-card__label">Dénivelé total</span>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,39 @@
+<!-- src/app/features/sport/pages/sport-dashboard/sport-dashboard.component.html -->
+
+<div class="sport-dashboard">
+
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="dashboard-header__content">
+      <h1 class="dashboard-header__title">Mes activités</h1>
+      <p class="dashboard-header__subtitle">Suivez vos performances sportives</p>
+    </div>
+    <button
+      class="btn-import"
+      (click)="openImportDialog()">
+      <span class="btn-import__icon">+</span>
+      Importer GPX
+    </button>
+  </header>
+
+  <!-- Statistics -->
+  <section class="dashboard-section">
+    <app-stats-summary
+      [stats]="stats()"
+      [loading]="statsLoading()" />
+  </section>
+
+  <!-- Track list -->
+  <section class="dashboard-section">
+    <h2 class="section-title">Activités récentes</h2>
+    <app-track-list
+      (onTrackSelect)="viewTrack($event)" />
+  </section>
+
+</div>
+
+<!-- Import dialog -->
+<app-track-import-dialog
+  [isOpen]="showImportDialog()"
+  (onClose)="closeImportDialog()"
+  (onImported)="onTrackImported($event)" />
