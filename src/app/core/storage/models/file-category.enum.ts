@@ -21,5 +21,8 @@ export enum FileCategory {
   PRODUCT_IMAGE = 'PRODUCT_IMAGE',
 
   /** Temporary files - auto-cleaned after retention period */
-  TEMPORARY = 'TEMPORARY'
+  TEMPORARY = 'TEMPORARY',
+
+  /** GPX track files - GPS data for sport activities */
+  GPX_TRACK = 'GPX_TRACK'
 }

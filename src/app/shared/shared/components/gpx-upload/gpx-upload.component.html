@@ -1,0 +1,57 @@
+<!-- src/app/shared/components/gpx-upload/gpx-upload.component.html -->
+
+<div
+  class="gpx-upload"
+  [class.gpx-upload--drag-over]="isDragOver()"
+  [class.gpx-upload--uploading]="isUploading()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  (click)="openFileExplorer(fileInput)"
+  (keydown.enter)="openFileExplorer(fileInput)"
+  (keydown.space)="openFileExplorer(fileInput)"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="isUploading() ? 'Uploading GPX file' : 'Click or drag to upload GPX file'"
+  [attr.aria-busy]="isUploading()">
+
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    accept=".gpx"
+    (change)="onFileSelected($event)"
+    hidden />
+
+  <!-- Upload icon -->
+  <div class="gpx-upload__icon">
+    @if (isUploading()) {
+      <svg class="gpx-upload__spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="20" />
+      </svg>
+    } @else {
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+    }
+  </div>
+
+  <!-- Text content -->
+  <div class="gpx-upload__content">
+    @if (isUploading()) {
+      <p class="gpx-upload__title">Uploading...</p>
+      <p class="gpx-upload__subtitle">{{ selectedFileName() }}</p>
+    } @else if (isDragOver()) {
+      <p class="gpx-upload__title">Drop your GPX file here</p>
+    } @else {
+      <p class="gpx-upload__title">Upload GPX Track</p>
+      <p class="gpx-upload__subtitle">
+        Click or drag & drop your .gpx file
+        <span class="gpx-upload__hint">(max {{ maxSizeMb() }} MB)</span>
+      </p>
+    }
+  </div>
+
+</div>
