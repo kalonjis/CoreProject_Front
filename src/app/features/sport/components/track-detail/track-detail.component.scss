@@ -1,0 +1,184 @@
+// src/app/features/sport/components/track-detail/track-detail.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+.track-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  // ===========================================================================
+  // HEADER
+  // ===========================================================================
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: $gray-dark;
+  }
+
+  &__type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    border-radius: 2rem;
+    font-weight: 500;
+  }
+
+  &__date {
+    font-weight: 500;
+    color: $secondary-color;
+  }
+
+  &__time {
+    &::before {
+      content: '•';
+      margin-right: 0.75rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  // ===========================================================================
+  // TITLE
+  // ===========================================================================
+
+  &__title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $secondary-color;
+    line-height: 1.2;
+
+    @include respond-to('mobile') {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// ===========================================================================
+// BUTTONS
+// ===========================================================================
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+
+  &--danger:hover {
+    border-color: $danger-color;
+    background: rgba($danger-color, 0.05);
+  }
+}
+
+// ===========================================================================
+// METRICS
+// ===========================================================================
+
+.metrics-section {
+  &__title {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $secondary-color;
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @include respond-to('tablet') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &--small {
+    .metric-card {
+      padding: 1rem;
+    }
+
+    .metric-card__value {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-sm;
+  }
+
+  &--primary {
+    background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-color, 0.02));
+    border-color: rgba($primary-color, 0.2);
+
+    .metric-card__value {
+      color: $primary-color;
+    }
+  }
+
+  &__icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  &__value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $secondary-color;
+    white-space: nowrap;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: $gray-dark;
+  }
+}

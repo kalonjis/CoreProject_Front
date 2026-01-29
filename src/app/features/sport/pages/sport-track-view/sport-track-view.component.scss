@@ -1,0 +1,177 @@
+// src/app/features/sport/pages/sport-track-view/sport-track-view.component.scss
+
+@import 'variables';
+@import 'mixins';
+
+.track-view {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+
+  @include respond-to('tablet') {
+    padding: 2rem;
+  }
+
+  // ===========================================================================
+  // NAV
+  // ===========================================================================
+
+  &__nav {
+    margin-bottom: 1.5rem;
+  }
+
+  // ===========================================================================
+  // LOADING
+  // ===========================================================================
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: $gray-dark;
+
+    p {
+      margin: 1rem 0 0;
+    }
+  }
+
+  // ===========================================================================
+  // ERROR
+  // ===========================================================================
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+
+    &-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.5rem;
+      color: $secondary-color;
+    }
+
+    p {
+      margin: 0 0 1.5rem;
+      color: $gray-dark;
+    }
+  }
+
+  // ===========================================================================
+  // CONTENT
+  // ===========================================================================
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__section {
+    background: white;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color;
+    overflow: hidden;
+
+    // Map section - no padding
+    &:first-child {
+      padding: 0;
+    }
+
+    // Other sections
+    &:not(:first-child) {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// ===========================================================================
+// BACK BUTTON
+// ===========================================================================
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  color: $gray-dark;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+// ===========================================================================
+// SECTION TITLE
+// ===========================================================================
+
+.section-title {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $secondary-color;
+}
+
+// ===========================================================================
+// CHART CONTAINER
+// ===========================================================================
+
+.chart-container {
+  background: $gray-light;
+  border-radius: $border-radius;
+  padding: 1rem;
+}
+
+// ===========================================================================
+// BUTTON
+// ===========================================================================
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: darken($primary-color, 5%);
+  }
+}
+
+// ===========================================================================
+// SPINNER
+// ===========================================================================
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
