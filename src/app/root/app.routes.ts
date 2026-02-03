@@ -35,6 +35,11 @@ export const routes: Routes = [
     canActivate: [() => authGuard()],
     loadChildren: () => import('../features/sport/sport.routes').then(r => r.SPORT_ROUTES)
   },
+  {
+    path: 'contact',
+    loadChildren: () => import('../features/contact/contact.routes')
+      .then(m => m.CONTACT_ROUTES)
+  }
 /*
   // Routes authentifiées standard
   {
