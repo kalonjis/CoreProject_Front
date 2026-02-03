@@ -1,0 +1,139 @@
+<!-- src/app/features/contact/pages/contact-page/contact-page.component.html -->
+
+<div class="contact-container">
+  <div class="contact-card">
+    <h1>Contactez-nous</h1>
+    <p class="subtitle">Une question ? N'hésitez pas à nous écrire.</p>
+
+    <!-- Form error -->
+    @if (formError()) {
+      <div class="error-message">
+        {{ formError() }}
+      </div>
+    }
+
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+
+      <!-- Honeypot (hidden) - uses fake field name to avoid browser autocomplete -->
+      <div class="honeypot" aria-hidden="true">
+        <label for="confirmEmail">Confirm Email</label>
+        <input type="text" id="confirmEmail" formControlName="confirmEmail" tabindex="-1" autocomplete="new-password">
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Nom <span class="optional">(optionnel)</span></label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="Votre nom"
+          autocomplete="name"
+        >
+        @if (f['name'].invalid && f['name'].touched) {
+          <div class="validation-error">
+            @if (f['name'].errors?.['maxlength']) {
+              Le nom ne peut pas dépasser 100 caractères
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="votre@email.com"
+          autocomplete="email"
+        >
+        @if (f['email'].invalid && f['email'].touched) {
+          <div class="validation-error">
+            @if (f['email'].errors?.['required']) {
+              L'adresse email est requise
+            } @else if (f['email'].errors?.['email']) {
+              Veuillez entrer une adresse email valide
+            } @else if (f['email'].errors?.['maxlength']) {
+              L'email ne peut pas dépasser 254 caractères
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Lead Type -->
+      <div class="form-group">
+        <label for="leadType">Type de demande <span class="required">*</span></label>
+        <select id="leadType" formControlName="leadType">
+          @for (type of leadTypes; track type) {
+            <option [value]="type">{{ leadTypeLabels[type] }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label for="subject">Sujet <span class="required">*</span></label>
+        <input
+          type="text"
+          id="subject"
+          formControlName="subject"
+          placeholder="Sujet de votre message"
+        >
+        @if (f['subject'].invalid && f['subject'].touched) {
+          <div class="validation-error">
+            @if (f['subject'].errors?.['required']) {
+              Le sujet est requis
+            } @else if (f['subject'].errors?.['minlength']) {
+              Le sujet doit contenir au moins 5 caractères
+            } @else if (f['subject'].errors?.['maxlength']) {
+              Le sujet ne peut pas dépasser 255 caractères
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Message -->
+      <div class="form-group">
+        <label for="message">Message <span class="required">*</span></label>
+        <textarea
+          id="message"
+          formControlName="message"
+          rows="6"
+          placeholder="Votre message..."
+        ></textarea>
+        @if (f['message'].invalid && f['message'].touched) {
+          <div class="validation-error">
+            @if (f['message'].errors?.['required']) {
+              Le message est requis
+            } @else if (f['message'].errors?.['minlength']) {
+              Le message doit contenir au moins 10 caractères
+            } @else if (f['message'].errors?.['maxlength']) {
+              Le message ne peut pas dépasser 5000 caractères
+            }
+          </div>
+        }
+        <div class="char-count">
+          {{ f['message'].value?.length || 0 }} / 5000
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span>Envoi en cours...</span>
+          } @else {
+            <span>Envoyer</span>
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
