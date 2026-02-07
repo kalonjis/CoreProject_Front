@@ -1,0 +1,68 @@
+<div class="day-view">
+  <!-- All-Day Events Section -->
+  @if (allDayEvents().length > 0) {
+    <div class="all-day-section">
+      <div class="all-day-label">Journée</div>
+      <div class="all-day-events">
+        @for (event of allDayEvents(); track event.publicId) {
+          <app-calendar-event-card
+            [event]="event"
+            [compact]="true"
+            [showTime]="false"
+            (click)="onEventClick(event, $event)"
+          />
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Time Grid -->
+  <div class="time-grid">
+    <!-- Time Labels Column -->
+    <div class="time-labels">
+      @for (slot of timeSlots(); track trackBySlot($index, slot)) {
+        <div class="time-label">
+          <span>{{ slot }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Events Column -->
+    <div class="events-column">
+      <!-- Time Slot Rows (for click targets) -->
+      @for (slot of timeSlots(); track trackBySlot($index, slot)) {
+        <div
+          class="time-slot"
+          (click)="onSlotClick(slot)"
+        ></div>
+      }
+
+      <!-- Current Time Line -->
+      @if (currentTimePosition(); as position) {
+        <div
+          class="current-time-line"
+          [style.top.%]="position"
+        >
+          <span class="current-time-dot"></span>
+        </div>
+      }
+
+      <!-- Positioned Events -->
+      <div class="events-container">
+        @for (positioned of positionedEvents(); track trackByEvent($index, positioned)) {
+          <div
+            class="positioned-event"
+            [ngStyle]="getEventStyle(positioned)"
+            (click)="onEventClick(positioned.event, $event)"
+          >
+            <app-calendar-event-card
+              [event]="positioned.event"
+              [compact]="false"
+              [showTime]="true"
+            />
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

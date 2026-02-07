@@ -1,0 +1,108 @@
+<div class="calendar-container" [class.sidebar-open]="sidebarOpen()">
+  <!-- Header -->
+  <app-calendar-header
+    class="calendar-header"
+    [title]="viewTitle()"
+    [currentView]="currentView()"
+    [loading]="loading()"
+    [hasActiveFilters]="hasActiveFilters()"
+    (viewChange)="onViewChange($event)"
+    (todayClick)="onTodayClick()"
+    (previousClick)="onPreviousClick()"
+    (nextClick)="onNextClick()"
+    (createClick)="onCreateEvent()"
+    (toggleSidebar)="toggleSidebar()"
+    (toggleFilters)="toggleFilters()"
+  />
+
+  <div class="calendar-body">
+    <!-- Sidebar -->
+    @if (sidebarOpen()) {
+      <aside class="calendar-sidebar">
+        <!-- Mini Calendar -->
+        <app-calendar-mini-month
+          [currentDate]="currentDate()"
+          [events]="filteredEvents()"
+          (dateSelect)="onDateSelect($event)"
+        />
+
+        <!-- Filters -->
+        <app-calendar-filters
+          [filters]="state.filters()"
+          [events]="state.events()"
+          [expanded]="filtersExpanded()"
+          (filtersChange)="onFiltersChange($event)"
+          (reset)="onFiltersReset()"
+        />
+      </aside>
+    }
+
+    <!-- Main Content Area -->
+    <main class="calendar-main">
+      <!-- Loading Overlay -->
+      @if (loading()) {
+        <div class="calendar-loading">
+          <div class="spinner"></div>
+          <span>Chargement...</span>
+        </div>
+      }
+
+      <!-- Error Message -->
+      @if (error(); as errorMessage) {
+        <div class="calendar-error">
+          <span class="error-icon">⚠️</span>
+          <p>{{ errorMessage }}</p>
+          <button type="button" (click)="state.loadAllEvents()">
+            Réessayer
+          </button>
+        </div>
+      }
+
+      <!-- View Switcher (renders the active view) -->
+      <app-calendar-view-switcher
+        [currentView]="currentView()"
+        [currentDate]="currentDate()"
+        [events]="filteredEvents()"
+        (eventSelect)="onEventSelect($event)"
+        (slotClick)="onSlotClick($event)"
+        (dateSelect)="onDateSelect($event)"
+      />
+
+      <!-- Or use Router Outlet for routed views -->
+      <!-- <router-outlet /> -->
+    </main>
+
+    <!-- Event Detail Panel -->
+    @if (detailPanelOpen() && selectedEvent(); as event) {
+      <aside class="calendar-detail-panel">
+        <app-calendar-event-detail
+          [event]="event"
+          (close)="onDetailClose()"
+          (edit)="onEditEvent($event)"
+          (delete)="onDeleteEvent($event)"
+        />
+      </aside>
+    }
+  </div>
+</div>
+
+<!-- Mobile Filter Overlay -->
+@if (filtersExpanded()) {
+  <div class="filters-overlay" (click)="toggleFilters()">
+    <div class="filters-modal" (click)="$event.stopPropagation()">
+      <div class="filters-modal-header">
+        <h3>Filtres</h3>
+        <button type="button" class="close-btn" (click)="toggleFilters()">
+          ✕
+        </button>
+      </div>
+      <app-calendar-filters
+        [filters]="state.filters()"
+        [events]="state.events()"
+        [expanded]="true"
+        (filtersChange)="onFiltersChange($event)"
+        (reset)="onFiltersReset()"
+      />
+    </div>
+  </div>
+}

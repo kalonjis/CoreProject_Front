@@ -1,0 +1,41 @@
+// =============================================================================
+// View Container
+// =============================================================================
+
+.view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  // Ensure child view takes full space
+  > * {
+    flex: 1;
+    min-height: 0; // Important for flex children with overflow
+  }
+}
+
+// =============================================================================
+// View Transition Animation (optional)
+// =============================================================================
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+// Uncomment for fade transition between views
+// .view-container > * {
+//   animation: fadeIn 0.2s ease;
+// }
+
+// @keyframes fadeIn {
+//   from {
+//     opacity: 0;
+//   }
+//   to {
+//     opacity: 1;
+//   }
+// }

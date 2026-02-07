@@ -1,0 +1,375 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+$primary-color: #3b82f6;
+$primary-hover: #2563eb;
+$danger-color: #ef4444;
+$warning-color: #f59e0b;
+$text-color: #1f2937;
+$text-muted: #6b7280;
+$border-color: #e5e7eb;
+$bg-color: #f9fafb;
+$border-radius: 0.375rem;
+
+// =============================================================================
+// Page Layout
+// =============================================================================
+
+.event-form-page {
+  min-height: 100vh;
+  background-color: $bg-color;
+}
+
+// =============================================================================
+// Header
+// =============================================================================
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-bottom: 1px solid $border-color;
+
+  h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+}
+
+.back-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: $text-muted;
+  background: none;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: $text-color;
+    background-color: $bg-color;
+  }
+}
+
+// =============================================================================
+// Form
+// =============================================================================
+
+.event-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+// =============================================================================
+// Alerts
+// =============================================================================
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+
+  &.alert-error {
+    background-color: #fef2f2;
+    color: $danger-color;
+    border: 1px solid #fecaca;
+  }
+
+  &.alert-warning {
+    background-color: #fffbeb;
+    color: darken($warning-color, 10%);
+    border: 1px solid #fde68a;
+  }
+}
+
+// =============================================================================
+// Form Sections
+// =============================================================================
+
+.form-section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// =============================================================================
+// Form Groups
+// =============================================================================
+
+.form-group {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+
+  .flex-1 {
+    flex: 1;
+  }
+
+  .time-input {
+    width: 120px;
+    flex-shrink: 0;
+  }
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-color;
+
+  &.required::after {
+    content: ' *';
+    color: $danger-color;
+  }
+}
+
+// =============================================================================
+// Form Inputs
+// =============================================================================
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: $text-color;
+  background-color: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: lighten($text-muted, 10%);
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &.error {
+    border-color: $danger-color;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+    }
+  }
+
+  &:disabled {
+    background-color: $bg-color;
+    cursor: not-allowed;
+  }
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.field-error {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: $danger-color;
+}
+
+// =============================================================================
+// Checkbox
+// =============================================================================
+
+.checkbox-group {
+  margin-bottom: 1rem;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: $primary-color;
+  }
+
+  span {
+    font-size: 0.9375rem;
+    color: $text-color;
+  }
+}
+
+// =============================================================================
+// Color Picker
+// =============================================================================
+
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.color-option {
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.selected {
+    border-color: $text-color;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor;
+  }
+
+  .check {
+    font-size: 0.875rem;
+    font-weight: bold;
+  }
+}
+
+// =============================================================================
+// Form Actions
+// =============================================================================
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-color;
+}
+
+// =============================================================================
+// Buttons
+// =============================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: $primary-color;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background-color: $primary-hover;
+  }
+}
+
+.btn-secondary {
+  color: $text-color;
+  background-color: #fff;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background-color: $bg-color;
+  }
+}
+
+// =============================================================================
+// Spinner
+// =============================================================================
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 640px) {
+  .event-form {
+    padding: 1rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+
+    .time-input {
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

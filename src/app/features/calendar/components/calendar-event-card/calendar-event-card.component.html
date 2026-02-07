@@ -1,0 +1,64 @@
+@if (_event(); as event) {
+  <div class="event-card" [attr.title]="title()">
+    <!-- Color Bar (for compact mode) -->
+    <div class="color-bar"></div>
+
+    <!-- Content -->
+    <div class="event-content">
+      <!-- Time (compact mode) -->
+      @if (compact && showTime && !event.allDay) {
+        <span class="event-time">{{ timeString() }}</span>
+      }
+
+      <!-- Title -->
+      <span class="event-title">{{ title() }}</span>
+
+      <!-- Icons (compact mode) -->
+      @if (compact) {
+        <span class="event-icons">
+          @if (showStatus && status() === CalendarEventStatus.TENTATIVE) {
+            <span class="icon tentative" title="Provisoire">?</span>
+          }
+          @if (showRecurrence && isRecurring()) {
+            <span class="icon recurring" title="Récurrent">↻</span>
+          }
+        </span>
+      }
+    </div>
+
+    <!-- Extended Info (non-compact mode) -->
+    @if (!compact) {
+      <div class="event-details">
+        <!-- Time Range -->
+        @if (showTime) {
+          <div class="detail-row time">
+            <span class="icon">🕐</span>
+            <span>{{ timeRangeString() }}</span>
+          </div>
+        }
+
+        <!-- Location -->
+        @if (location()) {
+          <div class="detail-row location">
+            <span class="icon">📍</span>
+            <span>{{ location() }}</span>
+          </div>
+        }
+
+        <!-- Status & Recurrence -->
+        <div class="detail-row meta">
+          @if (showStatus && status() !== CalendarEventStatus.CONFIRMED) {
+            <span class="badge" [class]="'status-' + status().toLowerCase()">
+              {{ status() | eventStatus }}
+            </span>
+          }
+          @if (showRecurrence && isRecurring()) {
+            <span class="badge recurring">
+              Récurrent
+            </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,90 @@
+<div class="week-view">
+  <!-- Header Row -->
+  <div class="week-header">
+    <div class="time-gutter"></div>
+    @for (item of allDayEventsByDay(); track trackByDay($index, item)) {
+      <div
+        class="day-header"
+        [class.today]="isToday(item.day)"
+        [class.selected]="isSelected(item.day)"
+      >
+        <button
+          type="button"
+          class="day-header-btn"
+          (click)="onDayClick(item.day)"
+        >
+          <span class="day-name">{{ formatDayHeader(item.day) }}</span>
+          <span class="day-number" [class.today]="isToday(item.day)">
+            {{ getDayNumber(item.day) }}
+          </span>
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- All-Day Events Row -->
+  @if (allDayEventsByDay().some(d => d.events.length > 0)) {
+    <div class="all-day-row">
+      <div class="time-gutter">
+        <span>Journée</span>
+      </div>
+      @for (item of allDayEventsByDay(); track trackByDay($index, item)) {
+        <div class="all-day-cell">
+          @for (event of item.events; track event.publicId) {
+            <app-calendar-event-card
+              [event]="event"
+              [compact]="true"
+              [showTime]="false"
+              (click)="onEventClick(event, $event)"
+            />
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Time Grid -->
+  <div class="time-grid">
+    <!-- Time Labels -->
+    <div class="time-gutter time-labels">
+      @for (slot of timeSlots(); track trackBySlot($index, slot)) {
+        <div class="time-label">
+          <span>{{ slot }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Day Columns -->
+    @for (dayData of positionedEventsByDay(); track trackByDay($index, dayData)) {
+      <div
+        class="day-column"
+        [class.today]="isToday(dayData.day)"
+      >
+        <!-- Time Slots -->
+        @for (slot of timeSlots(); track trackBySlot($index, slot)) {
+          <div
+            class="time-slot"
+            (click)="onSlotClick(dayData.day, slot)"
+          ></div>
+        }
+
+        <!-- Events -->
+        <div class="events-container">
+          @for (positioned of dayData.events; track trackByEvent($index, positioned)) {
+            <div
+              class="positioned-event"
+              [ngStyle]="getEventStyle(positioned)"
+              (click)="onEventClick(positioned.event, $event)"
+            >
+              <app-calendar-event-card
+                [event]="positioned.event"
+                [compact]="true"
+                [showTime]="true"
+              />
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

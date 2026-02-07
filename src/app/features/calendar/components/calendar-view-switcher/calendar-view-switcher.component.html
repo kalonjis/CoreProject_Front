@@ -1,0 +1,49 @@
+<div class="view-container">
+  @switch (currentView) {
+    @case (CalendarView.DAY) {
+      <app-calendar-day-view
+        [date]="currentDate"
+        [events]="events"
+        (eventSelect)="onEventSelect($event)"
+        (slotClick)="onSlotClick($event)"
+      />
+    }
+
+    @case (CalendarView.WEEK) {
+      <app-calendar-week-view
+        [date]="currentDate"
+        [events]="events"
+        (eventSelect)="onEventSelect($event)"
+        (slotClick)="onSlotClick($event)"
+        (dateSelect)="onDateSelect($event)"
+      />
+    }
+
+    @case (CalendarView.MONTH) {
+      <app-calendar-month-view
+        [date]="currentDate"
+        [events]="events"
+        (eventSelect)="onEventSelect($event)"
+        (slotClick)="onSlotClick($event)"
+        (dateSelect)="onDateSelect($event)"
+      />
+    }
+
+    @case (CalendarView.AGENDA) {
+      <app-calendar-agenda-view
+        [events]="events"
+        (eventSelect)="onEventSelect($event)"
+      />
+    }
+
+    @default {
+      <app-calendar-month-view
+        [date]="currentDate"
+        [events]="events"
+        (eventSelect)="onEventSelect($event)"
+        (slotClick)="onSlotClick($event)"
+        (dateSelect)="onDateSelect($event)"
+      />
+    }
+  }
+</div>

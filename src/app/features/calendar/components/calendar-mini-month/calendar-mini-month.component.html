@@ -1,0 +1,64 @@
+<div class="mini-month">
+  <!-- Header -->
+  <div class="mini-header">
+    <button
+      type="button"
+      class="nav-btn"
+      (click)="previousMonth()"
+      aria-label="Mois précédent"
+    >
+      ◀
+    </button>
+
+    <button
+      type="button"
+      class="title-btn"
+      (click)="goToToday()"
+      [attr.aria-label]="'Aller à aujourd\'hui'"
+    >
+      {{ displayTitle() }}
+    </button>
+
+    <button
+      type="button"
+      class="nav-btn"
+      (click)="nextMonth()"
+      aria-label="Mois suivant"
+    >
+      ▶
+    </button>
+  </div>
+
+  <!-- Week Day Names -->
+  <div class="weekday-row">
+    @for (dayName of weekDayNames(); track dayName) {
+      <span class="weekday-name">{{ dayName }}</span>
+    }
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="mini-grid">
+    @for (week of weeks(); track trackByWeek($index)) {
+      <div class="week-row">
+        @for (day of week; track trackByDay($index, day)) {
+          <button
+            type="button"
+            class="day-btn"
+            [class.other-month]="!isCurrentMonth(day)"
+            [class.today]="isToday(day)"
+            [class.selected]="isSelected(day)"
+            [class.has-events]="hasEvents(day)"
+            [attr.aria-label]="day | date:'fullDate'"
+            [attr.title]="hasEvents(day) ? getEventCount(day) + ' événement(s)' : null"
+            (click)="onDayClick(day)"
+          >
+            <span class="day-number">{{ day | date:'d' }}</span>
+            @if (hasEvents(day)) {
+              <span class="event-dot"></span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

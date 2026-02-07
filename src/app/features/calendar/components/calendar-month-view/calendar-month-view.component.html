@@ -1,0 +1,72 @@
+<div class="month-view">
+  <!-- Week Day Headers -->
+  <div class="weekday-header">
+    @if (config.showWeekNumbers) {
+      <div class="week-number-header">S</div>
+    }
+    @for (dayName of weekDayNames(); track dayName) {
+      <div class="weekday-name">{{ dayName }}</div>
+    }
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="month-grid">
+    @for (week of weeks(); track trackByWeek($index, week)) {
+      <div class="week-row">
+        <!-- Week Number -->
+        @if (config.showWeekNumbers) {
+          <div class="week-number">
+            {{ getWeekNumber(week) }}
+          </div>
+        }
+
+        <!-- Days -->
+        @for (day of week; track trackByDay($index, day)) {
+          <div
+            class="day-cell"
+            [class.other-month]="!isCurrentMonth(day)"
+            [class.today]="isToday(day)"
+            [class.weekend]="isWeekend(day)"
+            [class.selected]="isSelected(day)"
+            (click)="onCellClick(day)"
+          >
+            <!-- Day Header -->
+            <div class="day-header">
+              <button
+                type="button"
+                class="day-number"
+                [class.today]="isToday(day)"
+                (click)="onDayClick(day, $event)"
+                [attr.aria-label]="day | date:'fullDate'"
+              >
+                {{ day | date:'d' }}
+              </button>
+            </div>
+
+            <!-- Events -->
+            <div class="day-events">
+              @for (event of getVisibleEvents(day); track trackByEvent($index, event)) {
+                <app-calendar-event-card
+                  [event]="event"
+                  [compact]="true"
+                  (click)="onEventClick(event, $event)"
+                />
+              }
+
+              <!-- More Link -->
+              @if (getHiddenEventsCount(day) > 0) {
+                <button
+                  type="button"
+                  class="more-link"
+                  (click)="onMoreClick(day, $event)"
+                >
+                  +{{ getHiddenEventsCount(day) }} autre(s)
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
