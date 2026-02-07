@@ -1,0 +1,67 @@
+@if (isOpen) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal" role="dialog" aria-modal="true">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>{{ modalTitle }}</h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Fermer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="modal-content">
+        <!-- Error -->
+        @if (error()) {
+          <div class="alert alert-error">
+            <span>⚠️</span>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <!-- Export Options -->
+        <div class="export-options">
+          @for (option of exportOptions; track option.provider) {
+            <button
+              type="button"
+              class="export-option"
+              [class.disabled]="isDisabled(option)"
+              [disabled]="isDisabled(option)"
+              (click)="onExportClick(option)"
+            >
+              <span class="option-icon">{{ option.icon }}</span>
+              <div class="option-content">
+                <span class="option-label">{{ option.label }}</span>
+                <span class="option-description">{{ option.description }}</span>
+              </div>
+              @if (isLoading(option.provider)) {
+                <span class="option-spinner"></span>
+              } @else {
+                <span class="option-arrow">→</span>
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Info -->
+        @if (!isSingleEvent) {
+          <p class="info-text">
+            💡 Pour exporter vers Google ou Outlook, sélectionnez un événement spécifique.
+          </p>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+}

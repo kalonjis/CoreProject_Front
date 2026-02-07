@@ -1,0 +1,77 @@
+<div class="agenda-view">
+  @if (hasEvents()) {
+    <!-- Event Count -->
+    <div class="agenda-summary">
+      <span>{{ totalCount() }} événement(s) à venir</span>
+    </div>
+
+    <!-- Date Groups -->
+    <div class="date-groups">
+      @for (group of dateGroups(); track trackByGroup($index, group)) {
+        <div class="date-group" [class.today]="group.isToday">
+          <!-- Date Header -->
+          <div class="date-header">
+            <div class="date-info">
+              <span class="date-relative">{{ group.date | relativeDate }}</span>
+              <span class="date-full">{{ formatDateHeader(group.date) }}</span>
+            </div>
+            @if (group.isToday) {
+              <span class="today-badge">Aujourd'hui</span>
+            }
+          </div>
+
+          <!-- Events List -->
+          <div class="events-list">
+            @for (event of group.events; track trackByEvent($index, event)) {
+              <div
+                class="agenda-event"
+                [class.all-day]="event.allDay"
+                [class.cancelled]="event.status === 'CANCELLED'"
+                (click)="onEventClick(event)"
+              >
+                <!-- Color Indicator -->
+                <div
+                  class="event-color"
+                  [style.background-color]="event.colorCode || '#3b82f6'"
+                ></div>
+
+                <!-- Event Content -->
+                <div class="event-content">
+                  <div class="event-header">
+                    <span class="event-time">{{ formatEventTime(event) }}</span>
+                    @if (event.recurrence | isRecurring) {
+                      <span class="recurrence-icon" title="Récurrent">↻</span>
+                    }
+                  </div>
+
+                  <h4 class="event-title">{{ event.title }}</h4>
+
+                  @if (event.displayLocation || event.location) {
+                    <p class="event-location">
+                      <span class="location-icon">📍</span>
+                      {{ event.displayLocation || event.location }}
+                    </p>
+                  }
+
+                  @if (event.description) {
+                    <p class="event-description">{{ event.description }}</p>
+                  }
+                </div>
+
+                <!-- Arrow -->
+                <span class="event-arrow">›</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Empty State -->
+    <div class="empty-state">
+      <span class="empty-icon">📅</span>
+      <h3>Aucun événement à venir</h3>
+      <p>Vous n'avez pas d'événements planifiés pour le moment.</p>
+    </div>
+  }
+</div>

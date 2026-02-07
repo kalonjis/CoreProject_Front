@@ -1,0 +1,141 @@
+<div class="filters" [class.expanded]="expanded">
+  <!-- Search -->
+  <div class="filter-section search-section">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher..."
+        [ngModel]="searchQuery"
+        (ngModelChange)="onSearchChange($event)"
+      />
+      @if (searchQuery) {
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="clearSearch()"
+          aria-label="Effacer la recherche"
+        >
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Status Filter -->
+  <div class="filter-section">
+    <button
+      type="button"
+      class="section-header"
+      (click)="toggleSection('status')"
+      [attr.aria-expanded]="isSectionOpen('status')"
+    >
+      <span class="section-title">Statut</span>
+      <span class="section-toggle">{{ isSectionOpen('status') ? '▼' : '▶' }}</span>
+    </button>
+
+    @if (isSectionOpen('status')) {
+      <div class="section-content">
+        @for (option of statusOptions(); track option.value) {
+          <label class="filter-option">
+            <input
+              type="checkbox"
+              [checked]="option.selected"
+              (change)="onStatusChange(option.value, $any($event.target).checked)"
+            />
+            <span class="option-label">{{ option.label }}</span>
+            <span class="option-count">({{ option.count }})</span>
+          </label>
+        }
+
+        <!-- Show Cancelled Toggle -->
+        <label class="filter-option toggle-option">
+          <input
+            type="checkbox"
+            [checked]="!hideCancelled()"
+            (change)="onShowCancelledChange($any($event.target).checked)"
+          />
+          <span class="option-label">Afficher les annulés</span>
+        </label>
+      </div>
+    }
+  </div>
+
+  <!-- Recurrence Filter -->
+  <div class="filter-section">
+    <button
+      type="button"
+      class="section-header"
+      (click)="toggleSection('recurrence')"
+      [attr.aria-expanded]="isSectionOpen('recurrence')"
+    >
+      <span class="section-title">Récurrence</span>
+      <span class="section-toggle">{{ isSectionOpen('recurrence') ? '▼' : '▶' }}</span>
+    </button>
+
+    @if (isSectionOpen('recurrence')) {
+      <div class="section-content">
+        @for (option of recurrenceOptions(); track option.value) {
+          <label class="filter-option">
+            <input
+              type="checkbox"
+              [checked]="option.selected"
+              (change)="onRecurrenceChange(option.value, $any($event.target).checked)"
+            />
+            <span class="option-label">{{ option.label }}</span>
+            <span class="option-count">({{ option.count }})</span>
+          </label>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Color Filter -->
+  @if (colorOptions().length > 0) {
+    <div class="filter-section">
+      <button
+        type="button"
+        class="section-header"
+        (click)="toggleSection('colors')"
+        [attr.aria-expanded]="isSectionOpen('colors')"
+      >
+        <span class="section-title">Couleurs</span>
+        <span class="section-toggle">{{ isSectionOpen('colors') ? '▼' : '▶' }}</span>
+      </button>
+
+      @if (isSectionOpen('colors')) {
+        <div class="section-content colors-grid">
+          @for (option of colorOptions(); track option.value) {
+            <label
+              class="color-option"
+              [class.selected]="option.selected"
+              [style.--color]="option.value"
+              [attr.title]="option.count + ' événement(s)'"
+            >
+              <input
+                type="checkbox"
+                [checked]="option.selected"
+                (change)="onColorChange(option.value, $any($event.target).checked)"
+              />
+              <span class="color-swatch"></span>
+            </label>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Reset Button -->
+  @if (activeFiltersCount() > 0) {
+    <div class="filter-actions">
+      <button
+        type="button"
+        class="reset-btn"
+        (click)="onReset()"
+      >
+        Réinitialiser les filtres ({{ activeFiltersCount() }})
+      </button>
+    </div>
+  }
+</div>

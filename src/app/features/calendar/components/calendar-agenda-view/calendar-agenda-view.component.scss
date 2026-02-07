@@ -1,0 +1,271 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+$border-color: #e5e7eb;
+$text-color: #1f2937;
+$text-muted: #6b7280;
+$primary-color: #3b82f6;
+$hover-bg: #f9fafb;
+$today-bg: rgba(59, 130, 246, 0.05);
+
+// =============================================================================
+// Container
+// =============================================================================
+
+.agenda-view {
+  height: 100%;
+  overflow-y: auto;
+  background-color: #fff;
+  padding: 1rem;
+}
+
+// =============================================================================
+// Summary
+// =============================================================================
+
+.agenda-summary {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid $border-color;
+  font-size: 0.875rem;
+  color: $text-muted;
+}
+
+// =============================================================================
+// Date Groups
+// =============================================================================
+
+.date-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.date-group {
+  &.today {
+    .date-header {
+      background-color: $today-bg;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+    }
+  }
+}
+
+// =============================================================================
+// Date Header
+// =============================================================================
+
+.date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.date-relative {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.date-full {
+  font-size: 0.875rem;
+  color: $text-muted;
+  text-transform: capitalize;
+}
+
+.today-badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $primary-color;
+  background-color: rgba($primary-color, 0.1);
+  border-radius: 9999px;
+}
+
+// =============================================================================
+// Events List
+// =============================================================================
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+// =============================================================================
+// Agenda Event
+// =============================================================================
+
+.agenda-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: #fff;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: $hover-bg;
+    border-color: darken($border-color, 5%);
+    transform: translateX(4px);
+  }
+
+  &.cancelled {
+    opacity: 0.6;
+
+    .event-title {
+      text-decoration: line-through;
+    }
+  }
+
+  &.all-day {
+    background-color: $hover-bg;
+  }
+}
+
+// =============================================================================
+// Event Color
+// =============================================================================
+
+.event-color {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// Event Content
+// =============================================================================
+
+.event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.event-time {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.recurrence-icon {
+  font-size: 0.75rem;
+  color: $primary-color;
+}
+
+.event-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-color;
+  line-height: 1.3;
+}
+
+.event-location {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+
+  .location-icon {
+    font-size: 0.75rem;
+  }
+}
+
+.event-description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// =============================================================================
+// Event Arrow
+// =============================================================================
+
+.event-arrow {
+  font-size: 1.25rem;
+  color: $text-muted;
+  transition: transform 0.15s ease;
+
+  .agenda-event:hover & {
+    transform: translateX(4px);
+    color: $primary-color;
+  }
+}
+
+// =============================================================================
+// Empty State
+// =============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  text-align: center;
+  padding: 2rem;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $text-muted;
+  }
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 640px) {
+  .agenda-view {
+    padding: 0.75rem;
+  }
+
+  .agenda-event {
+    padding: 0.625rem;
+  }
+
+  .event-title {
+    font-size: 0.875rem;
+  }
+}

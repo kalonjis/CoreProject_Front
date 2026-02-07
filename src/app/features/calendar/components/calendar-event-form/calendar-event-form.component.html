@@ -1,0 +1,211 @@
+<div class="event-form-page">
+  <!-- Header -->
+  <header class="form-header">
+    <button type="button" class="back-btn" (click)="onCancel()">
+      ← Retour
+    </button>
+    <h1>{{ pageTitle() }}</h1>
+  </header>
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="event-form">
+    <!-- Error Alert -->
+    @if (error()) {
+      <div class="alert alert-error">
+        <span>⚠️</span>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <!-- Form Error -->
+    @if (getFormError()) {
+      <div class="alert alert-warning">
+        <span>{{ getFormError() }}</span>
+      </div>
+    }
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title" class="form-label required">Titre</label>
+      <input
+        type="text"
+        id="title"
+        formControlName="title"
+        class="form-input"
+        placeholder="Titre de l'événement"
+        [class.error]="getFieldError('title')"
+      />
+      @if (getFieldError('title')) {
+        <span class="field-error">{{ getFieldError('title') }}</span>
+      }
+    </div>
+
+    <!-- Date & Time Section -->
+    <div class="form-section">
+      <h3 class="section-title">Date et heure</h3>
+
+      <!-- All Day Toggle -->
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="allDay" />
+          <span>Toute la journée</span>
+        </label>
+      </div>
+
+      <!-- Start Date/Time -->
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="startDate" class="form-label required">Début</label>
+          <input
+            type="date"
+            id="startDate"
+            formControlName="startDate"
+            class="form-input"
+          />
+        </div>
+        @if (!form.get('allDay')?.value) {
+          <div class="form-group time-input">
+            <label for="startTime" class="form-label">&nbsp;</label>
+            <input
+              type="time"
+              id="startTime"
+              formControlName="startTime"
+              class="form-input"
+            />
+          </div>
+        }
+      </div>
+
+      <!-- End Date/Time -->
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="endDate" class="form-label required">Fin</label>
+          <input
+            type="date"
+            id="endDate"
+            formControlName="endDate"
+            class="form-input"
+          />
+        </div>
+        @if (!form.get('allDay')?.value) {
+          <div class="form-group time-input">
+            <label for="endTime" class="form-label">&nbsp;</label>
+            <input
+              type="time"
+              id="endTime"
+              formControlName="endTime"
+              class="form-input"
+            />
+          </div>
+        }
+      </div>
+
+      <!-- Recurrence -->
+      <div class="form-group">
+        <label for="recurrence" class="form-label">Récurrence</label>
+        <select id="recurrence" formControlName="recurrence" class="form-select">
+          @for (option of recurrenceOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="form-group">
+      <label for="location" class="form-label">Lieu</label>
+      <input
+        type="text"
+        id="location"
+        formControlName="location"
+        class="form-input"
+        placeholder="Ajouter un lieu"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-textarea"
+        rows="4"
+        placeholder="Ajouter une description"
+      ></textarea>
+      @if (getFieldError('description')) {
+        <span class="field-error">{{ getFieldError('description') }}</span>
+      }
+    </div>
+
+    <!-- Options Section -->
+    <div class="form-section">
+      <h3 class="section-title">Options</h3>
+
+      <!-- Status -->
+      <div class="form-group">
+        <label for="status" class="form-label">Statut</label>
+        <select id="status" formControlName="status" class="form-select">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Reminder -->
+      <div class="form-group">
+        <label for="reminder" class="form-label">Rappel</label>
+        <select id="reminder" formControlName="reminderMinutes" class="form-select">
+          @for (option of reminderOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Color -->
+      <div class="form-group">
+        <label class="form-label">Couleur</label>
+        <div class="color-picker">
+          @for (color of colorOptions; track color.value) {
+            <button
+              type="button"
+              class="color-option"
+              [class.selected]="form.get('colorCode')?.value === color.value"
+              [style.background-color]="color.value"
+              [attr.title]="color.name"
+              (click)="selectColor(color.value)"
+            >
+              @if (form.get('colorCode')?.value === color.value) {
+                <span class="check" [style.color]="color.textColor">✓</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="loading()"
+      >
+        Annuler
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading() || form.invalid"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          Enregistrement...
+        } @else {
+          {{ isEditMode() ? 'Enregistrer' : 'Créer' }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

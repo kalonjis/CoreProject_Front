@@ -1,0 +1,100 @@
+<header class="header">
+  <!-- Left Section: Sidebar Toggle (mobile) + Title + Navigation -->
+  <div class="header-left">
+    <!-- Sidebar Toggle (mobile only) -->
+    <button
+      type="button"
+      class="btn-icon sidebar-toggle"
+      (click)="toggleSidebar.emit()"
+      aria-label="Toggle sidebar"
+    >
+      <span class="icon">☰</span>
+    </button>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button
+        type="button"
+        class="btn-icon"
+        (click)="previousClick.emit()"
+        [attr.aria-label]="getNavigationLabel('previous')"
+        [disabled]="loading"
+      >
+        <span class="icon">◀</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn-today"
+        (click)="todayClick.emit()"
+        [disabled]="loading"
+      >
+        Aujourd'hui
+      </button>
+
+      <button
+        type="button"
+        class="btn-icon"
+        (click)="nextClick.emit()"
+        [attr.aria-label]="getNavigationLabel('next')"
+        [disabled]="loading"
+      >
+        <span class="icon">▶</span>
+      </button>
+    </div>
+
+    <!-- Title -->
+    <h1 class="title">
+      {{ title }}
+      @if (loading) {
+        <span class="loading-indicator"></span>
+      }
+    </h1>
+  </div>
+
+  <!-- Center Section: View Switcher -->
+  <div class="header-center">
+    <div class="view-switcher" role="tablist" aria-label="Calendar views">
+      @for (view of views; track view) {
+        <button
+          type="button"
+          class="view-btn"
+          [class.active]="isActiveView(view)"
+          [attr.aria-selected]="isActiveView(view)"
+          [attr.aria-label]="viewLabels[view]"
+          role="tab"
+          (click)="onViewClick(view)"
+        >
+          <span class="view-label">{{ viewLabels[view] }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Right Section: Actions -->
+  <div class="header-right">
+    <!-- Filter Toggle (mobile) -->
+    <button
+      type="button"
+      class="btn-icon filter-toggle"
+      [class.has-filters]="hasActiveFilters"
+      (click)="toggleFilters.emit()"
+      aria-label="Toggle filters"
+    >
+      <span class="icon">⚙</span>
+      @if (hasActiveFilters) {
+        <span class="filter-badge"></span>
+      }
+    </button>
+
+    <!-- Create Event Button -->
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="createClick.emit()"
+    >
+      <span class="icon">+</span>
+      <span class="btn-text">Créer</span>
+    </button>
+  </div>
+</header>

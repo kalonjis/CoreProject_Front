@@ -1,0 +1,241 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+$primary-color: #3b82f6;
+$text-color: #1f2937;
+$text-muted: #6b7280;
+$border-color: #e5e7eb;
+$hover-bg: #f3f4f6;
+$border-radius: 0.375rem;
+
+// =============================================================================
+// Container
+// =============================================================================
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// =============================================================================
+// Search Section
+// =============================================================================
+
+.search-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-color;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 2rem 0.5rem 2.25rem;
+  font-size: 0.875rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+}
+
+.clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: $text-muted;
+  font-size: 0.75rem;
+
+  &:hover {
+    background-color: $hover-bg;
+    color: $text-color;
+  }
+}
+
+// =============================================================================
+// Filter Sections
+// =============================================================================
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    .section-title {
+      color: $primary-color;
+    }
+  }
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.15s ease;
+}
+
+.section-toggle {
+  font-size: 0.625rem;
+  color: $text-muted;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+}
+
+// =============================================================================
+// Filter Options
+// =============================================================================
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: $hover-bg;
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: $primary-color;
+  }
+}
+
+.option-label {
+  flex: 1;
+  font-size: 0.875rem;
+  color: $text-color;
+}
+
+.option-count {
+  font-size: 0.75rem;
+  color: $text-muted;
+}
+
+.toggle-option {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid $border-color;
+}
+
+// =============================================================================
+// Colors Grid
+// =============================================================================
+
+.colors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.color-option {
+  position: relative;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .color-swatch {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: var(--color);
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+
+  &:hover .color-swatch {
+    transform: scale(1.1);
+  }
+
+  &.selected .color-swatch {
+    border-color: $text-color;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color);
+  }
+}
+
+// =============================================================================
+// Actions
+// =============================================================================
+
+.filter-actions {
+  padding-top: 1rem;
+  border-top: 1px solid $border-color;
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: $primary-color;
+  background: none;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: $primary-color;
+    color: #fff;
+  }
+}

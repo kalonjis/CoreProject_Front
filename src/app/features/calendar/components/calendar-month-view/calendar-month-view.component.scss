@@ -1,0 +1,262 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+$border-color: #e5e7eb;
+$text-color: #1f2937;
+$text-muted: #9ca3af;
+$bg-hover: #f9fafb;
+$bg-weekend: #fafafa;
+$bg-other-month: #f3f4f6;
+$today-color: #3b82f6;
+$selected-bg: #eff6ff;
+
+// =============================================================================
+// Container
+// =============================================================================
+
+.month-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+}
+
+// =============================================================================
+// Weekday Header
+// =============================================================================
+
+.weekday-header {
+  display: flex;
+  border-bottom: 1px solid $border-color;
+  background-color: #fafafa;
+  flex-shrink: 0;
+}
+
+.week-number-header {
+  width: 40px;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $text-muted;
+  border-right: 1px solid $border-color;
+}
+
+.weekday-name {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// =============================================================================
+// Month Grid
+// =============================================================================
+
+.month-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.week-row {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// =============================================================================
+// Week Number Column
+// =============================================================================
+
+.week-number {
+  width: 40px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.5rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  background-color: #fafafa;
+  border-right: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// Day Cell
+// =============================================================================
+
+.day-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid $border-color;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  overflow: hidden;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background-color: $bg-hover;
+  }
+
+  &.other-month {
+    background-color: $bg-other-month;
+
+    .day-number {
+      color: $text-muted;
+    }
+  }
+
+  &.weekend {
+    background-color: $bg-weekend;
+  }
+
+  &.today {
+    background-color: rgba($today-color, 0.05);
+  }
+
+  &.selected {
+    background-color: $selected-bg;
+  }
+}
+
+// =============================================================================
+// Day Header
+// =============================================================================
+
+.day-header {
+  padding: 0.25rem;
+  flex-shrink: 0;
+}
+
+.day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-color;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: $border-color;
+  }
+
+  &.today {
+    background-color: $today-color;
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+      background-color: darken($today-color, 10%);
+    }
+  }
+}
+
+// =============================================================================
+// Day Events
+// =============================================================================
+
+.day-events {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 0.25rem 0.25rem;
+  overflow: hidden;
+}
+
+// =============================================================================
+// More Link
+// =============================================================================
+
+.more-link {
+  padding: 0.125rem 0.25rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.1s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: $text-color;
+  }
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 768px) {
+  .weekday-name {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.625rem;
+  }
+
+  .week-number,
+  .week-number-header {
+    width: 28px;
+    font-size: 0.625rem;
+  }
+
+  .day-number {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  .day-events {
+    // Hide event cards on very small screens, show dots instead
+    app-calendar-event-card {
+      display: none;
+    }
+  }
+
+  // Show event indicators as dots on mobile
+  .day-cell {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .week-number,
+  .week-number-header {
+    display: none;
+  }
+}

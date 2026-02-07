@@ -1,0 +1,180 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+$border-color: #e5e7eb;
+$text-muted: #6b7280;
+$slot-height: 48px;
+$time-label-width: 60px;
+$current-time-color: #ef4444;
+
+// =============================================================================
+// Container
+// =============================================================================
+
+.day-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+// =============================================================================
+// All-Day Section
+// =============================================================================
+
+.all-day-section {
+  display: flex;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.all-day-label {
+  width: $time-label-width;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  text-align: right;
+  border-right: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.all-day-events {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  min-height: 40px;
+}
+
+// =============================================================================
+// Time Grid
+// =============================================================================
+
+.time-grid {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+}
+
+// =============================================================================
+// Time Labels
+// =============================================================================
+
+.time-labels {
+  width: $time-label-width;
+  flex-shrink: 0;
+  border-right: 1px solid $border-color;
+}
+
+.time-label {
+  height: $slot-height;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+
+  span {
+    font-size: 0.75rem;
+    color: $text-muted;
+    transform: translateY(-50%);
+  }
+
+  &:first-child span {
+    transform: none;
+  }
+}
+
+// =============================================================================
+// Events Column
+// =============================================================================
+
+.events-column {
+  flex: 1;
+  position: relative;
+}
+
+.time-slot {
+  height: $slot-height;
+  border-bottom: 1px solid $border-color;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// =============================================================================
+// Events Container
+// =============================================================================
+
+.events-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.positioned-event {
+  position: absolute;
+  padding: 2px;
+  pointer-events: auto;
+  min-height: 20px;
+
+  app-calendar-event-card {
+    height: 100%;
+  }
+}
+
+// =============================================================================
+// Current Time Line
+// =============================================================================
+
+.current-time-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: $current-time-color;
+  z-index: 10;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: $current-time-color;
+    border-radius: 50%;
+  }
+}
+
+.current-time-dot {
+  display: none;
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 640px) {
+  .time-label-width {
+    width: 48px;
+  }
+
+  .time-label span {
+    font-size: 0.625rem;
+  }
+}
