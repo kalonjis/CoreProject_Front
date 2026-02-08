@@ -1,3 +1,5 @@
+// src/app/features/calendar/components/calendar-event-form/calendar-event-form.component.ts
+
 import {
   Component,
   OnInit,
@@ -23,7 +25,8 @@ import {
   CalendarEventStatusUtils,
   EventRecurrenceUtils,
   CreateCalendarEventRequest,
-  UpdateCalendarEventRequest
+  UpdateCalendarEventRequest,
+  AddressInput
 } from '../../models';
 import {
   CalendarEventApiService,
@@ -40,6 +43,16 @@ import {
 } from '../../validators';
 import { DEFAULT_EVENT_COLORS, getColorOptions } from '../../utils';
 import { HasUnsavedChanges } from '../../guards/calendar-unsaved-changes.guard';
+import {
+  AddressFormComponent,
+  AddressFormConfig,
+  AddressType,
+  CreateAddressRequest,
+  UpdateAddressRequest
+} from '../../../../shared/address';
+
+// Address form imports
+
 
 /**
  * Calendar event form component for creating and editing events.
@@ -47,6 +60,7 @@ import { HasUnsavedChanges } from '../../guards/calendar-unsaved-changes.guard';
  * @description
  * Handles both create and edit modes based on route data.
  * Implements HasUnsavedChanges for navigation guard.
+ * Integrates address selection via AddressFormComponent.
  *
  * @example
  * ```typescript
@@ -58,7 +72,11 @@ import { HasUnsavedChanges } from '../../guards/calendar-unsaved-changes.guard';
 @Component({
   selector: 'app-calendar-event-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AddressFormComponent
+  ],
   templateUrl: './calendar-event-form.component.html',
   styleUrl: './calendar-event-form.component.scss'
 })
@@ -75,13 +93,33 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   private readonly config = inject(CALENDAR_CONFIG);
 
   // ===========================================================================
-  // State
+  // State - Event Form
   // ===========================================================================
 
+  /** Form mode: create or edit */
   readonly mode = signal<'create' | 'edit'>('create');
+
+  /** Loading state during submission */
   readonly loading = signal<boolean>(false);
+
+  /** Error message from API */
   readonly error = signal<string | null>(null);
+
+  /** Event being edited (null in create mode) */
   readonly existingEvent = signal<CalendarEvent | null>(null);
+
+  // ===========================================================================
+  // State - Address Management
+  // ===========================================================================
+
+  /** Whether to show the address form */
+  readonly showAddressForm = signal<boolean>(false);
+
+  /** Selected/entered address for the event */
+  readonly selectedAddress = signal<AddressInput | null>(null);
+
+  /** Address form mode (create/edit) */
+  readonly addressFormMode = signal<'create' | 'edit'>('create');
 
   // ===========================================================================
   // Form
@@ -107,10 +145,37 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   });
 
   // ===========================================================================
-  // Computed
+  // Address Form Configuration
   // ===========================================================================
 
+  /**
+   * Configuration for the address form component.
+   * Uses 'user' context with simplified settings for calendar events.
+   */
+  readonly addressFormConfig: AddressFormConfig = {
+    context: 'user',
+    defaultCountryCode: 'BE',
+    defaultType: AddressType.OTHER,
+    allowedTypes: [AddressType.OTHER, AddressType.PROFESSIONAL, AddressType.TEMPORARY],
+    showComplement: true,
+    showStateProvince: false,
+    showLabel: false,
+    showNotes: false,
+    showDefaultCheckbox: false,
+    showPrimaryCheckbox: false,
+    showEligibilityFlags: false,
+    requireStateProvince: false,
+    enableAutocomplete: false
+  };
+
+  // ===========================================================================
+  // Computed Properties
+  // ===========================================================================
+
+  /** Whether in edit mode */
   readonly isEditMode = computed(() => this.mode() === 'edit');
+
+  /** Page title based on mode */
   readonly pageTitle = computed(() =>
     this.isEditMode() ? 'Modifier l\'événement' : 'Nouvel événement'
   );
@@ -119,17 +184,22 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // Template Data
   // ===========================================================================
 
+  /** Status options for dropdown */
   readonly statusOptions = CalendarEventStatusUtils.all().map(status => ({
     value: status,
     label: CALENDAR_EVENT_STATUS_LABELS[status]
   }));
 
+  /** Recurrence options for dropdown */
   readonly recurrenceOptions = EventRecurrenceUtils.all().map(recurrence => ({
     value: recurrence,
     label: EVENT_RECURRENCE_LABELS[recurrence]
   }));
 
+  /** Reminder time options */
   readonly reminderOptions = REMINDER_OPTIONS_WITH_LABELS;
+
+  /** Color palette options */
   readonly colorOptions = getColorOptions(DEFAULT_EVENT_COLORS);
 
   // ===========================================================================
@@ -146,6 +216,17 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
     if (event && this.isEditMode()) {
       this.existingEvent.set(event);
       this.populateForm(event);
+
+      // Load address if present
+      if (event.address) {
+        this.selectedAddress.set({
+          streetName: event.address.streetName,
+          streetNumber: event.address.streetNumber,
+          postalCode: event.address.postalCode,
+          city: event.address.city,
+          countryCode: event.address.countryCode
+        });
+      }
     }
 
     // Handle date from query params (for create from slot click)
@@ -162,7 +243,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
       });
     }
 
-    // Listen to allDay changes
+    // Listen to allDay changes to enable/disable time fields
     this.form.get('allDay')?.valueChanges.subscribe(allDay => {
       if (allDay) {
         this.form.get('startTime')?.disable();
@@ -178,10 +259,16 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // HasUnsavedChanges Implementation
   // ===========================================================================
 
+  /**
+   * Checks if there are unsaved changes in the form.
+   */
   hasUnsavedChanges(): boolean {
-    return this.form.dirty;
+    return this.form.dirty || this.selectedAddress() !== null;
   }
 
+  /**
+   * Returns the warning message for unsaved changes.
+   */
   getUnsavedChangesMessage(): string {
     return 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter ?';
   }
@@ -238,6 +325,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
       title: values.title,
       description: values.description || undefined,
       location: values.location || undefined,
+      address: this.selectedAddress() || undefined,
       startDateTime,
       endDateTime,
       allDay: values.allDay,
@@ -249,11 +337,73 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   }
 
   // ===========================================================================
-  // Actions
+  // Address Management
   // ===========================================================================
 
   /**
-   * Submits the form.
+   * Opens the address form for adding/editing an address.
+   */
+  openAddressForm(): void {
+    this.addressFormMode.set(this.selectedAddress() ? 'edit' : 'create');
+    this.showAddressForm.set(true);
+  }
+
+  /**
+   * Closes the address form without saving.
+   */
+  closeAddressForm(): void {
+    this.showAddressForm.set(false);
+  }
+
+  /**
+   * Handles address form submission.
+   * Maps CreateAddressRequest to AddressInput for the event.
+   */
+  handleAddressSubmit(request: CreateAddressRequest | UpdateAddressRequest): void {
+    // Cast to CreateAddressRequest since we always create new addresses in calendar
+    const createRequest = request as CreateAddressRequest;
+
+    const addressInput: AddressInput = {
+      streetName: createRequest.streetName,
+      streetNumber: createRequest.streetNumber || '',
+      postalCode: createRequest.postalCode,
+      city: createRequest.city,
+      countryCode: createRequest.countryCode
+    };
+
+    this.selectedAddress.set(addressInput);
+    this.showAddressForm.set(false);
+  }
+
+  /**
+   * Removes the selected address.
+   */
+  removeAddress(): void {
+    this.selectedAddress.set(null);
+  }
+
+  /**
+   * Formats an address for display.
+   */
+  formatAddress(address: AddressInput | null): string {
+    if (!address) return '';
+
+    const parts = [
+      address.streetNumber,
+      address.streetName,
+      address.postalCode,
+      address.city
+    ].filter(Boolean);
+
+    return parts.join(', ');
+  }
+
+  // ===========================================================================
+  // Form Actions
+  // ===========================================================================
+
+  /**
+   * Submits the form to create or update an event.
    */
   onSubmit(): void {
     if (this.form.invalid) {
@@ -284,14 +434,14 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   }
 
   /**
-   * Cancels and navigates back.
+   * Cancels the form and navigates back.
    */
   onCancel(): void {
     this.router.navigate(['../..'], { relativeTo: this.route });
   }
 
   /**
-   * Selects a color.
+   * Selects a color for the event.
    */
   selectColor(color: string): void {
     this.form.patchValue({ colorCode: color });
@@ -302,7 +452,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // ===========================================================================
 
   /**
-   * Gets error message for a field.
+   * Gets validation error message for a specific field.
    */
   getFieldError(fieldName: string): string | null {
     const control = this.form.get(fieldName);
@@ -318,7 +468,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   }
 
   /**
-   * Gets form-level error message.
+   * Gets form-level validation error message.
    */
   getFormError(): string | null {
     if (this.form.errors?.['dateRange']) {

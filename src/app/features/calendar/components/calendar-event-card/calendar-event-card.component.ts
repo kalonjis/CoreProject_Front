@@ -76,7 +76,7 @@ export class CalendarEventCardComponent {
   set event(value: CalendarEvent) {
     this._event.set(value);
   }
-  private readonly _event = signal<CalendarEvent | null>(null);
+  protected  readonly _event = signal<CalendarEvent | null>(null);
 
   /** Whether to use compact display (single line) */
   @Input() compact: boolean = false;
