@@ -1,3 +1,5 @@
+// src/app/features/calendar/components/calendar-event-form/calendar-event-form.component.scss
+
 // =============================================================================
 // Variables
 // =============================================================================
@@ -5,20 +7,34 @@
 $primary-color: #3b82f6;
 $primary-hover: #2563eb;
 $danger-color: #ef4444;
+$danger-hover: #dc2626;
+$success-color: #10b981;
 $warning-color: #f59e0b;
+
 $text-color: #1f2937;
 $text-muted: #6b7280;
+$text-light: #9ca3af;
+
+$bg-color: #f3f4f6;
+$bg-light: #f9fafb;
 $border-color: #e5e7eb;
-$bg-color: #f9fafb;
 $border-radius: 0.375rem;
 
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
 // =============================================================================
-// Page Layout
+// Container
 // =============================================================================
 
-.event-form-page {
-  min-height: 100vh;
-  background-color: $bg-color;
+.event-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-xl $spacing-md;
+  background-color: #fff;
 }
 
 // =============================================================================
@@ -26,45 +42,14 @@ $border-radius: 0.375rem;
 // =============================================================================
 
 .form-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  background-color: #fff;
-  border-bottom: 1px solid $border-color;
-
-  h1 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: $text-color;
-  }
+  margin-bottom: $spacing-xl;
 }
 
-.back-btn {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: $text-muted;
-  background: none;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    color: $text-color;
-    background-color: $bg-color;
-  }
-}
-
-// =============================================================================
-// Form
-// =============================================================================
-
-.event-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1.5rem;
+.form-title {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $text-color;
 }
 
 // =============================================================================
@@ -72,11 +57,8 @@ $border-radius: 0.375rem;
 // =============================================================================
 
 .alert {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
   border-radius: $border-radius;
   font-size: 0.875rem;
 
@@ -91,6 +73,22 @@ $border-radius: 0.375rem;
     color: darken($warning-color, 10%);
     border: 1px solid #fde68a;
   }
+
+  &.alert-success {
+    background-color: #f0fdf4;
+    color: darken($success-color, 10%);
+    border: 1px solid #bbf7d0;
+  }
+}
+
+// =============================================================================
+// Form
+// =============================================================================
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
 }
 
 // =============================================================================
@@ -98,15 +96,14 @@ $border-radius: 0.375rem;
 // =============================================================================
 
 .form-section {
-  margin: 1.5rem 0;
-  padding: 1rem;
+  padding: $spacing-lg;
   background-color: #fff;
   border: 1px solid $border-color;
   border-radius: $border-radius;
 }
 
 .section-title {
-  margin: 0 0 1rem 0;
+  margin: 0 0 $spacing-md 0;
   font-size: 0.875rem;
   font-weight: 600;
   color: $text-muted;
@@ -114,12 +111,19 @@ $border-radius: 0.375rem;
   letter-spacing: 0.05em;
 }
 
+.subsection-title {
+  margin: 0 0 $spacing-sm 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
 // =============================================================================
 // Form Groups
 // =============================================================================
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: $spacing-md;
 
   &:last-child {
     margin-bottom: 0;
@@ -128,7 +132,8 @@ $border-radius: 0.375rem;
 
 .form-row {
   display: flex;
-  gap: 1rem;
+  gap: $spacing-md;
+  align-items: flex-end;
 
   .flex-1 {
     flex: 1;
@@ -153,6 +158,13 @@ $border-radius: 0.375rem;
   }
 }
 
+.help-text {
+  margin-top: $spacing-xs;
+  font-size: 0.875rem;
+  color: $text-muted;
+  line-height: 1.5;
+}
+
 // =============================================================================
 // Form Inputs
 // =============================================================================
@@ -171,7 +183,7 @@ $border-radius: 0.375rem;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
   &::placeholder {
-    color: lighten($text-muted, 10%);
+    color: $text-light;
   }
 
   &:focus {
@@ -190,16 +202,24 @@ $border-radius: 0.375rem;
   &:disabled {
     background-color: $bg-color;
     cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
 .form-select {
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
 }
 
 .form-textarea {
   resize: vertical;
   min-height: 100px;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
 .field-error {
@@ -214,14 +234,15 @@ $border-radius: 0.375rem;
 // =============================================================================
 
 .checkbox-group {
-  margin-bottom: 1rem;
+  margin-bottom: $spacing-md;
 }
 
 .checkbox-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $spacing-sm;
   cursor: pointer;
+  user-select: none;
 
   input[type="checkbox"] {
     width: 18px;
@@ -235,6 +256,12 @@ $border-radius: 0.375rem;
     font-size: 0.9375rem;
     color: $text-color;
   }
+
+  &:hover {
+    span {
+      color: darken($text-color, 10%);
+    }
+  }
 }
 
 // =============================================================================
@@ -244,12 +271,12 @@ $border-radius: 0.375rem;
 .color-picker {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: $spacing-sm;
 }
 
 .color-option {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: 2px solid transparent;
   border-radius: 50%;
   cursor: pointer;
@@ -257,9 +284,15 @@ $border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover {
     transform: scale(1.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(1.05);
   }
 
   &.selected {
@@ -274,57 +307,194 @@ $border-radius: 0.375rem;
 }
 
 // =============================================================================
-// Form Actions
+// Address Section
 // =============================================================================
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
+.address-section {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
   border-top: 1px solid $border-color;
+}
+
+.address-form-wrapper {
+  padding: $spacing-md;
+  background-color: $bg-light;
+  border-radius: $border-radius;
+  border: 1px dashed $border-color;
+}
+
+.selected-address {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background-color: $bg-light;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
+
+.address-display {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.address-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.address-text {
+  flex: 1;
+  font-size: 0.9375rem;
+  color: $text-color;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.address-actions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
 }
 
 // =============================================================================
 // Buttons
 // =============================================================================
 
-.btn {
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
+  gap: $spacing-sm;
+  padding: 0.625rem 1rem;
   font-size: 0.9375rem;
   font-weight: 500;
+  color: $text-color;
+  background-color: #fff;
+  border: 1px solid $border-color;
   border-radius: $border-radius;
   cursor: pointer;
   transition: all 0.15s ease;
 
+  &:hover:not(:disabled) {
+    background-color: $bg-light;
+    border-color: darken($border-color, 10%);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: $primary-color;
-  border: none;
+.btn-danger-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: $danger-color;
+  background-color: #fff;
+  border: 1px solid $danger-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
 
   &:hover:not(:disabled) {
-    background-color: $primary-hover;
+    background-color: rgba($danger-color, 0.05);
+    border-color: $danger-hover;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
-.btn-secondary {
+.btn-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+// =============================================================================
+// Form Actions
+// =============================================================================
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-color;
+  margin-top: $spacing-lg;
+}
+
+.btn-cancel {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
   color: $text-color;
   background-color: #fff;
   border: 1px solid $border-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
 
   &:hover:not(:disabled) {
     background-color: $bg-color;
+    border-color: darken($border-color, 10%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: $primary-color;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: $primary-hover;
+    border-color: $primary-hover;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
@@ -333,12 +503,13 @@ $border-radius: 0.375rem;
 // =============================================================================
 
 .spinner {
+  display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
 @keyframes spin {
@@ -351,14 +522,17 @@ $border-radius: 0.375rem;
 // Responsive
 // =============================================================================
 
-@media (max-width: 640px) {
-  .event-form {
-    padding: 1rem;
+@media (max-width: 768px) {
+  .event-form-container {
+    padding: $spacing-md;
+  }
+
+  .form-section {
+    padding: $spacing-md;
   }
 
   .form-row {
     flex-direction: column;
-    gap: 0;
 
     .time-input {
       width: 100%;
@@ -368,8 +542,39 @@ $border-radius: 0.375rem;
   .form-actions {
     flex-direction: column-reverse;
 
-    .btn {
+    button {
       width: 100%;
     }
+  }
+
+  .address-display {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .address-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .color-picker {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .form-section {
+    padding: $spacing-sm;
+  }
+
+  .section-title {
+    font-size: 0.8125rem;
   }
 }

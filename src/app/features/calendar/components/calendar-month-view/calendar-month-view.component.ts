@@ -59,7 +59,7 @@ export class CalendarMonthViewComponent {
   // Dependencies
   // ===========================================================================
 
-  private readonly config = inject(CALENDAR_CONFIG);
+  protected readonly config = inject(CALENDAR_CONFIG);
 
   // ===========================================================================
   // Inputs

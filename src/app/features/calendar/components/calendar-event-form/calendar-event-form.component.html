@@ -1,61 +1,63 @@
-<div class="event-form-page">
+<!-- src/app/features/calendar/components/calendar-event-form/calendar-event-form.component.html -->
+
+<div class="event-form-container">
   <!-- Header -->
-  <header class="form-header">
-    <button type="button" class="back-btn" (click)="onCancel()">
-      ← Retour
-    </button>
-    <h1>{{ pageTitle() }}</h1>
-  </header>
+  <div class="form-header">
+    <h1 class="form-title">{{ pageTitle() }}</h1>
+  </div>
+
+  <!-- Error Alert -->
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Form-level validation error -->
+  @if (getFormError()) {
+    <div class="alert alert-warning">
+      {{ getFormError() }}
+    </div>
+  }
 
   <!-- Form -->
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="event-form">
-    <!-- Error Alert -->
-    @if (error()) {
-      <div class="alert alert-error">
-        <span>⚠️</span>
-        <span>{{ error() }}</span>
-      </div>
-    }
 
-    <!-- Form Error -->
-    @if (getFormError()) {
-      <div class="alert alert-warning">
-        <span>{{ getFormError() }}</span>
-      </div>
-    }
-
-    <!-- Title -->
-    <div class="form-group">
-      <label for="title" class="form-label required">Titre</label>
-      <input
-        type="text"
-        id="title"
-        formControlName="title"
-        class="form-input"
-        placeholder="Titre de l'événement"
-        [class.error]="getFieldError('title')"
-      />
-      @if (getFieldError('title')) {
-        <span class="field-error">{{ getFieldError('title') }}</span>
-      }
-    </div>
-
-    <!-- Date & Time Section -->
+    <!-- Basic Information Section -->
     <div class="form-section">
-      <h3 class="section-title">Date et heure</h3>
+      <h3 class="section-title">Basic Information</h3>
+
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title" class="form-label required">Title</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          class="form-input"
+          placeholder="Event title"
+          [class.error]="getFieldError('title')"
+        />
+        @if (getFieldError('title')) {
+          <span class="field-error">{{ getFieldError('title') }}</span>
+        }
+      </div>
 
       <!-- All Day Toggle -->
-      <div class="form-group checkbox-group">
+      <div class="checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" formControlName="allDay" />
-          <span>Toute la journée</span>
+          <input
+            type="checkbox"
+            formControlName="allDay"
+          />
+          <span>All-day event</span>
         </label>
       </div>
 
       <!-- Start Date/Time -->
       <div class="form-row">
         <div class="form-group flex-1">
-          <label for="startDate" class="form-label required">Début</label>
+          <label for="startDate" class="form-label required">Start</label>
           <input
             type="date"
             id="startDate"
@@ -79,7 +81,7 @@
       <!-- End Date/Time -->
       <div class="form-row">
         <div class="form-group flex-1">
-          <label for="endDate" class="form-label required">Fin</label>
+          <label for="endDate" class="form-label required">End</label>
           <input
             type="date"
             id="endDate"
@@ -102,7 +104,7 @@
 
       <!-- Recurrence -->
       <div class="form-group">
-        <label for="recurrence" class="form-label">Récurrence</label>
+        <label for="recurrence" class="form-label">Recurrence</label>
         <select id="recurrence" formControlName="recurrence" class="form-select">
           @for (option of recurrenceOptions; track option.value) {
             <option [value]="option.value">{{ option.label }}</option>
@@ -111,31 +113,105 @@
       </div>
     </div>
 
-    <!-- Location -->
-    <div class="form-group">
-      <label for="location" class="form-label">Lieu</label>
-      <input
-        type="text"
-        id="location"
-        formControlName="location"
-        class="form-input"
-        placeholder="Ajouter un lieu"
-      />
+    <!-- Location Section -->
+    <div class="form-section">
+      <h3 class="section-title">Location</h3>
+
+      <!-- Location (free text) -->
+      <div class="form-group">
+        <label for="location" class="form-label">Location</label>
+        <input
+          type="text"
+          id="location"
+          formControlName="location"
+          class="form-input"
+          placeholder="Add a location (free text)"
+        />
+        <p class="help-text">
+          E.g., "Conference Room A", "Teams Meeting", "Café du Commerce"
+        </p>
+      </div>
+
+      <!-- Physical Address (optional) -->
+      <div class="address-section">
+        <h4 class="subsection-title">Physical Address (optional)</h4>
+
+        @if (showAddressForm()) {
+          <!-- Address Form -->
+          <div class="address-form-wrapper">
+            <app-address-form
+              [mode]="addressFormMode()"
+              [config]="addressFormConfig"
+              [isSubmitting]="loading()"
+              (onSubmit)="handleAddressSubmit($event)"
+              (onCancel)="closeAddressForm()"
+            />
+          </div>
+        } @else {
+          <!-- Address Display or Add Button -->
+          @if (selectedAddress()) {
+            <!-- Selected Address Display -->
+            <div class="selected-address">
+              <div class="address-display">
+                <div class="address-icon">📍</div>
+                <div class="address-text">
+                  {{ formatAddress(selectedAddress()) }}
+                </div>
+              </div>
+              <div class="address-actions">
+                <button
+                  type="button"
+                  class="btn-secondary btn-sm"
+                  (click)="openAddressForm()"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="btn-danger-outline btn-sm"
+                  (click)="removeAddress()"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          } @else {
+            <!-- Add Address Button -->
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="openAddressForm()"
+            >
+              <span class="btn-icon">+</span>
+              Add Physical Address
+            </button>
+            <p class="help-text">
+              You can specify a physical address in addition to the text location.
+              This will allow the event to be located on a map.
+            </p>
+          }
+        }
+      </div>
     </div>
 
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description" class="form-label">Description</label>
-      <textarea
-        id="description"
-        formControlName="description"
-        class="form-textarea"
-        rows="4"
-        placeholder="Ajouter une description"
-      ></textarea>
-      @if (getFieldError('description')) {
-        <span class="field-error">{{ getFieldError('description') }}</span>
-      }
+    <!-- Description Section -->
+    <div class="form-section">
+      <h3 class="section-title">Description</h3>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-textarea"
+          rows="4"
+          placeholder="Add a description (optional)"
+        ></textarea>
+        @if (getFieldError('description')) {
+          <span class="field-error">{{ getFieldError('description') }}</span>
+        }
+      </div>
     </div>
 
     <!-- Options Section -->
@@ -144,7 +220,7 @@
 
       <!-- Status -->
       <div class="form-group">
-        <label for="status" class="form-label">Statut</label>
+        <label for="status" class="form-label">Status</label>
         <select id="status" formControlName="status" class="form-select">
           @for (option of statusOptions; track option.value) {
             <option [value]="option.value">{{ option.label }}</option>
@@ -152,58 +228,59 @@
         </select>
       </div>
 
-      <!-- Reminder -->
-      <div class="form-group">
-        <label for="reminder" class="form-label">Rappel</label>
-        <select id="reminder" formControlName="reminderMinutes" class="form-select">
-          @for (option of reminderOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-      </div>
-
       <!-- Color -->
       <div class="form-group">
-        <label class="form-label">Couleur</label>
+        <label class="form-label">Color</label>
         <div class="color-picker">
-          @for (color of colorOptions; track color.value) {
+          @for (colorOption of colorOptions; track colorOption.value) {
             <button
               type="button"
               class="color-option"
-              [class.selected]="form.get('colorCode')?.value === color.value"
-              [style.background-color]="color.value"
-              [attr.title]="color.name"
-              (click)="selectColor(color.value)"
+              [class.selected]="form.get('colorCode')?.value === colorOption.value"
+              [style.background-color]="colorOption.value"
+              [attr.aria-label]="colorOption.name"
+              (click)="selectColor(colorOption.value)"
             >
-              @if (form.get('colorCode')?.value === color.value) {
-                <span class="check" [style.color]="color.textColor">✓</span>
+              @if (form.get('colorCode')?.value === colorOption.value) {
+                <span class="check" [style.color]="colorOption.textColor">✓</span>
               }
             </button>
           }
         </div>
       </div>
+
+      <!-- Reminder -->
+      <div class="form-group">
+        <label for="reminder" class="form-label">Reminder</label>
+        <select id="reminder" formControlName="reminderMinutes" class="form-select">
+          <option [value]="null">No reminder</option>
+          @for (option of reminderOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Form Actions -->
     <div class="form-actions">
       <button
         type="button"
-        class="btn btn-secondary"
+        class="btn-cancel"
         (click)="onCancel()"
         [disabled]="loading()"
       >
-        Annuler
+        Cancel
       </button>
       <button
         type="submit"
-        class="btn btn-primary"
-        [disabled]="loading() || form.invalid"
+        class="btn-submit"
+        [disabled]="form.invalid || loading()"
       >
         @if (loading()) {
           <span class="spinner"></span>
-          Enregistrement...
+          <span>Saving...</span>
         } @else {
-          {{ isEditMode() ? 'Enregistrer' : 'Créer' }}
+          <span>{{ isEditMode() ? 'Save' : 'Create' }}</span>
         }
       </button>
     </div>

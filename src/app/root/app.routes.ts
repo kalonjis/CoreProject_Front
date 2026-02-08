@@ -39,6 +39,11 @@ export const routes: Routes = [
     path: 'contact',
     loadChildren: () => import('../features/contact/contact.routes')
       .then(m => m.CONTACT_ROUTES)
+  },
+  {
+    path: 'calendar',
+    loadChildren: () => import('../features/calendar/calendar.routes')
+        .then(m => m.CALENDAR_ROUTES)
   }
 /*
   // Routes authentifiées standard

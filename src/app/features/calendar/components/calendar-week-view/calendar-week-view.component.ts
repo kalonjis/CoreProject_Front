@@ -1,3 +1,5 @@
+// src/app/features/calendar/components/calendar-week-view/calendar-week-view.component.ts
+
 import {
   Component,
   Input,
@@ -13,13 +15,13 @@ import { CalendarEvent } from '../../models';
 import { CALENDAR_CONFIG } from '../../calendar.config';
 import {
   getTimeSlots,
-  getWeekDays,
   getEventsForDay,
   calculateEventPositions,
   isToday,
   isSameDay,
   PositionedEvent
 } from '../../utils';
+import { CalendarDateService } from '../../services';
 import { CalendarEventCardComponent } from '../calendar-event-card/calendar-event-card.component';
 
 /**
@@ -53,6 +55,7 @@ export class CalendarWeekViewComponent {
   // ===========================================================================
 
   protected readonly config = inject(CALENDAR_CONFIG);
+  private readonly dateService = inject(CalendarDateService);
 
   // ===========================================================================
   // Inputs
@@ -90,7 +93,10 @@ export class CalendarWeekViewComponent {
   // ===========================================================================
 
   /** Days of the week */
-  readonly weekDays = computed(() => getWeekDays(this._date()));
+  readonly weekDays = computed(() => {
+    const date = this._date();
+    return this.dateService.getWeekDays(date);
+  });
 
   /** Time slots */
   readonly timeSlots = computed(() =>
@@ -106,7 +112,7 @@ export class CalendarWeekViewComponent {
     const days = this.weekDays();
     const events = this._events();
 
-    return days.map(day => ({
+    return days.map((day: Date) => ({
       day,
       events: getEventsForDay(events, day).filter(e => e.allDay)
     }));
@@ -117,7 +123,7 @@ export class CalendarWeekViewComponent {
     const days = this.weekDays();
     const events = this._events();
 
-    return days.map(day => {
+    return days.map((day: Date) => {
       const dayEvents = getEventsForDay(events, day).filter(e => !e.allDay);
       return {
         day,
@@ -133,6 +139,13 @@ export class CalendarWeekViewComponent {
   // ===========================================================================
   // Template Helpers
   // ===========================================================================
+
+  /**
+   * Checks if there are any all-day events in the week.
+   */
+  hasAllDayEvents(): boolean {
+    return this.allDayEventsByDay().some(d => d.events.length > 0);
+  }
 
   /**
    * Formats a day for the header.
