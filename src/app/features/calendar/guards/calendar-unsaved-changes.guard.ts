@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 /**
  * Interface for components that can have unsaved changes.
@@ -60,7 +61,7 @@ const DEFAULT_MESSAGE = 'Vous avez des modifications non enregistrées. Voulez-v
  * }
  * ```
  */
-export const calendarUnsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (
+export const calendarUnsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = async (
   component,
   currentRoute,
   currentState,
@@ -79,8 +80,20 @@ export const calendarUnsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (
   // Get confirmation message
   const message = component.getUnsavedChangesMessage?.() || DEFAULT_MESSAGE;
 
-  // Show browser confirmation dialog
-  return window.confirm(message);
+  const confirmDialog = inject(ConfirmDialogService);
+
+  try {
+    await confirmDialog.confirm({
+      message: message,
+      title: 'Modifications non sauvegardées',
+      confirmButtonText: 'Quitter sans sauvegarder',
+      cancelButtonText: 'Rester sur la page',
+      type: 'warning'
+    });
+    return true; // L'utilisateur a confirmé
+  } catch {
+    return false; // L'utilisateur a annulé
+  }
 };
 
 /**
@@ -143,7 +156,19 @@ export function createUnsavedChangesGuard(options: {
       return options.confirmFn(message);
     }
 
-    return window.confirm(message);
+    const confirmDialog = inject(ConfirmDialogService);
+    try {
+      await confirmDialog.confirm({
+        message: message,
+        title: 'Modifications non sauvegardées',
+        confirmButtonText: 'Quitter',
+        cancelButtonText: 'Rester',
+        type: 'warning'
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 }
 
