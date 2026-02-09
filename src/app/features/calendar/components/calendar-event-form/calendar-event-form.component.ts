@@ -30,7 +30,8 @@ import {
 } from '../../models';
 import {
   CalendarEventApiService,
-  CalendarDateService
+  CalendarDateService,
+  CalendarEventStateService
 } from '../../services';
 import {
   CALENDAR_CONFIG,
@@ -50,6 +51,7 @@ import {
   CreateAddressRequest,
   UpdateAddressRequest
 } from '../../../../shared/address';
+import {FeedbackService} from '../../../../shared/feedback/tools/feedback.service';
 
 // Address form imports
 
@@ -91,6 +93,8 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   private readonly api = inject(CalendarEventApiService);
   private readonly dateService = inject(CalendarDateService);
   private readonly config = inject(CALENDAR_CONFIG);
+  private readonly state = inject(CalendarEventStateService);
+  private readonly feedback = inject(FeedbackService);
 
   // ===========================================================================
   // State - Event Form
@@ -121,6 +125,9 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   /** Address form mode (create/edit) */
   readonly addressFormMode = signal<'create' | 'edit'>('create');
 
+  /** Address from the original event (for comparison) */
+  readonly initialAddress = signal<AddressInput | null>(null);
+
   // ===========================================================================
   // Form
   // ===========================================================================
@@ -129,10 +136,13 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
     title: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', [Validators.maxLength(5000)]],
     location: ['', [Validators.maxLength(300)]],
-    startDate: [new Date(), [Validators.required]],
+
+    // ✅ CORRECTION : Utiliser le format string pour les dates
+    startDate: [this.formatDateForInput(new Date()), [Validators.required]],
     startTime: ['09:00', [Validators.required]],
-    endDate: [new Date(), [Validators.required]],
+    endDate: [this.formatDateForInput(new Date()), [Validators.required]],
     endTime: ['10:00', [Validators.required]],
+
     allDay: [false],
     status: [CalendarEventStatus.CONFIRMED],
     recurrence: [EventRecurrence.NONE],
@@ -219,13 +229,15 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
 
       // Load address if present
       if (event.address) {
-        this.selectedAddress.set({
+        const address: AddressInput = {
           streetName: event.address.streetName,
           streetNumber: event.address.streetNumber,
           postalCode: event.address.postalCode,
           city: event.address.city,
           countryCode: event.address.countryCode
-        });
+        };
+        this.selectedAddress.set(address);
+        this.initialAddress.set(address);
       }
     }
 
@@ -234,9 +246,9 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
     if (dateParam && !this.isEditMode()) {
       const date = new Date(dateParam);
       this.form.patchValue({
-        startDate: date,
+        startDate: this.formatDateForInput(date),
         startTime: this.dateService.formatTime(date),
-        endDate: date,
+        endDate: this.formatDateForInput(date),
         endTime: this.dateService.formatTime(
           new Date(date.getTime() + this.config.defaultEventDuration * 60000)
         )
@@ -263,7 +275,31 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
    * Checks if there are unsaved changes in the form.
    */
   hasUnsavedChanges(): boolean {
-    return this.form.dirty || this.selectedAddress() !== null;
+    // Vérifier si le formulaire a des changements
+    if (this.form.dirty) {
+      return true;
+    }
+
+    // Vérifier si l'adresse a changé par rapport à l'état initial
+    const currentAddress = this.selectedAddress();
+    const initialAddr = this.initialAddress();
+
+    // Si une nouvelle adresse a été ajoutée (initial = null, current != null)
+    if (initialAddr === null && currentAddress !== null) {
+      return true;
+    }
+
+    // Si une adresse a été supprimée (initial != null, current = null)
+    if (initialAddr !== null && currentAddress === null) {
+      return true;
+    }
+
+    // Si l'adresse a été modifiée (comparer les valeurs)
+    if (initialAddr !== null && currentAddress !== null) {
+      return JSON.stringify(initialAddr) !== JSON.stringify(currentAddress);
+    }
+
+    return false;
   }
 
   /**
@@ -277,6 +313,13 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // Form Methods
   // ===========================================================================
 
+  private formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   /**
    * Populates form with existing event data.
    */
@@ -288,10 +331,13 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
       title: event.title,
       description: event.description || '',
       location: event.location || '',
-      startDate: startDate,
+
+      // ✅ CORRECTION : Convertir en string
+      startDate: this.formatDateForInput(startDate),
       startTime: this.dateService.formatTime(startDate),
-      endDate: endDate,
+      endDate: this.formatDateForInput(endDate),
       endTime: this.dateService.formatTime(endDate),
+
       allDay: event.allDay,
       status: event.status,
       recurrence: event.recurrence,
@@ -299,7 +345,6 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
       reminderMinutes: event.reminderMinutes
     });
 
-    // Trigger allDay handling
     if (event.allDay) {
       this.form.get('startTime')?.disable();
       this.form.get('endTime')?.disable();
@@ -398,10 +443,39 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
     return parts.join(', ');
   }
 
+  /**
+   * Converts AddressInput to AddressLink for the address form.
+   * AddressFormComponent expects a nested structure with 'address' property.
+   */
+  convertAddressInputToAddressLink(addressInput: AddressInput | null): any {
+    if (!addressInput) return null;
+
+    return {
+      address: {
+        streetName: addressInput.streetName,
+        streetNumber: addressInput.streetNumber,
+        complement: '',
+        postalCode: addressInput.postalCode,
+        city: addressInput.city,
+        stateProvince: '',
+        countryCode: addressInput.countryCode
+      },
+      // Métadonnées au niveau racine
+      addressType: 'OTHER' as any,
+      label: '',
+      notes: '',
+      isDefault: false,
+      isPrimary: false
+    };
+  }
+
   // ===========================================================================
   // Form Actions
   // ===========================================================================
 
+  /**
+   * Submits the form to create or update an event.
+   */
   /**
    * Submits the form to create or update an event.
    */
@@ -424,11 +498,31 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
       next: (event) => {
         this.loading.set(false);
         this.form.markAsPristine();
+        this.initialAddress.set(this.selectedAddress());
+
+        // ✅ AJOUT : Synchroniser avec le state service
+        if (this.isEditMode()) {
+          // Mettre à jour l'événement dans le state (sans recharger tous les événements)
+          this.state['_events'].update(events =>
+            events.map(e => e.publicId === event.publicId ? event : e)
+          );
+          // Mettre à jour aussi l'événement sélectionné si c'est le même
+          if (this.state['_selectedEvent']()?.publicId === event.publicId) {
+            this.state['_selectedEvent'].set(event);
+          }
+          this.feedback.showSuccess('Événement modifié avec succès', "", 5000);
+        } else {
+          // Ajouter le nouvel événement au state
+          this.state['_events'].update(events => [...events, event]);
+          this.feedback.showSuccess('Événement créé avec succès', "", 5000);
+        }
+
         this.router.navigate(['../..'], { relativeTo: this.route });
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(err.message || 'Une erreur est survenue');
+        this.feedback.showError(err.message || 'Une erreur est survenue');
       }
     });
   }

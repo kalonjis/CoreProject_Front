@@ -15,6 +15,7 @@ import {
   CALENDAR_FILTER_UTILS,
   CalendarEventStatusUtils
 } from '../models';
+import {FeedbackService} from '../../../shared/feedback/tools/feedback.service';
 
 /**
  * State management service for calendar events using Angular signals.
@@ -51,6 +52,7 @@ import {
 })
 export class CalendarEventStateService {
   private readonly api = inject(CalendarEventApiService);
+  private feedback = inject(FeedbackService);
 
   // ===========================================================================
   // Core State Signals
@@ -366,12 +368,13 @@ export class CalendarEventStateService {
 
     this.api.createEvent(request)
       .pipe(
-        tap(event => {
-          this._events.update(events => [...events, event]);
-          this._selectedEvent.set(event);
+        tap(created => {
+          this._events.update(events => [...events, created]);
+          this.feedback.showSuccess('Événement créé avec succès');
         }),
         catchError(err => {
           this._error.set(err.message || 'Failed to create event');
+          this.feedback.showError('Erreur lors de la création de l\'événement');
           return EMPTY;
         }),
         finalize(() => this._loading.set(false))
@@ -395,9 +398,11 @@ export class CalendarEventStateService {
           if (this._selectedEvent()?.publicId === publicId) {
             this._selectedEvent.set(updated);
           }
+          this.feedback.showSuccess('Événement modifié avec succès');
         }),
         catchError(err => {
           this._error.set(err.message || 'Failed to update event');
+          this.feedback.showError('Erreur lors de la modification');
           return EMPTY;
         }),
         finalize(() => this._loading.set(false))
@@ -421,9 +426,11 @@ export class CalendarEventStateService {
           if (this._selectedEvent()?.publicId === publicId) {
             this._selectedEvent.set(cancelled);
           }
+          this.feedback.showSuccess('Événement annulé avec succès');
         }),
         catchError(err => {
           this._error.set(err.message || 'Failed to cancel event');
+          this.feedback.showError("Erreur lors de l'annulation");
           return EMPTY;
         }),
         finalize(() => this._loading.set(false))
@@ -447,9 +454,11 @@ export class CalendarEventStateService {
           if (this._selectedEvent()?.publicId === publicId) {
             this._selectedEvent.set(null);
           }
+          this.feedback.showSuccess('Événement supprimé avec succès');
         }),
         catchError(err => {
           this._error.set(err.message || 'Failed to delete event');
+          this.feedback.showError('Erreur lors de la suppression');
           return EMPTY;
         }),
         finalize(() => this._loading.set(false))

@@ -23,7 +23,8 @@ import { CalendarFiltersComponent } from '../components/calendar-filters/calenda
 import { CalendarViewSwitcherComponent } from '../components/calendar-view-switcher/calendar-view-switcher.component';
 import { CalendarMiniMonthComponent } from '../components/calendar-mini-month/calendar-mini-month.component';
 import { CalendarEventDetailComponent } from '../components/calendar-event-detail/calendar-event-detail.component';
-
+import { ConfirmDialogService } from '../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { FeedbackService } from '../../../shared/feedback/tools/feedback.service';
 /**
  * Main calendar page component (Smart Container).
  *
@@ -57,7 +58,6 @@ import { CalendarEventDetailComponent } from '../components/calendar-event-detai
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
     CalendarHeaderComponent,
     CalendarFiltersComponent,
     CalendarViewSwitcherComponent,
@@ -76,6 +76,8 @@ export class CalendarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly config = inject(CALENDAR_CONFIG);
   protected readonly state = inject(CalendarEventStateService);
+  private confirmDialog = inject(ConfirmDialogService);
+  private feedback = inject(FeedbackService);
 
   // ===========================================================================
   // Local State
@@ -160,8 +162,10 @@ export class CalendarComponent implements OnInit {
     // Open detail panel when event is selected
     effect(() => {
       const event = this.selectedEvent();
+      console.log('🔄 Effect triggered - selectedEvent:', event);
       this.detailPanelOpen.set(!!event);
-    });
+      console.log('🚪 detailPanelOpen set to:', !!event);
+    }, { allowSignalWrites: true });
   }
 
   // ===========================================================================
@@ -276,9 +280,18 @@ export class CalendarComponent implements OnInit {
    * Deletes the selected event.
    */
   onDeleteEvent(event: CalendarEvent): void {
-    if (confirm('Voulez-vous vraiment supprimer cet événement ?')) {
+    this.confirmDialog.confirm({
+      message: 'Voulez-vous vraiment supprimer cet événement ?',
+      title: 'Supprimer l\'événement',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+      type: 'danger'
+    }).then(() => {
       this.state.deleteEvent(event.publicId);
-    }
+      this.feedback.showSuccess('Événement supprimé avec succès');
+    }).catch(() => {
+      // L'utilisateur a annulé, rien à faire
+    });
   }
 
   // ===========================================================================

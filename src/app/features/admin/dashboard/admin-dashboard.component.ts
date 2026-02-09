@@ -76,6 +76,15 @@ export class AdminDashboardComponent implements OnInit {
       badge: 'Live',
       requiredRole: UserRole.SUPER_ADMIN
     },
+    {
+      id: 'calendar',
+      icon: '📅',
+      title: 'Calendar Management',
+      description: 'View and manage calendar events and schedules',
+      route: '/calendar',
+      enabled: true,
+      color: 'success'
+    },
 
     // -------------------------------------------------------------------------
     // COMING SOON MODULES

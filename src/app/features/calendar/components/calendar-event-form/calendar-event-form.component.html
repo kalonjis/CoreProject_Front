@@ -141,6 +141,7 @@
           <div class="address-form-wrapper">
             <app-address-form
               [mode]="addressFormMode()"
+              [initialData]="convertAddressInputToAddressLink(selectedAddress())"
               [config]="addressFormConfig"
               [isSubmitting]="loading()"
               (onSubmit)="handleAddressSubmit($event)"
