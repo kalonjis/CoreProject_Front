@@ -306,57 +306,296 @@ $spacing-xl: 2rem;
   }
 }
 
-// =============================================================================
-// Address Section
-// =============================================================================
+// ===========================================================================
+// Address Section - CORRECTED VERSION
+// ===========================================================================
 
 .address-section {
-  margin-top: $spacing-lg;
-  padding-top: $spacing-lg;
-  border-top: 1px solid $border-color;
-}
-
-.address-form-wrapper {
+  margin-top: $spacing-md;
   padding: $spacing-md;
-  background-color: $bg-light;
-  border-radius: $border-radius;
-  border: 1px dashed $border-color;
-}
-
-.selected-address {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  padding: $spacing-md;
-  background-color: $bg-light;
+  background: $bg-light;
   border: 1px solid $border-color;
   border-radius: $border-radius;
+
+  .address-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+
+    .address-section-title {
+      margin: 0;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: $text-color;
+    }
+  }
+
+  // ===========================================================================
+  // Selected Address Display
+  // ===========================================================================
+
+  .selected-address-display {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    background: #ecfdf5; // success-light
+    border: 1px solid $success-color;
+    border-radius: $border-radius;
+
+    .address-text {
+      flex: 1;
+      font-size: 0.875rem;
+      color: $text-color;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .btn-remove {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      padding: 0;
+      font-size: 1rem;
+      color: $danger-color;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #fee2e2;
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($danger-color, 0.2);
+      }
+    }
+  }
+
+  // ===========================================================================
+  // Beautiful Address Form Modal
+  // ===========================================================================
+
+  .address-form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-md;
+    animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    // Dark overlay with blur
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.75); // Dark blue-gray
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      cursor: pointer;
+      animation: overlayFadeIn 0.3s ease-out;
+    }
+
+    // Beautiful white modal card
+    .modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 680px;
+      max-height: 92vh;
+      background: white;
+      border-radius: 16px;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 10px 20px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      z-index: 1;
+      animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+      // Modal Header - Beautiful gradient
+      .modal-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-lg $spacing-xl;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-bottom: none;
+
+        // Decorative pattern overlay
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image:
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+          pointer-events: none;
+        }
+
+        h3 {
+          position: relative;
+          margin: 0;
+          font-size: 1.375rem;
+          font-weight: 700;
+          color: white;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          z-index: 1;
+        }
+
+        .modal-close {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 2.5rem;
+          height: 2.5rem;
+          padding: 0;
+          font-size: 1.5rem;
+          color: white;
+          background: rgba(255, 255, 255, 0.15);
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(10px);
+          z-index: 1;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05) rotate(90deg);
+          }
+
+          &:active {
+            transform: scale(0.95) rotate(90deg);
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+
+      // Modal Body - Clean white
+      .modal-body {
+        padding: $spacing-xl;
+        max-height: calc(92vh - 100px);
+        overflow-y: auto;
+        background: white;
+
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: $bg-light;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: $border-color;
+          border-radius: 4px;
+
+          &:hover {
+            background: darken($border-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  // ===========================================================================
+  // Smooth Animations
+  // ===========================================================================
+
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+      backdrop-filter: blur(0px);
+    }
+    to {
+      opacity: 1;
+      backdrop-filter: blur(8px);
+    }
+  }
+
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 }
 
-.address-display {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
+// ===========================================================================
+// Responsive adjustments
+// ===========================================================================
 
-.address-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  line-height: 1;
-}
+@media (max-width: 768px) {
+  .address-section {
+    .address-form-modal {
+      padding: $spacing-sm;
 
-.address-text {
-  flex: 1;
-  font-size: 0.9375rem;
-  color: $text-color;
-  line-height: 1.5;
-  word-break: break-word;
-}
+      .modal-content {
+        border-radius: 12px;
+        max-height: 95vh;
 
-.address-actions {
-  display: flex;
-  gap: $spacing-sm;
-  flex-wrap: wrap;
+        .modal-header {
+          padding: $spacing-md $spacing-lg;
+
+          h3 {
+            font-size: 1.125rem;
+          }
+
+          .modal-close {
+            width: 2.25rem;
+            height: 2.25rem;
+            font-size: 1.25rem;
+          }
+        }
+
+        .modal-body {
+          padding: $spacing-lg;
+        }
+      }
+    }
+  }
 }
 
 // =============================================================================

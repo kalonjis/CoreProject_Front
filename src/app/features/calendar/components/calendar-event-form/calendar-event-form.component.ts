@@ -52,6 +52,7 @@ import {
   UpdateAddressRequest
 } from '../../../../shared/address';
 import {FeedbackService} from '../../../../shared/feedback/tools/feedback.service';
+import {AddressSelectComponent} from '../address-select/address-select.component';
 
 // Address form imports
 
@@ -77,7 +78,8 @@ import {FeedbackService} from '../../../../shared/feedback/tools/feedback.servic
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    AddressFormComponent
+    AddressFormComponent,
+    AddressSelectComponent
   ],
   templateUrl: './calendar-event-form.component.html',
   styleUrl: './calendar-event-form.component.scss'
@@ -386,10 +388,30 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // ===========================================================================
 
   /**
+   * Handles address selection from the AddressSelect component.
+   *
+   * @param addressInput - The address selected by the user
+   */
+  onAddressSelected(addressInput: AddressInput): void {
+    this.selectedAddress.set(addressInput);
+
+    // Optional: Log for debug
+    console.log('Address selected:', addressInput);
+  }
+
+  /**
    * Opens the address form for adding/editing an address.
+   *
+   * MODIFICATION: Now supports 'edit' mode if an address is already selected
    */
   openAddressForm(): void {
-    this.addressFormMode.set(this.selectedAddress() ? 'edit' : 'create');
+    // If an address is already selected, switch to edit mode
+    if (this.selectedAddress()) {
+      this.addressFormMode.set('edit');
+    } else {
+      this.addressFormMode.set('create');
+    }
+
     this.showAddressForm.set(true);
   }
 
@@ -517,7 +539,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
           this.feedback.showSuccess('Événement créé avec succès', "", 5000);
         }
 
-        this.router.navigate(['../..'], { relativeTo: this.route });
+        this.router.navigate(['/calendar/month']);
       },
       error: (err) => {
         this.loading.set(false);
@@ -531,7 +553,7 @@ export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
    * Cancels the form and navigates back.
    */
   onCancel(): void {
-    this.router.navigate(['../..'], { relativeTo: this.route });
+    this.router.navigate(['/calendar/month']);
   }
 
   /**

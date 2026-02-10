@@ -178,7 +178,9 @@ $transition-duration: 0.2s;
   width: $detail-panel-width;
   border-left: 1px solid $border-color;
   background-color: #fff;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   // Animation
   animation: slideIn $transition-duration ease;

@@ -1,0 +1,71 @@
+<!-- src/app/features/calendar/components/address-select/address-select.component.html -->
+
+<div class="address-select">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading addresses...</span>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (hasError()) {
+    <div class="error-state">
+      <p class="error-message">
+        ⚠️ Unable to load your addresses
+      </p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="retry()"
+      >
+        Retry
+      </button>
+    </div>
+  }
+
+  <!-- Dropdown Selection -->
+  @else {
+    <div class="select-wrapper">
+      <label for="addressSelect" class="select-label">
+        Select a saved address
+      </label>
+
+      <select
+        id="addressSelect"
+        class="form-select"
+        [value]="selectedAddressId() || ''"
+        (change)="onSelectAddress($event)"
+      >
+        <!-- Default option -->
+        <option value="">-- No address --</option>
+
+        <!-- Existing addresses -->
+        @for (address of addresses(); track address.publicId) {
+          <option [value]="address.publicId">
+            {{ getAddressLabel(address) }}
+          </option>
+        }
+
+        <!-- Separator -->
+        <option disabled>──────────────</option>
+
+        <!-- Option to create new address -->
+        <option value="new">+ New address</option>
+      </select>
+
+      <!-- Info message -->
+      @if (addresses().length === 0) {
+        <p class="help-text">
+          You don't have any saved addresses yet.
+          Create one to easily reuse it.
+        </p>
+      } @else {
+        <p class="help-text">
+          {{ addresses().length }} address(es) available
+        </p>
+      }
+    </div>
+  }
+</div>
