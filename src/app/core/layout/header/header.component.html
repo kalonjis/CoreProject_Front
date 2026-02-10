@@ -7,8 +7,9 @@
     <nav class="main-nav">
       <ul class="nav-list">
         <li class="nav-item"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a></li>
-        <li class="nav-item"><a routerLink="/about" routerLinkActive="active">À propos</a></li>
         <li class="nav-item"><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
+        <li class="nav-item"><a routerLink="/calendar" routerLinkActive="active">Calendrier</a></li>
+        <li class="nav-item"><a routerLink="/sport" routerLinkActive="active">Sport</a></li>
 
         @if (isAdmin()) {
           <li class="nav-item"><a routerLink="/admin" routerLinkActive="active">Administration</a></li>
@@ -27,7 +28,7 @@
           </button>
           @if (isDropdownOpen) {
             <div class="dropdown-menu">
-              <a routerLink="account/profile" class="dropdown-item">Profil</a>
+              <a routerLink="account/profile" class="dropdown-item">Mon compte</a>
               <a routerLink="/devices" class="dropdown-item">Mes appareils</a>
               <div class="dropdown-divider"></div>
               <a (click)="logout()" class="dropdown-item logout-item">Déconnexion</a>
@@ -48,14 +49,15 @@
 <div class="mobile-nav" [class.active]="mobileMenuActive">
   <ul class="mobile-nav-list">
     <li class="mobile-nav-item"><a routerLink="/" (click)="closeMobileMenu()">Accueil</a></li>
-    <li class="mobile-nav-item"><a routerLink="/about" (click)="closeMobileMenu()">À propos</a></li>
     <li class="mobile-nav-item"><a routerLink="/contact" (click)="closeMobileMenu()">Contact</a></li>
+    <li class="mobile-nav-item"><a routerLink="/calendar" (click)="closeMobileMenu()">Calendrier</a></li>
+    <li class="mobile-nav-item"><a routerLink="/sport" (click)="closeMobileMenu()">Sport</a></li>
 
     @if (!isAuthenticated()) {
       <li class="mobile-nav-item"><a routerLink="/auth/login" (click)="closeMobileMenu()">Connexion</a></li>
       <li class="mobile-nav-item"><a routerLink="/auth/signup" (click)="closeMobileMenu()">Inscription</a></li>
     } @else {
-      <li class="mobile-nav-item"><a routerLink="/profile" (click)="closeMobileMenu()">Profil</a></li>
+      <li class="mobile-nav-item"><a routerLink="/account" (click)="closeMobileMenu()">Mon Compte</a></li>
       <li class="mobile-nav-item"><a routerLink="/devices" (click)="closeMobileMenu()">Mes appareils</a></li>
 
       @if (isAdmin()) {
