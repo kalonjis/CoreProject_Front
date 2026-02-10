@@ -1,0 +1,151 @@
+// src/app/features/calendar/components/address-select/address-select.component.scss
+
+.address-select {
+  width: 100%;
+
+  // ===========================================================================
+  // Loading State
+  // ===========================================================================
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+
+    .spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  // ===========================================================================
+  // Error State
+  // ===========================================================================
+
+  .error-state {
+    padding: 1rem;
+    background: var(--color-danger-light);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+
+    .error-message {
+      margin: 0 0 0.75rem;
+      color: var(--color-danger);
+      font-size: 0.875rem;
+    }
+  }
+
+  // ===========================================================================
+  // Select Wrapper
+  // ===========================================================================
+
+  .select-wrapper {
+    .select-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+      background-color: var(--color-background-primary);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-md);
+      appearance: none;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--color-border-hover);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px var(--color-primary-light);
+      }
+
+      // Options styling
+      option {
+        padding: 0.5rem;
+
+        &[disabled] {
+          color: var(--color-text-disabled);
+          font-size: 0.75rem;
+        }
+
+        &[value="new"] {
+          color: var(--color-primary);
+          font-weight: 500;
+        }
+      }
+    }
+
+    .help-text {
+      margin: 0.5rem 0 0;
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+  }
+
+  // ===========================================================================
+  // Buttons
+  // ===========================================================================
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    &.btn-secondary {
+      color: var(--color-text-primary);
+      background-color: var(--color-background-secondary);
+      border-color: var(--color-border);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-background-tertiary);
+        border-color: var(--color-border-hover);
+      }
+    }
+  }
+}

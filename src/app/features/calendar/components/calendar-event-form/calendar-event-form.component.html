@@ -134,63 +134,62 @@
 
       <!-- Physical Address (optional) -->
       <div class="address-section">
-        <h4 class="subsection-title">Physical Address (optional)</h4>
+        <div class="address-section-header">
+          <h4 class="address-section-title">Physical Address (optional)</h4>
 
-        @if (showAddressForm()) {
-          <!-- Address Form -->
-          <div class="address-form-wrapper">
-            <app-address-form
-              [mode]="addressFormMode()"
-              [initialData]="convertAddressInputToAddressLink(selectedAddress())"
-              [config]="addressFormConfig"
-              [isSubmitting]="loading()"
-              (onSubmit)="handleAddressSubmit($event)"
-              (onCancel)="closeAddressForm()"
-            />
-          </div>
-        } @else {
-          <!-- Address Display or Add Button -->
+          <!-- Display selected address if exists -->
           @if (selectedAddress()) {
-            <!-- Selected Address Display -->
-            <div class="selected-address">
-              <div class="address-display">
-                <div class="address-icon">📍</div>
-                <div class="address-text">
-                  {{ formatAddress(selectedAddress()) }}
-                </div>
+            <div class="selected-address-display">
+          <span class="address-text">
+            📍 {{ formatAddress(selectedAddress()) }}
+          </span>
+              <button
+                type="button"
+                class="btn-remove"
+                (click)="removeAddress()"
+                title="Remove address"
+              >
+                ✕
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Address selection component -->
+        @if (!selectedAddress()) {
+          <app-address-select
+            [selectedAddress]="selectedAddress()"
+            (addressSelected)="onAddressSelected($event)"
+            (createNew)="openAddressForm()"
+          />
+        }
+
+        <!-- Address create/edit modal -->
+        @if (showAddressForm()) {
+          <div class="address-form-modal">
+            <div class="modal-overlay" (click)="closeAddressForm()"></div>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>{{ addressFormMode() === 'create' ? 'New address' : 'Edit address' }}</h3>
+                <button
+                  type="button"
+                  class="modal-close"
+                  (click)="closeAddressForm()"
+                >
+                  ✕
+                </button>
               </div>
-              <div class="address-actions">
-                <button
-                  type="button"
-                  class="btn-secondary btn-sm"
-                  (click)="openAddressForm()"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  class="btn-danger-outline btn-sm"
-                  (click)="removeAddress()"
-                >
-                  Remove
-                </button>
+              <div class="modal-body">
+                <app-address-form
+                  [config]="addressFormConfig"
+                  [mode]="addressFormMode()"
+                  [initialData]="convertAddressInputToAddressLink(selectedAddress())"
+                  (onSubmit)="handleAddressSubmit($event)"
+                  (onCancel)="closeAddressForm()"
+                />
               </div>
             </div>
-          } @else {
-            <!-- Add Address Button -->
-            <button
-              type="button"
-              class="btn-secondary"
-              (click)="openAddressForm()"
-            >
-              <span class="btn-icon">+</span>
-              Add Physical Address
-            </button>
-            <p class="help-text">
-              You can specify a physical address in addition to the text location.
-              This will allow the event to be located on a map.
-            </p>
-          }
+          </div>
         }
       </div>
     </div>
@@ -279,7 +278,6 @@
       >
         @if (loading()) {
           <span class="spinner"></span>
-          <span>Saving...</span>
         } @else {
           <span>{{ isEditMode() ? 'Save' : 'Create' }}</span>
         }

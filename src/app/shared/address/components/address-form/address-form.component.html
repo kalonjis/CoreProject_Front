@@ -190,7 +190,7 @@
     </section>
 
     <!-- Options section (create mode only or config enabled) -->
-    @if (mode === 'create' || config.showDefaultCheckbox || config.showPrimaryCheckbox) {
+    @if (config.showDefaultCheckbox || config.showPrimaryCheckbox) {
       <section class="form-section">
         <h4 class="form-section__title">Options</h4>
 
@@ -202,9 +202,9 @@
                 formControlName="isDefault"
                 class="checkbox-input">
               <span class="checkbox-text">
-                <strong>Adresse par défaut</strong>
-                <small>Pour ce type d'adresse</small>
-              </span>
+            <strong>Default address</strong>
+            <small>For this address type</small>
+          </span>
             </label>
           }
 
@@ -215,9 +215,9 @@
                 formControlName="isPrimary"
                 class="checkbox-input">
               <span class="checkbox-text">
-                <strong>Adresse principale</strong>
-                <small>Adresse de contact principale</small>
-              </span>
+            <strong>Primary address</strong>
+            <small>Main contact address</small>
+          </span>
             </label>
           }
         </div>
