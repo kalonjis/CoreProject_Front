@@ -1,4 +1,4 @@
-// src/app/features/admin/system-health/system-health-container/system-health-container.component.ts
+// src/app/features/admin/monitoring/system-health-container/system-health-container.component.ts
 
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,10 +7,11 @@ import { Subject, interval, takeUntil, forkJoin, catchError, of } from 'rxjs';
 import { ActuatorHealthApiService } from '../services/actuator-health-api.service';
 import { ActuatorMetricsApiService } from '../services/actuator-metrics-api.service';
 import { CircuitBreakerApiService } from '../services/circuit-breaker-api.service';
-import {CircuitBreakerStatus, HealthMetrics, HealthStatus, ServerStatus} from '../models';
-import {HealthMetricsCardComponent} from '../components/health-metrics-card/health-metrics-card.component';
-import {CircuitBreakerCardComponent} from '../components/circuit-breaker-card/circuit-breaker-card.component';
-import {ServerStatusCardComponent} from '../components/server-status-card/server-status-card.component';
+import { CircuitBreakerStatus, ExecutorMetrics, HealthMetrics, HealthStatus, ServerStatus } from '../models';
+import { HealthMetricsCardComponent } from '../components/health-metrics-card/health-metrics-card.component';
+import { CircuitBreakerCardComponent } from '../components/circuit-breaker-card/circuit-breaker-card.component';
+import { ServerStatusCardComponent } from '../components/server-status-card/server-status-card.component';
+import { ExecutorMetricsCardComponent } from '../components/executor-metrics-card/executor-metrics-card.component';
 
 
 /** Auto-refresh interval in milliseconds (30 seconds) */
@@ -24,6 +25,7 @@ const REFRESH_INTERVAL_MS = 30_000;
  * - Server/service status (Application, Database, RabbitMQ, Email, Disk)
  * - Circuit breaker states with manual controls
  * - JVM, CPU, Disk and DB pool metrics
+ * - Async executor thread pool metrics
  *
  * Features:
  * - Auto-refresh every 30 seconds
@@ -37,7 +39,8 @@ const REFRESH_INTERVAL_MS = 30_000;
     CommonModule,
     ServerStatusCardComponent,
     CircuitBreakerCardComponent,
-    HealthMetricsCardComponent
+    HealthMetricsCardComponent,
+    ExecutorMetricsCardComponent
   ],
   templateUrl: './system-health-container.component.html',
   styleUrl: './system-health-container.component.scss'
@@ -62,7 +65,7 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
   /** Circuit breaker statuses */
   circuitBreakers = signal<CircuitBreakerStatus[]>([]);
 
-  /** Health metrics (JVM, CPU, Disk, DB) */
+  /** Health metrics (JVM, CPU, Disk, DB, Executors) */
   healthMetrics = signal<HealthMetrics | null>(null);
 
   /** Overall system status */
@@ -105,6 +108,24 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
     this.circuitBreakers().some(cb => cb.state === 'OPEN' || cb.state === 'FORCED_OPEN')
   );
 
+  /** Executor metrics extracted from health metrics */
+  executorMetrics = computed<ExecutorMetrics[]>(() =>
+    this.healthMetrics()?.executors ?? []
+  );
+
+  /** Count of saturated executors */
+  saturatedExecutorsCount = computed(() =>
+    this.executorMetrics().filter(e => e.saturated).length
+  );
+
+  /** Total number of executors */
+  totalExecutorsCount = computed(() => this.executorMetrics().length);
+
+  /** True if any executor is saturated */
+  hasAnySaturatedExecutor = computed(() =>
+    this.executorMetrics().some(e => e.saturated)
+  );
+
   // ===========================================================================
   // LIFECYCLE
   // ===========================================================================
@@ -145,7 +166,7 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
           this.overallStatus.set(health.status);
         }
 
-        // Set metrics
+        // Set metrics (includes executors now)
         if (metrics) {
           this.healthMetrics.set(metrics);
         }

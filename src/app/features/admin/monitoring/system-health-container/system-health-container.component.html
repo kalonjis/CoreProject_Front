@@ -1,4 +1,4 @@
-<!-- src/app/features/admin/system-health/system-health-container/system-health-container.component.html -->
+<!-- src/app/features/admin/monitoring/system-health-container/system-health-container.component.html -->
 
 <div class="system-health-container">
 
@@ -54,6 +54,12 @@
         </span>
       </div>
 
+      <div class="status-item" [class.warning]="hasAnySaturatedExecutor()">
+        <span class="text">
+          Executors: {{ totalExecutorsCount() - saturatedExecutorsCount() }}/{{ totalExecutorsCount() }} healthy
+        </span>
+      </div>
+
       @if (lastUpdated()) {
         <div class="status-item last-update">
           <span class="text">Last update: {{ lastUpdated() | date:'HH:mm:ss' }}</span>
@@ -104,6 +110,14 @@
           [metrics]="healthMetrics()"
           [isLoading]="isLoading()">
         </app-health-metrics-card>
+      </section>
+
+      <!-- Executor Metrics Card -->
+      <section class="grid-section executor-metrics">
+        <app-executor-metrics-card
+          [executors]="executorMetrics()"
+          [isLoading]="isLoading()">
+        </app-executor-metrics-card>
       </section>
 
     </div>

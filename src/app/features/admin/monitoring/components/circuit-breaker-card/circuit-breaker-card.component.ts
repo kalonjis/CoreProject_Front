@@ -176,10 +176,12 @@ export class CircuitBreakerCardComponent {
    * @returns Formatted display name
    */
   getDisplayName(name: string): string {
-    // smtpBackend → SMTP
+    // smtpBackend → SMTP Email
     // twilioBackend → Twilio SMS
+    // nominatimBackend → Nominatim Geocoding
     if (name === 'smtpBackend') return 'SMTP Email';
     if (name === 'twilioBackend') return 'Twilio SMS';
+    if (name === 'nominatimBackend') return 'Nominatim Geocoding';  // ⬅️ ADD THIS LINE
 
     // Default: remove "Backend" suffix and capitalize
     return name.replace(/Backend$/i, '').replace(/([A-Z])/g, ' $1').trim();

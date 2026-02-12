@@ -1,0 +1,124 @@
+<!-- src/app/features/admin/monitoring/components/executor-metrics-card/executor-metrics-card.component.html -->
+
+<div class="executor-metrics-card">
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-title">
+      <span class="icon">🔄</span>
+      <h2>Async Executors</h2>
+    </div>
+
+    @if (hasAnySaturated()) {
+      <div class="header-warning">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">{{ saturatedCount() }} saturated</span>
+      </div>
+    } @else if (hasExecutors()) {
+      <div class="header-status healthy">
+        <span class="status-icon">✓</span>
+        <span class="status-text">All healthy</span>
+      </div>
+    }
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content">
+    @if (!hasExecutors() && !isLoading) {
+      <div class="empty-state">
+        <span class="icon">🔄</span>
+        <p>No executors available</p>
+      </div>
+    } @else if (isLoading && !hasExecutors()) {
+      <div class="loading-state">
+        <div class="skeleton-executor"></div>
+        <div class="skeleton-executor"></div>
+        <div class="skeleton-executor"></div>
+      </div>
+    } @else {
+      <div class="executors-grid">
+        @for (executor of executors$(); track executor.name) {
+          <div class="executor-item" [class.saturated]="executor.saturated">
+
+            <!-- Executor Header -->
+            <div class="executor-header">
+              <div class="executor-title">
+                <span class="executor-icon">{{ getDisplayConfig(executor.name).icon }}</span>
+                <span class="executor-name">{{ getDisplayConfig(executor.name).label }}</span>
+              </div>
+              @if (executor.saturated) {
+                <span class="saturated-badge">SATURATED</span>
+              }
+            </div>
+
+            <!-- Queue Progress -->
+            <div class="metric-row">
+              <div class="metric-label">
+                <span>Queue</span>
+                <span class="metric-value" [class]="getQueueUsageClass(executor.queueUsagePercent, executor.saturated)">
+                  {{ executor.queueSize }}/{{ formatCapacity(executor.queueCapacity) }}
+                </span>
+              </div>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [class]="getQueueUsageClass(executor.queueUsagePercent, executor.saturated)"
+                  [style.width.%]="executor.queueCapacity > 0 ? executor.queueUsagePercent : 0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Threads Progress -->
+            <div class="metric-row">
+              <div class="metric-label">
+                <span>Threads</span>
+                <span class="metric-value" [class]="getThreadUsageClass(executor.activeCount, executor.maxPoolSize)">
+                  {{ executor.activeCount }}/{{ executor.maxPoolSize }}
+                </span>
+              </div>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [class]="getThreadUsageClass(executor.activeCount, executor.maxPoolSize)"
+                  [style.width.%]="getThreadUsagePercent(executor.activeCount, executor.maxPoolSize)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-label">Pool</span>
+                <span class="stat-value">{{ executor.poolSize }}/{{ executor.corePoolSize }}-{{ executor.maxPoolSize }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Completed</span>
+                <span class="stat-value">{{ formatNumber(executor.completedTaskCount) }}</span>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <div class="legend">
+      <div class="legend-item">
+        <span class="dot healthy"></span>
+        <span>Healthy (&lt;70%)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot warning"></span>
+        <span>Warning (70-90%)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot critical"></span>
+        <span>Critical/Saturated</span>
+      </div>
+    </div>
+  </div>
+
+</div>
