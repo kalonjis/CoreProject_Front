@@ -1,0 +1,259 @@
+// src/app/features/notification/pages/notification-center/notification-center.component.scss
+
+.notification-center {
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg-primary, white);
+}
+
+// =============================================================================
+// Header
+// =============================================================================
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.header-content {
+  flex: 1;
+}
+
+.page-title {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.unread-indicator {
+  color: var(--color-primary, #3b82f6);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// Buttons
+// =============================================================================
+
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--color-primary, #3b82f6);
+  color: white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-dark, #2563eb);
+  }
+}
+
+.btn-secondary {
+  background: var(--bg-secondary, #f3f4f6);
+  color: var(--text-primary, #111827);
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-tertiary, #e5e7eb);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary, #6b7280);
+  border: 1px solid var(--border-color, #e5e7eb);
+
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary, #f3f4f6);
+    color: var(--text-primary, #111827);
+    border-color: var(--border-hover, #d1d5db);
+  }
+}
+
+// =============================================================================
+// Content
+// =============================================================================
+
+.notification-content {
+  min-height: 400px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+// =============================================================================
+// States
+// =============================================================================
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+
+  .state-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+    max-width: 300px;
+  }
+}
+
+.error-state {
+  .state-icon {
+    opacity: 1;
+  }
+}
+
+// =============================================================================
+// Loading
+// =============================================================================
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--color-primary, #3b82f6);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+
+  &.small {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+    margin-bottom: 0;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// =============================================================================
+// Load More
+// =============================================================================
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.btn-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary, #3b82f6);
+  background: transparent;
+  border: 1px solid var(--color-primary, #3b82f6);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-light, #eff6ff);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    padding: 24px 16px 16px;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+
+    .btn-secondary,
+    .btn-outline {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .state-container {
+    padding: 60px 16px;
+
+    .state-icon {
+      font-size: 48px;
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+  }
+}

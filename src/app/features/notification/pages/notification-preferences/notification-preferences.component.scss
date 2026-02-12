@@ -1,0 +1,462 @@
+// src/app/features/notification/pages/notification-preferences/notification-preferences.component.scss
+
+.notification-preferences {
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+// =============================================================================
+// Header
+// =============================================================================
+
+.page-header {
+  padding: 24px 24px 32px;
+}
+
+.header-navigation {
+  margin-bottom: 16px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    color: var(--color-primary, #3b82f6);
+  }
+}
+
+.header-content {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+// =============================================================================
+// Buttons
+// =============================================================================
+
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--color-primary, #3b82f6);
+  color: white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-dark, #2563eb);
+  }
+}
+
+.btn-secondary {
+  background: var(--bg-secondary, #f3f4f6);
+  color: var(--text-primary, #111827);
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-tertiary, #e5e7eb);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary, #6b7280);
+  border: 1px solid var(--border-color, #e5e7eb);
+
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary, #f3f4f6);
+    border-color: var(--border-hover, #d1d5db);
+  }
+}
+
+// =============================================================================
+// Content
+// =============================================================================
+
+.preferences-content {
+  padding: 0 24px;
+}
+
+// =============================================================================
+// Card
+// =============================================================================
+
+.preferences-card {
+  background: var(--bg-primary, white);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+
+  h2 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+  }
+}
+
+// =============================================================================
+// Matrix Table
+// =============================================================================
+
+.matrix-container {
+  overflow-x: auto;
+}
+
+.preferences-matrix {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 16px;
+    text-align: center;
+  }
+
+  thead {
+    background: var(--bg-secondary, #f9fafb);
+  }
+
+  .type-header {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary, #9ca3af);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .channel-header {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+
+    .channel-icon {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .channel-label {
+      display: block;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--bg-hover, #f9fafb);
+    }
+  }
+
+  .type-cell {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .type-icon {
+      font-size: 20px;
+    }
+
+    .type-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary, #111827);
+    }
+  }
+
+  .toggle-cell {
+    vertical-align: middle;
+  }
+}
+
+// =============================================================================
+// Toggle Button
+// =============================================================================
+
+.toggle-button {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary, #f3f4f6);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-tertiary, #e5e7eb);
+  }
+
+  &.enabled {
+    background: var(--color-success-light, #dcfce7);
+    border-color: var(--color-success, #22c55e);
+
+    .toggle-icon.check {
+      color: var(--color-success, #22c55e);
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--color-success-hover, #bbf7d0);
+    }
+  }
+
+  &.pending {
+    opacity: 0.7;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  .toggle-icon {
+    width: 20px;
+    height: 20px;
+
+    &.x {
+      color: var(--text-tertiary, #9ca3af);
+    }
+  }
+}
+
+.toggle-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--color-primary, #3b82f6);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// =============================================================================
+// Info Section
+// =============================================================================
+
+.info-section {
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--bg-secondary, #f9fafb);
+  border-radius: 12px;
+
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  gap: 12px;
+
+  .info-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+  }
+
+  .info-content {
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary, #111827);
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary, #6b7280);
+      line-height: 1.5;
+    }
+  }
+}
+
+// =============================================================================
+// States
+// =============================================================================
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+
+  .state-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+  }
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--color-primary, #3b82f6);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+// =============================================================================
+// Responsive
+// =============================================================================
+
+@media (max-width: 640px) {
+  .notification-preferences {
+    padding-bottom: 32px;
+  }
+
+  .page-header {
+    padding: 16px 16px 24px;
+  }
+
+  .preferences-content {
+    padding: 0 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+
+    .btn-outline,
+    .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .card-header {
+    padding: 16px;
+  }
+
+  .preferences-matrix {
+    th, td {
+      padding: 12px 8px;
+    }
+
+    .channel-header .channel-label {
+      font-size: 11px;
+    }
+
+    .type-cell {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+
+      .type-label {
+        font-size: 13px;
+      }
+    }
+  }
+
+  .toggle-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .info-section {
+    padding: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

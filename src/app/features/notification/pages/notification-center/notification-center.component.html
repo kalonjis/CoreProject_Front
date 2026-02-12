@@ -1,0 +1,109 @@
+<!-- src/app/features/notification/pages/notification-center/notification-center.component.html -->
+
+<div class="notification-center">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">
+        {{ totalCount() }} notification{{ totalCount() !== 1 ? 's' : '' }}
+        @if (unreadCount() > 0) {
+          <span class="unread-indicator">• {{ unreadCount() }} unread</span>
+        }
+      </p>
+    </div>
+
+    <div class="header-actions">
+      @if (unreadCount() > 0) {
+        <button
+          class="btn-secondary"
+          (click)="markAllAsRead()"
+          [disabled]="isLoading()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Mark all read
+        </button>
+      }
+
+      <a routerLink="preferences" class="btn-outline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <app-notification-filters
+    [filter]="filter()"
+    [unreadCount]="unreadCount()"
+    (filterChange)="onFilterChange($event)"
+    (unreadToggle)="onUnreadToggle($event)"
+    (typeSelect)="onTypeSelect($event)"
+  />
+
+  <!-- Content -->
+  <main class="notification-content">
+    @if (error()) {
+      <!-- Error state -->
+      <div class="state-container error-state">
+        <span class="state-icon">⚠️</span>
+        <h3>Something went wrong</h3>
+        <p>{{ error() }}</p>
+        <button class="btn-primary" (click)="refresh()">Try again</button>
+      </div>
+    } @else if (isLoading() && notifications().length === 0) {
+      <!-- Loading state -->
+      <div class="state-container loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading notifications...</p>
+      </div>
+    } @else if (notifications().length === 0) {
+      <!-- Empty state -->
+      <div class="state-container empty-state">
+        <span class="state-icon">🔔</span>
+        <h3>You're all caught up!</h3>
+        <p>No notifications to show</p>
+      </div>
+    } @else {
+      <!-- Notification list -->
+      <div class="notification-list">
+        @for (notification of notifications(); track trackByPublicId($index, notification)) {
+          <app-notification-item
+            [notification]="notification"
+            [showActions]="true"
+            [showAction]="true"
+            [showUnreadDot]="true"
+            [showPriorityIndicator]="true"
+            (itemClick)="onNotificationClick($event)"
+            (markAsRead)="onMarkAsRead($event)"
+            (dismiss)="onDismiss($event)"
+          />
+        }
+      </div>
+
+      <!-- Load more -->
+      @if (hasMore()) {
+        <div class="load-more-container">
+          <button
+            class="btn-load-more"
+            (click)="loadMore()"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <div class="loading-spinner small"></div>
+              Loading...
+            } @else {
+              Load more notifications
+            }
+          </button>
+        </div>
+      }
+    }
+  </main>
+</div>

@@ -1,0 +1,153 @@
+<!-- src/app/features/notification/pages/notification-preferences/notification-preferences.component.html -->
+
+<div class="notification-preferences">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-navigation">
+      <a routerLink="/notifications" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Notifications
+      </a>
+    </div>
+
+    <div class="header-content">
+      <h1 class="page-title">Notification Preferences</h1>
+      <p class="page-subtitle">
+        Choose how and when you want to receive notifications
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        class="btn-outline"
+        (click)="resetToDefaults()"
+        [disabled]="isLoading()"
+      >
+        Reset to defaults
+      </button>
+      <button
+        class="btn-secondary"
+        (click)="refresh()"
+        [disabled]="isLoading()"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="preferences-content">
+    @if (error()) {
+      <!-- Error state -->
+      <div class="state-container error-state">
+        <span class="state-icon">⚠️</span>
+        <h3>Failed to load preferences</h3>
+        <p>{{ error() }}</p>
+        <button class="btn-primary" (click)="refresh()">Try again</button>
+      </div>
+    } @else if (isLoading() && !preferenceMatrix()) {
+      <!-- Loading state -->
+      <div class="state-container loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading preferences...</p>
+      </div>
+    } @else if (preferenceMatrix()) {
+      <!-- Preferences matrix -->
+      <div class="preferences-card">
+        <div class="card-header">
+          <h2>Delivery Channels</h2>
+          <p>Toggle notifications for each type and channel</p>
+        </div>
+
+        <div class="matrix-container">
+          <table class="preferences-matrix">
+            <thead>
+            <tr>
+              <th class="type-header">Notification Type</th>
+              @for (channel of channels; track channel) {
+                <th class="channel-header">
+                  <span class="channel-icon">{{ getChannelIcon(channel) }}</span>
+                  <span class="channel-label">{{ getChannelLabel(channel) }}</span>
+                </th>
+              }
+            </tr>
+            </thead>
+            <tbody>
+              @for (type of types; track type) {
+                <tr>
+                  <td class="type-cell">
+                    <span class="type-icon">{{ getTypeIcon(type) }}</span>
+                    <span class="type-label">{{ getTypeLabel(type) }}</span>
+                  </td>
+                  @for (channel of channels; track channel) {
+                    <td class="toggle-cell">
+                      <button
+                        class="toggle-button"
+                        [class.enabled]="isEnabled(type, channel)"
+                        [class.pending]="isPending(type, channel)"
+                        [disabled]="isPending(type, channel)"
+                        (click)="onToggle(type, channel)"
+                        [attr.aria-label]="getTypeLabel(type) + ' via ' + getChannelLabel(channel)"
+                        [attr.aria-pressed]="isEnabled(type, channel)"
+                      >
+                        @if (isPending(type, channel)) {
+                          <div class="toggle-spinner"></div>
+                        } @else if (isEnabled(type, channel)) {
+                          <svg class="toggle-icon check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        } @else {
+                          <svg class="toggle-icon x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        }
+                      </button>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Info section -->
+      <div class="info-section">
+        <h3>About Notification Channels</h3>
+        <div class="info-grid">
+          @for (channel of channels; track channel) {
+            <div class="info-item">
+              <span class="info-icon">{{ getChannelIcon(channel) }}</span>
+              <div class="info-content">
+                <h4>{{ getChannelLabel(channel) }}</h4>
+                <p>
+                  @switch (channel) {
+                    @case ('IN_APP') {
+                      Notifications appear in the app's notification center and dropdown.
+                    }
+                    @case ('EMAIL') {
+                      Receive notifications via email to your registered address.
+                    }
+                    @case ('PUSH') {
+                      Browser push notifications even when you're not on the site.
+                    }
+                    @case ('SMS') {
+                      Text message alerts for critical notifications.
+                    }
+                  }
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
