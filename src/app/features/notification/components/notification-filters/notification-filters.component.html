@@ -1,0 +1,45 @@
+<!-- src/app/features/notification/components/notification-filters/notification-filters.component.html -->
+
+<div class="notification-filters">
+  <!-- Primary tabs: All / Unread -->
+  <div class="filter-tabs">
+    <button
+      class="filter-tab"
+      [class.active]="!filter.unreadOnly"
+      (click)="onToggleUnread(false)"
+    >
+      All
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="filter.unreadOnly"
+      (click)="onToggleUnread(true)"
+    >
+      Unread
+      @if (unreadCount > 0) {
+        <span class="tab-badge">{{ unreadCount }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- Type filter pills -->
+  <div class="filter-pills">
+    <button
+      class="filter-pill"
+      [class.active]="filter.types.length === 0"
+      (click)="onTypeSelect(null)"
+    >
+      All types
+    </button>
+    @for (type of notificationTypes; track type) {
+      <button
+        class="filter-pill"
+        [class.active]="isTypeSelected(type)"
+        (click)="onTypeSelect(type)"
+      >
+        <span class="pill-icon">{{ getTypeIcon(type) }}</span>
+        {{ getTypeLabel(type) }}
+      </button>
+    }
+  </div>
+</div>

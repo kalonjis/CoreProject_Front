@@ -1,0 +1,63 @@
+<!-- src/app/features/notification/components/notification-dropdown/notification-dropdown.component.html -->
+
+<div class="notification-dropdown" role="menu">
+  <!-- Header -->
+  <div class="dropdown-header">
+    <h3 class="dropdown-title">Notifications</h3>
+    <div class="header-actions">
+      @if (hasUnread()) {
+        <button
+          class="header-btn"
+          (click)="markAllAsRead()"
+          [disabled]="isLoading()"
+        >
+          Mark all read
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="dropdown-content">
+    @if (isLoading() && notifications().length === 0) {
+      <!-- Loading state -->
+      <div class="dropdown-empty">
+        <div class="loading-spinner"></div>
+        <p>Loading notifications...</p>
+      </div>
+    } @else if (notifications().length === 0) {
+      <!-- Empty state -->
+      <div class="dropdown-empty">
+        <span class="empty-icon">🔔</span>
+        <p>No notifications yet</p>
+        <span class="empty-hint">We'll notify you when something happens</span>
+      </div>
+    } @else {
+      <!-- Notification list -->
+      <div class="notification-list">
+        @for (notification of notifications(); track notification.publicId) {
+          <app-notification-item
+            [notification]="notification"
+            [showActions]="true"
+            [showAction]="false"
+            [showUnreadDot]="true"
+            (itemClick)="onNotificationClick($event)"
+            (markAsRead)="onMarkAsRead($event)"
+            (dismiss)="onDismiss($event)"
+          />
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="dropdown-footer">
+    <a
+      routerLink="/notifications"
+      class="view-all-link"
+      (click)="onViewAllClick()"
+    >
+      View all notifications
+    </a>
+  </div>
+</div>

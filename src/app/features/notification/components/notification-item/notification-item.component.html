@@ -1,0 +1,69 @@
+<!-- src/app/features/notification/components/notification-item/notification-item.component.html -->
+
+<div
+  class="notification-item"
+  [class.unread]="isUnread"
+  [class.clickable]="notification.actionUrl"
+  (click)="onItemClick()"
+>
+  <!-- Priority indicator -->
+  @if (showPriorityIndicator) {
+    <div
+      class="priority-indicator"
+      [style.background-color]="priorityColor"
+    ></div>
+  }
+
+  <!-- Icon -->
+  <div class="notification-icon">
+    <span class="icon-emoji">{{ icon }}</span>
+  </div>
+
+  <!-- Content -->
+  <div class="notification-content">
+    <div class="notification-header">
+      <h4 class="notification-title">{{ notification.title }}</h4>
+      <span class="notification-time">{{ relativeTime }}</span>
+    </div>
+
+    <p class="notification-body">{{ notification.body }}</p>
+
+    <!-- Action button -->
+    @if (notification.actionUrl && showAction) {
+      <a
+        [routerLink]="notification.actionUrl"
+        class="notification-action"
+        (click)="onActionClick($event)"
+      >
+        View Details →
+      </a>
+    }
+  </div>
+
+  <!-- Actions menu -->
+  @if (showActions) {
+    <div class="notification-actions">
+      @if (isUnread) {
+        <button
+          class="action-btn"
+          title="Mark as read"
+          (click)="onMarkAsRead($event)"
+        >
+          ✓
+        </button>
+      }
+      <button
+        class="action-btn"
+        title="Dismiss"
+        (click)="onDismiss($event)"
+      >
+        ✕
+      </button>
+    </div>
+  }
+
+  <!-- Unread dot -->
+  @if (isUnread && showUnreadDot) {
+    <div class="unread-dot"></div>
+  }
+</div>

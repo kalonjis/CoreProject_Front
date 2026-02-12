@@ -1,0 +1,101 @@
+// src/app/features/notification/components/notification-bell/notification-bell.component.scss
+
+.notification-bell-container {
+  position: relative;
+}
+
+// Bell button
+.bell-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  }
+
+  &.dropdown-open {
+    background: var(--bg-active, rgba(0, 0, 0, 0.1));
+  }
+}
+
+// Bell icon
+.bell-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary, #6b7280);
+  transition: color 0.15s ease;
+
+  .bell-button:hover &,
+  .bell-button.has-unread & {
+    color: var(--text-primary, #111827);
+  }
+
+  // Ringing animation
+  &.ringing {
+    animation: ring 0.5s ease-in-out;
+  }
+}
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0); }
+  20%, 60% { transform: rotate(15deg); }
+  40%, 80% { transform: rotate(-15deg); }
+}
+
+// Unread badge
+.unread-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  background: var(--color-danger, #ef4444);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+// Connection indicator
+.connection-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary, white);
+
+  &.connected {
+    background: var(--color-success, #22c55e);
+  }
+
+  &.reconnecting {
+    background: var(--color-warning, #f59e0b);
+    animation: pulse 1s infinite;
+  }
+
+  &.disconnected {
+    background: var(--color-danger, #ef4444);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
