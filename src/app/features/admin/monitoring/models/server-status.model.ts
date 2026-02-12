@@ -1,6 +1,7 @@
-// src/app/features/admin/models/server-status.model.ts
+// src/app/features/admin/monitoring/models/server-status.model.ts
 
 import { HealthStatus } from './health-status.model';
+import { ExecutorMetrics } from './executor-metrics.model';
 
 /**
  * Simplified server/service status for display.
@@ -57,6 +58,9 @@ export interface HealthMetrics {
     idle: number;
     max: number;
   };
+
+  /** Async executor thread pools */
+  executors: ExecutorMetrics[];
 
   /** Application uptime in seconds */
   uptime: number;

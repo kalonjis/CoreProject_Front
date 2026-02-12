@@ -3,7 +3,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
-import { HealthMetrics } from '../models';
+import { ExecutorMetrics, HealthMetrics } from '../models';
 
 /**
  * API service for Spring Boot Actuator metrics endpoints.
@@ -13,6 +13,7 @@ import { HealthMetrics } from '../models';
  * - CPU usage (system and process)
  * - Disk space
  * - Database connection pool (HikariCP)
+ * - Async executor thread pools
  * - Application uptime
  *
  * Used by the Health Metrics card in System Health dashboard.
@@ -78,6 +79,7 @@ export class ActuatorMetricsApiService {
         idle: response.dbPool.idle,
         max: response.dbPool.max
       },
+      executors: response.executors ?? [],
       uptime: response.uptime
     };
   }
@@ -91,13 +93,14 @@ export class ActuatorMetricsApiService {
       cpu: { systemUsage: 0, processUsage: 0 },
       disk: { free: 0, total: 1, freePercent: 0 },
       dbPool: { active: 0, idle: 0, max: 0 },
+      executors: [],
       uptime: 0
     };
   }
 }
 
 // ===========================================================================
-// BACKEND RESPONSE INTERFACE
+// BACKEND RESPONSE INTERFACES
 // ===========================================================================
 
 /**
@@ -124,5 +127,6 @@ interface DashboardMetricsResponse {
     idle: number;
     max: number;
   };
+  executors: ExecutorMetrics[];
   uptime: number;
 }
