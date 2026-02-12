@@ -16,6 +16,11 @@
         }
       </ul>
     </nav>
+    <!-- Notification bell -->
+    <app-notification-bell />
+
+    <!-- Toast container (une seule fois, dans app.component) -->
+    <app-notification-toast />
 
     <div class="auth-section">
       @if (!isAuthenticated()) {

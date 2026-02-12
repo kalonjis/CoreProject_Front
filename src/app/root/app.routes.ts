@@ -44,6 +44,12 @@ export const routes: Routes = [
     path: 'calendar',
     loadChildren: () => import('../features/calendar/calendar.routes')
         .then(m => m.CALENDAR_ROUTES)
+  },
+  {
+    path: 'notifications',
+    canActivate: [() => authGuard()],
+    loadChildren: () => import('../features/notification')
+      .then(m => m.NOTIFICATION_ROUTES),
   }
 /*
   // Routes authentifiées standard

@@ -110,12 +110,22 @@ export { NotificationFacade } from './services/notification.facade';
 // COMPONENTS (for use in navbar, app shell, etc.)
 // =============================================================================
 
-// These will be added once components are created
-// export { NotificationBellComponent } from './components/notification-bell/notification-bell.component';
-// export { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
+export { NotificationBellComponent } from './components/notification-bell/notification-bell.component';
+export { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
+export { NotificationItemComponent } from './components/notification-item/notification-item.component';
+export { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
+export { NotificationFiltersComponent } from './components/notification-filters/notification-filters.component';
+
+// =============================================================================
+// PAGES (lazy-loaded via routes)
+// =============================================================================
+
+// Pages are lazy-loaded, but exported for direct import if needed
+export { NotificationCenterComponent } from './pages/notification-center/notification-center.component';
+export { NotificationPreferencesComponent } from './pages/notification-preferences/notification-preferences.component';
 
 // =============================================================================
 // ROUTES
 // =============================================================================
 
-// export { NOTIFICATION_ROUTES } from './notification.routes';
+export { NOTIFICATION_ROUTES } from './notification.routes';

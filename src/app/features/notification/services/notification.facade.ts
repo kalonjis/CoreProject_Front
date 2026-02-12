@@ -2,7 +2,7 @@
 
 import { Injectable, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, tap, catchError, throwError, finalize, of } from 'rxjs';
+import {Observable, tap, catchError, throwError, finalize, of, map} from 'rxjs';
 
 import { NotificationStore } from '../state/notification.store';
 import { NotificationApiService } from './notification-api.service';
@@ -274,11 +274,12 @@ export class NotificationFacade {
 
     return this.api.markAllAsRead().pipe(
       tap(() => this.store.setUnreadCount(0)),
+      map(() => void 0),
       catchError(error => {
         this.refresh();
         return throwError(() => error);
       })
-    ) as Observable<void>;
+    );
   }
 
   /**
@@ -394,8 +395,9 @@ export class NotificationFacade {
    */
   resetPreferences(): Observable<void> {
     return this.api.resetToDefaults().pipe(
-      tap(() => this.loadPreferences().subscribe())
-    ) as Observable<void>;
+      tap(() => this.loadPreferences().subscribe()),
+      map(() => void 0)
+    );
   }
 
   // ===========================================================================

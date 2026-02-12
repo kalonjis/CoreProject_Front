@@ -6,6 +6,8 @@ import { HeaderComponent } from '../core/layout/header/header.component';
 import { GlobalFeedbackComponent } from '../shared/feedback/global-feedback.component';
 import {DeviceAlertBannerComponent} from '../shared/device-alert-banner/device-alert-banner.component';
 import {AuthFacade} from '../core/auth';
+import { NotificationFacade } from '../features/notification';
+
 
 @Component({
   selector: 'app-root',
@@ -16,6 +18,7 @@ import {AuthFacade} from '../core/auth';
 })
 export class AppComponent implements OnInit {
   private authFacade = inject(AuthFacade);
+  private notificationFacade = inject(NotificationFacade);
 
   // Utilisation d'un effect pour gérer le thème basé sur les préférences
   themeEffect = effect(() => {
@@ -41,5 +44,10 @@ export class AppComponent implements OnInit {
     // L'initialisation est déjà gérée par APP_INITIALIZER
     // Mais on peut ajouter des actions supplémentaires si nécessaire
     console.log('Application initialisée');
+    const isAuth = this.authFacade.isAuthenticated();
+    if (isAuth) {
+      this.notificationFacade.initialize();
+      console.log("notification service initialized")
+    }
   }
 }

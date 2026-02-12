@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthFacade } from '../../auth/services/auth.facade';
+import {NotificationBellComponent, NotificationToastComponent} from '../../../features/notification';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, NotificationBellComponent, NotificationToastComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
