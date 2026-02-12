@@ -1,0 +1,53 @@
+<!-- src/app/features/notification/components/notification-toast/notification-toast.component.html -->
+
+@if (currentToast(); as toast) {
+  <div
+    class="toast-container"
+    [class.visible]="isVisible()"
+    [class.exiting]="isExiting()"
+    (click)="onToastClick(toast)"
+    (mouseenter)="pauseAutoClose()"
+    (mouseleave)="resumeAutoClose()"
+  >
+    <!-- Priority bar -->
+    <div
+      class="priority-bar"
+      [style.background-color]="getPriorityColor(toast)"
+    ></div>
+
+    <!-- Content -->
+    <div class="toast-content">
+      <!-- Icon -->
+      <div class="toast-icon">
+        <span>{{ getIcon(toast) }}</span>
+      </div>
+
+      <!-- Text -->
+      <div class="toast-text">
+        <h4 class="toast-title">{{ toast.title }}</h4>
+        <p class="toast-body">{{ toast.body }}</p>
+      </div>
+
+      <!-- Close button -->
+      <button
+        class="toast-close"
+        (click)="onClose($event)"
+        aria-label="Close notification"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Progress bar -->
+    @if (!isPaused()) {
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.animation-duration]="autoCloseDuration + 'ms'"
+        ></div>
+      </div>
+    }
+  </div>
+}
