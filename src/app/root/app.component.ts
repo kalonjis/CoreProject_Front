@@ -16,38 +16,28 @@ import { NotificationFacade } from '../features/notification';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   private authFacade = inject(AuthFacade);
   private notificationFacade = inject(NotificationFacade);
 
-  // Utilisation d'un effect pour gérer le thème basé sur les préférences
+  // Theme effect
   themeEffect = effect(() => {
     const user = this.authFacade.user();
     if (user) {
-      // Exemple: appliquer le thème préféré de l'utilisateur
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.body.className = savedTheme;
     }
   });
 
-  // Utilisation d'un effect pour afficher le statut d'authentification en dev
-  logEffect = effect(() => {
+  // Notification SSE - réactif aux changements d'auth
+  notificationEffect = effect(() => {
     const isAuth = this.authFacade.isAuthenticated();
-    console.log(`État d'authentification: ${isAuth ? 'Connecté' : 'Non connecté'}`);
+    const isInitialized = this.authFacade.isInitialized();
 
-    if (isAuth) {
-      console.log('Utilisateur:', this.authFacade.user()?.username);
-    }
-  });
-
-  ngOnInit(): void {
-    // L'initialisation est déjà gérée par APP_INITIALIZER
-    // Mais on peut ajouter des actions supplémentaires si nécessaire
-    console.log('Application initialisée');
-    const isAuth = this.authFacade.isAuthenticated();
-    if (isAuth) {
+    if (isInitialized && isAuth) {
       this.notificationFacade.initialize();
-      console.log("notification service initialized")
+    } else if (isInitialized && !isAuth) {
+      this.notificationFacade.shutdown();
     }
-  }
+  }, { allowSignalWrites: true });
 }

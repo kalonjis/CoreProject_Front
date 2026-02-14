@@ -51,7 +51,7 @@ export class NotificationToastComponent implements OnDestroy {
       if (toast) {
         this.showToast();
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnDestroy(): void {

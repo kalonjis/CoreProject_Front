@@ -172,9 +172,15 @@ export class NotificationFacade {
    * Loads unread notification count.
    */
   loadUnreadCount(): void {
+    console.log('[NotificationFacade] Loading unread count...');
+
     this.api.getUnreadCount()
       .pipe(
-        tap(response => this.store.setUnreadCount(response.count)),
+        tap(response => {
+          console.log('[NotificationFacade] Unread count response:', response);
+          this.store.setUnreadCount(response.count);
+          console.log('[NotificationFacade] Store unreadCount set to:', response.count);
+        }),
         catchError(error => {
           console.error('[NotificationFacade] Failed to load unread count:', error);
           return of({ count: 0 });

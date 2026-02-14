@@ -5,7 +5,7 @@ import {
   inject,
   ElementRef,
   HostListener,
-  signal
+  signal, effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -41,6 +41,13 @@ export class NotificationBellComponent {
   readonly unreadCount = this.facade.unreadCount;
   readonly isDropdownOpen = this.facade.isDropdownOpen;
   readonly sseStatus = this.facade.sseStatus;
+
+  constructor() {
+    // Debug: log unreadCount changes
+    effect(() => {
+      console.log('[NotificationBell] unreadCount:', this.unreadCount());
+    });
+  }
 
   // Computed states
   hasUnread = () => this.unreadCount() > 0;

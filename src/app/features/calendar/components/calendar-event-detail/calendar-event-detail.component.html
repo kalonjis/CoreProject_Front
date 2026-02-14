@@ -1,171 +1,172 @@
+<!-- calendar-event-detail.component.html -->
+
 @if (event$(); as event) {
-  <div class="event-detail">
-    <!-- Header -->
-    <div
-      class="detail-header"
-      [style.background-color]="eventColor()"
-      [style.color]="textColor()"
-    >
-      <button
-        type="button"
-        class="close-btn"
-        (click)="onClose()"
-        aria-label="Fermer"
+  <div class="event-detail-wrapper">
+    <div class="event-detail-card">
+      <!-- Header -->
+      <div
+        class="detail-header"
+        [style.background-color]="eventColor()"
+        [style.color]="textColor()"
       >
-        ✕
-      </button>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Fermer"
+        >
+          ✕
+        </button>
 
-      <h2 class="event-title" [class.cancelled]="isCancelled()">
-        {{ event.title }}
-      </h2>
+        <h2 class="event-title" [class.cancelled]="isCancelled()">
+          {{ event.title }}
+        </h2>
 
-      @if (event.status !== CalendarEventStatus.CONFIRMED) {
-        <span class="status-badge">
-          {{ event.status | eventStatus }}
-        </span>
-      }
-    </div>
-
-    <!-- Content -->
-    <div class="detail-content">
-      <!-- Date & Time -->
-      <div class="detail-section">
-        <div class="detail-row">
-          <span class="detail-icon">🗓️</span>
-          <div class="detail-text">
-            <span class="detail-label">Date et heure</span>
-            <span class="detail-value" [style.white-space]="'pre-line'">
-              {{ dateRange() }}
-            </span>
-            @if (event.allDay) {
-              <span class="all-day-badge">Toute la journée</span>
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- Location -->
-      @if (event.displayLocation || event.location) {
-        <div class="detail-section">
-          <div class="detail-row">
-            <span class="detail-icon">📍</span>
-            <div class="detail-text">
-              <span class="detail-label">Lieu</span>
-              <span class="detail-value">
-                {{ event.displayLocation || event.location }}
-              </span>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Recurrence -->
-      @if (isRecurring()) {
-        <div class="detail-section">
-          <div class="detail-row">
-            <span class="detail-icon">🔄</span>
-            <div class="detail-text">
-              <span class="detail-label">Récurrence</span>
-              <span class="detail-value">{{ recurrenceLabel() }}</span>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Description -->
-      @if (event.description) {
-        <div class="detail-section">
-          <div class="detail-row">
-            <span class="detail-icon">📝</span>
-            <div class="detail-text">
-              <span class="detail-label">Description</span>
-              <p class="detail-description">{{ event.description }}</p>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Reminder -->
-      @if (event.reminderMinutes) {
-        <div class="detail-section">
-          <div class="detail-row">
-            <span class="detail-icon">🔔</span>
-            <div class="detail-text">
-              <span class="detail-label">Rappel</span>
-              <span class="detail-value">
-                @if (event.reminderMinutes < 60) {
-                  {{ event.reminderMinutes }} minutes avant
-                } @else if (event.reminderMinutes === 60) {
-                  1 heure avant
-                } @else if (event.reminderMinutes < 1440) {
-                  {{ event.reminderMinutes / 60 }} heures avant
-                } @else {
-                  {{ event.reminderMinutes / 1440 }} jour(s) avant
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Metadata -->
-      <div class="detail-section metadata">
-        <span class="meta-item">
-          Créé le {{ event.createdAt | date:'dd/MM/yyyy à HH:mm' }}
-        </span>
-        @if (event.updatedAt !== event.createdAt) {
-          <span class="meta-item">
-            Modifié le {{ event.updatedAt | date:'dd/MM/yyyy à HH:mm' }}
+        @if (event.status !== CalendarEventStatus.CONFIRMED) {
+          <span class="status-badge">
+            {{ event.status | eventStatus }}
           </span>
         }
       </div>
-    </div>
 
-    <!-- Actions -->
-    <div class="detail-actions">
-      <!-- Export Menu -->
-      <div class="export-dropdown">
-        <button
-          type="button"
-          class="btn-secondary"
-          (click)="toggleExportMenu()"
-        >
-          <span>Exporter</span>
-          <span class="dropdown-arrow">▼</span>
-        </button>
+      <!-- Content -->
+      <div class="detail-content">
+        <!-- Date & Time -->
+        <div class="detail-section">
+          <div class="detail-row">
+            <span class="detail-icon">🗓️</span>
+            <div class="detail-text">
+              <span class="detail-label">Date et heure</span>
+              <span class="detail-value">{{ dateRange() }}</span>
+              @if (event.allDay) {
+                <span class="badge badge-info">Toute la journée</span>
+              }
+            </div>
+          </div>
+        </div>
 
-        @if (exportMenuOpen()) {
-          <div class="dropdown-menu">
-            <button type="button" (click)="exportToGoogle()">
-              <span>📅</span> Google Calendar
-            </button>
-            <button type="button" (click)="exportToOutlook()">
-              <span>📧</span> Outlook
-            </button>
-            <button type="button" (click)="downloadIcs()">
-              <span>📥</span> Télécharger .ics
-            </button>
+        <!-- Location -->
+        @if (event.displayLocation || event.location) {
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-icon">📍</span>
+              <div class="detail-text">
+                <span class="detail-label">Lieu</span>
+                <span class="detail-value">
+                  {{ event.displayLocation || event.location }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Recurrence -->
+        @if (isRecurring()) {
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-icon">🔄</span>
+              <div class="detail-text">
+                <span class="detail-label">Récurrence</span>
+                <span class="detail-value">{{ recurrenceLabel() }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Description -->
+        @if (event.description) {
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-icon">📝</span>
+              <div class="detail-text">
+                <span class="detail-label">Description</span>
+                <p class="detail-description">{{ event.description }}</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Reminder -->
+        @if (event.reminderMinutes) {
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-icon">🔔</span>
+              <div class="detail-text">
+                <span class="detail-label">Rappel</span>
+                <span class="detail-value">
+                  @if (event.reminderMinutes < 60) {
+                    {{ event.reminderMinutes }} minutes avant
+                  } @else if (event.reminderMinutes === 60) {
+                    1 heure avant
+                  } @else if (event.reminderMinutes < 1440) {
+                    {{ event.reminderMinutes / 60 }} heures avant
+                  } @else {
+                    {{ event.reminderMinutes / 1440 }} jour(s) avant
+                  }
+                </span>
+              </div>
+            </div>
           </div>
         }
       </div>
 
-      <div class="action-buttons">
-        @if (!isCancelled()) {
-          <button
-            type="button"
-            class="btn-secondary"
-            (click)="onEdit()"
-          >
+      <!-- Footer -->
+      <div class="detail-footer">
+        <span class="footer-meta">
+          Créé le {{ event.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+        </span>
+
+        <div class="footer-actions">
+          <!-- Export dropdown -->
+          <div class="export-dropdown" (clickOutside)="exportMenuOpen.set(false)">
+            <button
+              type="button"
+              class="btn btn-outline"
+              (click)="toggleExportMenu()"
+            >
+              <span>Exporter</span>
+              <span class="chevron" [class.open]="exportMenuOpen()">▾</span>
+            </button>
+
+            @if (exportMenuOpen()) {
+              <div class="export-menu">
+                <button type="button" (click)="downloadIcs()">
+                  <span class="menu-icon">📅</span>
+                  <span>Fichier ICS</span>
+                </button>
+                <button type="button" (click)="exportToGoogle()">
+                  <span class="menu-icon">🔵</span>
+                  <span>Google Calendar</span>
+                </button>
+                <button type="button" (click)="exportToOutlook()">
+                  <span class="menu-icon">🔷</span>
+                  <span>Outlook</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Edit button -->
+          <button type="button" class="btn btn-outline" (click)="onEdit()">
             Modifier
           </button>
-        }
 
-        <button
-          type="button"
-          class="btn-danger"
-          (click)="onDelete()"
-        >
-          Supprimer
+          <!-- Delete button -->
+          <button type="button" class="btn btn-danger" (click)="onDelete()">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="event-detail-wrapper">
+    <div class="event-detail-card">
+      <div class="empty-state">
+        <span class="empty-icon">📅</span>
+        <p>Événement non trouvé</p>
+        <button type="button" class="btn btn-outline" (click)="onClose()">
+          Retour au calendrier
         </button>
       </div>
     </div>
