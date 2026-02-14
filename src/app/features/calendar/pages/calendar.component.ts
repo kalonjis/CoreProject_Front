@@ -150,21 +150,19 @@ export class CalendarComponent implements OnInit {
       const view = this.currentView();
       const viewPath = view.toLowerCase();
       this.router.navigate([viewPath], { relativeTo: this.route });
-    });
+    }, { allowSignalWrites: true });
 
     // Load events when date changes
     effect(() => {
       const date = this.currentDate();
       const view = this.currentView();
       this.loadEventsForView(date, view);
-    });
+    }, { allowSignalWrites: true });
 
     // Open detail panel when event is selected
     effect(() => {
       const event = this.selectedEvent();
-      console.log('🔄 Effect triggered - selectedEvent:', event);
       this.detailPanelOpen.set(!!event);
-      console.log('🚪 detailPanelOpen set to:', !!event);
     }, { allowSignalWrites: true });
   }
 

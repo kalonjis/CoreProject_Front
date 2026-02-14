@@ -96,7 +96,7 @@ export class NotificationApiService {
    * Marks a notification as read.
    */
   markAsRead(publicId: string): Observable<Notification> {
-    return this.http.post<Notification>(`${this.baseUrl}/${publicId}/read`, {});
+    return this.http.patch<Notification>(`${this.baseUrl}/${publicId}/read`, {});
   }
 
   /**
@@ -123,7 +123,7 @@ export class NotificationApiService {
    * Dismisses a notification.
    */
   dismiss(publicId: string): Observable<Notification> {
-    return this.http.post<Notification>(`${this.baseUrl}/${publicId}/dismiss`, {});
+    return this.http.patch<Notification>(`${this.baseUrl}/${publicId}/dismiss`, {});
   }
 
   /**
