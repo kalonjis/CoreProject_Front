@@ -31,7 +31,7 @@
 
   <!-- Week Day Names -->
   <div class="weekday-row">
-    @for (dayName of weekDayNames(); track dayName) {
+    @for (dayName of weekDayNames(); track $index) {
       <span class="weekday-name">{{ dayName }}</span>
     }
   </div>

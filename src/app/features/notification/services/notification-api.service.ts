@@ -2,7 +2,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {map, Observable} from 'rxjs';
 
 import {
   Notification,
@@ -75,10 +75,17 @@ export class NotificationApiService {
 
   /**
    * Gets recent notifications (for dropdown preview).
+   * Uses the main paginated endpoint with size limit.
    */
   getRecent(limit: number = 10): Observable<Notification[]> {
-    const params = new HttpParams().set('size', limit.toString());
-    return this.http.get<Notification[]>(`${this.baseUrl}/recent`, { params });
+    const params = new HttpParams()
+      .set('size', limit.toString())
+      .set('page', '0');
+
+    return this.http.get<NotificationPageResponse>(this.baseUrl, { params })
+      .pipe(
+        map(response => response.content)
+      );
   }
 
   // ===========================================================================
@@ -89,7 +96,7 @@ export class NotificationApiService {
    * Marks a notification as read.
    */
   markAsRead(publicId: string): Observable<Notification> {
-    return this.http.post<Notification>(`${this.baseUrl}/${publicId}/read`, {});
+    return this.http.patch<Notification>(`${this.baseUrl}/${publicId}/read`, {});
   }
 
   /**
@@ -116,7 +123,7 @@ export class NotificationApiService {
    * Dismisses a notification.
    */
   dismiss(publicId: string): Observable<Notification> {
-    return this.http.post<Notification>(`${this.baseUrl}/${publicId}/dismiss`, {});
+    return this.http.patch<Notification>(`${this.baseUrl}/${publicId}/dismiss`, {});
   }
 
   /**

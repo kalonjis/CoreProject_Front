@@ -187,7 +187,7 @@ export class NotificationStore {
       return {
         ...state,
         notifications: state.notifications.filter(n => n.publicId !== publicId),
-        unreadCount: wasUnread ? state.unreadCount - 1 : state.unreadCount,
+        unreadCount: wasUnread ? Math.max(0, state.unreadCount - 1) : state.unreadCount,
         totalCount: state.totalCount - 1
       };
     });

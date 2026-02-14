@@ -5,7 +5,7 @@ import {
   EventEmitter,
   inject,
   computed,
-  signal
+  signal, OnInit
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -25,6 +25,7 @@ import {
   EventRecurrencePipe,
   DateRangePipe
 } from '../../pipes';
+import {ActivatedRoute, Router} from '@angular/router';
 
 /**
  * Calendar event detail component.
@@ -56,24 +57,27 @@ import {
   templateUrl: './calendar-event-detail.component.html',
   styleUrl: './calendar-event-detail.component.scss'
 })
-export class CalendarEventDetailComponent {
+export class CalendarEventDetailComponent implements OnInit {
   // ===========================================================================
   // Dependencies
   // ===========================================================================
 
   private readonly config = inject(CALENDAR_CONFIG);
   private readonly exportService = inject(CalendarExportApiService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   // ===========================================================================
   // Inputs
   // ===========================================================================
 
-  /** The event to display */
-  @Input({ required: true })
+  /** The event to display (when used as child component) */
+  @Input()
   set event(value: CalendarEvent) {
     this._event.set(value);
   }
   private readonly _event = signal<CalendarEvent | null>(null);
+
 
   // ===========================================================================
   // Outputs
@@ -179,6 +183,22 @@ export class CalendarEventDetailComponent {
   });
 
   // ===========================================================================
+  // Lifecycle
+  // ===========================================================================
+
+  ngOnInit(): void {
+    // Si pas d'event en @Input, essayer de le récupérer depuis le resolver
+    if (!this._event()) {
+      const resolvedEvent = this.route.snapshot.data['event'] as CalendarEvent | null;
+      if (resolvedEvent) {
+        this._event.set(resolvedEvent);
+      }
+    }
+  }
+
+
+
+  // ===========================================================================
   // Template Helpers
   // ===========================================================================
 
@@ -193,6 +213,10 @@ export class CalendarEventDetailComponent {
    */
   onClose(): void {
     this.close.emit();
+    // Si utilisé comme page routable, naviguer vers le calendrier
+    if (this.route.snapshot.data['event']) {
+      this.router.navigate(['/calendar']);
+    }
   }
 
   /**

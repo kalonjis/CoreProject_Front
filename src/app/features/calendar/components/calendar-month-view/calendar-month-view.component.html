@@ -4,7 +4,7 @@
     @if (config.showWeekNumbers) {
       <div class="week-number-header">S</div>
     }
-    @for (dayName of weekDayNames(); track dayName) {
+    @for (dayName of weekDayNames(); track $index) {
       <div class="weekday-name">{{ dayName }}</div>
     }
   </div>
