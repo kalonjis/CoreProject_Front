@@ -2,8 +2,8 @@
 
 import { Injectable, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {Observable, tap, catchError, throwError, finalize, of, map} from 'rxjs';
-
+import {Observable, tap, catchError, throwError, finalize, of, map, Subscription, interval, switchMap} from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { NotificationStore } from '../state/notification.store';
 import { NotificationApiService } from './notification-api.service';
 import { NotificationSseService } from './notification-sse.service';
@@ -41,6 +41,9 @@ export class NotificationFacade {
   private readonly sse = inject(NotificationSseService);
 
   private initialized = false;
+
+  private pollingSubscription: Subscription | null = null;
+  private readonly POLLING_INTERVAL_MS = 60000; // 60 secondes
 
   // ===========================================================================
   // EXPOSED STATE (readonly signals from store)
@@ -99,6 +102,9 @@ export class NotificationFacade {
 
     // Connect to SSE
     this.sse.connect();
+
+    // Polling backup
+    this.startBackupPolling();
   }
 
   /**
@@ -109,6 +115,7 @@ export class NotificationFacade {
     console.log('[NotificationFacade] Shutting down...');
 
     this.sse.disconnect();
+    this.stopPolling();
     this.store.reset();
     this.initialized = false;
   }
@@ -475,6 +482,55 @@ export class NotificationFacade {
     if (notification.actionUrl) {
       // Navigation would be handled by the component
       // This facade just handles the state updates
+    }
+  }
+
+
+// ===========================================================================
+// BACKUP POLLING
+// ===========================================================================
+
+  /**
+   * Starts polling for unread count as a fallback mechanism.
+   * This ensures the badge stays updated even if SSE fails.
+   */
+  private startBackupPolling(): void {
+    this.stopPolling();
+
+    console.log('[NotificationFacade] Starting backup polling every', this.POLLING_INTERVAL_MS / 1000, 'seconds');
+
+    this.pollingSubscription = interval(this.POLLING_INTERVAL_MS)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        // Ne poll que si SSE n'est PAS connecté (optionnel - enlever cette ligne pour toujours poll)
+        filter(() => !this.sse.isConnected),
+        switchMap(() => this.api.getUnreadCount().pipe(
+          catchError(err => {
+            console.warn('[NotificationFacade] Polling error:', err);
+            return of({ count: this.store.state().unreadCount });
+          })
+        ))
+      )
+      .subscribe({
+        next: (response) => {
+          const currentCount = this.store.state().unreadCount;
+
+          if (response.count !== currentCount) {
+            console.log('[NotificationFacade] 🔔 Backup polling detected change:', currentCount, '→', response.count);
+            this.store.setUnreadCount(response.count);
+
+            if (response.count > currentCount) {
+              this.loadRecentNotifications();
+            }
+          }
+        }
+      });
+  }
+
+  private stopPolling(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = null;
     }
   }
 }
