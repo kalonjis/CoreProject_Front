@@ -10,6 +10,7 @@ import { NotificationItemComponent } from '../../components/notification-item/no
 import { NotificationFiltersComponent } from '../../components/notification-filters/notification-filters.component';
 import { Notification, NotificationFilterState } from '../../models/notification.model';
 import { NotificationType } from '../../models/notification.enums';
+import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 /**
  * Notification Center page.
@@ -35,6 +36,7 @@ import { NotificationType } from '../../models/notification.enums';
 export class NotificationCenterComponent implements OnInit {
 
   private readonly facade = inject(NotificationFacade);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   // Exposed signals
   readonly notifications = this.facade.notifications;
@@ -81,6 +83,22 @@ export class NotificationCenterComponent implements OnInit {
 
   markAllAsRead(): void {
     this.facade.markAllAsRead().subscribe();
+  }
+
+  dismissAll(): void {
+    this.confirmDialog.confirm({
+      title: 'Effacer les notifications',
+      message: 'Êtes-vous sûr de vouloir effacer toutes vos notifications ? Cette action est irréversible.',
+      confirmButtonText: 'Effacer tout',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() => {
+        this.facade.dismissAll().subscribe();
+      })
+      .catch(() => {
+        // User cancelled - do nothing
+      });
   }
 
   loadMore(): void {

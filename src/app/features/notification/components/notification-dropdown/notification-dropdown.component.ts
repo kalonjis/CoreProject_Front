@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { NotificationFacade } from '../../services/notification.facade';
 import { NotificationItemComponent } from '../notification-item/notification-item.component';
 import { Notification } from '../../models/notification.model';
+import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 /**
  * Notification dropdown component.
@@ -24,6 +25,7 @@ import { Notification } from '../../models/notification.model';
 export class NotificationDropdownComponent {
 
   private readonly facade = inject(NotificationFacade);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   @Output() close = new EventEmitter<void>();
 
@@ -50,6 +52,24 @@ export class NotificationDropdownComponent {
 
   markAllAsRead(): void {
     this.facade.markAllAsRead().subscribe();
+  }
+
+  dismissAll(): void {
+    this.confirmDialog.confirm({
+      title: 'Effacer les notifications',
+      message: 'Effacer toutes les notifications ?',
+      confirmButtonText: 'Effacer',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() => {
+        this.facade.dismissAll().subscribe(() => {
+          this.close.emit();
+        });
+      })
+      .catch(() => {
+        // User cancelled
+      });
   }
 
   onViewAllClick(): void {

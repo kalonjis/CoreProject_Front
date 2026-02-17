@@ -16,7 +16,7 @@ import {
   UpdatePreferenceRequest,
   SetQuietHoursRequest,
   BulkPreferenceUpdateRequest,
-  PreferenceOperationResponse
+  PreferenceOperationResponse, PreferenceMatrixResponse, QuietHoursResponse
 } from '../models/notification-preference.model';
 import { NotificationChannel } from '../models/notification.enums';
 
@@ -88,6 +88,34 @@ export class NotificationApiService {
       );
   }
 
+  /**
+   * Gets active (non-dismissed, non-expired) notifications.
+   */
+  getActiveNotifications(params?: NotificationQueryParams): Observable<NotificationPageResponse> {
+    let httpParams = new HttpParams();
+
+    if (params?.page !== undefined) {
+      httpParams = httpParams.set('page', params.page.toString());
+    }
+    if (params?.size !== undefined) {
+      httpParams = httpParams.set('size', params.size.toString());
+    }
+
+    return this.http.get<NotificationPageResponse>(
+      `${this.baseUrl}/active`,
+      { params: httpParams }
+    );
+  }
+
+  /**
+   * Gets all unread notifications.
+   */
+  getUnreadNotifications(): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.baseUrl}/unread`);
+  }
+
+
+
   // ===========================================================================
   // NOTIFICATIONS - Actions
   // ===========================================================================
@@ -127,6 +155,16 @@ export class NotificationApiService {
   }
 
   /**
+   * Dismisses all notifications.
+   */
+  dismissAll(): Observable<NotificationOperationResponse> {
+    return this.http.post<NotificationOperationResponse>(
+      `${this.baseUrl}/dismiss-all`,
+      {}
+    );
+  }
+
+  /**
    * Deletes a notification.
    */
   delete(publicId: string): Observable<void> {
@@ -155,11 +193,27 @@ export class NotificationApiService {
   }
 
   /**
+   * Gets the complete preference matrix (all types × all channels).
+   */
+  getPreferenceMatrix(): Observable<PreferenceMatrixResponse> {
+    return this.http.get<PreferenceMatrixResponse>(`${this.preferencesUrl}/matrix`);
+  }
+
+  /**
    * Gets preferences for a specific channel.
    */
   getPreferencesByChannel(channel: NotificationChannel): Observable<NotificationPreference[]> {
     return this.http.get<NotificationPreference[]>(
       `${this.preferencesUrl}/channel/${channel}`
+    );
+  }
+
+  /**
+   * Gets quiet hours configuration for a channel.
+   */
+  getQuietHours(channel: NotificationChannel): Observable<QuietHoursResponse> {
+    return this.http.get<QuietHoursResponse>(
+      `${this.preferencesUrl}/quiet-hours/${channel}`
     );
   }
 
@@ -188,7 +242,7 @@ export class NotificationApiService {
    * Sets quiet hours for a channel.
    */
   setQuietHours(request: SetQuietHoursRequest): Observable<PreferenceOperationResponse> {
-    return this.http.post<PreferenceOperationResponse>(
+    return this.http.put<PreferenceOperationResponse>(
       `${this.preferencesUrl}/quiet-hours`,
       request
     );

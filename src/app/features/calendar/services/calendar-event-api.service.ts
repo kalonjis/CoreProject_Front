@@ -215,7 +215,7 @@ export class CalendarEventApiService {
    * ```
    */
   cancelEvent(publicId: string): Observable<CalendarEvent> {
-    return this.http.patch<CalendarEvent>(
+    return this.http.post<CalendarEvent>(
       `${this.baseUrl}/events/${publicId}/cancel`,
       {}
     );
