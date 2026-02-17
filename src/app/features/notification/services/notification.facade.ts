@@ -321,6 +321,24 @@ export class NotificationFacade {
     );
   }
 
+  /**
+   * Dismisses all notifications (clear all).
+   */
+  dismissAll(): Observable<void> {
+    return this.api.dismissAll().pipe(
+      tap(() => {
+        this.store.setNotifications([]);
+        this.store.setUnreadCount(0);
+        this.store.setTotalCount(0);
+      }),
+      map(() => void 0),
+      catchError(error => {
+        this.refresh();
+        return throwError(() => error);
+      })
+    );
+  }
+
   // ===========================================================================
   // FILTER
   // ===========================================================================

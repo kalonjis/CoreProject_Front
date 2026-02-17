@@ -28,6 +28,16 @@
         </button>
       }
 
+      @if (totalCount() > 0) {
+        <button
+          class="btn-action btn-danger"
+          (click)="dismissAll()"
+          [disabled]="isLoading()"
+        >
+          Tout effacer
+        </button>
+      }
+
       <a routerLink="preferences" class="btn-outline">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>

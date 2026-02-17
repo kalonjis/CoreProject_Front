@@ -16,6 +16,7 @@ import {
   getAllNotificationTypes,
   getAllNotificationChannels
 } from '../../models/notification.enums';
+import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
 /**
  * Notification Preferences page.
@@ -35,6 +36,7 @@ import {
 export class NotificationPreferencesComponent implements OnInit {
 
   private readonly facade = inject(NotificationFacade);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly preferenceMatrix = this.facade.preferenceMatrix;
   readonly isLoading = this.facade.isLoadingPreferences;
@@ -108,9 +110,19 @@ export class NotificationPreferencesComponent implements OnInit {
   }
 
   resetToDefaults(): void {
-    if (confirm('Reset all preferences to defaults?')) {
-      this.facade.resetPreferences().subscribe();
-    }
+    this.confirmDialog.confirm({
+      title: 'Réinitialiser les préférences',
+      message: 'Êtes-vous sûr de vouloir restaurer toutes les préférences par défaut ?',
+      confirmButtonText: 'Réinitialiser',
+      cancelButtonText: 'Annuler',
+      type: 'warning'
+    })
+      .then(() => {
+        this.facade.resetPreferences().subscribe();
+      })
+      .catch(() => {
+        // User cancelled - do nothing
+      });
   }
 
   refresh(): void {

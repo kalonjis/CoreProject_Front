@@ -179,6 +179,24 @@ export function matrixToPreferences(matrix: PreferenceMatrix): UpdatePreferenceR
 }
 
 /**
+ * Response from GET /preferences/matrix
+ */
+export interface PreferenceMatrixResponse {
+  matrix: Record<NotificationType, Record<NotificationChannel, boolean>>;
+  quietHours: Record<NotificationChannel, QuietHoursConfig>;
+}
+
+/**
+ * Response from GET /preferences/quiet-hours/{channel}
+ */
+export interface QuietHoursResponse {
+  channel: NotificationChannel;
+  enabled: boolean;
+  start?: string;  // HH:mm format
+  end?: string;    // HH:mm format
+}
+
+/**
  * Checks if quiet hours are currently active.
  */
 export function isInQuietHours(config: QuietHoursConfig): boolean {
@@ -213,3 +231,4 @@ export const DIGEST_FREQUENCY_LABELS: Record<DigestFrequency, string> = {
   [DigestFrequency.DAILY]: 'Daily',
   [DigestFrequency.WEEKLY]: 'Weekly'
 };
+
