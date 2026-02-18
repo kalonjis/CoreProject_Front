@@ -4,10 +4,18 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil, forkJoin, catchError, of } from 'rxjs';
 
-import { ActuatorHealthApiService } from '../services/actuator-health-api.service';
-import { ActuatorMetricsApiService } from '../services/actuator-metrics-api.service';
-import { CircuitBreakerApiService } from '../services/circuit-breaker-api.service';
-import { CircuitBreakerStatus, ExecutorMetrics, HealthMetrics, HealthStatus, ServerStatus } from '../models';
+import { ActuatorHealthApiService, ActuatorMetricsApiService, CircuitBreakerApiService, SmtpHealthApiService, TwilioHealthApiService } from '../services/';
+import {
+  CircuitBreakerStatus,
+  createInitialSmtpState,
+  createInitialTwilioState,
+  ExecutorMetrics,
+  HealthMetrics,
+  HealthStatus,
+  ServerStatus,
+  SmtpHealthState,
+  TwilioHealthState
+} from '../models';
 import { HealthMetricsCardComponent } from '../components/health-metrics-card/health-metrics-card.component';
 import { CircuitBreakerCardComponent } from '../components/circuit-breaker-card/circuit-breaker-card.component';
 import { ServerStatusCardComponent } from '../components/server-status-card/server-status-card.component';
@@ -54,6 +62,8 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
   private readonly healthApi = inject(ActuatorHealthApiService);
   private readonly metricsApi = inject(ActuatorMetricsApiService);
   private readonly circuitBreakerApi = inject(CircuitBreakerApiService);
+  private readonly smtpHealthApi = inject(SmtpHealthApiService);
+  private readonly twilioHealthApi = inject(TwilioHealthApiService);
 
   // ===========================================================================
   // STATE
@@ -64,6 +74,12 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
 
   /** Circuit breaker statuses */
   circuitBreakers = signal<CircuitBreakerStatus[]>([]);
+
+  /** SMTP health state */
+  smtpHealth = signal<SmtpHealthState>(createInitialSmtpState());
+
+  /** Twilio health state */
+  twilioHealth = signal<TwilioHealthState>(createInitialTwilioState());
 
   /** Health metrics (JVM, CPU, Disk, DB, Executors) */
   healthMetrics = signal<HealthMetrics | null>(null);
@@ -86,6 +102,18 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
   // ===========================================================================
   // COMPUTED
   // ===========================================================================
+
+  /** Current SMTP status for template binding */
+  smtpStatus = computed(() => this.smtpHealth().status);
+
+  /** True if SMTP test is in progress */
+  isTestingSmtp = computed(() => this.smtpHealth().status === 'TESTING');
+
+  /** Current Twilio status for template binding */
+  twilioStatus = computed(() => this.twilioHealth().status);
+
+  /** True if Twilio test is in progress */
+  isTestingTwilio = computed(() => this.twilioHealth().status === 'TESTING');
 
   /** Count of services that are UP */
   healthyServicesCount = computed(() =>
@@ -134,6 +162,8 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadAllData();
+    this.testSmtpConnection();
+    this.testTwilioConnection();
     this.startAutoRefresh();
   }
 
@@ -191,6 +221,90 @@ export class SystemHealthContainerComponent implements OnInit, OnDestroy {
    */
   refresh(): void {
     this.loadAllData();
+    this.testSmtpConnection();
+    this.testTwilioConnection();
+  }
+
+  /**
+   * Tests SMTP server connectivity.
+   *
+   * Performs a connection test without sending an email.
+   * Updates smtpHealth signal with the result.
+   */
+  testSmtpConnection(): void {
+    // Set testing state
+    this.smtpHealth.update(state => ({
+      ...state,
+      status: 'TESTING'
+    }));
+
+    this.smtpHealthApi.testConnection().subscribe({
+      next: (result) => {
+        this.smtpHealth.set({
+          status: result.reachable ? 'UP' : 'DOWN',
+          responseTimeMs: result.responseTimeMs,
+          errorMessage: result.errorMessage,
+          lastTestedAt: new Date()
+        });
+
+        // Show error banner if SMTP is down
+        if (!result.reachable) {
+          this.error.set(`SMTP unreachable: ${result.errorMessage}`);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to test SMTP connection:', err);
+        this.smtpHealth.set({
+          status: 'DOWN',
+          responseTimeMs: null,
+          errorMessage: 'Failed to reach health endpoint',
+          lastTestedAt: new Date()
+        });
+        this.error.set('Failed to test SMTP connection');
+      }
+    });
+  }
+
+  /**
+   * Tests Twilio API connectivity.
+   *
+   * Fetches account info without sending an SMS.
+   * Updates twilioHealth signal with the result.
+   */
+  testTwilioConnection(): void {
+    // Set testing state
+    this.twilioHealth.update(state => ({
+      ...state,
+      status: 'TESTING'
+    }));
+
+    this.twilioHealthApi.testConnection().subscribe({
+      next: (result) => {
+        this.twilioHealth.set({
+          status: result.reachable ? 'UP' : 'DOWN',
+          responseTimeMs: result.responseTimeMs,
+          accountStatus: result.accountStatus,
+          errorMessage: result.errorMessage,
+          lastTestedAt: new Date()
+        });
+
+        // Show error banner if Twilio is down
+        if (!result.reachable) {
+          this.error.set(`Twilio unreachable: ${result.errorMessage}`);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to test Twilio connection:', err);
+        this.twilioHealth.set({
+          status: 'DOWN',
+          responseTimeMs: null,
+          accountStatus: null,
+          errorMessage: 'Failed to reach health endpoint',
+          lastTestedAt: new Date()
+        });
+        this.error.set('Failed to test Twilio connection');
+      }
+    });
   }
 
   // ===========================================================================

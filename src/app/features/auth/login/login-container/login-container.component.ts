@@ -102,9 +102,10 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
     }
 
     if (error.status === 403) {
-      const errorMessage = error.error?.error || '';
+      const errorMessage: string = error.error?.message || error.error?.error || '';
 
-      if (errorMessage.includes('User account is not activated')) {
+      // Account never activated
+      if (errorMessage.includes('never been activated') || errorMessage.includes('not activated')) {
         const username = error.error?.username || '';
         this.unactivatedUsername.set(username);
         this.displayWarning(
@@ -115,7 +116,8 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
         return;
       }
 
-      if (errorMessage.includes('suspended') || errorMessage.includes('disabled by administrator')) {
+      // Account disabled (by admin or self-deactivated)
+      if (errorMessage.includes('disabled') || errorMessage.includes('suspended')) {
         this.displayError(
           'Your account has been suspended. Please contact an administrator.',
           '',
@@ -125,6 +127,11 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
       }
 
       this.loginError.set('Access denied');
+      return;
+    }
+
+    if (error.status === 429) {
+      this.loginError.set('Too many attempts. Please try again later.');
       return;
     }
 
