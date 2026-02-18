@@ -60,6 +60,54 @@
         </span>
       </div>
 
+      <!-- SMTP Status -->
+      <div
+        class="status-item smtp-status"
+        [class.healthy]="smtpStatus() === 'UP'"
+        [class.error]="smtpStatus() === 'DOWN'"
+        [class.testing]="smtpStatus() === 'TESTING'">
+        <span class="indicator"></span>
+        <span class="text">SMTP: {{ smtpStatus() }}</span>
+        @if (smtpHealth().responseTimeMs !== null && smtpStatus() === 'UP') {
+          <span class="response-time">({{ smtpHealth().responseTimeMs }}ms)</span>
+        }
+        <button
+          class="btn-test-smtp"
+          (click)="testSmtpConnection()"
+          [disabled]="isTestingSmtp()"
+          [title]="isTestingSmtp() ? 'Testing...' : 'Test SMTP connection'">
+          @if (isTestingSmtp()) {
+            <span class="icon spinning">🔄</span>
+          } @else {
+            <span class="icon">📧</span>
+          }
+        </button>
+      </div>
+
+      <!-- Twilio Status -->
+      <div
+        class="status-item twilio-status"
+        [class.healthy]="twilioStatus() === 'UP'"
+        [class.error]="twilioStatus() === 'DOWN'"
+        [class.testing]="twilioStatus() === 'TESTING'">
+        <span class="indicator"></span>
+        <span class="text">Twilio: {{ twilioStatus() }}</span>
+        @if (twilioHealth().responseTimeMs !== null && twilioStatus() === 'UP') {
+          <span class="response-time">({{ twilioHealth().responseTimeMs }}ms)</span>
+        }
+        <button
+          class="btn-test-twilio"
+          (click)="testTwilioConnection()"
+          [disabled]="isTestingTwilio()"
+          [title]="isTestingTwilio() ? 'Testing...' : 'Test Twilio connection'">
+          @if (isTestingTwilio()) {
+            <span class="icon spinning">🔄</span>
+          } @else {
+            <span class="icon">📱</span>
+          }
+        </button>
+      </div>
+
       @if (lastUpdated()) {
         <div class="status-item last-update">
           <span class="text">Last update: {{ lastUpdated() | date:'HH:mm:ss' }}</span>

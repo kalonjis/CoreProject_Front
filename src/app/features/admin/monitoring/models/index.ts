@@ -5,3 +5,5 @@ export * from './circuit-breaker-status.model';
 export * from './health-status.model';
 export * from './server-status.model';
 export * from './executor-metrics.model';
+export * from './smtp-status.model';
+export * from './twilio-status.model'
