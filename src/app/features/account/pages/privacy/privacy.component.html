@@ -1,0 +1,94 @@
+<!-- src/app/features/account/pages/privacy/privacy.component.html -->
+
+<div class="privacy-page">
+
+  <!-- =========================================================
+       YOUR DATA
+  ========================================================== -->
+  <section class="privacy-section">
+    <div class="section-header">
+      <h2>Your Data</h2>
+      <p class="section-description">
+        You have the right to access and export all the data we hold about you.
+      </p>
+    </div>
+
+    <div class="data-card">
+      <div class="data-card__info">
+        <span class="data-card__icon">📦</span>
+        <div>
+          <h3>Request data export</h3>
+          <p>Receive a copy of all your personal data in a portable format.</p>
+        </div>
+      </div>
+      <button class="btn btn--secondary" disabled>
+        Request export
+        <span class="badge badge--soon">Coming soon</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       DANGER ZONE
+  ========================================================== -->
+  <section class="privacy-section danger-zone">
+    <div class="section-header">
+      <h2>Danger Zone</h2>
+      <p class="section-description">
+        These actions are irreversible or have significant consequences on your account.
+      </p>
+    </div>
+
+    <!-- Success banner after deactivation request -->
+    @if (deactivationEmailSent()) {
+      <div class="alert alert--success">
+        <span>📧</span>
+        <p>
+          <strong>Check your inbox.</strong>
+          A confirmation email has been sent. Your account will be deactivated
+          after you click the link in the email.
+        </p>
+      </div>
+    }
+
+    <!-- Deactivate account -->
+    <div class="danger-card">
+      <div class="danger-card__info">
+        <h3>Deactivate account</h3>
+        <p>
+          Temporarily deactivate your account. Your data will be preserved and
+          you can reactivate at any time by logging in again.
+        </p>
+      </div>
+      <button class="btn btn--danger-outline"
+              (click)="openDeactivationModal()"
+              [disabled]="deactivationEmailSent()">
+        Deactivate my account
+      </button>
+    </div>
+
+    <!-- GDPR deletion -->
+    <div class="danger-card danger-card--critical">
+      <div class="danger-card__info">
+        <h3>Delete my account (GDPR)</h3>
+        <p>
+          Permanently delete your account and all associated data.
+          <strong>This action cannot be undone.</strong>
+        </p>
+      </div>
+      <button class="btn btn--danger" disabled>
+        Delete my account
+        <span class="badge badge--soon">Coming soon</span>
+      </button>
+    </div>
+  </section>
+
+</div>
+
+<!-- Deactivation modal -->
+@if (showDeactivationModal()) {
+  <app-deactivate-account-modal
+    (deactivationRequested)="onDeactivationRequested()"
+    (cancel)="closeDeactivationModal()"
+  />
+}

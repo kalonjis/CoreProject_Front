@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
-import {AccountApiService} from '../../../../core/account';
+import {AccountApiService} from '../../services';
 
 @Component({
   selector: 'app-account-confirmation',

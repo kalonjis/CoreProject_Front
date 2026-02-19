@@ -50,7 +50,12 @@ export const ACCOUNT_ROUTES: Routes = [
         path: 'address',
         loadComponent: () => import('./pages/address/address.component')
           .then(m => m.AddressComponent)
-      }
+      },
+      {
+        path: 'privacy',
+        loadComponent: () => import('./pages/privacy/privacy.component')
+          .then(m => m.PrivacyComponent)
+      },
     ]
   },
   {

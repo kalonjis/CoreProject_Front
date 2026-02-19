@@ -1,0 +1,170 @@
+<!-- src/app/features/account/pages/privacy/components/deactivate-account-modal/deactivate-account-modal.component.html -->
+
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+
+    <!-- =====================================================================
+         HEADER
+    ====================================================================== -->
+    <div class="modal-header">
+      <h2 class="modal-title">Deactivate account</h2>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">✕</button>
+    </div>
+
+    <!-- =====================================================================
+         STEP INDICATOR
+    ====================================================================== -->
+    <div class="step-indicator">
+      <span class="step" [class.step--active]="currentStep() === 'form'">
+        1. Reason
+      </span>
+      <span class="step-separator">›</span>
+      <span class="step" [class.step--active]="currentStep() === 'confirm'">
+        2. Confirm
+      </span>
+    </div>
+
+    <!-- =====================================================================
+         STEP 1 — FORM
+    ====================================================================== -->
+    @if (currentStep() === 'form') {
+      <div class="modal-content">
+        <form [formGroup]="form" (ngSubmit)="goToConfirm()">
+
+          <!-- Reason select -->
+          <div class="form-group">
+            <label for="reason" class="form-label">
+              Why do you want to deactivate your account?
+            </label>
+            <select id="reason" formControlName="reason" class="form-select"
+                    [class.form-select--error]="form.get('reason')?.invalid && form.get('reason')?.touched">
+              <option [ngValue]="null" disabled>Select a reason</option>
+              @for (opt of reasonOptions; track opt.value) {
+                <option [ngValue]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            @if (form.get('reason')?.invalid && form.get('reason')?.touched) {
+              <span class="field-error">Please select a reason.</span>
+            }
+          </div>
+
+          <!-- GDPR warning -->
+          @if (isGdprSelected) {
+            <div class="alert alert--danger">
+              <span class="alert__icon">⚠️</span>
+              <div>
+                <strong>Permanent deletion — this cannot be undone.</strong>
+                <p>
+                  Selecting this option will permanently delete your account and all
+                  associated data in compliance with GDPR. You will <strong>not</strong>
+                  be able to reactivate your account afterwards.
+                </p>
+              </div>
+            </div>
+          }
+
+          <!-- Reactivation info (for standard reasons) -->
+          @if (selectedReason && !isGdprSelected) {
+            <div class="alert alert--info">
+              <span class="alert__icon">ℹ️</span>
+              <p>You can reactivate your account at any time by simply logging in again.</p>
+            </div>
+          }
+
+          <!-- Details textarea -->
+          <div class="form-group">
+            <label for="reasonDetails" class="form-label">
+              Tell us more
+              <span class="form-label__required">*</span>
+            </label>
+            <textarea
+              id="reasonDetails"
+              formControlName="reasonDetails"
+              class="form-textarea"
+              [class.form-textarea--error]="form.get('reasonDetails')?.invalid && form.get('reasonDetails')?.touched"
+              rows="4"
+              placeholder="Please provide some details (min. 10 characters)..."
+            ></textarea>
+            <div class="form-hint">
+              <span>
+                @if (form.get('reasonDetails')?.errors?.['minlength'] && form.get('reasonDetails')?.touched) {
+                  <span class="field-error">Minimum 10 characters required.</span>
+                }
+              </span>
+              <span class="char-count" [class.char-count--max]="detailsCharCount >= 500">
+                {{ detailsCharCount }} / 500
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn--secondary" (click)="onCancel()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn--danger-outline"
+                    [disabled]="form.invalid">
+              Continue →
+            </button>
+          </div>
+
+        </form>
+      </div>
+    }
+
+    <!-- =====================================================================
+         STEP 2 — CONFIRM
+    ====================================================================== -->
+    @if (currentStep() === 'confirm') {
+      <div class="modal-content">
+
+        <div class="confirm-summary">
+          <p class="confirm-summary__label">Reason</p>
+          <p class="confirm-summary__value">{{ reasonLabels[selectedReason!] }}</p>
+
+          <p class="confirm-summary__label">Details</p>
+          <p class="confirm-summary__value">{{ form.get('reasonDetails')?.value }}</p>
+
+          @if (!allowsReactivation) {
+            <div class="alert alert--danger">
+              <span class="alert__icon">⚠️</span>
+              <p><strong>This action is permanent.</strong> Your account and all data will be deleted and cannot be recovered.</p>
+            </div>
+          } @else {
+            <div class="alert alert--warning">
+              <span class="alert__icon">📧</span>
+              <p>
+                A confirmation email will be sent to you. Your account will only be
+                deactivated after you click the link in the email.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- API error -->
+        @if (error()) {
+          <div class="alert alert--danger">
+            <span class="alert__icon">⚠️</span>
+            <p>{{ error() }}</p>
+          </div>
+        }
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn--secondary"
+                  (click)="goBack()" [disabled]="isSubmitting()">
+            ← Back
+          </button>
+          <button type="button" class="btn btn--danger"
+                  (click)="confirmDeactivation()" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="spinner"></span> Sending...
+            } @else {
+              Confirm deactivation
+            }
+          </button>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</div>
