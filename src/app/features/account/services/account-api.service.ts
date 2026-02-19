@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { HttpUtilService } from '../../http/http-util.service';
-import { SignupRequest, DeactivateAccountRequest, ReactivateAccountRequest } from '../models/signup-request.model';
+import { HttpUtilService } from '../../../core/http/http-util.service';
 import { AccountOperationResponse } from '../models/account-response.model';
+import {DeactivateAccountRequest, ReactivateAccountRequest, SignupRequest} from '../models';
 
 /**
  * AccountApiService - HTTP calls for account lifecycle operations.

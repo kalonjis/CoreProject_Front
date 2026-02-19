@@ -42,6 +42,12 @@ export class AccountTabsComponent {
       route: '/account/device',
       icon: '📱',
       description: 'Manage your devices and sessions'
+    },
+    {
+      label: 'Privacy & Data',
+      route: '/account/privacy',
+      icon: '🛡️',
+      description: 'Data export, account deactivation and deletion'
     }
   ];
 }

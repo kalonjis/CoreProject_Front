@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {UserSignupForm} from '../../../../data/models/auth/user-signup-form';
-import {AccountApiService, SignupRequest} from '../../../../core/account';
+import {AccountApiService} from '../../services';
+import {SignupRequest} from '../../models';
 
 @Component({
   selector: 'app-signup',
