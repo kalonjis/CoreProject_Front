@@ -68,4 +68,10 @@ export const ACCOUNT_ROUTES: Routes = [
     loadComponent: () => import('./pages/account-confirmation/account-confirmation.component')
       .then(m => m.AccountConfirmationComponent)
   },
+  {
+    path: 'deactivation',
+    loadComponent: () =>
+      import('./pages/account-deactivation-confirmation/account-deactivation-confirmation.component')
+        .then(m => m.AccountDeactivationConfirmationComponent)
+  },
 ];

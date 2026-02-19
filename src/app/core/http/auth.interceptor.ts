@@ -131,7 +131,7 @@ export const authInterceptor = (
       // -----------------------------------------------------------------
       if (error.status === 403 && error.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
         console.log('[AuthInterceptor] Password change required, redirecting...');
-        router.navigate(['/auth/change-password'], {
+        router.navigate(['/password/change'], {
           queryParams: { forced: 'true' }
         });
         return throwError(() => error);

@@ -26,11 +26,18 @@ import { AuthFacade } from '../services/auth.facade';
  * }
  * ```
  */
+// auth.guard.ts
 export function authGuard(isPasswordChangePage: boolean = false): boolean {
   const authFacade = inject(AuthFacade);
   const router = inject(Router);
 
-  // Not authenticated → redirect to login
+  // Page de changement forcé : le JWT est valide (login vient de réussir),
+  // le backend protège la route via MustChangePasswordFilter.
+  // Pas besoin que le store soit peuplé ici.
+  if (isPasswordChangePage) {
+    return true;
+  }
+
   if (!authFacade.isAuthenticated()) {
     router.navigate(['/auth/login'], {
       queryParams: { returnUrl: router.url }
@@ -38,20 +45,12 @@ export function authGuard(isPasswordChangePage: boolean = false): boolean {
     return false;
   }
 
-  // Must change password?
   if (authFacade.mustChangePassword()) {
-    // If we're on the password change page, allow access
-    if (isPasswordChangePage) {
-      return true;
-    }
-
-    // Otherwise, redirect to password change
     router.navigate(['/password/change'], {
       queryParams: { forced: 'true', returnUrl: router.url }
     });
     return false;
   }
 
-  // Authenticated and no password change required
   return true;
 }
