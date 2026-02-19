@@ -244,12 +244,14 @@
     background: color.adjust($warning-color, $lightness: 38%);
     border-left: 4px solid $warning-color;
     color: color.adjust($warning-color, $lightness: -35%);
+    margin-top: 1.5rem;
   }
 
   &--danger {
     background: color.adjust($danger-color, $lightness: 42%);
     border-left: 4px solid $danger-color;
     color: color.adjust($danger-color, $lightness: -15%);
+    margin-top: 1.5rem;
   }
 }
 

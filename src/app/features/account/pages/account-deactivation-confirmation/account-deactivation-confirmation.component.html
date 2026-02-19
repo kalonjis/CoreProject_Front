@@ -1,0 +1,35 @@
+<div class="deactivation-confirmation-container">
+  <div class="deactivation-confirmation-card">
+    <h1 class="title">Account Deactivation</h1>
+
+    @if (isProcessing) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Processing your request, please wait...</p>
+      </div>
+    } @else {
+      @if (showFeedback()) {
+        <app-feedback
+          [message]="feedbackMessage()"
+          [type]="feedbackType()"
+          [buttonText]="buttonText()"
+          [timeout]="feedbackTimeout()"
+          (buttonClicked)="handleFeedbackButtonClick()">
+        </app-feedback>
+      } @else {
+        @if (showConfirmButton()) {
+          <div class="confirmation-info">
+            <div class="warning-icon">⚠️</div>
+            <p>You are about to <strong>deactivate your account</strong>.</p>
+            <p class="sub">This action will log you out and disable access to your account. You can reactivate it at any time by logging in again.</p>
+            <div class="confirmation-action">
+              <button class="btn-danger" (click)="confirm()">
+                Confirm deactivation
+              </button>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>
