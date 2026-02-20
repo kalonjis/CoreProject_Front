@@ -9,6 +9,7 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { LoginFormComponent } from '../components/login-form/login-form.component';
 import { OAuthButtonComponent } from '../components/oauth-button/oauth-button.component';
 import {LoginRequest} from '../../../../core/auth';
+import {AccountApiService} from '../../../account/services';
 
 export interface LoginFormData {
   username: string;
@@ -33,10 +34,13 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private authFacade = inject(AuthFacade);
 
+  private accountApi = inject(AccountApiService);
+
+  private unactivatedIdentifier = signal<string>('');
+
   // Container state
   isSubmitting = signal(false);
   loginError = signal<string | null>(null);
-  unactivatedUsername = signal<string>('');
 
   ngOnInit(): void {
     this.handleUrlParams();
@@ -50,6 +54,7 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
 
     this.isSubmitting.set(true);
     this.loginError.set(null);
+    this.unactivatedIdentifier.set(formData.username);
 
     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
@@ -95,7 +100,9 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
   /**
    * Handles login errors and displays appropriate feedback
    */
+
   private handleLoginError(error: HttpErrorResponse): void {
+    console.error(error);
     if (error.status === 401) {
       this.loginError.set('Invalid username or password');
       return;
@@ -104,25 +111,18 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
     if (error.status === 403) {
       const errorMessage: string = error.error?.message || error.error?.error || '';
 
-      // Account never activated
-      if (errorMessage.includes('never been activated') || errorMessage.includes('not activated')) {
-        const username = error.error?.username || '';
-        this.unactivatedUsername.set(username);
+      if (errorMessage.includes('ACCOUNT_NOT_ACTIVATED') || errorMessage.includes('not been activated')) {
         this.displayWarning(
-          'Your account is not activated yet. Please check your email and click the activation link.',
+          'Your account has never been activated. Please check your email and follow the activation instructions.',
           'Resend activation email',
           0
         );
+        this.buttonAction = () => this.resendActivationEmail(); // ← wiring du bouton
         return;
       }
 
-      // Account disabled (by admin or self-deactivated)
       if (errorMessage.includes('disabled') || errorMessage.includes('suspended')) {
-        this.displayError(
-          'Your account has been suspended. Please contact an administrator.',
-          '',
-          0
-        );
+        this.displayError('Your account has been suspended. Please contact an administrator.', '', 0);
         return;
       }
 
@@ -130,13 +130,41 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
       return;
     }
 
-    if (error.status === 429) {
-      this.loginError.set('Too many attempts. Please try again later.');
+    if (error.status === 423) {
+      // Account locked — message visible, pas d'énumération (username déjà connu)
+      this.displayWarning(
+        error.error?.error || 'Your account is temporarily locked. Check your email.',
+        '', 0
+      );
       return;
     }
 
-    // Generic error
+    if (error.status === 429) {
+      // IP blocked — afficher le Retry-After
+      const retryAfter = error.headers?.get('Retry-After');
+      const msg = retryAfter
+        ? `Too many attempts. Please try again in ${Math.ceil(+retryAfter / 60)} minutes.`
+        : 'Too many attempts. Please try again later.';
+      this.displayWarning(msg, '', 0);
+      return;
+    }
+
     this.loginError.set('An error occurred during login. Please try again.');
+  }
+
+  private resendActivationEmail(): void {
+    const identifier = this.unactivatedIdentifier();
+    if (!identifier) return;
+
+    this.accountApi.resendActivationByIdentifier(identifier).subscribe({
+      next: () => {
+        this.displaySuccess('Activation email sent! Please check your inbox.', '', 5000);
+      },
+      error: () => {
+        this.displayError('Failed to send activation email. Please try again.', 'Retry', 0);
+        this.buttonAction = () => this.resendActivationEmail(); // ← retry possible
+      }
+    });
   }
 
   /**

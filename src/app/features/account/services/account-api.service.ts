@@ -56,6 +56,17 @@ export class AccountApiService {
     return this.http.get(`${this.baseUrl}/resend-activation?token=${token}`);
   }
 
+
+  /**
+   * Request new activation email by email or username.
+   * For users who try to login but never activated their account.
+   *
+   * POST /api/account/resend-activation-by-identifier
+   */
+  resendActivationByIdentifier(identifier: string): Observable<AccountOperationResponse> {
+    return this.http.post(`${this.baseUrl}/resend-activation-by-identifier`, { identifier });
+  }
+
   // =========================================================================
   // DEACTIVATION (authenticated users only)
   // =========================================================================
