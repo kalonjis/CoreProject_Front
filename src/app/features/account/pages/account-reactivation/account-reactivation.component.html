@@ -1,0 +1,54 @@
+<div class="reactivation-container">
+  <div class="reactivation-card">
+    <h1 class="title">Account Reactivation</h1>
+
+    <!-- Traitement du token (loading) -->
+    @if (token() && isProcessing()) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Processing your reactivation, please wait...</p>
+      </div>
+    }
+
+    <!-- Feedback (succès / erreur) -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+    <!-- Formulaire de demande de réactivation -->
+    @if (showRequestForm() && !showFeedback()) {
+      <div class="reactivation-form">
+        <h2>Reactivate your account</h2>
+        <p>Enter your email address or username to receive a reactivation link.</p>
+
+        <div class="form-group">
+          <label for="identifier">Email or username</label>
+          <input
+            id="identifier"
+            type="text"
+            [ngModel]="identifier()"
+            (ngModelChange)="identifier.set($event)"
+            placeholder="Enter your email or username"
+            [disabled]="isProcessing()"
+          />
+        </div>
+
+        <button
+          class="btn btn-primary"
+          (click)="requestReactivation()"
+          [disabled]="isProcessing() || !identifier().trim()"
+        >
+          {{ isProcessing() ? 'Sending...' : 'Send reactivation email' }}
+        </button>
+
+        <a routerLink="/auth/login" class="back-link">Back to login</a>
+      </div>
+    }
+  </div>
+</div>

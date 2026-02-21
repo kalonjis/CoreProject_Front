@@ -4,6 +4,7 @@
  */
 export interface AccountOperationResponse {
   message: string;
+  username?: string;
   operation: string;
   data?: unknown;
 }

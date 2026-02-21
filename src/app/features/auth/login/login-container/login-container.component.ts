@@ -121,8 +121,33 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
         return;
       }
 
-      if (errorMessage.includes('disabled') || errorMessage.includes('suspended')) {
-        this.displayError('Your account has been suspended. Please contact an administrator.', '', 0);
+      if (errorMessage.includes('ACCOUNT_SELF_DEACTIVATED')) {
+        this.displayWarning(
+          'Your account has been deactivated.',
+          'Reactivate my account',
+          0
+        );
+        this.buttonAction = () => this.router.navigate(['/account/reactivation']);
+        return;
+      }
+
+      if (errorMessage.includes('ACCOUNT_PERMANENTLY_DELETED')) {
+        this.displayError('Your account was permanently deleted (GDPR). This action cannot be reversed.', '', 0);
+        return;
+      }
+
+      if (errorMessage.includes('ACCOUNT_ADMIN_DEACTIVATED_REACTIVABLE')) {
+        this.displayWarning(
+          'Your account was deactivated by an administrator. You can request reactivation.',
+          'Request reactivation',
+          0
+        );
+        this.buttonAction = () => this.router.navigate(['/account/reactivation']);
+        return;
+      }
+
+      if (errorMessage.includes('ACCOUNT_ADMIN_DEACTIVATED_PERMANENT')) {
+        this.displayError('Your account was permanently deactivated. Please contact support.', '', 0);
         return;
       }
 
