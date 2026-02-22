@@ -83,12 +83,12 @@ export class DeviceApiService {
 
   /** Update device trust level */
   updateTrustLevel(publicId: string, level: DeviceTrustLevel): Observable<DeviceOperationResponse> {
-    return this.http.put(`${this.baseUrl}/${publicId}/trust-level`, { level });
+    return this.http.patch(`${this.baseUrl}/trust-level/${publicId}`, { deviceTrustLevel: level });
   }
 
   /** Disconnect a specific device */
   disconnectDevice(publicId: string): Observable<DeviceOperationResponse> {
-    return this.http.post(`${this.baseUrl}/${publicId}/disconnect`, {});
+    return this.http.post(`${this.baseUrl}/disconnect/${publicId}`, {});
   }
 
   /** Disconnect all other devices */
