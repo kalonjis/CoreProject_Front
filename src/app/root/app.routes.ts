@@ -31,6 +31,11 @@ export const routes: Routes = [
     loadChildren: () => import('../features/admin/admin.routes').then(r => r.ADMIN_ROUTES)
   },
   {
+    path:'activity-log',
+    loadChildren: () => import('../features/activity-logs/activity-logs.routes')
+      .then(r => r.ACTIVITY_LOGS_ROUTES)
+  },
+  {
     path: 'sport',
     canActivate: [() => authGuard()],
     loadChildren: () => import('../features/sport/sport.routes').then(r => r.SPORT_ROUTES)

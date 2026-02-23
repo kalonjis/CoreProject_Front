@@ -1,0 +1,125 @@
+@import 'variables';
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid $border-color;
+  overflow-y: auto;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid $border-color;
+  gap: 0.75rem;
+}
+
+.panel-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.action-type {
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.close-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: $gray-dark;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: $border-radius;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: $gray-medium;
+  }
+}
+
+// ── Status banner ─────────────────────────────────────────────────────────────
+
+.status-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &--ok {
+    background-color: color-mix(in srgb, $success-color 12%, transparent);
+    color: darken($success-color, 15%);
+  }
+
+  &--fail {
+    background-color: color-mix(in srgb, $danger-color 12%, transparent);
+    color: darken($danger-color, 10%);
+  }
+}
+
+.failure-reason {
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+// ── Detail list ───────────────────────────────────────────────────────────────
+
+.detail-list {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+
+  dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  dd {
+    font-size: 0.85rem;
+    color: $text-color;
+    margin: 0;
+    word-break: break-all;
+
+    code {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: $gray-light;
+      padding: 0.1rem 0.3rem;
+      border-radius: $border-radius-sm;
+    }
+  }
+
+  &--muted {
+    dt, dd { color: $gray-dark; }
+  }
+}

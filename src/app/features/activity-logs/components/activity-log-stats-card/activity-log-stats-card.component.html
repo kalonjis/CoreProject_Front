@@ -1,0 +1,35 @@
+<div class="stats-card">
+
+  <div class="stats-header">
+    <span class="stats-title">Activité par catégorie</span>
+    @if (!loading && total() > 0) {
+      <span class="stats-total">{{ total() }} total</span>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="stats-loading">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  @if (!loading && rows().length === 0) {
+    <p class="stats-empty">Aucune donnée disponible.</p>
+  }
+
+  @if (!loading && rows().length > 0) {
+    <ul class="stats-list">
+      @for (row of rows(); track row.category) {
+        <li class="stats-row">
+          <app-activity-log-badge [category]="row.category" size="sm" />
+          <div class="stats-bar-wrap">
+            <div class="stats-bar" [style.width.%]="row.percent"></div>
+          </div>
+          <span class="stats-count">{{ row.count }}</span>
+          <span class="stats-percent">{{ row.percent }}%</span>
+        </li>
+      }
+    </ul>
+  }
+
+</div>
