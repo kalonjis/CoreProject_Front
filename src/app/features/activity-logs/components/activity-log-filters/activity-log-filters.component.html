@@ -1,0 +1,74 @@
+<div class="filters">
+
+  <!-- Category chips -->
+  <div class="filter-row">
+    <span class="filter-label">Catégorie</span>
+    <div class="chips">
+      @for (cat of topCategories; track cat) {
+        <button
+          class="chip"
+          [class.chip--active]="category() === cat"
+          (click)="selectCategory(cat)">
+          {{ categoryLabels[cat] }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Admin sub-categories (visible only when ADMIN selected) -->
+  @if (showAdminSub()) {
+    <div class="filter-row filter-row--sub">
+      <span class="filter-label">Sous-type</span>
+      <div class="chips">
+        @for (sub of adminSubCategories; track sub) {
+          <button
+            class="chip chip--sm"
+            [class.chip--active]="category() === sub"
+            (click)="selectCategory(sub)">
+            {{ categoryLabels[sub] }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Date range + status -->
+  <div class="filter-row">
+    <span class="filter-label">Période</span>
+
+    <div class="filter-controls">
+      <input
+        type="date"
+        class="filter-input"
+        [value]="from() ?? ''"
+        (change)="onFromChange($any($event.target).value)"
+        placeholder="Du" />
+
+      <span class="filter-sep">→</span>
+
+      <input
+        type="date"
+        class="filter-input"
+        [value]="to() ?? ''"
+        (change)="onToChange($any($event.target).value)"
+        placeholder="Au" />
+
+      <select
+        class="filter-input filter-input--select"
+        [value]="successful() === null ? '' : String(successful())"
+        (change)="onSuccessfulChange($any($event.target).value)">
+        <option value="">Tous</option>
+        <option value="true">Succès</option>
+        <option value="false">Échec</option>
+      </select>
+    </div>
+
+    <!-- Reset -->
+    @if (hasActiveFilter) {
+      <button class="reset-btn" (click)="onReset()">
+        Réinitialiser
+      </button>
+    }
+  </div>
+
+</div>

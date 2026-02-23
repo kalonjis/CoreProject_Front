@@ -6,6 +6,7 @@ import {UserRole} from '../../../data/models/user/user-role';
  */
 export interface AdminUserDTO {
   id: number;
+  publicId: string;
   username: string;
   firstname?: string;
   lastname?: string;

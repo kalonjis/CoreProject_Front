@@ -1,0 +1,36 @@
+<div class="all-logs">
+
+  <!-- Stats -->
+  <app-activity-log-stats-card
+    [stats]="facade.stats()"
+    [loading]="facade.statsLoading()" />
+
+  <!-- Filters -->
+  <app-activity-log-filters
+    [filter]="facade.filter()"
+    [hasActiveFilter]="facade.hasActiveFilter()"
+    (filterChange)="onFilterChange($event)"
+    (reset)="onFilterReset()" />
+
+  <!-- Table + detail panel -->
+  <div class="logs-body" [class.logs-body--with-panel]="facade.selected()">
+
+    <app-activity-log-table
+      [logs]="facade.logs()"
+      [loading]="facade.loading()"
+      [currentPage]="facade.currentPage()"
+      [totalPages]="facade.totalPages()"
+      [totalElements]="facade.totalElements()"
+      [selectedLog]="facade.selected()"
+      (logSelected)="facade.selectLog($event)"
+      (pageChange)="facade.goToPage($event)" />
+
+    @if (facade.selected()) {
+      <app-activity-log-detail-panel
+        [log]="facade.selected()!"
+        (closed)="facade.clearSelection()" />
+    }
+
+  </div>
+
+</div>

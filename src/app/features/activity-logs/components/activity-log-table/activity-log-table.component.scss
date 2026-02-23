@@ -1,0 +1,170 @@
+@use 'variables' as v;
+
+.table-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+
+.table-loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--color-border, #e5e7eb);
+    border-top-color: var(--color-primary, #3b82f6);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Empty ─────────────────────────────────────────────────────────────────────
+
+.table-empty {
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.9rem;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  thead tr {
+    border-bottom: 2px solid var(--color-border, #e5e7eb);
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-muted, #6b7280);
+    white-space: nowrap;
+  }
+}
+
+// ── Row ───────────────────────────────────────────────────────────────────────
+
+.log-row {
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: var(--color-surface-hover, #f9fafb);
+  }
+
+  &--selected {
+    background-color: color-mix(in srgb, #3b82f6 8%, transparent);
+  }
+
+  &--failed {
+    background-color: color-mix(in srgb, #ef4444 5%, transparent);
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+  }
+}
+
+// ── Cells ─────────────────────────────────────────────────────────────────────
+
+.col-date {
+  white-space: nowrap;
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.8rem;
+}
+
+.col-action {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  .action-type {
+    font-weight: 500;
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+
+  .action-details {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #6b7280);
+  }
+}
+
+.col-status {
+  text-align: center;
+}
+
+.status {
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  &--ok   { color: #16a34a; }
+  &--fail { color: #dc2626; cursor: help; }
+}
+
+.col-ip,
+.col-location {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+  white-space: nowrap;
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-text, #374151);
+  transition: background-color 0.1s ease, color 0.1s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-surface-hover, #f3f4f6);
+  }
+
+  &--active {
+    background-color: var(--color-primary, #3b82f6);
+    border-color: var(--color-primary, #3b82f6);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.page-info {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+}

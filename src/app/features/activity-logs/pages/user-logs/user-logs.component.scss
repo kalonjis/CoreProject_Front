@@ -1,0 +1,26 @@
+@import 'variables';
+
+.user-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.no-user {
+  color: $gray-dark;
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+// ── Table + panel layout ──────────────────────────────────────────────────────
+
+.logs-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  &--with-panel {
+    grid-template-columns: 1fr 360px;
+  }
+}

@@ -1,0 +1,93 @@
+<div class="table-wrapper">
+
+  <!-- Loading overlay -->
+  @if (loading) {
+    <div class="table-loading">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && logs.length === 0) {
+    <div class="table-empty">
+      <p>Aucune activité trouvée.</p>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (logs.length > 0) {
+    <table class="log-table">
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>Catégorie</th>
+        <th>Action</th>
+        <th>Statut</th>
+        <th>IP</th>
+        <th>Localisation</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (log of logs; track log.publicId) {
+          <tr
+            class="log-row"
+            [class.log-row--selected]="isSelected(log)"
+            [class.log-row--failed]="!log.successful"
+            (click)="logSelected.emit(log)">
+
+            <td class="col-date">{{ formatDate(log.timestamp) }}</td>
+
+            <td class="col-category">
+              <app-activity-log-badge [category]="log.actionCategory" size="sm" />
+            </td>
+
+            <td class="col-action">
+              <span class="action-type">{{ log.actionType }}</span>
+              @if (log.actionDetails) {
+                <span class="action-details">{{ log.actionDetails }}</span>
+              }
+            </td>
+
+            <td class="col-status">
+              @if (log.successful) {
+                <span class="status status--ok">✓</span>
+              } @else {
+                <span class="status status--fail" [title]="log.failureReason ?? ''">✗</span>
+              }
+            </td>
+
+            <td class="col-ip">{{ log.ipAddress ?? '—' }}</td>
+
+            <td class="col-location">{{ log.location ?? '—' }}</td>
+
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button class="page-btn" [disabled]="!hasPrev" (click)="pageChange.emit(currentPage - 1)">
+          ‹
+        </button>
+
+        @for (p of pages; track p) {
+          <button
+            class="page-btn"
+            [class.page-btn--active]="p === currentPage"
+            (click)="pageChange.emit(p)">
+            {{ p + 1 }}
+          </button>
+        }
+
+        <button class="page-btn" [disabled]="!hasNext" (click)="pageChange.emit(currentPage + 1)">
+          ›
+        </button>
+
+        <span class="page-info">{{ totalElements }} résultats</span>
+      </div>
+    }
+  }
+
+</div>

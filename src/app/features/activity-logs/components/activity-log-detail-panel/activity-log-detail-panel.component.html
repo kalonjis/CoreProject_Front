@@ -1,0 +1,74 @@
+<div class="panel">
+
+  <!-- Header -->
+  <div class="panel-header">
+    <div class="panel-title">
+      <app-activity-log-badge [category]="log.actionCategory" />
+      <span class="action-type">{{ log.actionType }}</span>
+    </div>
+    <button class="close-btn" (click)="closed.emit()" aria-label="Fermer">✕</button>
+  </div>
+
+  <!-- Status banner -->
+  <div class="status-banner" [class.status-banner--ok]="log.successful" [class.status-banner--fail]="!log.successful">
+    @if (log.successful) {
+      <span>✓ Succès</span>
+    } @else {
+      <span>✗ Échec</span>
+      @if (log.failureReason) {
+        <span class="failure-reason">{{ log.failureReason }}</span>
+      }
+    }
+  </div>
+
+  <!-- Details -->
+  <dl class="detail-list">
+
+    <div class="detail-row">
+      <dt>Date</dt>
+      <dd>{{ formatDate(log.timestamp) }}</dd>
+    </div>
+
+    @if (log.actionDetails) {
+      <div class="detail-row">
+        <dt>Détails</dt>
+        <dd>{{ log.actionDetails }}</dd>
+      </div>
+    }
+
+    @if (log.ipAddress) {
+      <div class="detail-row">
+        <dt>Adresse IP</dt>
+        <dd><code>{{ log.ipAddress }}</code></dd>
+      </div>
+    }
+
+    @if (log.location) {
+      <div class="detail-row">
+        <dt>Localisation</dt>
+        <dd>{{ log.location }}</dd>
+      </div>
+    }
+
+    @if (log.actorDeviceId) {
+      <div class="detail-row">
+        <dt>Appareil source</dt>
+        <dd><code>{{ log.actorDeviceId }}</code></dd>
+      </div>
+    }
+
+    @if (log.targetDeviceId) {
+      <div class="detail-row">
+        <dt>Appareil cible</dt>
+        <dd><code>{{ log.targetDeviceId }}</code></dd>
+      </div>
+    }
+
+    <div class="detail-row detail-row--muted">
+      <dt>ID</dt>
+      <dd><code>{{ log.publicId }}</code></dd>
+    </div>
+
+  </dl>
+
+</div>

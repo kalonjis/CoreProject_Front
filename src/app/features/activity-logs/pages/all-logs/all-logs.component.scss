@@ -1,0 +1,20 @@
+@import 'variables';
+
+.all-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ── Table + panel layout ──────────────────────────────────────────────────────
+
+.logs-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  min-height: 0;
+
+  &--with-panel {
+    grid-template-columns: 1fr 360px;
+  }
+}

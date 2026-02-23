@@ -15,6 +15,7 @@ import {DeviceUtilsService} from '../../../../shared/services/device-utils.servi
 import {AuthFacade} from '../../../../core/auth';
 import {AdminUserApiService} from '../../services/admin-user-api.service';
 import {AdminDeviceApiService} from '../../services/admin-device-api.service';
+import {UserLogsComponent} from '../../../activity-logs';
 
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
@@ -22,7 +23,7 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FeedbackComponent, FormsModule],
+  imports: [CommonModule, RouterLink, FeedbackComponent, FormsModule, UserLogsComponent],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })
@@ -51,15 +52,6 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   selectedDevice: Device | null = null;
 
   protected deviceUtils = inject(DeviceUtilsService);
-
-  activityLogs = signal<ActivityLogDto[]>([]);
-  isLoadingLogs = signal(false);
-  activityPagination = signal<LogPagination>({
-    totalPages: 0,
-    totalElements: 0,
-    pageNumber: 0,
-    pageSize: 10
-  });
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -90,18 +82,12 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
   // Méthode pour changer d'onglet
   // Pour charger les logs quand on change d'onglet
+
   setActiveTab(tab: UserDetailTab): void {
     this.activeTab.set(tab);
-
-    // Charger les données spécifiques à l'onglet si nécessaire
-    if (tab === 'activity' && this.activityLogs().length === 0) {
-      this.loadActivityLogs();
-    }
-
-    // Mettre à jour l'URL sans recharger la page
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { tab },
+      queryParams: {tab},
       queryParamsHandling: 'merge',
       replaceUrl: true
     });
@@ -273,77 +259,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     return 'status-unconfirmed';
   }
 
-
-  // Pour l'onglet activité
-
-  // Méthode pour charger les logs d'activité
-  loadActivityLogs(page = 0): void {
-    if (!this.userId()) {
-      return;
-    }
-
-    this.isLoadingLogs.set(true);
-
-    this.adminUserApi.getUserActivityHistory(
-      this.userId()!,
-      page,
-      this.activityPagination().pageSize
-    ).subscribe({
-      next: (response) => {
-        if (response && response._embedded && response._embedded.activityLogDTOList) {
-          this.activityLogs.set(response._embedded.activityLogDTOList);
-
-          // Mise à jour de la pagination
-          if (response.page) {
-            this.activityPagination.set({
-              totalPages: response.page.totalPages,
-              totalElements: response.page.totalElements,
-              pageNumber: response.page.number,
-              pageSize: response.page.size
-            });
-          }
-        }
-        this.isLoadingLogs.set(false);
-      },
-      error: (error) => {
-        this.displayError("Erreur lors du chargement de l'historique d'activité");
-        this.isLoadingLogs.set(false);
-      }
-    });
-  }
-
-// Méthode pour changer de page dans les logs
-  changeActivityPage(newPage: number): void {
-    if (newPage < 0 || newPage >= this.activityPagination().totalPages) {
-      return;
-    }
-
-    this.loadActivityLogs(newPage);
-  }
-
-// Méthode pour obtenir la couleur CSS en fonction du type d'action
-  getActionTypeClass(actionType: string): string {
-    if (!actionType) return '';
-
-    if (actionType.startsWith('AUTH_')) {
-      return 'action-auth';
-    } else if (actionType.startsWith('ACCOUNT_')) {
-      return 'action-account';
-    } else if (actionType.startsWith('PASSWORD_')) {
-      return 'action-password';
-    } else if (actionType.startsWith('EMAIL_')) {
-      return 'action-email';
-    } else if (actionType.startsWith('DEVICE_')) {
-      return 'action-device';
-    } else if (actionType.startsWith('SECURITY_')) {
-      return 'action-security';
-    }
-
-    return 'action-other';
-  }
-
-
-  // Propriétés pour la gestion des rôles
+// Propriétés pour la gestion des rôles
   availableRoles = signal<UserRole[]>([
     UserRole.SUPER_ADMIN,
     UserRole.ADMIN,

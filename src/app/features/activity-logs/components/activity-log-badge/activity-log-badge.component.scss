@@ -1,0 +1,49 @@
+@import 'variables';
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  &--sm {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.65rem;
+  }
+
+  // ── Colors ─────────────────────────────────────────────────────────────────
+
+  &--blue {
+    background-color: color-mix(in srgb, #3b82f6 15%, transparent);
+    color: #1d4ed8;
+  }
+
+  &--red {
+    background-color: color-mix(in srgb, #ef4444 15%, transparent);
+    color: #b91c1c;
+  }
+
+  &--green {
+    background-color: color-mix(in srgb, #22c55e 15%, transparent);
+    color: #15803d;
+  }
+
+  &--purple {
+    background-color: color-mix(in srgb, #a855f7 15%, transparent);
+    color: #7e22ce;
+  }
+
+  &--orange {
+    background-color: color-mix(in srgb, #f97316 15%, transparent);
+    color: #c2410c;
+  }
+
+  &--gray {
+    background-color: color-mix(in srgb, #6b7280 15%, transparent);
+    color: #374151;
+  }
+}

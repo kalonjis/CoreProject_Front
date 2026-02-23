@@ -2,6 +2,7 @@ import {UserRole} from './user-role';
 
 export interface UserDTO {
   id: number;
+  publicId: string;
   username: string;
   firstname?: string;
   lastname?: string;

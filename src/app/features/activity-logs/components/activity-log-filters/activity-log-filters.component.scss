@@ -1,0 +1,119 @@
+@import 'variables';
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+}
+
+// ── Row ───────────────────────────────────────────────────────────────────────
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  &--sub {
+    padding-left: 1rem;
+    border-left: 2px solid $gray-medium;
+  }
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $gray-dark;
+  min-width: 5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// ── Chips ─────────────────────────────────────────────────────────────────────
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: $text-color;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: $gray-medium;
+  }
+
+  &--active {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: #fff;
+  }
+
+  &--sm {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+// ── Controls ──────────────────────────────────────────────────────────────────
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 0.85rem;
+  color: $text-color;
+  background: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &--select {
+    cursor: pointer;
+  }
+}
+
+.filter-sep {
+  color: $gray-dark;
+  font-size: 0.8rem;
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+
+.reset-btn {
+  margin-left: auto;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid $danger-color;
+  border-radius: $border-radius;
+  background: transparent;
+  color: $danger-color;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: $danger-color;
+    color: #fff;
+  }
+}

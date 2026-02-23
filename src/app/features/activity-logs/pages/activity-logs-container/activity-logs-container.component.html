@@ -1,0 +1,22 @@
+<div class="logs-container">
+
+  <header class="logs-header">
+    <h1 class="logs-title">Journaux d'activité</h1>
+
+    <nav class="logs-tabs">
+      @for (tab of tabs; track tab.route) {
+        <a
+          class="tab"
+          [routerLink]="tab.route"
+          routerLinkActive="tab--active">
+          {{ tab.label }}
+        </a>
+      }
+    </nav>
+  </header>
+
+  <div class="logs-content">
+    <router-outlet />
+  </div>
+
+</div>
