@@ -86,6 +86,16 @@ export class AdminDashboardComponent implements OnInit {
       color: 'success'
     },
 
+    {
+      id: 'activity-log',
+      icon: '📋',
+      title: 'Activity Log',
+      description: 'View and audit all system activity and user actions',
+      route: '/activity-log',
+      enabled: true,
+      color: 'warning'
+    },
+
     // -------------------------------------------------------------------------
     // COMING SOON MODULES
     // -------------------------------------------------------------------------

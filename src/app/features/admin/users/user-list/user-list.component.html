@@ -133,8 +133,8 @@
     } @else {
       <!-- Users Grid -->
       <div class="users-grid">
-        @for (user of users(); track user.id) {
-          <div class="user-card" [routerLink]="['/admin/users', user.id]">
+        @for (user of users(); track user.publicId) {
+          <div class="user-card" [routerLink]="['/admin/users', user.publicId]">
             <div class="user-card-header">
               <div class="user-avatar">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
