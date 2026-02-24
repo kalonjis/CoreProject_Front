@@ -87,8 +87,8 @@ export class AdminUserApiService {
    * @param id User ID
    * @returns Observable of user DTO
    */
-  getUserById(id: number): Observable<UserDTO> {
-    return this.http.get<UserDTO>(`/api/admin/users/${id}`);
+  getUserById(publicId: string): Observable<UserDTO> {
+    return this.http.get<UserDTO>(`/api/admin/users/${publicId}`);
   }
 
   // =========================================================================
@@ -111,8 +111,8 @@ export class AdminUserApiService {
    * @param id User ID to delete
    * @returns Observable of void
    */
-  deleteUser(id: number): Observable<void> {
-    return this.httpUtil.delete<void>(`/api/admin/users/${id}`);
+  deleteUser(publicId: string): Observable<void> {
+    return this.httpUtil.delete<void>(`/api/admin/users/${publicId}`);
   }
 
   /**
@@ -121,8 +121,8 @@ export class AdminUserApiService {
    * @param id User ID to activate
    * @returns Observable of void
    */
-  activateUser(id: number): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/activate/${id}`, {});
+  activateUser(publicId: string): Observable<void> {
+    return this.httpUtil.patch<void>(`/api/admin/users/activate/${publicId}`, {});
   }
 
   /**
@@ -131,8 +131,8 @@ export class AdminUserApiService {
    * @param id User ID to deactivate
    * @returns Observable of void
    */
-  deactivateUser(id: number): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/deactivate/${id}`, {});
+  deactivateUser(publicId: string): Observable<void> {
+    return this.httpUtil.patch<void>(`/api/admin/users/deactivate/${publicId}`, {});
   }
 
   // =========================================================================
@@ -146,8 +146,8 @@ export class AdminUserApiService {
    * @param role Role to grant
    * @returns Observable of void
    */
-  grantUserRole(id: number, role: UserRole): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/grant-role/${id}`, { userRole: role });
+  grantUserRole(publicId: string, role: UserRole): Observable<void> {
+    return this.httpUtil.patch<void>(`/api/admin/users/grant-role/${publicId}`, { userRole: role });
   }
 
   /**
@@ -157,8 +157,8 @@ export class AdminUserApiService {
    * @param role Role to revoke
    * @returns Observable of void
    */
-  revokeUserRole(id: number, role: UserRole): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/revoke-role/${id}`, { userRole: role });
+  revokeUserRole(publicId: string, role: UserRole): Observable<void> {
+    return this.httpUtil.patch<void>(`/api/admin/users/revoke-role/${publicId}`, { userRole: role });
   }
 
   // =========================================================================
@@ -172,8 +172,8 @@ export class AdminUserApiService {
    * @param id User ID
    * @returns Observable of void
    */
-  forceResetPassword(id: number): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/force-reset-password/${id}`, {});
+  forceResetPassword(userPublicId: string): Observable<void> {
+    return this.httpUtil.patch<void>(`/api/admin/users/force-reset-password/${userPublicId}`, {});
   }
 
   /**

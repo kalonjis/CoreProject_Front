@@ -23,11 +23,11 @@ export class AdminDeviceApiService {
   /**
    * Retrieves all devices for a specific user.
    *
-   * @param userId User ID
+   * @param userPublicId User ID
    * @returns Observable of device array
    */
-  getUserDevices(userId: number): Observable<Device[]> {
-    return this.http.get<Device[]>(`/api/admin/device/list/user/${userId}`);
+  getUserDevices(userPublicId: string): Observable<Device[]> {
+    return this.http.get<Device[]>(`/api/admin/device/list/user/${userPublicId}`);
   }
 
   /**

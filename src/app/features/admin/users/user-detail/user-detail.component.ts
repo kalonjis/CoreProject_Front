@@ -1,22 +1,20 @@
 // src/app/features/admin/users/user-detail/user-detail.component.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserDTO } from '../../../../data/models/user/user-dto';
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
-import {ActivityLogDto, LogPagination} from '../../../../data/models/log/activity-log-dto';
-import {Device} from '../../../../data/models/device/device';
-import {DeviceTrustLevel} from '../../../../data/models/device/device-trust-level';
-import {UserRole} from '../../../../data/models/user/user-role';
-import {FormsModule} from '@angular/forms';
-import {DeviceUtilsService} from '../../../../shared/services/device-utils.service';
-import {AuthFacade} from '../../../../core/auth';
-import {AdminUserApiService} from '../../services/admin-user-api.service';
-import {AdminDeviceApiService} from '../../services/admin-device-api.service';
-import {UserLogsComponent} from '../../../activity-logs';
-
+import { Device } from '../../../../data/models/device/device';
+import { DeviceTrustLevel } from '../../../../data/models/device/device-trust-level';
+import { UserRole } from '../../../../data/models/user/user-role';
+import { FormsModule } from '@angular/forms';
+import { DeviceUtilsService } from '../../../../shared/services/device-utils.service';
+import { AuthFacade } from '../../../../core/auth';
+import { AdminUserApiService } from '../../services/admin-user-api.service';
+import { AdminDeviceApiService } from '../../services/admin-device-api.service';
+import { UserLogsComponent } from '../../../activity-logs';
 
 type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
 
@@ -27,21 +25,19 @@ type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })
-
-
 export class UserDetailComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private adminUserApi = inject(AdminUserApiService);
   private adminDeviceApi = inject(AdminDeviceApiService);
-  protected authFacade: AuthFacade = inject(AuthFacade);
-  private router: Router = inject(Router);
+  protected authFacade = inject(AuthFacade);
+  private router = inject(Router);
+  protected deviceUtils = inject(DeviceUtilsService);
 
-
-  userId = signal<number | null>(null);
+  // Stocke le publicId extrait de la route (pour le bouton "Réessayer")
+  publicId = signal<string | null>(null);
   user = signal<UserDTO | null>(null);
   isLoading = signal(true);
   activeTab = signal<UserDetailTab>('info');
-
 
   devices: Device[] = [];
   isLoadingDevices = false;
@@ -51,26 +47,49 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   deviceSortDirection: 'asc' | 'desc' = 'desc';
   selectedDevice: Device | null = null;
 
-  protected deviceUtils = inject(DeviceUtilsService);
+  availableRoles = signal<UserRole[]>([
+    UserRole.SUPER_ADMIN,
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.USER,
+    UserRole.GUEST
+  ]);
+  isUpdatingRole = signal(false);
+  roleUpdateError = signal<string | null>(null);
+
+  protected readonly UserRole = UserRole;
+
+  // ===========================================================================
+  // LIFECYCLE
+  // ===========================================================================
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const idParam = params.get('id');
-      if (idParam) {
-        this.userId.set(parseInt(idParam, 10));
-        this.loadUserDetails(parseInt(idParam, 10));
-        this.loadUserDevices();
+      const id = params.get('id');
+      if (id) {
+        this.publicId.set(id);
+        this.loadUserDetails(id);
       }
+    });
+
+    // Lire le tab depuis les queryParams
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab') as UserDetailTab | null;
+      if (tab) this.activeTab.set(tab);
     });
   }
 
-  loadUserDetails(userId: number): void {
-    this.isLoading.set(true);
+  // ===========================================================================
+  // CHARGEMENT
+  // ===========================================================================
 
-    this.adminUserApi.getUserById(userId).subscribe({
+  loadUserDetails(publicId: string): void {
+    this.isLoading.set(true);
+    this.adminUserApi.getUserById(publicId).subscribe({
       next: (user) => {
         this.user.set(user);
         this.isLoading.set(false);
+        this.loadUserDevices();
       },
       error: (error: HttpErrorResponse) => {
         this.handleError(error);
@@ -79,135 +98,14 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     });
   }
 
-
-  // Méthode pour changer d'onglet
-  // Pour charger les logs quand on change d'onglet
-
-  setActiveTab(tab: UserDetailTab): void {
-    this.activeTab.set(tab);
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {tab},
-      queryParamsHandling: 'merge',
-      replaceUrl: true
-    });
-  }
-
-
-  activateUser(): void {
-    if (!this.user() || this.user()?.enabled) {
-      return;
-    }
-
-    this.adminUserApi.activateUser(this.userId()!).subscribe({
-      next: () => {
-        this.displaySuccess('Utilisateur activé avec succès');
-        // Mettre à jour l'état local
-        this.user.update(user => user ? { ...user, enabled: true } : null);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.displayError(
-          error.error?.error || 'Erreur lors de l\'activation de l\'utilisateur'
-        );
-      }
-    });
-  }
-
-  /**
-   * Désactive un utilisateur actif
-   */
-  deactivateUser(): void {
-    if (!this.user() || !this.user()?.enabled) {
-      return;
-    }
-
-    this.adminUserApi.deactivateUser(this.userId()!).subscribe({
-      next: () => {
-        this.displaySuccess('Utilisateur désactivé avec succès');
-        // Mettre à jour l'état local
-        this.user.update(user => user ? { ...user, enabled: false } : null);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.log("deactivate error: ", error);
-        this.displayError(
-          error.error?.error || 'Erreur lors de la désactivation de l\'utilisateur'
-        );
-      }
-    });
-  }
-
-  /**
-   * Réinitialise le mot de passe de l'utilisateur
-   */
-  resetPassword(): void {
-    if (!this.user()) {
-      return;
-    }
-
-    if (confirm('Êtes-vous sûr de vouloir réinitialiser le mot de passe de cet utilisateur ? Un email lui sera envoyé.')) {
-      this.adminUserApi.forceResetPassword(this.userId()!).subscribe({
-        next: () => {
-          this.displaySuccess(
-            'Un email de réinitialisation de mot de passe a été envoyé à l\'utilisateur'
-          );
-        },
-        error: (error: HttpErrorResponse) => {
-          this.displayError(
-            error.error?.error || 'Erreur lors de la réinitialisation du mot de passe'
-          );
-        }
-      });
-    }
-  }
-
-  /**
-   * Supprime l'utilisateur
-   */
-  deleteUser(): void {
-    if (!this.user()) {
-      return;
-    }
-
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
-      this.adminUserApi.deleteUser(this.userId()!).subscribe({
-        next: () => {
-          this.displaySuccess('Utilisateur supprimé avec succès');
-          // Rediriger vers la liste des utilisateurs après un court délai
-          setTimeout(() => {
-            window.location.href = '/admin/users';
-          }, 1500);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.displayError(
-            error.error?.error || 'Erreur lors de la suppression de l\'utilisateur'
-          );
-        }
-      });
-    }
-  }
-
-
-  // Méthode pour vérifier si c'est le profil de l'utilisateur connecté
-  isCurrentUserProfile(): boolean {
-    if (!this.user()) {
-      return false;
-    }
-
-    const currentUsername = this.authFacade.username();
-    return currentUsername === this.user()?.username;
-  }
-
-
-
-  // Ajoutez cette méthode pour charger les appareils
   loadUserDevices(): void {
-    if (!this.userId()) {
-      return;
-    }
-    this.isLoadingDevices = true;
+    const user = this.user();
+    if (!user) return;
 
-    // Vérifiez si userId a une valeur
-    this.adminDeviceApi.getUserDevices(this.userId()!).subscribe({
+    this.isLoadingDevices = true;
+    this.deviceError = null;
+
+    this.adminDeviceApi.getUserDevices(user.publicId).subscribe({
       next: (devices) => {
         this.devices = devices;
         this.isLoadingDevices = false;
@@ -220,7 +118,200 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     });
   }
 
-  // Méthodes utilitaires pour l'affichage des appareils
+  // ===========================================================================
+  // NAVIGATION
+  // ===========================================================================
+
+  setActiveTab(tab: UserDetailTab): void {
+    this.activeTab.set(tab);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  // ===========================================================================
+  // ACTIONS UTILISATEUR
+  // ===========================================================================
+
+  activateUser(): void {
+    const user = this.user();
+    if (!user || user.enabled) return;
+
+    this.adminUserApi.activateUser(user.publicId).subscribe({
+      next: () => {
+        this.displaySuccess('Utilisateur activé avec succès');
+        this.user.update(u => u ? { ...u, enabled: true } : null);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.displayError(error.error?.error || "Erreur lors de l'activation de l'utilisateur");
+      }
+    });
+  }
+
+  deactivateUser(): void {
+    const user = this.user();
+    if (!user || !user.enabled) return;
+
+    this.adminUserApi.deactivateUser(user.publicId).subscribe({
+      next: () => {
+        this.displaySuccess('Utilisateur désactivé avec succès');
+        this.user.update(u => u ? { ...u, enabled: false } : null);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.displayError(error.error?.error || "Erreur lors de la désactivation de l'utilisateur");
+      }
+    });
+  }
+
+  resetPassword(): void {
+    if (!this.user()) return;
+
+    if (confirm('Êtes-vous sûr de vouloir réinitialiser le mot de passe de cet utilisateur ? Un email lui sera envoyé.')) {
+      this.adminUserApi.forceResetPassword(this.user()!.publicId).subscribe({
+        next: () => {
+          this.displaySuccess('Un email de réinitialisation de mot de passe a été envoyé à l\'utilisateur');
+        },
+        error: (error: HttpErrorResponse) => {
+          this.displayError(error.error?.error || 'Erreur lors de la réinitialisation du mot de passe');
+        }
+      });
+    }
+  }
+
+  deleteUser(): void {
+    if (!this.user()) return;
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
+      this.adminUserApi.deleteUser(this.user()!.publicId).subscribe({
+        next: () => {
+          this.displaySuccess('Utilisateur supprimé avec succès');
+          setTimeout(() => this.router.navigate(['/admin/users']), 1500);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.displayError(error.error?.error || "Erreur lors de la suppression de l'utilisateur");
+        }
+      });
+    }
+  }
+
+  // ===========================================================================
+  // GESTION DES RÔLES
+  // ===========================================================================
+
+  grantRole(role: UserRole): void {
+    const user = this.user();
+    if (!user || this.isUpdatingRole()) return;
+
+    this.isUpdatingRole.set(true);
+    this.roleUpdateError.set(null);
+
+    this.adminUserApi.grantUserRole(user.publicId, role).subscribe({
+      next: () => {
+        this.user.update(u => u ? { ...u, userRoles: [...u.userRoles, role] } : null);
+        this.displaySuccess(`Rôle ${role} attribué avec succès`);
+        this.isUpdatingRole.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        const msg = error.error?.error || `Erreur lors de l'attribution du rôle ${role}`;
+        this.roleUpdateError.set(msg);
+        this.displayError(msg);
+        this.isUpdatingRole.set(false);
+      }
+    });
+  }
+
+  revokeRole(role: UserRole): void {
+    const user = this.user();
+    if (!user || this.isUpdatingRole()) return;
+
+    this.isUpdatingRole.set(true);
+    this.roleUpdateError.set(null);
+
+    this.adminUserApi.revokeUserRole(user.publicId, role).subscribe({
+      next: () => {
+        this.user.update(u => u ? { ...u, userRoles: u.userRoles.filter(r => r !== role) } : null);
+        this.displaySuccess(`Rôle ${role} révoqué avec succès`);
+        this.isUpdatingRole.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        const msg = error.error?.error || `Erreur lors de la révocation du rôle ${role}`;
+        this.roleUpdateError.set(msg);
+        this.displayError(msg);
+        this.isUpdatingRole.set(false);
+      }
+    });
+  }
+
+  hasRole(role: UserRole): boolean {
+    return this.user()?.userRoles.includes(role) ?? false;
+  }
+
+  canManageRoles(): boolean {
+    if (this.isCurrentUserProfile()) return false;
+
+    const isSuperAdmin = this.authFacade.hasRole(UserRole.SUPER_ADMIN);
+    const isAdmin = this.authFacade.hasRole(UserRole.ADMIN);
+    const targetIsSuperAdmin = this.user()?.userRoles.includes(UserRole.SUPER_ADMIN);
+
+    if (isSuperAdmin) return true;
+    if (isAdmin && !targetIsSuperAdmin) return true;
+    return false;
+  }
+
+  getRoleDescription(role: UserRole): string {
+    const descriptions: Record<UserRole, string> = {
+      [UserRole.SUPER_ADMIN]: 'Accès complet à toutes les fonctionnalités et tous les utilisateurs',
+      [UserRole.ADMIN]: 'Gestion des utilisateurs et des contenus',
+      [UserRole.MODERATOR]: 'Modération des contenus et des interactions',
+      [UserRole.USER]: 'Accès aux fonctionnalités standard',
+      [UserRole.GUEST]: 'Accès limité en lecture seule'
+    };
+    return descriptions[role] || 'Description non disponible';
+  }
+
+  // ===========================================================================
+  // APPAREILS
+  // ===========================================================================
+
+  selectDeviceDetail(device: Device): void {
+    this.selectedDevice = device;
+  }
+
+  closeDeviceDetail(): void {
+    this.selectedDevice = null;
+  }
+
+  sortDevices(field: keyof Device): void {
+    if (this.deviceSortField === field) {
+      this.deviceSortDirection = this.deviceSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.deviceSortField = field;
+      this.deviceSortDirection = 'desc';
+    }
+  }
+
+  getSortedAndFilteredDevices(): Device[] {
+    return this.deviceUtils.getSortedAndFilteredDevices(
+      this.devices,
+      this.deviceFilterText,
+      this.deviceSortField,
+      this.deviceSortDirection
+    );
+  }
+
+  blacklistDevice(publicId: string): void {
+    if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) return;
+
+    this.displayWarning('Fonctionnalité non implémentée : la mise en liste noire des appareils sera disponible prochainement.', 'Compris');
+
+    if (this.selectedDevice?.publicId === publicId) {
+      this.closeDeviceDetail();
+    }
+  }
+
   getTrustLevelLabel(level: DeviceTrustLevel): string {
     const labels: Record<DeviceTrustLevel, string> = {
       [DeviceTrustLevel.UNTRUSTED]: 'Non approuvé',
@@ -234,225 +325,39 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
   getTrustLevelClass(level: DeviceTrustLevel): string {
     switch (level) {
       case DeviceTrustLevel.HIGHLY_TRUSTED: return 'level-highly-trusted';
-      case DeviceTrustLevel.TRUSTED: return 'level-trusted';
-      case DeviceTrustLevel.BASIC: return 'level-basic';
-      case DeviceTrustLevel.UNTRUSTED: return 'level-untrusted';
-      default: return '';
+      case DeviceTrustLevel.TRUSTED:        return 'level-trusted';
+      case DeviceTrustLevel.BASIC:          return 'level-basic';
+      case DeviceTrustLevel.UNTRUSTED:      return 'level-untrusted';
+      default:                              return '';
     }
-  }
-
-  formatDeviceDate(dateString: string): string {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleString();
   }
 
   getDeviceStatus(device: Device): string {
     if (device.blacklisted) return 'Blacklisté';
-    if (device.confirmed) return 'Confirmé';
+    if (device.confirmed)   return 'Confirmé';
     return 'Non confirmé';
   }
 
   getDeviceStatusClass(device: Device): string {
     if (device.blacklisted) return 'status-blacklisted';
-    if (device.confirmed) return 'status-confirmed';
+    if (device.confirmed)   return 'status-confirmed';
     return 'status-unconfirmed';
   }
 
-// Propriétés pour la gestion des rôles
-  availableRoles = signal<UserRole[]>([
-    UserRole.SUPER_ADMIN,
-    UserRole.ADMIN,
-    UserRole.MODERATOR,
-    UserRole.USER,
-    UserRole.GUEST
-  ]);
-  isUpdatingRole = signal(false);
-  roleUpdateError = signal<string | null>(null);
-
-// Méthodes pour la gestion des rôles
-  grantRole(role: UserRole): void {
-    if (!this.userId() || this.isUpdatingRole()) return;
-
-    this.isUpdatingRole.set(true);
-    this.roleUpdateError.set(null);
-
-    this.adminUserApi.grantUserRole(this.userId()!, role).subscribe({
-      next: () => {
-        // Mettre à jour le modèle local
-        this.user.update(user => {
-          if (!user) return null;
-
-          // Créer une copie des rôles actuels et y ajouter le nouveau rôle
-          const updatedRoles = [...user.userRoles, role];
-
-          return {
-            ...user,
-            userRoles: updatedRoles
-          };
-        });
-
-        this.displaySuccess(`Rôle ${role} attribué avec succès`);
-        this.isUpdatingRole.set(false);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.roleUpdateError.set(
-          error.error?.error || `Erreur lors de l'attribution du rôle ${role}`
-        );
-        this.isUpdatingRole.set(false);
-        this.displayError(this.roleUpdateError()!);
-      }
-    });
+  formatDeviceDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString();
   }
 
-  revokeRole(role: UserRole): void {
-    if (!this.userId() || this.isUpdatingRole()) return;
+  // ===========================================================================
+  // HELPERS
+  // ===========================================================================
 
-    this.isUpdatingRole.set(true);
-    this.roleUpdateError.set(null);
-
-    this.adminUserApi.revokeUserRole(this.userId()!, role).subscribe({
-      next: () => {
-        // Mettre à jour le modèle local
-        this.user.update(user => {
-          if (!user) return null;
-
-          // Créer une copie des rôles sans le rôle révoqué
-          const updatedRoles = user.userRoles.filter(r => r !== role);
-
-          return {
-            ...user,
-            userRoles: updatedRoles
-          };
-        });
-
-        this.displaySuccess(`Rôle ${role} révoqué avec succès`);
-        this.isUpdatingRole.set(false);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.roleUpdateError.set(
-          error.error?.error || `Erreur lors de la révocation du rôle ${role}`
-        );
-        this.isUpdatingRole.set(false);
-        this.displayError(this.roleUpdateError()!);
-      }
-    });
+  isCurrentUserProfile(): boolean {
+    return this.authFacade.username() === this.user()?.username;
   }
-
-// Vérifier si un utilisateur possède un rôle spécifique
-  hasRole(role: UserRole): boolean {
-    return this.user()?.userRoles.includes(role) || false;
-  }
-
-// Vérifier si l'utilisateur connecté peut modifier les rôles (vérification supplémentaire)
-  canManageRoles(): boolean {
-    // Vérifier si on est sur son propre profil
-    if (this.isCurrentUserProfile()) {
-      return false;
-    }
-
-    // Vérifier les règles de gestion des rôles
-    const isSuperAdmin = this.authFacade.hasRole(UserRole.SUPER_ADMIN);
-    const isAdmin = this.authFacade.hasRole(UserRole.ADMIN);
-    const targetIsSuperAdmin = this.user()?.userRoles.includes(UserRole.SUPER_ADMIN);
-
-    // Un SUPER_ADMIN peut gérer tous les utilisateurs
-    if (isSuperAdmin) {
-      return true;
-    }
-
-    // Un ADMIN peut gérer tous les utilisateurs sauf les SUPER_ADMIN
-    if (isAdmin && !targetIsSuperAdmin) {
-      return true;
-    }
-
-    return false;
-  }
-
-  getRoleDescription(role: UserRole): string {
-    const descriptions: Record<UserRole, string> = {
-      [UserRole.SUPER_ADMIN]: 'Accès complet à toutes les fonctionnalités et tous les utilisateurs',
-      [UserRole.ADMIN]: 'Gestion des utilisateurs et des contenus',
-      [UserRole.MODERATOR]: 'Modération des contenus et des interactions',
-      [UserRole.USER]: 'Accès aux fonctionnalités standard',
-      [UserRole.GUEST]: 'Accès limité en lecture seule'
-    };
-
-    return descriptions[role] || 'Description non disponible';
-  }
-
-
 
   private handleError(error: HttpErrorResponse): void {
-    let errorMessage = 'Une erreur est survenue lors du chargement des données utilisateur.';
-
-    if (error.error?.error) {
-      errorMessage = error.error.error;
-    }
-
-    this.displayError(errorMessage);
+    this.displayError(error.error?.error || 'Une erreur est survenue lors du chargement des données utilisateur.');
   }
-
-  protected readonly UserRole = UserRole;
-
-  /**
-   * Sélectionne un appareil pour afficher ses détails
-   */
-  selectDeviceDetail(device: Device): void {
-    this.selectedDevice = device;
-  }
-
-  /**
-   * Ferme le panneau de détails de l'appareil
-   */
-  closeDeviceDetail(): void {
-    this.selectedDevice = null;
-  }
-
-  /**
-   * Trie les appareils selon un champ spécifique
-   */
-  sortDevices(field: keyof Device): void {
-    if (this.deviceSortField === field) {
-      // Inverser la direction si on clique sur le même champ
-      this.deviceSortDirection = this.deviceSortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      // Nouveau champ de tri, réinitialiser à desc (récent -> ancien)
-      this.deviceSortField = field;
-      this.deviceSortDirection = 'desc';
-    }
-  }
-
-
-// Méthode pour filtrer et trier les appareils
-  getSortedAndFilteredDevices(): Device[] {
-    return this.deviceUtils.getSortedAndFilteredDevices(
-      this.devices,
-      this.deviceFilterText,
-      this.deviceSortField,
-      this.deviceSortDirection
-    );
-  }
-
-// Méthode pour blacklister un appareil (à implémenter)
-  blacklistDevice(publicId: string): void {
-    if (!confirm('Êtes-vous sûr de vouloir blacklister cet appareil ? L\'utilisateur ne pourra plus l\'utiliser pour se connecter.')) {
-      return;
-    }
-
-    // Fonctionnalité à implémenter
-    this.displayWarning(
-      'Fonctionnalité non implémentée : la mise en liste noire des appareils sera disponible prochainement.',
-      'Compris'
-    );
-
-    // Fermer le panneau de détails si ouvert
-    if (this.selectedDevice && this.selectedDevice.publicId === publicId) {
-      this.closeDeviceDetail();
-    }
-  }
-
-
-
-
 }

@@ -15,7 +15,7 @@
   } @else if (!user()) {
     <div class="error-container">
       <p>Impossible de charger les informations de l'utilisateur.</p>
-      <button class="btn-primary" (click)="loadUserDetails(userId()!)">Réessayer</button>
+      <button class="btn-primary" (click)="loadUserDetails(publicId()!)">Réessayer</button>
     </div>
   } @else {
     <div class="user-card">
@@ -74,7 +74,7 @@
                 <div class="info-grid">
                   <div class="info-item">
                     <span class="info-label">ID</span>
-                    <span class="info-value">{{ user()!.id }}</span>
+                    <span class="info-value">{{ user()!.publicId  }}</span>
                   </div>
 
                   <div class="info-item">
@@ -235,7 +235,7 @@
                 }
 
                 <div class="devices-link">
-                  <a [routerLink]="['/admin/users', userId(), 'devices']" class="btn-view-all">
+                  <a [routerLink]="['/admin/users', user()!.publicId, 'devices']" class="btn-view-all">
                     Voir tous les appareils
                   </a>
                 </div>
