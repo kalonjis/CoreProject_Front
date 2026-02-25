@@ -1,0 +1,148 @@
+// src/app/features/account/pages/account-deletion-confirmation/account-deletion-confirmation.component.scss
+
+@use 'sass:color';
+@import 'variables';
+@import 'mixins';
+
+// =============================================================================
+// PAGE
+// =============================================================================
+
+.deletion-confirmation-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+// =============================================================================
+// CARD
+// =============================================================================
+
+.deletion-card {
+  background: white;
+  border: 1px solid rgba($danger-color, 0.25);
+  border-top: 4px solid $danger-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-lg;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+
+  // ---------------------------------------------------------------------------
+  // Header
+  // ---------------------------------------------------------------------------
+
+  &__header {
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__icon {
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: $font-weight-bold;
+    color: $danger-color;
+    margin: 0 0 0.5rem;
+  }
+
+  &__subtitle {
+    font-size: 0.9rem;
+    color: $gray-dark;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Processing
+  // ---------------------------------------------------------------------------
+
+  &__processing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem;
+    color: $gray-dark;
+    font-size: 0.9rem;
+
+    p { margin: 0; }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
+  &__actions {
+    padding: 1.5rem 2rem;
+  }
+}
+
+// =============================================================================
+// BUTTON
+// =============================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $border-radius;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &--danger {
+    background: $danger-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($danger-color, $lightness: -8%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &--full { width: 100%; }
+}
+
+// =============================================================================
+// SPINNER
+// =============================================================================
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($danger-color, 0.25);
+  border-top-color: $danger-color;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// ANIMATIONS
+// =============================================================================
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

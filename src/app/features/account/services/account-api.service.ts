@@ -116,4 +116,29 @@ export class AccountApiService {
   confirmReactivation(token: string): Observable<AccountOperationResponse> {
     return this.http.get(`${this.baseUrl}/confirm-reactivation?token=${token}`);
   }
+
+  // =========================================================================
+  // GDPR DELETION
+  // =========================================================================
+
+  /**
+   * Initiates a GDPR account deletion request for the authenticated user.
+   * Sends a confirmation email with a single-use link.
+   * No data is modified at this stage.
+   *
+   * POST /api/account/request-deletion
+   */
+  requestDeletion(): Observable<AccountOperationResponse> {
+    return this.http.post(`${this.baseUrl}/request-deletion`, {});
+  }
+
+  /**
+   * Confirms and executes the GDPR deletion via the token received by email.
+   * Anonymizes personal data, revokes all tokens, and clears authentication cookies.
+   *
+   * GET /api/account/confirm-deletion?token=xxx
+   */
+  confirmDeletion(token: string): Observable<AccountOperationResponse> {
+    return this.http.get(`${this.baseUrl}/confirm-deletion?token=${token}`);
+  }
 }

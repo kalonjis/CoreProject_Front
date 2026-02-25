@@ -1,0 +1,35 @@
+<!-- src/app/features/account/pages/export-download/export-download.component.html -->
+
+<div class="download-container">
+  <div class="download-card">
+
+    <h1 class="download-card__title">📦 Data Export</h1>
+
+    <!-- =========================================================================
+         PROCESSING — download call in flight
+    ========================================================================== -->
+    @if (isProcessing) {
+      <div class="download-card__loading">
+        <div class="spinner"></div>
+        <p>Preparing your archive, please wait…</p>
+        <p class="download-card__hint">
+          Your download will start automatically. Do not close this tab.
+        </p>
+      </div>
+    }
+
+    <!-- =========================================================================
+         FEEDBACK — success or error (from FeedbackBase)
+    ========================================================================== -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+  </div>
+</div>

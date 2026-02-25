@@ -1,0 +1,264 @@
+// src/app/features/account/components/data-export-card/data-export-card.component.scss
+
+@use 'sass:color';
+@import 'variables';
+@import 'mixins';
+
+// =============================================================================
+// CARD CONTAINER
+// =============================================================================
+
+.export-card {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.export-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.export-card__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.export-card__title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $secondary-color;
+}
+
+.export-card__description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: $gray-dark;
+  line-height: 1.5;
+}
+
+// =============================================================================
+// LOADING
+// =============================================================================
+
+.export-card__loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $gray-dark;
+}
+
+// =============================================================================
+// STEPPER
+// =============================================================================
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// Individual step
+.stepper__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+
+  @include respond-to('mobile') {
+    flex-direction: row;
+    flex: unset;
+    width: 100%;
+    gap: 0.75rem;
+  }
+}
+
+// Circle indicator
+.stepper__indicator {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid $border-color;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $gray-dark;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+
+  .stepper__step--active & {
+    border-color: $primary-color;
+    background: color.adjust($primary-color, $lightness: 42%);
+    color: $primary-color;
+  }
+
+  .stepper__step--done & {
+    border-color: $success-color;
+    background: $success-color;
+    color: white;
+  }
+}
+
+// Label block
+.stepper__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.2rem;
+
+  @include respond-to('mobile') {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.stepper__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $gray-dark;
+
+  .stepper__step--active & { color: $primary-color; }
+  .stepper__step--done &   { color: $success-color; }
+}
+
+.stepper__hint {
+  font-size: 0.75rem;
+  color: $gray-dark;
+  line-height: 1.3;
+}
+
+// Connector line between steps
+.stepper__connector {
+  flex: 1;
+  height: 2px;
+  background: $border-color;
+  margin-top: 1rem; // align with center of indicator
+  transition: background 0.3s ease;
+
+  &--done { background: $success-color; }
+
+  @include respond-to('mobile') {
+    display: none;
+  }
+}
+
+// =============================================================================
+// ALERTS
+// =============================================================================
+
+.export-card__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  p { margin: 0; }
+
+  &--success {
+    background: color.adjust($success-color, $lightness: 42%);
+    border-left: 4px solid $success-color;
+    color: color.adjust($success-color, $lightness: -20%);
+  }
+
+  &--warning {
+    background: color.adjust($warning-color, $lightness: 38%);
+    border-left: 4px solid $warning-color;
+    color: color.adjust($warning-color, $lightness: -25%);
+  }
+
+  &--danger {
+    background: color.adjust($danger-color, $lightness: 42%);
+    border-left: 4px solid $danger-color;
+    color: color.adjust($danger-color, $lightness: -15%);
+  }
+}
+
+// =============================================================================
+// ACTION BUTTON
+// =============================================================================
+
+.export-card__action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: $border-radius;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  &--secondary {
+    background: white;
+    border-color: $border-color;
+    color: $secondary-color;
+
+    &:hover:not(:disabled) {
+      background: $gray-light;
+      border-color: $gray-dark;
+    }
+  }
+}
+
+// =============================================================================
+// SPINNER
+// =============================================================================
+
+.spinner {
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba($primary-color, 0.25);
+  border-top-color: $primary-color;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+
+  &--sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
+  }
+
+  &--xs {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-width: 2px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

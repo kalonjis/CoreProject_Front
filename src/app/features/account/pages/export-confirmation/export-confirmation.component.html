@@ -1,0 +1,32 @@
+<!-- src/app/features/account/pages/export-confirmation/export-confirmation.component.html -->
+
+<div class="confirmation-container">
+  <div class="confirmation-card">
+
+    <h1 class="confirmation-card__title">📦 Data Export</h1>
+
+    <!-- =========================================================================
+         PROCESSING — API call in flight
+    ========================================================================== -->
+    @if (isProcessing) {
+      <div class="confirmation-card__loading">
+        <div class="spinner"></div>
+        <p>Confirming your export request, please wait…</p>
+      </div>
+    }
+
+    <!-- =========================================================================
+         FEEDBACK — success or error (from FeedbackBase)
+    ========================================================================== -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()">
+      </app-feedback>
+    }
+
+  </div>
+</div>

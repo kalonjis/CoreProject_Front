@@ -1,0 +1,35 @@
+<!-- src/app/features/account/pages/delete-account-page/components/data-warning-dialog/data-warning-dialog.component.html -->
+
+<div class="dialog-overlay">
+  <div class="dialog-container">
+
+    <!-- Header -->
+    <div class="dialog-header">
+      <span class="dialog-icon">📦</span>
+      <h3 class="dialog-title">Before you go — your data</h3>
+    </div>
+
+    <!-- Content -->
+    <div class="dialog-content">
+      <p class="dialog-message">
+        Under GDPR, you have the right to a copy of all personal data we hold about you
+        before it is permanently deleted.
+      </p>
+      <p class="dialog-message dialog-message--emphasis">
+        Once your account is deleted, this data cannot be recovered.
+        Do you want to download it first?
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="btn btn--secondary" (click)="onExportData()">
+        📥 Download my data first
+      </button>
+      <button class="btn btn--danger-outline" (click)="onProceedDelete()">
+        Continue with deletion
+      </button>
+    </div>
+
+  </div>
+</div>
