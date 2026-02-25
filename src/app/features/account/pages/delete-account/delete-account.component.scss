@@ -1,0 +1,211 @@
+// src/app/features/account/pages/delete-account/delete-account.component.scss
+
+@use 'sass:color';
+@import 'variables';
+@import 'mixins';
+
+// =============================================================================
+// PAGE
+// =============================================================================
+
+.delete-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.delete-page__header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-color;
+}
+
+.delete-page__title {
+  font-size: 1.5rem;
+  font-weight: $font-weight-bold;
+  color: $danger-color;
+  margin: 0 0 0.25rem;
+}
+
+.delete-page__subtitle {
+  font-size: 0.9rem;
+  color: $gray-dark;
+  margin: 0;
+}
+
+// =============================================================================
+// WARNING SECTION
+// =============================================================================
+
+.warning-section {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: color.adjust($danger-color, $lightness: 46%);
+  border: 1px solid color.adjust($danger-color, $lightness: 30%);
+  border-radius: $border-radius-lg;
+
+  &__icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  &__content {
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: color.adjust($danger-color, $lightness: -10%);
+      margin: 0 0 0.75rem;
+    }
+  }
+
+  &__note {
+    font-size: 0.875rem;
+    color: color.adjust($danger-color, $lightness: -10%);
+    margin: 0.75rem 0 0;
+    line-height: 1.5;
+  }
+}
+
+.warning-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  li {
+    font-size: 0.875rem;
+    color: color.adjust($danger-color, $lightness: -10%);
+    line-height: 1.5;
+  }
+}
+
+// =============================================================================
+// CONFIRMATION SECTION
+// =============================================================================
+
+.confirm-section {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: $box-shadow;
+
+  &__instruction {
+    font-size: 0.9rem;
+    color: $text-color;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  &__expected {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    background: $gray-light;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: $secondary-color;
+    user-select: all;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 0.95rem;
+    font-family: monospace;
+    color: $secondary-color;
+    background: $gray-light;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $gray-dark;
+      opacity: 0.5;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $danger-color;
+      background: white;
+      box-shadow: 0 0 0 3px color.adjust($danger-color, $lightness: 38%);
+    }
+  }
+}
+
+// =============================================================================
+// BUTTON
+// =============================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $border-radius;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &--danger {
+    background: $danger-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($danger-color, $lightness: -8%);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &--full {
+    width: 100%;
+  }
+}
+
+// =============================================================================
+// SPINNER
+// =============================================================================
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(white, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+// =============================================================================
+// ANIMATIONS
+// =============================================================================
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

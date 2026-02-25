@@ -1,0 +1,85 @@
+<!-- src/app/features/account/pages/delete-account/delete-account.component.html -->
+
+<div class="delete-page">
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+  <div class="delete-page__header">
+    <h1 class="delete-page__title">Delete my account</h1>
+    <p class="delete-page__subtitle">
+      This action is permanent and cannot be undone.
+    </p>
+  </div>
+
+  <!-- =========================================================
+       WARNING SECTION
+  ========================================================== -->
+  <section class="warning-section">
+    <div class="warning-section__icon">⚠️</div>
+    <div class="warning-section__content">
+      <h2>What will be deleted</h2>
+      <ul class="warning-list">
+        <li>Your profile and all personal information</li>
+        <li>Your account history and activity logs</li>
+        <li>All data associated with your account</li>
+      </ul>
+      <p class="warning-section__note">
+        In accordance with GDPR, all personally identifiable information will be
+        <strong>anonymized or permanently removed</strong> from our systems.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONFIRMATION INPUT
+  ========================================================== -->
+  <section class="confirm-section">
+    <p class="confirm-section__instruction">
+      To confirm, type
+      <code class="confirm-section__expected">{{ expectedValue }}</code>
+      below.
+    </p>
+
+    <input
+      class="confirm-section__input"
+      type="text"
+      [placeholder]="expectedValue"
+      [value]="inputValue()"
+      (input)="onInputChange($any($event.target).value)"
+      autocomplete="off"
+      spellcheck="false"
+    />
+
+    <!-- API error -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()"
+      />
+    }
+
+    <button
+      class="btn btn--danger btn--full"
+      [disabled]="!isInputValid || isSubmitting()"
+      (click)="submit()">
+      @if (isSubmitting()) {
+        <span class="spinner"></span> Sending...
+      } @else {
+        🗑️ Delete my account
+      }
+    </button>
+  </section>
+
+</div>
+
+<!-- Data export warning dialog -->
+@if (showDataWarning()) {
+  <app-data-warning-dialog
+    (exportData)="onExportData()"
+    (proceedDelete)="onProceedDelete()"
+  />
+}

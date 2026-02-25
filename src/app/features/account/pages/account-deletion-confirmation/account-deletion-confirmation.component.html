@@ -1,0 +1,50 @@
+<!-- src/app/features/account/pages/account-deletion-confirmation/account-deletion-confirmation.component.html -->
+
+<div class="deletion-confirmation-page">
+
+  <div class="deletion-card">
+
+    <!-- Header -->
+    <div class="deletion-card__header">
+      <span class="deletion-card__icon">🗑️</span>
+      <h1 class="deletion-card__title">Confirm account deletion</h1>
+      <p class="deletion-card__subtitle">
+        This is the final step. Once confirmed, your account and all personal
+        data will be <strong>permanently deleted</strong>.
+      </p>
+    </div>
+
+    <!-- Feedback (success / error) -->
+    @if (showFeedback()) {
+      <app-feedback
+        [message]="feedbackMessage()"
+        [type]="feedbackType()"
+        [buttonText]="buttonText()"
+        [timeout]="feedbackTimeout()"
+        (buttonClicked)="handleFeedbackButtonClick()"
+      />
+    }
+
+    <!-- Processing indicator -->
+    @if (isProcessing()) {
+      <div class="deletion-card__processing">
+        <span class="spinner"></span>
+        <p>Processing your deletion request…</p>
+      </div>
+    }
+
+    <!-- Confirm button -->
+    @if (showConfirmButton()) {
+      <div class="deletion-card__actions">
+        <button
+          class="btn btn--danger btn--full"
+          [disabled]="isProcessing()"
+          (click)="confirm()">
+          Permanently delete my account
+        </button>
+      </div>
+    }
+
+  </div>
+
+</div>

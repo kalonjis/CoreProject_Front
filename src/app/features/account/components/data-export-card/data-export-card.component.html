@@ -1,0 +1,178 @@
+<!-- src/app/features/account/components/data-export-card/data-export-card.component.html -->
+
+<div class="export-card">
+
+  <!-- =========================================================================
+       HEADER
+  ========================================================================== -->
+  <div class="export-card__header">
+    <span class="export-card__icon">📦</span>
+    <div>
+      <h3 class="export-card__title">Request data export</h3>
+      <p class="export-card__description">
+        Receive a copy of all your personal data in a portable format (JSON).
+      </p>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       LOADING
+  ========================================================================== -->
+  @if (isLoading()) {
+    <div class="export-card__loading">
+      <span class="spinner spinner--sm"></span>
+      <span>Loading status…</span>
+    </div>
+  }
+
+  <!-- =========================================================================
+       CONTENT (once loaded)
+  ========================================================================== -->
+  @if (!isLoading()) {
+
+    <!-- -----------------------------------------------------------------------
+         STEPPER — visible for PENDING / PROCESSING / READY / DOWNLOADED
+    ------------------------------------------------------------------------ -->
+    @if (showStepper) {
+      <div class="stepper" aria-label="Export progress">
+
+        <!-- Step 0 — Requested -->
+        <div class="stepper__step"
+             [class.stepper__step--done]="activeStep > 0"
+             [class.stepper__step--active]="activeStep === 0">
+          <div class="stepper__indicator">
+            @if (activeStep > 0) { <span>✓</span> }
+            @else if (activeStep === 0) { <span class="spinner spinner--xs"></span> }
+            @else { <span>1</span> }
+          </div>
+          <div class="stepper__label">
+            <span class="stepper__name">Requested</span>
+            @if (activeStep === 0) {
+              <span class="stepper__hint">Check your inbox — click the confirmation link</span>
+            }
+          </div>
+        </div>
+
+        <div class="stepper__connector"
+             [class.stepper__connector--done]="activeStep > 0"></div>
+
+        <!-- Step 1 — Confirmed -->
+        <div class="stepper__step"
+             [class.stepper__step--done]="activeStep > 1"
+             [class.stepper__step--active]="activeStep === 1">
+          <div class="stepper__indicator">
+            @if (activeStep > 1) { <span>✓</span> }
+            @else if (activeStep === 1) { <span class="spinner spinner--xs"></span> }
+            @else { <span>2</span> }
+          </div>
+          <div class="stepper__label">
+            <span class="stepper__name">Confirmed</span>
+            @if (activeStep === 1) {
+              <span class="stepper__hint">Generating your archive…</span>
+            }
+          </div>
+        </div>
+
+        <div class="stepper__connector"
+             [class.stepper__connector--done]="activeStep > 1"></div>
+
+        <!-- Step 2 — Ready -->
+        <div class="stepper__step"
+             [class.stepper__step--done]="activeStep > 2"
+             [class.stepper__step--active]="activeStep === 2">
+          <div class="stepper__indicator">
+            @if (activeStep > 2) { <span>✓</span> }
+            @else if (activeStep === 2) { <span>✉</span> }
+            @else { <span>3</span> }
+          </div>
+          <div class="stepper__label">
+            <span class="stepper__name">Ready</span>
+            @if (activeStep === 2) {
+              <span class="stepper__hint">Download link sent to your email</span>
+            }
+          </div>
+        </div>
+
+        <div class="stepper__connector"
+             [class.stepper__connector--done]="activeStep > 2"></div>
+
+        <!-- Step 3 — Downloaded -->
+        <div class="stepper__step"
+             [class.stepper__step--done]="activeStep >= 3"
+             [class.stepper__step--active]="activeStep === 3">
+          <div class="stepper__indicator">
+            @if (activeStep >= 3) { <span>✓</span> }
+            @else { <span>4</span> }
+          </div>
+          <div class="stepper__label">
+            <span class="stepper__name">Downloaded</span>
+            @if (activeStep === 3) {
+              <span class="stepper__hint">Archive successfully downloaded</span>
+            }
+          </div>
+        </div>
+
+      </div><!-- /stepper -->
+    }
+
+    <!-- -----------------------------------------------------------------------
+         STATE MESSAGES
+    ------------------------------------------------------------------------ -->
+
+      <!-- EXPIRED -->
+    @if (status === GdprExportStatus.EXPIRED) {
+      <div class="export-card__alert export-card__alert--warning">
+        <span>⏱️</span>
+        <p>Your download link has expired. You can request a new export below.</p>
+      </div>
+    }
+
+    <!-- FAILED -->
+    @if (status === GdprExportStatus.FAILED) {
+      <div class="export-card__alert export-card__alert--danger">
+        <span>⚠️</span>
+        <p>Archive generation failed. Please try again. If the problem persists, contact support.</p>
+      </div>
+    }
+
+    <!-- DOWNLOADED — offer new request -->
+    @if (status === GdprExportStatus.DOWNLOADED) {
+      <div class="export-card__alert export-card__alert--success">
+        <span>✅</span>
+        <p>Your archive has been downloaded. You can request a new export after the cooldown period.</p>
+      </div>
+    }
+
+    <!-- API / request error -->
+    @if (errorMessage()) {
+      <div class="export-card__alert export-card__alert--danger">
+        <span>⚠️</span>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    }
+
+    <!-- -----------------------------------------------------------------------
+         ACTION BUTTON
+    ------------------------------------------------------------------------ -->
+    @if (showRequestButton) {
+      <div class="export-card__action">
+        <button class="btn btn--secondary"
+                (click)="requestExport()"
+                [disabled]="isRequesting()">
+          @if (isRequesting()) {
+            <span class="spinner spinner--sm"></span>
+            Sending…
+          } @else if (status === GdprExportStatus.DOWNLOADED || status === GdprExportStatus.EXPIRED) {
+            Request a new export
+          } @else if (status === GdprExportStatus.FAILED) {
+            Try again
+          } @else {
+            Request export
+          }
+        </button>
+      </div>
+    }
+
+  }<!-- /!isLoading -->
+
+</div><!-- /export-card -->

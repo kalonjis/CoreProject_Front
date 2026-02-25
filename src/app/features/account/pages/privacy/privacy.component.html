@@ -13,19 +13,8 @@
       </p>
     </div>
 
-    <div class="data-card">
-      <div class="data-card__info">
-        <span class="data-card__icon">📦</span>
-        <div>
-          <h3>Request data export</h3>
-          <p>Receive a copy of all your personal data in a portable format.</p>
-        </div>
-      </div>
-      <button class="btn btn--secondary" disabled>
-        Request export
-        <span class="badge badge--soon">Coming soon</span>
-      </button>
-    </div>
+    <app-data-export-card />
+
   </section>
 
   <!-- =========================================================
@@ -67,6 +56,18 @@
       </button>
     </div>
 
+    <!-- Success banner after deletion request -->
+    @if (deletionEmailSent()) {
+      <div class="alert alert--success">
+        <span>📧</span>
+        <p>
+          <strong>Check your inbox.</strong>
+          A confirmation email has been sent. Your account will be permanently deleted
+          after you click the link in the email.
+        </p>
+      </div>
+    }
+
     <!-- GDPR deletion -->
     <div class="danger-card danger-card--critical">
       <div class="danger-card__info">
@@ -76,11 +77,14 @@
           <strong>This action cannot be undone.</strong>
         </p>
       </div>
-      <button class="btn btn--danger" disabled>
+      <a
+        class="btn btn--danger"
+        routerLink="/account/deletion-request"
+        [class.disabled]="deletionEmailSent()">
         Delete my account
-        <span class="badge badge--soon">Coming soon</span>
-      </button>
+      </a>
     </div>
+
   </section>
 
 </div>
