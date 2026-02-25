@@ -6,12 +6,12 @@ import {
   DeactivateAccountModalComponent
 } from '../../components/deactivate-account-modal/deactivate-account-modal.component';
 import {DataExportCardComponent} from '../../components/data-export-card/data-export-card.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-privacy',
   standalone: true,
-  imports: [CommonModule, DeactivateAccountModalComponent, DataExportCardComponent],
+  imports: [CommonModule, DeactivateAccountModalComponent, DataExportCardComponent, RouterLink],
   templateUrl: './privacy.component.html',
   styleUrl: './privacy.component.scss'
 })
