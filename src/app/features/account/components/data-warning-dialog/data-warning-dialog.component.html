@@ -1,4 +1,4 @@
-<!-- src/app/features/account/pages/delete-account-page/components/data-warning-dialog/data-warning-dialog.component.html -->
+<!-- src/app/features/account/components/data-warning-dialog/data-warning-dialog.component.html -->
 
 <div class="dialog-overlay">
   <div class="dialog-container">
@@ -23,12 +23,20 @@
 
     <!-- Actions -->
     <div class="dialog-actions">
-      <button class="btn btn--secondary" (click)="onExportData()">
-        📥 Download my data first
+
+      <button class="action-btn action-btn--export" (click)="onExportData()">
+        <span class="action-btn__icon">📥</span>
+        <span class="action-btn__label">Download my data first</span>
       </button>
-      <button class="btn btn--danger-outline" (click)="onProceedDelete()">
-        Continue with deletion
+
+      <div class="actions-divider">
+        <span>or</span>
+      </div>
+
+      <button class="action-btn action-btn--delete" (click)="onProceedDelete()">
+        <span class="action-btn__label">Continue with deletion</span>
       </button>
+
     </div>
 
   </div>
