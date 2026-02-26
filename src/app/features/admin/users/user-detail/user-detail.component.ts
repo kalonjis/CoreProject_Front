@@ -85,7 +85,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
 
   loadUserDetails(publicId: string): void {
     this.isLoading.set(true);
-    this.adminUserApi.getUserById(publicId).subscribe({
+    this.adminUserApi.getById(publicId).subscribe({
       next: (user) => {
         this.user.set(user);
         this.isLoading.set(false);
@@ -165,7 +165,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
       }
     });
   }
-
+/*
   resetPassword(): void {
     if (!this.user()) return;
 
@@ -179,7 +179,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
         }
       });
     }
-  }
+  }*/
 
   deleteUser(): void {
     if (!this.user()) return;
@@ -208,7 +208,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     this.isUpdatingRole.set(true);
     this.roleUpdateError.set(null);
 
-    this.adminUserApi.grantUserRole(user.publicId, role).subscribe({
+    this.adminUserApi.grantRole(user.publicId, role).subscribe({
       next: () => {
         this.user.update(u => u ? { ...u, userRoles: [...u.userRoles, role] } : null);
         this.displaySuccess(`Rôle ${role} attribué avec succès`);
@@ -230,7 +230,7 @@ export class UserDetailComponent extends FeedbackBase implements OnInit {
     this.isUpdatingRole.set(true);
     this.roleUpdateError.set(null);
 
-    this.adminUserApi.revokeUserRole(user.publicId, role).subscribe({
+    this.adminUserApi.revokeRole(user.publicId, role).subscribe({
       next: () => {
         this.user.update(u => u ? { ...u, userRoles: u.userRoles.filter(r => r !== role) } : null);
         this.displaySuccess(`Rôle ${role} révoqué avec succès`);
