@@ -1,218 +1,253 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserDTO } from '../../../data/models/user/user-dto';
-import { UserRole } from '../../../data/models/user/user-role';
-import { UserRegisterForm } from '../../../data/models/admin/user-register-form';
-import { HttpUtilService } from '../../../core/http/http-util.service';
+import {
+  AdminUser,
+  AdminUserCreateRequest,
+  UserDeactivationRequest,
+  AdminRoleChangeRequest,
+  AdminOperationResponse,
+  AdminUserStats,
+  PageResponse,
+  DeactivationCategoryItem,
+} from '../users/models';
+import {UserRole} from '../../../data/models/user/user-role';
+
+const BASE_URL = '/api/admin/users';
 
 /**
- * API service for admin user management operations.
- * Handles all HTTP calls related to user CRUD, roles, activation, and history.
+ * Service responsible for all HTTP interactions with the admin user endpoints.
  *
- * Endpoints:
- * - User queries: /api/admin/users/*
- * - User management: /api/admin/users/{id}/*
+ * Each method maps 1-to-1 to a backend endpoint. No business logic lives here —
+ * only HTTP concerns (params, URL construction, typed responses).
+ *
+ * All endpoints require at minimum the {@code ADMIN} authority.
+ * Endpoints marked as SUPER_ADMIN only are enforced by the backend;
+ * the UI is responsible for hiding/disabling those actions appropriately.
+ *
+ * Base path: /api/admin/users
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AdminUserApiService {
+
   private http = inject(HttpClient);
-  private httpUtil = inject(HttpUtilService);
 
-  // Default pagination
-  private defaultPage = 0;
-  private defaultSize = 20;
-
-  // =========================================================================
-  // USER QUERIES
-  // =========================================================================
+  // ==========================================================================
+  // Search & Query
+  // ==========================================================================
 
   /**
-   * Retrieves paginated list of all users.
+   * Returns a paginated list of all users.
    *
-   * @param page Page number (default: 0)
-   * @param size Page size (default: 20)
-   * @param sort Sort criteria (default: 'id,asc')
-   * @returns Observable of paginated user list
+   * GET /api/admin/users/all
+   *
+   * @param page  Zero-based page index (default: 0)
+   * @param size  Number of items per page (default: 20)
+   * @param sort  Sort field and direction, e.g. 'id,asc' (default: 'id,asc')
    */
-  getAllUsers(page = this.defaultPage, size = this.defaultSize, sort = 'id,asc'): Observable<any> {
-    return this.http.get<any>(`/api/admin/users/all?page=${page}&size=${size}&sort=${sort}`);
+  getAll(page = 0, size = 20, sort = 'id,asc'): Observable<PageResponse<AdminUser>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', sort);
+    return this.http.get<PageResponse<AdminUser>>(`${BASE_URL}/all`, { params });
   }
 
   /**
-   * Searches users by a global search term.
-   * Searches across: username, firstname, lastname, email, phone number.
+   * Searches users by a global query across all fields
+   * (username, firstname, lastname, email, phone).
    *
-   * @param query Search query string
-   * @param page Page number (default: 0)
-   * @param size Page size (default: 20)
-   * @returns Observable of paginated search results
+   * GET /api/admin/users/search
+   *
+   * @param query Search term
+   * @param page  Zero-based page index (default: 0)
+   * @param size  Number of items per page (default: 20)
    */
-  searchUsers(query: string, page = this.defaultPage, size = this.defaultSize): Observable<any> {
-    return this.http.get<any>(`/api/admin/users/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+  search(query: string, page = 0, size = 20): Observable<PageResponse<AdminUser>> {
+    const params = new HttpParams()
+      .set('query', query)
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<PageResponse<AdminUser>>(`${BASE_URL}/search`, { params });
   }
 
   /**
-   * Searches users by specific criteria with individual field filters.
-   * All parameters are optional and can be combined.
+   * Searches users by individual field criteria. All fields are optional.
    *
-   * @param criteria Object containing search criteria
-   * @param page Page number (default: 0)
-   * @param size Page size (default: 20)
-   * @returns Observable of paginated search results
+   * GET /api/admin/users/searchbycriteria
+   *
+   * @param criteria  Object containing any combination of field filters
+   * @param page      Zero-based page index (default: 0)
+   * @param size      Number of items per page (default: 20)
    */
-  searchUsersByCriteria(criteria: {
-    username?: string,
-    firstname?: string,
-    lastname?: string,
-    email?: string,
-    phoneNumber?: string
-  }, page = this.defaultPage, size = this.defaultSize): Observable<any> {
-    // Build URL with non-empty parameters
-    const params = Object.entries(criteria)
-      .filter(([_, value]) => value !== undefined && value !== '')
-      .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
-      .join('&');
-
-    return this.http.get<any>(
-      `/api/admin/users/searchbycriteria?${params}&page=${page}&size=${size}`
-    );
+  searchByCriteria(
+    criteria: {
+      username?:    string;
+      firstname?:   string;
+      lastname?:    string;
+      email?:       string;
+      phoneNumber?: string;
+    },
+    page = 0,
+    size = 20,
+  ): Observable<PageResponse<AdminUser>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    Object.entries(criteria).forEach(([key, value]) => {
+      if (value) params = params.set(key, value);
+    });
+    return this.http.get<PageResponse<AdminUser>>(`${BASE_URL}/searchbycriteria`, { params });
   }
 
   /**
-   * Retrieves a specific user by ID.
+   * Returns a single user by their public UUID.
    *
-   * @param id User ID
-   * @returns Observable of user DTO
-   */
-  getUserById(publicId: string): Observable<UserDTO> {
-    return this.http.get<UserDTO>(`/api/admin/users/${publicId}`);
-  }
-
-  // =========================================================================
-  // USER MANAGEMENT
-  // =========================================================================
-
-  /**
-   * Creates a new user (by administrator).
+   * GET /api/admin/users/{publicId}
    *
-   * @param user User registration form data
-   * @returns Observable of creation response
+   * @param publicId  The user's public UUID
    */
-  createUser(user: UserRegisterForm): Observable<any> {
-    return this.httpUtil.post<any>('/api/admin/users/create', user);
+  getById(publicId: string): Observable<AdminUser> {
+    return this.http.get<AdminUser>(`${BASE_URL}/${publicId}`);
   }
 
   /**
-   * Deletes a user account.
+   * Returns aggregated user statistics for the admin dashboard.
    *
-   * @param id User ID to delete
-   * @returns Observable of void
+   * GET /api/admin/users/stats
    */
-  deleteUser(publicId: string): Observable<void> {
-    return this.httpUtil.delete<void>(`/api/admin/users/${publicId}`);
+  getStats(): Observable<AdminUserStats> {
+    return this.http.get<AdminUserStats>(`${BASE_URL}/stats`);
   }
 
   /**
-   * Activates a user account.
+   * Returns the list of available deactivation categories.
+   * Used to populate the category picker in the deactivation modal.
    *
-   * @param id User ID to activate
-   * @returns Observable of void
+   * GET /api/admin/users/deactivation-categories
    */
-  activateUser(publicId: string): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/activate/${publicId}`, {});
+  getDeactivationCategories(): Observable<DeactivationCategoryItem[]> {
+    return this.http.get<DeactivationCategoryItem[]>(`${BASE_URL}/deactivation-categories`);
+  }
+
+  // ==========================================================================
+  // Lifecycle — Creation
+  // ==========================================================================
+
+  /**
+   * Creates a new user account as an administrator.
+   * The backend generates and emails a temporary password to the new user.
+   *
+   * POST /api/admin/users/create
+   *
+   * @param request  User creation payload
+   */
+  createUser(request: AdminUserCreateRequest): Observable<AdminOperationResponse> {
+    return this.http.post<AdminOperationResponse>(`${BASE_URL}/create`, request);
+  }
+
+  // ==========================================================================
+  // Lifecycle — Activation
+  // ==========================================================================
+
+  /**
+   * First-time activation of an account that has never been activated.
+   * Use when {@code everActivated === false}.
+   *
+   * PATCH /api/admin/users/activate/{publicId}
+   *
+   * @param publicId  The user's public UUID
+   */
+  activateUser(publicId: string): Observable<AdminOperationResponse> {
+    return this.http.patch<AdminOperationResponse>(`${BASE_URL}/activate/${publicId}`, {});
   }
 
   /**
-   * Deactivates a user account.
+   * Reactivates a previously deactivated account.
+   * Use when {@code everActivated === true && enabled === false}.
    *
-   * @param id User ID to deactivate
-   * @returns Observable of void
+   * PATCH /api/admin/users/reactivate/{publicId}
+   *
+   * @param publicId  The user's public UUID
    */
-  deactivateUser(publicId: string): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/deactivate/${publicId}`, {});
+  reactivateUser(publicId: string): Observable<AdminOperationResponse> {
+    return this.http.patch<AdminOperationResponse>(`${BASE_URL}/reactivate/${publicId}`, {});
   }
 
-  // =========================================================================
-  // ROLE MANAGEMENT
-  // =========================================================================
+  // ==========================================================================
+  // Lifecycle — Deactivation
+  // ==========================================================================
+
+  /**
+   * Administratively deactivates a user account.
+   * Requires a deactivation category and a justification (10–500 chars).
+   *
+   * PATCH /api/admin/users/deactivate/{publicId}
+   *
+   * @param publicId  The user's public UUID
+   * @param request   Deactivation payload (category + justification)
+   */
+  deactivateUser(publicId: string, request: UserDeactivationRequest): Observable<AdminOperationResponse> {
+    return this.http.patch<AdminOperationResponse>(`${BASE_URL}/deactivate/${publicId}`, request);
+  }
+
+  // ==========================================================================
+  // Lifecycle — Deletion (SUPER_ADMIN only)
+  // ==========================================================================
+
+  /**
+   * Permanently and irreversibly deletes a user account and all associated data.
+   * Requires SUPER_ADMIN authority — enforced by the backend.
+   *
+   * DELETE /api/admin/users/delete/{publicId}
+   *
+   * @param publicId  The user's public UUID
+   */
+  deleteUser(publicId: string): Observable<AdminOperationResponse> {
+    return this.http.delete<AdminOperationResponse>(`${BASE_URL}/delete/${publicId}`);
+  }
+
+  /**
+   * Anonymizes a user account in compliance with GDPR regulations.
+   * All personally identifiable data is wiped; the account shell is retained.
+   * Requires SUPER_ADMIN authority — enforced by the backend.
+   *
+   * DELETE /api/admin/users/gdpr/{publicId}
+   *
+   * @param publicId  The user's public UUID
+   */
+  gdprDeleteUser(publicId: string): Observable<AdminOperationResponse> {
+    return this.http.delete<AdminOperationResponse>(`${BASE_URL}/gdpr/${publicId}`);
+  }
+
+  // ==========================================================================
+  // Role Management
+  // ==========================================================================
 
   /**
    * Grants a role to a user.
+   * An ADMIN can only grant MODERATOR and USER roles.
+   * Granting ADMIN or SUPER_ADMIN requires SUPER_ADMIN authority.
    *
-   * @param id User ID
-   * @param role Role to grant
-   * @returns Observable of void
+   * PATCH /api/admin/users/grant-role/{publicId}
+   *
+   * @param publicId  The user's public UUID
+   * @param role      The role to grant
    */
-  grantUserRole(publicId: string, role: UserRole): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/grant-role/${publicId}`, { userRole: role });
+  grantRole(publicId: string, role: UserRole): Observable<AdminOperationResponse> {
+    const body: AdminRoleChangeRequest = { role };
+    return this.http.patch<AdminOperationResponse>(`${BASE_URL}/grant-role/${publicId}`, body);
   }
 
   /**
    * Revokes a role from a user.
+   * Follows the same permission rules as granting roles.
    *
-   * @param id User ID
-   * @param role Role to revoke
-   * @returns Observable of void
-   */
-  revokeUserRole(publicId: string, role: UserRole): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/revoke-role/${publicId}`, { userRole: role });
-  }
-
-  // =========================================================================
-  // PASSWORD MANAGEMENT
-  // =========================================================================
-
-  /**
-   * Forces a password reset for a user.
-   * Triggers password reset email.
+   * PATCH /api/admin/users/revoke-role/{publicId}
    *
-   * @param id User ID
-   * @returns Observable of void
+   * @param publicId  The user's public UUID
+   * @param role      The role to revoke
    */
-  forceResetPassword(userPublicId: string): Observable<void> {
-    return this.httpUtil.patch<void>(`/api/admin/users/force-reset-password/${userPublicId}`, {});
-  }
-
-  /**
-   * Requests password reset via email.
-   *
-   * @param email User email
-   * @returns Observable of response
-   */
-  requestPasswordReset(email: string): Observable<any> {
-    return this.httpUtil.post<any>('/api/password/request-password-reset', { email }, true);
-  }
-
-  // =========================================================================
-  // ACTIVITY & HISTORY
-  // =========================================================================
-
-  /**
-   * Retrieves user activity history with pagination.
-   *
-   * @param userId User ID
-   * @param page Page number (default: 0)
-   * @param size Page size (default: 10)
-   * @returns Observable of paginated activity logs
-   */
-  getUserActivityHistory(userId: number, page = 0, size = 10): Observable<any> {
-    return this.http.get<any>(`/api/security/logs/user/${userId}?page=${page}&size=${size}`);
-  }
-
-  /**
-   * Retrieves specific user actions filtered by type.
-   *
-   * @param userId User ID
-   * @param types Array of action types to filter
-   * @param page Page number (default: 0)
-   * @param size Page size (default: 10)
-   * @returns Observable of paginated filtered logs
-   */
-  getUserSpecificActions(userId: number, types: string[], page = 0, size = 10): Observable<any> {
-    const typesParam = types.join(',');
-    return this.http.get<any>(`/api/security/logs/user/${userId}/actions?types=${typesParam}&page=${page}&size=${size}`);
+  revokeRole(publicId: string, role: UserRole): Observable<AdminOperationResponse> {
+    const body: AdminRoleChangeRequest = { role };
+    return this.http.patch<AdminOperationResponse>(`${BASE_URL}/revoke-role/${publicId}`, body);
   }
 }
