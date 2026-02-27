@@ -1,0 +1,57 @@
+<!-- src/app/features/admin/users/user-detail/components/tabs/admin-deactivation-audit/admin-deactivation-audit.component.html -->
+
+<section class="deactivation-audit">
+
+  <!-- =========================================================================
+       HEADER
+  ========================================================================== -->
+  <header class="audit-header">
+    <svg class="audit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <path d="M9 2L2 5.5V10C2 13.5 5 16.5 9 17.5C13 16.5 16 13.5 16 10V5.5L9 2Z"
+            stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M9 7V10M9 12.5H9.01"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <h3 class="audit-title">Désactivation administrative</h3>
+      <p class="audit-subtitle">Informations enregistrées lors de la désactivation du compte</p>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       BODY
+  ========================================================================== -->
+  <dl class="audit-body">
+
+    <!-- Category ----------------------------------------------------------- -->
+    <div class="audit-row">
+      <dt class="audit-label">Catégorie</dt>
+      <dd class="audit-value">
+        <span class="main-category-badge" [class]="mainCategoryClass">
+          {{ mainCategoryLabel }}
+        </span>
+        <span class="sub-category">{{ categoryLabel }}</span>
+      </dd>
+    </div>
+
+    <!-- Free-text justification -------------------------------------------- -->
+    @if (user.adminDeactivationDetails) {
+      <div class="audit-row audit-row--column">
+        <dt class="audit-label">Justification</dt>
+        <dd class="audit-details">{{ user.adminDeactivationDetails }}</dd>
+      </div>
+    }
+
+    <!-- Deactivation date -------------------------------------------------- -->
+    @if (user.adminDeactivatedAt) {
+      <div class="audit-row">
+        <dt class="audit-label">Date de désactivation</dt>
+        <dd class="audit-value">
+          {{ user.adminDeactivatedAt | date: 'dd MMMM yyyy, HH:mm' : '' : 'fr' }}
+        </dd>
+      </div>
+    }
+
+  </dl>
+
+</section>

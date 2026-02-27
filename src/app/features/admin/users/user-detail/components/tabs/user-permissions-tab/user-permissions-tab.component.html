@@ -1,0 +1,103 @@
+<!-- src/app/features/admin/users/user-detail/components/tabs/user-permissions-tab/user-permissions-tab.component.html -->
+
+<div class="permissions-tab">
+
+  <!-- =========================================================================
+       READ-ONLY BANNER — shown when the acting admin cannot manage this user
+  ========================================================================== -->
+  @if (!canManage()) {
+    <div class="readonly-banner">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M8 5v4M8 11h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>
+        @if (isSelf()) {
+          Vous ne pouvez pas modifier vos propres rôles.
+        } @else if (targetIsSuperAdmin()) {
+          Seul un Super Administrateur peut modifier les rôles d'un autre Super Administrateur.
+        } @else {
+          Vous n'avez pas les droits nécessaires pour modifier les rôles de cet utilisateur.
+        }
+      </span>
+    </div>
+  }
+
+  <!-- =========================================================================
+       CURRENT ROLES
+  ========================================================================== -->
+  <section class="perm-section">
+    <h3 class="section-title">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+        <circle cx="7.5" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M1.5 14c0-3.314 2.686-6 6-6s6 2.686 6 6"
+              stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      Rôles attribués
+    </h3>
+
+    <div class="roles-grid">
+      @for (role of ROLE_ORDER; track role) {
+        @if (user.userRoles.includes(role)) {
+          <div class="role-card" [class]="roleClass(role)">
+            <div class="role-card__header">
+              <span class="role-name">{{ ROLE_LABELS[role] }}</span>
+              @if (canRevoke(role)) {
+                <button
+                  class="btn-revoke"
+                  [disabled]="facade.isMutating()"
+                  (click)="revoke(role)"
+                  [title]="'Retirer le rôle ' + ROLE_LABELS[role]">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path d="M2 2L10 10M10 2L2 10"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              }
+            </div>
+            <p class="role-description">{{ ROLE_DESCRIPTIONS[role] }}</p>
+          </div>
+        }
+      }
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       GRANTABLE ROLES — hidden when there's nothing to grant or no permission
+  ========================================================================== -->
+  @if (canManage() && grantableRoles.length > 0) {
+    <section class="perm-section">
+      <h3 class="section-title">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M7.5 4.5v6M4.5 7.5h6"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Attribuer un rôle
+      </h3>
+
+      <div class="roles-grid roles-grid--grantable">
+        @for (role of grantableRoles; track role) {
+          <div class="role-card role-card--grantable" [class]="roleClass(role)">
+            <div class="role-card__header">
+              <span class="role-name">{{ ROLE_LABELS[role] }}</span>
+              <button
+                class="btn-grant"
+                [disabled]="facade.isMutating()"
+                (click)="grant(role)"
+                [title]="'Attribuer le rôle ' + ROLE_LABELS[role]">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M6 1v10M1 6h10"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Attribuer
+              </button>
+            </div>
+            <p class="role-description">{{ ROLE_DESCRIPTIONS[role] }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+</div>

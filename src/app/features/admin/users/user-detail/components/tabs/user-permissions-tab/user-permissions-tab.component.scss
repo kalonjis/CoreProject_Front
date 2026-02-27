@@ -1,0 +1,174 @@
+// src/app/features/admin/users/user-detail/components/tabs/user-permissions-tab/user-permissions-tab.component.scss
+
+$primary:  #6366f1;
+$success:  #10b981;
+$warning:  #f59e0b;
+$danger:   #ef4444;
+$info:     #3b82f6;
+
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+
+$radius-sm: 6px;
+$radius-md: 10px;
+
+// ============================================================================
+// LAYOUT
+// ============================================================================
+
+.permissions-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ============================================================================
+// READ-ONLY BANNER
+// ============================================================================
+
+.readonly-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: rgba($info, 0.07);
+  border: 1px solid rgba($info, 0.25);
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  color: darken($info, 12%);
+
+  svg { flex-shrink: 0; }
+}
+
+// ============================================================================
+// SECTIONS
+// ============================================================================
+
+.perm-section {
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 1.125rem 1.5rem 1.375rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $primary;
+
+  svg { flex-shrink: 0; }
+}
+
+// ============================================================================
+// ROLES GRID
+// ============================================================================
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+
+  &--grantable .role-card {
+    opacity: 0.7;
+    border-style: dashed;
+    &:hover { opacity: 1; }
+  }
+}
+
+// ============================================================================
+// ROLE CARD
+// ============================================================================
+
+.role-card {
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 0.875rem 1rem;
+  background: #fff;
+  transition: box-shadow 0.15s;
+
+  &:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+  // Colour accent via left border
+  &.role--super-admin { border-left: 3px solid #7c3aed; }
+  &.role--admin       { border-left: 3px solid $primary; }
+  &.role--moderator   { border-left: 3px solid $info; }
+  &.role--user        { border-left: 3px solid $success; }
+  &.role--guest       { border-left: 3px solid $gray-300; }
+}
+
+.role-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+}
+
+.role-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $gray-700;
+}
+
+.role-description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: $gray-500;
+  line-height: 1.5;
+}
+
+// ============================================================================
+// REVOKE BUTTON
+// ============================================================================
+
+.btn-revoke {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 1px solid rgba($danger, 0.3);
+  background: rgba($danger, 0.06);
+  border-radius: $radius-sm;
+  color: $danger;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover:not(:disabled) { background: rgba($danger, 0.15); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// ============================================================================
+// GRANT BUTTON
+// ============================================================================
+
+.btn-grant {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba($success, 0.35);
+  background: rgba($success, 0.08);
+  border-radius: 999px;
+  color: darken($success, 8%);
+  cursor: pointer;
+  transition: background 0.12s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) { background: rgba($success, 0.16); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}

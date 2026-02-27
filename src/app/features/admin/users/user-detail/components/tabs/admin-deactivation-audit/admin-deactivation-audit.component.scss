@@ -1,0 +1,138 @@
+// src/app/features/admin/users/user-detail/components/tabs/admin-deactivation-audit/admin-deactivation-audit.component.scss
+
+$danger:   #ef4444;
+$gray-100: #f3f4f6;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-700: #374151;
+
+$radius-sm: 6px;
+$radius-md: 10px;
+
+// ============================================================================
+// CONTAINER
+// ============================================================================
+
+.deactivation-audit {
+  border: 1px solid rgba($danger, 0.3);
+  border-radius: $radius-md;
+  background: rgba($danger, 0.03);
+  overflow: hidden;
+}
+
+// ============================================================================
+// HEADER
+// ============================================================================
+
+.audit-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba($danger, 0.06);
+  border-bottom: 1px solid rgba($danger, 0.15);
+}
+
+.audit-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: $danger;
+}
+
+.audit-title {
+  margin: 0 0 2px 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: darken($danger, 8%);
+}
+
+.audit-subtitle {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba($danger, 0.65);
+}
+
+// ============================================================================
+// BODY
+// ============================================================================
+
+.audit-body {
+  margin: 0;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.audit-row {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba($danger, 0.08);
+
+  &:last-child { border-bottom: none; }
+
+  // Stacks label above value for the free-text justification block
+  &--column {
+    grid-template-columns: 1fr;
+    gap: 0.375rem;
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+
+.audit-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba($danger, 0.6);
+}
+
+.audit-value {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $gray-700;
+}
+
+.audit-details {
+  margin: 0;
+  font-size: 0.875rem;
+  color: $gray-700;
+  line-height: 1.6;
+  background: rgba($danger, 0.04);
+  border-left: 3px solid rgba($danger, 0.3);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 $radius-sm $radius-sm 0;
+}
+
+.sub-category {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $gray-700;
+}
+
+// ============================================================================
+// MAIN CATEGORY BADGES — colour-coded by severity
+// ============================================================================
+
+.main-category-badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+
+  &.severity--banned      { background: rgba(#dc2626, 0.12); color: #b91c1c; border-color: rgba(#dc2626, 0.3); }
+  &.severity--legal       { background: rgba(#7c3aed, 0.12); color: #6d28d9; border-color: rgba(#7c3aed, 0.3); }
+  &.severity--security    { background: rgba(#d97706, 0.12); color: #b45309; border-color: rgba(#d97706, 0.3); }
+  &.severity--tos         { background: rgba(#ea580c, 0.12); color: #c2410c; border-color: rgba(#ea580c, 0.3); }
+  &.severity--maintenance { background: rgba(#0284c7, 0.12); color: #0369a1; border-color: rgba(#0284c7, 0.3); }
+  &.severity--admin       { background: rgba(#4b5563, 0.1);  color: #374151; border-color: rgba(#4b5563, 0.2); }
+}
