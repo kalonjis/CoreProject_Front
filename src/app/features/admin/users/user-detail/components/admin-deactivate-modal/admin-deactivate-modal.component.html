@@ -1,0 +1,139 @@
+<!-- src/app/features/admin/users/user-detail/components/admin-deactivate-modal/admin-deactivate-modal.component.html -->
+
+<!-- Backdrop -->
+<div class="modal-backdrop" (click)="onBackdropClick()"></div>
+
+<!-- Dialog -->
+<div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+  <!-- =========================================================================
+       HEADER
+  ========================================================================== -->
+  <header class="modal-header">
+    <div class="modal-header__icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 2L3 5.5V10.5C3 14 6 17 10 18C14 17 17 14 17 10.5V5.5L10 2Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M10 8v4M10 14h.01"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <h2 class="modal-title" id="modal-title">Désactiver le compte</h2>
+      <p class="modal-subtitle">
+        <strong>{{ username }}</strong> — cette action révoque immédiatement l'accès.
+      </p>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       BODY
+  ========================================================================== -->
+  <div class="modal-body">
+
+    <!-- Category select -------------------------------------------------------- -->
+    <div class="field" [class.field--error]="selectedCategory() === '' && submitError()">
+      <label class="field-label" for="deactivation-category">
+        Catégorie <span class="required" aria-hidden="true">*</span>
+      </label>
+
+      @if (facade.deactivationCategories().length === 0) {
+        <p class="loading-hint">Chargement des catégories…</p>
+      } @else {
+        <select
+          id="deactivation-category"
+          class="field-select"
+          [disabled]="facade.isMutating()"
+          [value]="selectedCategory()"
+          (change)="onCategoryChange($any($event.target).value)">
+          <option value="" disabled>Sélectionner une catégorie…</option>
+          @for (group of groupedCategories(); track group.label) {
+            <optgroup [label]="group.label">
+              @for (item of group.items; track item.value) {
+                <option [value]="item.value">{{ item.displayName }}</option>
+              }
+            </optgroup>
+          }
+        </select>
+      }
+
+      <!-- Selected category hint -->
+      @if (selectedCategoryItem(); as item) {
+        <p class="field-hint">
+          {{ item.description }}
+          @if (item.allowsReactivation) {
+            <span class="hint-badge hint-badge--reactivable">Réactivation possible</span>
+          } @else {
+            <span class="hint-badge hint-badge--permanent">Permanent</span>
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Details textarea ------------------------------------------------------- -->
+    <div class="field" [class.field--error]="details().length > 0 && !detailsValid()">
+      <label class="field-label" for="deactivation-details">
+        Justification <span class="required" aria-hidden="true">*</span>
+      </label>
+      <textarea
+        id="deactivation-details"
+        class="field-textarea"
+        rows="4"
+        placeholder="Décrivez la raison de cette désactivation (min. 10 caractères)…"
+        [disabled]="facade.isMutating()"
+        [value]="details()"
+        (input)="onDetailsChange($any($event.target).value)">
+      </textarea>
+      <div class="field-footer">
+        @if (details().length > 0 && detailsLength() < 10) {
+          <span class="field-error-msg">Minimum 10 caractères requis.</span>
+        } @else if (detailsLength() > 500) {
+          <span class="field-error-msg">Maximum 500 caractères.</span>
+        } @else {
+          <span></span>
+        }
+        <span class="char-count" [class.char-count--over]="detailsLength() > 500">
+          {{ detailsLength() }} / 500
+        </span>
+      </div>
+    </div>
+
+    <!-- Submit error ----------------------------------------------------------- -->
+    @if (submitError()) {
+      <div class="submit-error">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M7 4.5v3M7 9.5h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        {{ submitError() }}
+      </div>
+    }
+
+  </div>
+
+  <!-- =========================================================================
+       FOOTER
+  ========================================================================== -->
+  <footer class="modal-footer">
+    <button
+      class="btn-cancel"
+      type="button"
+      [disabled]="facade.isMutating()"
+      (click)="onCancel()">
+      Annuler
+    </button>
+    <button
+      class="btn-confirm"
+      type="button"
+      [disabled]="!formValid() || facade.isMutating()"
+      (click)="onSubmit()">
+      @if (facade.isMutating()) {
+        <span class="btn-spinner"></span>
+        Désactivation…
+      } @else {
+        Confirmer la désactivation
+      }
+    </button>
+  </footer>
+
+</div>

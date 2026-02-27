@@ -11,14 +11,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { UserDetailHeaderComponent } from './components/user-detail-header/user-detail-header.component';
-import { UserDetailActionsComponent } from './components/user-detail-actions/user-detail-actions.component';
-import { UserInfoTabComponent } from './components/tabs/user-info-tab/user-info-tab.component';
-import { UserDevicesTabComponent } from './components/tabs/user-devices-tab/user-devices-tab.component';
-import { UserPermissionsTabComponent } from './components/tabs/user-permissions-tab/user-permissions-tab.component';
-import { AdminDeactivateModalComponent } from './components/admin-deactivate-modal/admin-deactivate-modal.component';
-import { UserLogsComponent } from '../../../../features/activity-logs';
+import { UserDetailHeaderComponent } from '../components/user-detail-header/user-detail-header.component';
+import { UserDetailActionsComponent } from '../components/user-detail-actions/user-detail-actions.component';
+import { UserInfoTabComponent } from '../components/tabs/user-info-tab/user-info-tab.component';
+import { UserDevicesTabComponent } from '../components/tabs/user-devices-tab/user-devices-tab.component';
+import { UserPermissionsTabComponent } from '../components/tabs/user-permissions-tab/user-permissions-tab.component';
+import { AdminDeactivateModalComponent } from '../components/admin-deactivate-modal/admin-deactivate-modal.component';
 import {AdminUserFacade} from '../../services/admin-user-facade.service';
+import {UserLogsComponent} from '../../../../activity-logs';
 
 // =============================================================================
 // Types

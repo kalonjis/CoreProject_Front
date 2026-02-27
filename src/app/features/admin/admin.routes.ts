@@ -56,8 +56,8 @@ export const ADMIN_ROUTES: Routes = [
       // User details
       {
         path: ':id',
-        loadComponent: () => import('./users/user-detail/user-detail.component')
-          .then(m => m.UserDetailComponent)
+        loadComponent: () => import('./users/user-detail/user-detail-container/user-detail-container.component')
+          .then(m => m.UserDetailContainerComponent)
       }
     ]
   },

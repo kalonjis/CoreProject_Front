@@ -1,0 +1,192 @@
+<!-- src/app/features/admin/users/user-detail/components/tabs/user-info-tab/user-info-tab.component.html -->
+
+<div class="info-tab">
+
+  <!-- =========================================================================
+       SECTION 1 — IDENTITY
+  ========================================================================== -->
+  <section class="info-section">
+    <h3 class="section-title">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Identité
+    </h3>
+
+    <dl class="info-grid">
+
+      <div class="info-row">
+        <dt class="info-label">Identifiant public</dt>
+        <dd class="info-value info-value--mono">{{ user.publicId }}</dd>
+      </div>
+
+      <div class="info-row">
+        <dt class="info-label">Nom d'utilisateur</dt>
+        <dd class="info-value">{{ user.username }}</dd>
+      </div>
+
+      @if (user.firstname || user.lastname) {
+        <div class="info-row">
+          <dt class="info-label">Nom complet</dt>
+          <dd class="info-value">{{ displayName }}</dd>
+        </div>
+      }
+
+      <div class="info-row">
+        <dt class="info-label">Adresse e-mail</dt>
+        <dd class="info-value">
+          {{ user.email }}
+          @if (user.emailVerified) {
+            <span class="verified-badge">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                <circle cx="5.5" cy="5.5" r="4.5" fill="currentColor" opacity=".15"/>
+                <path d="M3 5.5L5 7.5L8.5 4"
+                      stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Vérifié
+            </span>
+          } @else {
+            <span class="unverified-badge">Non vérifié</span>
+          }
+        </dd>
+      </div>
+
+      <div class="info-row">
+        <dt class="info-label">Téléphone</dt>
+        <dd class="info-value">
+          @if (user.phoneNumber) {
+            {{ user.phoneNumber }}
+            @if (user.phoneNumberVerified) {
+              <span class="verified-badge">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                  <circle cx="5.5" cy="5.5" r="4.5" fill="currentColor" opacity=".15"/>
+                  <path d="M3 5.5L5 7.5L8.5 4"
+                        stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vérifié
+              </span>
+            }
+          } @else {
+            <span class="empty-value">—</span>
+          }
+        </dd>
+      </div>
+
+    </dl>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 2 — ACCOUNT
+  ========================================================================== -->
+  <section class="info-section">
+    <h3 class="section-title">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M5 3V1M11 3V1M2 7H14"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Compte
+    </h3>
+
+    <dl class="info-grid">
+
+      <div class="info-row">
+        <dt class="info-label">Créé le</dt>
+        <dd class="info-value">
+          {{ user.createdAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+        </dd>
+      </div>
+
+      <div class="info-row">
+        <dt class="info-label">Activé le</dt>
+        <dd class="info-value">
+          @if (user.activatedAt) {
+            {{ user.activatedAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+          } @else {
+            <span class="empty-value">Jamais activé</span>
+          }
+        </dd>
+      </div>
+
+      @if (user.deactivatedAt) {
+        <div class="info-row">
+          <dt class="info-label">Désactivé le</dt>
+          <dd class="info-value info-value--warning">
+            {{ user.deactivatedAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+          </dd>
+        </div>
+      }
+
+      <div class="info-row">
+        <dt class="info-label">Rôles</dt>
+        <dd class="info-value">
+          <div class="roles-list">
+            @for (role of user.userRoles; track role) {
+              <span class="role-badge" [class]="roleBadgeClass(role)">
+                {{ roleLabels[role] }}
+              </span>
+            }
+          </div>
+        </dd>
+      </div>
+
+      @if (user.deviceCount !== null) {
+        <div class="info-row">
+          <dt class="info-label">Appareils enregistrés</dt>
+          <dd class="info-value">{{ user.deviceCount }}</dd>
+        </div>
+      }
+
+    </dl>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 3 — SECURITY
+  ========================================================================== -->
+  <section class="info-section">
+    <h3 class="section-title">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 2L3 4.5V9C3 12 5.5 14.5 8 15C10.5 14.5 13 12 13 9V4.5L8 2Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      Sécurité
+    </h3>
+
+    <dl class="info-grid">
+
+      <div class="info-row">
+        <dt class="info-label">Double authentification</dt>
+        <dd class="info-value">
+          @if (user.twoFactorEnabled) {
+            <span class="flag-badge flag-badge--on">Activée</span>
+          } @else {
+            <span class="flag-badge flag-badge--off">Désactivée</span>
+          }
+        </dd>
+      </div>
+
+      <div class="info-row">
+        <dt class="info-label">Changement mdp requis</dt>
+        <dd class="info-value">
+          @if (user.mustChangePassword) {
+            <span class="flag-badge flag-badge--warn">Oui</span>
+          } @else {
+            <span class="flag-badge flag-badge--neutral">Non</span>
+          }
+        </dd>
+      </div>
+
+    </dl>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 4 — ADMIN DEACTIVATION AUDIT (conditional)
+       Rendered only when the account was deactivated by an administrator.
+  ========================================================================== -->
+  @if (user.adminDeactivationReason) {
+    <app-admin-deactivation-audit [user]="user" />
+  }
+
+</div>
