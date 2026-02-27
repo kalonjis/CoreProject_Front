@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AdminStatsApiService } from '../../services/admin-stats-api.service';
+import { AdminStatsApiService } from '../../users/services/admin-stats-api.service';
 import { DeviceStats } from '../../models/device-stats.model';
 
 /**

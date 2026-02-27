@@ -9,7 +9,7 @@ import { DeviceUtilsService } from '../../../shared/services/device-utils.servic
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import { DeviceDetailComponent } from '../../devices/device-detail/device-detail.component';
 import {AdminDeviceApiService} from '../../admin/services/admin-device-api.service';
-import {AdminUserApiService} from '../../admin/services/admin-user-api.service';
+import {AdminUserApiService} from '../../admin/users/services/admin-user-api.service';
 
 @Component({
   selector: 'app-admin-device-list',

@@ -12,7 +12,7 @@ import { UserRole } from '../../../../data/models/user/user-role';
 import { FormsModule } from '@angular/forms';
 import { DeviceUtilsService } from '../../../../shared/services/device-utils.service';
 import { AuthFacade } from '../../../../core/auth';
-import { AdminUserApiService } from '../../services/admin-user-api.service';
+import { AdminUserApiService } from '../services/admin-user-api.service';
 import { AdminDeviceApiService } from '../../services/admin-device-api.service';
 import { UserLogsComponent } from '../../../activity-logs';
 

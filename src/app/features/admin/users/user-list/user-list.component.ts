@@ -1,22 +1,33 @@
+// src/app/features/admin/users/user-list/user-list.component.ts
+
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
 import { FeedbackComponent } from '../../../../shared/feedback/feedback.component';
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
-import { HttpErrorResponse } from '@angular/common/http';
 import { UserRole } from '../../../../data/models/user/user-role';
-import { ConfirmDialogService } from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
-import { AdminUserApiService } from '../../services/admin-user-api.service';
-import {AdminUserDTO} from '../../models/admin-user-dto';
+import { AdminUserFacade } from '../services/admin-user-facade.service';
+import { AdminUser } from '../models';
 
-interface PaginationInfo {
-  totalPages: number;
-  totalElements: number;
-  pageNumber: number;
-  pageSize: number;
-}
-
+/**
+ * User list component for the admin section.
+ *
+ * Displays a paginated, searchable table of all platform users.
+ * Delegates all state and HTTP concerns to {@link AdminUserFacade}.
+ *
+ * Features:
+ * - Simple full-text search (username, email, firstname, lastname, phone)
+ * - Advanced criteria search (per-field filters, collapsible)
+ * - Pagination with configurable page size
+ * - Role badge display with hierarchy-aware top-role resolution
+ * - Active / inactive status indicator
+ *
+ * Navigation:
+ * - Row click → /admin/users/:publicId (detail view)
+ * - "New user" button → /admin/users/new
+ */
 @Component({
   selector: 'app-user-list',
   standalone: true,
@@ -25,210 +36,175 @@ interface PaginationInfo {
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent extends FeedbackBase implements OnInit {
-  private adminUserApi = inject(AdminUserApiService);
-  private fb = inject(FormBuilder);
-  private confirmDialogService: ConfirmDialogService = inject(ConfirmDialogService);
 
-  // État de chargement
-  isLoading = signal<boolean>(true);
+  // ===========================================================================
+  // Dependencies
+  // ===========================================================================
 
-  // Données des utilisateurs (now using AdminUserDTO)
-  users = signal<AdminUserDTO[]>([]);
-  pagination = signal<PaginationInfo>({
-    totalPages: 0,
-    totalElements: 0,
-    pageNumber: 0,
-    pageSize: 20
+  protected readonly facade = inject(AdminUserFacade);
+  private readonly fb     = inject(FormBuilder);
+
+  // ===========================================================================
+  // Facade signals (exposed to template)
+  // ===========================================================================
+
+  readonly users      = this.facade.users;
+  readonly pagination = this.facade.pagination;
+  readonly isLoading  = this.facade.isLoadingList;
+  readonly listError  = this.facade.listError;
+
+  // ===========================================================================
+  // Local UI state
+  // ===========================================================================
+
+  readonly showAdvancedSearch = signal(false);
+
+  searchForm: FormGroup = this.fb.group({
+    searchQuery: [''],
+    username:    [''],
+    firstname:   [''],
+    lastname:    [''],
+    email:       [''],
+    phoneNumber: [''],
   });
 
-  // Interface d'administration
-  searchForm: FormGroup;
-  showAdvancedSearch = signal(false);
-
-  constructor() {
-    super();
-    this.searchForm = this.fb.group({
-      searchQuery: [''],
-      username: [''],
-      firstname: [''],
-      lastname: [''],
-      email: [''],
-      phoneNumber: ['']
-    });
-  }
+  // ===========================================================================
+  // Lifecycle
+  // ===========================================================================
 
   ngOnInit(): void {
-    this.loadUsers();
+    this.facade.loadPage();
   }
 
-  loadUsers(page = 0): void {
-    this.isLoading.set(true);
+  // ===========================================================================
+  // Search
+  // ===========================================================================
 
-    this.adminUserApi.getAllUsers(page, this.pagination().pageSize)
-      .subscribe({
-        next: (response) => {
-          this.processUserResponse(response);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-        }
-      });
-  }
-
+  /**
+   * Runs a full-text search across all user fields.
+   * Falls back to loading the full list when the query is empty.
+   */
   searchUsers(): void {
-    const searchQuery = this.searchForm.get('searchQuery')?.value?.trim();
-
-    if (!searchQuery) {
-      this.loadUsers();
+    const query = this.searchForm.get('searchQuery')?.value?.trim();
+    if (!query) {
+      this.facade.loadPage();
       return;
     }
-
-    this.isLoading.set(true);
-
-    this.adminUserApi.searchUsers(searchQuery, 0, this.pagination().pageSize)
-      .subscribe({
-        next: (response) => {
-          this.processUserResponse(response);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-        }
-      });
-  }
-
-  advancedSearch(): void {
-    const criteria = {
-      username: this.searchForm.get('username')?.value?.trim(),
-      firstname: this.searchForm.get('firstname')?.value?.trim(),
-      lastname: this.searchForm.get('lastname')?.value?.trim(),
-      email: this.searchForm.get('email')?.value?.trim(),
-      phoneNumber: this.searchForm.get('phoneNumber')?.value?.trim()
-    };
-
-    // Check if at least one criterion is provided
-    const hasAnyCriteria = Object.values(criteria).some(val => val);
-
-    if (!hasAnyCriteria) {
-      this.loadUsers();
-      return;
-    }
-
-    this.isLoading.set(true);
-
-    this.adminUserApi.searchUsersByCriteria(criteria, 0, this.pagination().pageSize)
-      .subscribe({
-        next: (response) => {
-          this.processUserResponse(response);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-        }
-      });
-  }
-
-  changePage(newPage: number): void {
-    if (newPage < 0 || newPage >= this.pagination().totalPages) {
-      return;
-    }
-
-    this.loadUsers(newPage);
-  }
-
-  toggleAdvancedSearch(): void {
-    this.showAdvancedSearch.update(val => !val);
-
-    if (!this.showAdvancedSearch()) {
-      // Reset advanced search fields but not simple search
-      this.searchForm.patchValue({
-        username: '',
-        firstname: '',
-        lastname: '',
-        email: '',
-        phoneNumber: ''
-      });
-    }
-  }
-
-  resetSearch(): void {
-    this.searchForm.reset();
-    this.loadUsers();
-  }
-
-  getRoleClass(role: string): string {
-    switch (role) {
-      case UserRole.SUPER_ADMIN:
-        return 'role-super-admin';
-      case UserRole.ADMIN:
-        return 'role-admin';
-      case UserRole.MODERATOR:
-        return 'role-moderator';
-      case UserRole.USER:
-        return 'role-user';
-      case UserRole.GUEST:
-        return 'role-guest';
-      default:
-        return '';
-    }
-  }
-
-  getTopRole(roles: UserRole[]): UserRole {
-    // Find role with highest authority (lowest in enumeration)
-    return roles.reduce((top, current) => {
-      const topIndex = Object.values(UserRole).indexOf(top);
-      const currentIndex = Object.values(UserRole).indexOf(current);
-      return topIndex < currentIndex ? top : current;
-    }, UserRole.GUEST);
+    this.facade.search(query);
   }
 
   /**
-   * Format date for display
+   * Runs a field-by-field criteria search.
+   * Falls back to loading the full list when all criteria are empty.
    */
-  formatDate(date?: Date): string {
-    if (!date) return '-';
+  advancedSearch(): void {
+    const criteria = {
+      username:    this.searchForm.get('username')?.value?.trim() || undefined,
+      firstname:   this.searchForm.get('firstname')?.value?.trim() || undefined,
+      lastname:    this.searchForm.get('lastname')?.value?.trim() || undefined,
+      email:       this.searchForm.get('email')?.value?.trim() || undefined,
+      phoneNumber: this.searchForm.get('phoneNumber')?.value?.trim() || undefined,
+    };
+
+    const hasAnyCriteria = Object.values(criteria).some(Boolean);
+    if (!hasAnyCriteria) {
+      this.facade.loadPage();
+      return;
+    }
+
+    this.facade.searchByCriteria(criteria);
+  }
+
+  /** Resets the entire search form and reloads the full user list. */
+  resetSearch(): void {
+    this.searchForm.reset();
+    this.facade.loadPage();
+  }
+
+  // ===========================================================================
+  // Pagination
+  // ===========================================================================
+
+  /**
+   * Navigates to the given page index.
+   * Guards against out-of-range values.
+   *
+   * @param page Zero-based target page index
+   */
+  changePage(page: number): void {
+    const { totalPages, size } = this.pagination();
+    if (page < 0 || page >= totalPages) return;
+    this.facade.loadPage(page, size);
+  }
+
+  // ===========================================================================
+  // Advanced search toggle
+  // ===========================================================================
+
+  toggleAdvancedSearch(): void {
+    this.showAdvancedSearch.update(v => !v);
+
+    if (!this.showAdvancedSearch()) {
+      this.searchForm.patchValue({
+        username: '', firstname: '', lastname: '', email: '', phoneNumber: '',
+      });
+    }
+  }
+
+  // ===========================================================================
+  // Display helpers
+  // ===========================================================================
+
+  /**
+   * Maps a {@link UserRole} to its CSS modifier class for the role badge.
+   *
+   * @param role Role value
+   */
+  getRoleClass(role: UserRole): string {
+    const map: Record<UserRole, string> = {
+      [UserRole.SUPER_ADMIN]: 'role-super-admin',
+      [UserRole.ADMIN]:       'role-admin',
+      [UserRole.MODERATOR]:   'role-moderator',
+      [UserRole.USER]:        'role-user',
+      [UserRole.GUEST]:       'role-guest',
+    };
+    return map[role] ?? '';
+  }
+
+  /**
+   * Returns the highest-authority role from a set of roles.
+   * Authority order mirrors the {@link UserRole} enum declaration.
+   *
+   * @param roles Set of roles assigned to a user
+   */
+  getTopRole(roles: UserRole[]): UserRole {
+    const order = Object.values(UserRole);
+    return roles.reduce((top, cur) =>
+        order.indexOf(cur) < order.indexOf(top) ? cur : top
+      , UserRole.GUEST);
+  }
+
+  /**
+   * Formats an ISO date string for display in the fr-BE locale.
+   * Returns '—' when the value is absent.
+   *
+   * @param date ISO 8601 string or null/undefined
+   */
+  formatDate(date?: string | null): string {
+    if (!date) return '—';
     return new Date(date).toLocaleDateString('fr-BE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+      year: 'numeric', month: 'short', day: 'numeric',
     });
   }
 
-  protected processUserResponse(response: any): void {
-    if (response && response.content) {
-      this.users.set(response.content);
-
-      // Extract pagination information
-      this.pagination.set({
-        totalPages: response.totalPages || 0,
-        totalElements: response.totalElements || 0,
-        pageNumber: response.number || 0,
-        pageSize: response.size || 20
-      });
-    } else {
-      this.users.set([]);
-      this.pagination.set({
-        totalPages: 0,
-        totalElements: 0,
-        pageNumber: 0,
-        pageSize: 20
-      });
-    }
-
-    this.isLoading.set(false);
-  }
-
-  protected handleError(error: HttpErrorResponse): void {
-    this.isLoading.set(false);
-
-    let errorMessage = 'Une erreur est survenue lors du chargement des utilisateurs.';
-
-    if (error.error?.message) {
-      errorMessage = error.error.message;
-    } else if (error.status === 403) {
-      errorMessage = 'Vous n\'avez pas les permissions nécessaires pour accéder à cette ressource.';
-    } else if (error.status === 0) {
-      errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
-    }
-
-    this.displayError(errorMessage);
+  /**
+   * Builds a display name from a user record.
+   * Falls back to the username when firstname/lastname are not set.
+   *
+   * @param user AdminUser record
+   */
+  getDisplayName(user: AdminUser): string {
+    const full = [user.firstname, user.lastname].filter(Boolean).join(' ');
+    return full || user.username;
   }
 }

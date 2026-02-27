@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserStats } from '../models/user-stats.model';
-import { DeviceStats } from '../models/device-stats.model';
+import { UserStats } from '../../models/user-stats.model';
+import { DeviceStats } from '../../models/device-stats.model';
 
 /**
  * API service for admin statistics operations.

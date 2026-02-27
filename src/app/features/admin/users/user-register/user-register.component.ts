@@ -7,7 +7,7 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { FeedbackBase } from '../../../../shared/feedback/tools/feedback.base';
 import { UserRole } from '../../../../data/models/user/user-role';
 import {AuthFacade} from '../../../../core/auth';
-import {AdminUserApiService} from '../../services/admin-user-api.service';
+import {AdminUserApiService} from '../services/admin-user-api.service';
 import {combineLatest, startWith} from 'rxjs';
 
 @Component({
