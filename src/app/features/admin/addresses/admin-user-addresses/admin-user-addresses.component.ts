@@ -21,7 +21,7 @@ import {
 } from '../../../../shared/address';
 
 import { AdminAddressApiService } from '../services/admin-address-api.service';
-import { AdminUserApiService } from '../../services/admin-user-api.service';
+import { AdminUserApiService } from '../../users/services/admin-user-api.service';
 import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
 import { ConfirmDialogService } from '../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { UserDTO } from '../../../../data/models/user/user-dto';

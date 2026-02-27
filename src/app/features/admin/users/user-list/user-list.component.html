@@ -1,5 +1,10 @@
+<!-- src/app/features/admin/users/user-list/user-list.component.html -->
+
 <div class="user-list-container">
-  <!-- Header -->
+
+  <!-- =========================================================================
+       HEADER
+  ========================================================================== -->
   <div class="page-header">
     <div class="header-content">
       <div class="header-left">
@@ -11,7 +16,9 @@
         </button>
         <div class="header-title-group">
           <h1 class="page-title">Gestion des utilisateurs</h1>
-          <p class="page-subtitle">{{ pagination().totalElements }} utilisateur{{ pagination().totalElements > 1 ? 's' : '' }}</p>
+          <p class="page-subtitle">
+            {{ pagination().totalElements }} utilisateur{{ pagination().totalElements > 1 ? 's' : '' }}
+          </p>
         </div>
       </div>
       <div class="header-right">
@@ -25,20 +32,38 @@
     </div>
   </div>
 
-  <!-- Feedback messages -->
+  <!-- =========================================================================
+       FEEDBACK
+  ========================================================================== -->
   @if (showFeedback()) {
     <app-feedback
       [message]="feedbackMessage()"
       [type]="feedbackType()"
       [buttonText]="buttonText()"
       [timeout]="feedbackTimeout()"
-      (dismissed)="clearFeedback()">
+      (buttonClicked)="clearFeedback()">
     </app-feedback>
   }
 
-  <!-- Search Section -->
+  <!-- List-level error (network / server) -->
+  @if (listError()) {
+    <div class="error-banner">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 6V10M10 14H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>{{ listError() }}</span>
+      <button class="error-retry" (click)="facade.loadPage()">Réessayer</button>
+    </div>
+  }
+
+  <!-- =========================================================================
+       SEARCH
+  ========================================================================== -->
   <div class="search-card">
     <form [formGroup]="searchForm">
+
+      <!-- Simple search -->
       <div class="search-header">
         <h2 class="search-title">Rechercher</h2>
         <button type="button" class="btn-toggle" (click)="toggleAdvancedSearch()">
@@ -50,24 +75,22 @@
       </div>
 
       @if (!showAdvancedSearch()) {
-        <!-- Simple Search -->
         <div class="simple-search">
-          <div class="search-input-group">
+          <div class="search-input-wrapper">
             <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/>
-              <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
             <input
               type="text"
               formControlName="searchQuery"
-              placeholder="Rechercher par nom, email, téléphone..."
               class="search-input"
-              (keyup.enter)="searchUsers()"
-            />
+              placeholder="Rechercher par nom, email, username..."
+              (keyup.enter)="searchUsers()">
             @if (searchForm.get('searchQuery')?.value) {
-              <button type="button" class="btn-clear" (click)="resetSearch()">
+              <button type="button" class="clear-btn" (click)="resetSearch()">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
             }
@@ -76,29 +99,31 @@
             Rechercher
           </button>
         </div>
-      } @else {
-        <!-- Advanced Search -->
+      }
+
+      <!-- Advanced search -->
+      @if (showAdvancedSearch()) {
         <div class="advanced-search">
           <div class="search-grid">
             <div class="form-field">
-              <label for="username">Nom d'utilisateur</label>
-              <input type="text" id="username" formControlName="username" placeholder="Rechercher...">
+              <label>Username</label>
+              <input type="text" formControlName="username" placeholder="Ex: john_doe">
             </div>
             <div class="form-field">
-              <label for="firstname">Prénom</label>
-              <input type="text" id="firstname" formControlName="firstname" placeholder="Rechercher...">
+              <label>Prénom</label>
+              <input type="text" formControlName="firstname" placeholder="Ex: John">
             </div>
             <div class="form-field">
-              <label for="lastname">Nom</label>
-              <input type="text" id="lastname" formControlName="lastname" placeholder="Rechercher...">
+              <label>Nom</label>
+              <input type="text" formControlName="lastname" placeholder="Ex: Doe">
             </div>
             <div class="form-field">
-              <label for="email">Email</label>
-              <input type="text" id="email" formControlName="email" placeholder="Rechercher...">
+              <label>Email</label>
+              <input type="email" formControlName="email" placeholder="Ex: john@example.com">
             </div>
             <div class="form-field">
-              <label for="phoneNumber">Téléphone</label>
-              <input type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="Rechercher...">
+              <label>Téléphone</label>
+              <input type="text" formControlName="phoneNumber" placeholder="Ex: +32 ...">
             </div>
           </div>
           <div class="search-actions">
@@ -111,16 +136,21 @@
           </div>
         </div>
       }
+
     </form>
   </div>
 
-  <!-- Users Content -->
+  <!-- =========================================================================
+       USERS CONTENT
+  ========================================================================== -->
   <div class="users-content">
+
     @if (isLoading()) {
       <div class="loading-state">
         <div class="spinner"></div>
         <p>Chargement des utilisateurs...</p>
       </div>
+
     } @else if (users().length === 0) {
       <div class="empty-state">
         <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
@@ -130,11 +160,14 @@
         <h3>Aucun utilisateur trouvé</h3>
         <p>Essayez de modifier vos critères de recherche</p>
       </div>
+
     } @else {
-      <!-- Users Grid -->
+
+      <!-- Users grid -->
       <div class="users-grid">
         @for (user of users(); track user.publicId) {
           <div class="user-card" [routerLink]="['/admin/users', user.publicId]">
+
             <div class="user-card-header">
               <div class="user-avatar">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -150,10 +183,12 @@
 
             <div class="user-card-body">
               <div class="user-info">
-                <h3 class="user-name">{{ user.username }}</h3>
+                <!-- Display name (fullname when available, fallback to username) -->
+                <h3 class="user-name">{{ getDisplayName(user) }}</h3>
                 <p class="user-email">{{ user.email }}</p>
+                <!-- Show username as secondary info when fullname is shown -->
                 @if (user.firstname || user.lastname) {
-                  <p class="user-fullname">{{ user.firstname }} {{ user.lastname }}</p>
+                  <p class="user-fullname">{{ user.username }}</p>
                 }
               </div>
 
@@ -189,59 +224,74 @@
                       Email
                     </span>
                   }
+                  <!-- Admin-deactivated indicator -->
+                  @if (!user.enabled && user.adminDeactivationReason) {
+                    <span class="info-badge danger" title="Désactivé par un administrateur">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M4.5 4.5L9.5 9.5M9.5 4.5L4.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                      Admin
+                    </span>
+                  }
                 </div>
-              </div>
-
-              <div class="user-footer">
-                <div class="user-date">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M7 4V7L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
-                  <span>{{ formatDate(user.createdAt) }}</span>
-                </div>
-                @if (user.phoneNumber) {
-                  <div class="user-phone">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M3 2H5L6 5L4.5 6C5.5 8 6.5 9 8.5 9.5L10 8L13 9V11C13 11.5 12.5 12 12 12C6.5 12 2 7.5 2 2C2 1.5 2.5 1 3 1Z" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                    <span>{{ user.phoneNumber }}</span>
-                  </div>
-                }
               </div>
             </div>
+
+            <div class="user-footer">
+              <div class="user-date">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M7 4V7L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>{{ formatDate(user.createdAt) }}</span>
+              </div>
+              @if (user.phoneNumber) {
+                <div class="user-phone">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 2H5L6 5L4.5 6C5.5 8 6.5 9 8.5 9.5L10 8L13 9V11C13 11.5 12.5 12 12 12C6.5 12 2 7.5 2 2C2 1.5 2.5 1 3 1Z" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  <span>{{ user.phoneNumber }}</span>
+                </div>
+              }
+            </div>
+
           </div>
         }
       </div>
 
-      <!-- Pagination -->
+      <!-- =====================================================================
+           PAGINATION
+      ====================================================================== -->
       @if (pagination().totalPages > 1) {
         <div class="pagination">
           <button
             class="pagination-btn"
-            (click)="changePage(pagination().pageNumber - 1)"
-            [disabled]="pagination().pageNumber === 0">
+            (click)="changePage(pagination().page - 1)"
+            [disabled]="pagination().first">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
 
           <div class="pagination-info">
-            <span class="page-current">{{ pagination().pageNumber + 1 }}</span>
+            <span class="page-current">{{ pagination().page + 1 }}</span>
             <span class="page-separator">/</span>
             <span class="page-total">{{ pagination().totalPages }}</span>
           </div>
 
           <button
             class="pagination-btn"
-            (click)="changePage(pagination().pageNumber + 1)"
-            [disabled]="pagination().pageNumber >= pagination().totalPages - 1">
+            (click)="changePage(pagination().page + 1)"
+            [disabled]="pagination().last">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
         </div>
       }
+
     }
   </div>
+
 </div>

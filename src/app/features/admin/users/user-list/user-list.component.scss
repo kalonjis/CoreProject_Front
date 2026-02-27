@@ -132,6 +132,50 @@ $radius-lg: 16px;
   }
 }
 
+
+// ============================================================================
+// ERROR BANNER
+// ============================================================================
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: rgba($danger, 0.06);
+  border: 1px solid rgba($danger, 0.25);
+  border-radius: $radius-md;
+  color: darken($danger, 5%);
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  .error-retry {
+    padding: 0.375rem 0.875rem;
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: $radius-sm;
+    color: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba($danger, 0.08);
+    }
+  }
+}
+
 // ============================================================================
 // SEARCH CARD
 // ============================================================================
@@ -610,6 +654,12 @@ $radius-lg: 16px;
         background: rgba($success, 0.1);
         color: $success;
         border: 1px solid rgba($success, 0.3);
+      }
+
+      &.danger {
+        background: rgba($danger, 0.08);
+        color: darken($danger, 5%);
+        border: 1px solid rgba($danger, 0.25);
       }
 
       &.verified {

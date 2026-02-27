@@ -10,8 +10,8 @@ import {
   AdminUserStats,
   PageResponse,
   DeactivationCategoryItem,
-} from '../users/models';
-import {UserRole} from '../../../data/models/user/user-role';
+} from '../models';
+import {UserRole} from '../../../../data/models/user/user-role';
 
 const BASE_URL = '/api/admin/users';
 
@@ -105,7 +105,7 @@ export class AdminUserApiService {
    *
    * @param publicId  The user's public UUID
    */
-  getById(publicId: string): Observable<AdminUser> {
+  getByPublicId(publicId: string): Observable<AdminUser> {
     return this.http.get<AdminUser>(`${BASE_URL}/${publicId}`);
   }
 

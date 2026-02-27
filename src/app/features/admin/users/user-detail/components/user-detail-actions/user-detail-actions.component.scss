@@ -1,0 +1,223 @@
+// src/app/features/admin/users/user-detail/components/user-detail-actions/user-detail-actions.component.scss
+
+$primary:      #6366f1;
+$success:      #10b981;
+$warning:      #f59e0b;
+$danger:       #ef4444;
+$gray-100:     #f3f4f6;
+$gray-200:     #e5e7eb;
+$gray-400:     #9ca3af;
+$gray-500:     #6b7280;
+$gray-600:     #4b5563;
+$gray-700:     #374151;
+$gray-900:     #111827;
+
+$radius-md:    12px;
+$radius-sm:    8px;
+
+// ============================================================================
+// PANEL SHELL
+// ============================================================================
+
+.actions-panel {
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.actions-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $gray-500;
+  margin: 0;
+}
+
+// ============================================================================
+// SELF NOTICE
+// ============================================================================
+
+.self-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: $gray-100;
+  border-radius: $radius-sm;
+  font-size: 0.8rem;
+  color: $gray-600;
+
+  svg { flex-shrink: 0; }
+}
+
+// ============================================================================
+// ACTION GROUPS
+// ============================================================================
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $gray-400;
+    margin: 0;
+  }
+
+  &--danger {
+    padding-top: 1rem;
+    border-top: 1px solid rgba($danger, 0.15);
+  }
+}
+
+.super-admin-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: rgba($danger, 0.08);
+  color: $danger;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// ============================================================================
+// ACTION BUTTONS
+// ============================================================================
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  // Variants
+  &--success {
+    background: rgba($success, 0.1);
+    color: $success;
+    border-color: rgba($success, 0.3);
+
+    &:not(:disabled):hover {
+      background: $success;
+      color: white;
+      box-shadow: 0 4px 12px rgba($success, 0.3);
+    }
+  }
+
+  &--warning {
+    background: rgba($warning, 0.1);
+    color: darken($warning, 10%);
+    border-color: rgba($warning, 0.3);
+
+    &:not(:disabled):hover {
+      background: $warning;
+      color: white;
+      box-shadow: 0 4px 12px rgba($warning, 0.3);
+    }
+  }
+
+  &--danger {
+    background: $danger;
+    color: white;
+    border-color: $danger;
+
+    &:not(:disabled):hover {
+      background: darken($danger, 8%);
+      box-shadow: 0 4px 12px rgba($danger, 0.35);
+    }
+  }
+
+  &--danger-outline {
+    background: transparent;
+    color: $danger;
+    border-color: rgba($danger, 0.4);
+
+    &:not(:disabled):hover {
+      background: rgba($danger, 0.06);
+      border-color: $danger;
+    }
+  }
+}
+
+// ============================================================================
+// ACTION HINTS
+// ============================================================================
+
+.action-hint {
+  font-size: 0.75rem;
+  color: $gray-400;
+  margin: 0;
+  line-height: 1.4;
+
+  &--danger {
+    color: rgba($danger, 0.7);
+  }
+}
+
+// ============================================================================
+// LOCKED STATE  (SUPER_ADMIN target)
+// ============================================================================
+
+.action-locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: $gray-100;
+  border-radius: $radius-sm;
+  font-size: 0.8rem;
+  color: $gray-500;
+
+  svg { flex-shrink: 0; }
+}
+
+// ============================================================================
+// SPINNER (inline in button while mutating)
+// ============================================================================
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

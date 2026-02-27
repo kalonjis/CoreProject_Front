@@ -1,0 +1,273 @@
+// src/app/features/admin/users/user-detail/user-detail-container.component.scss
+
+// Variables (mirrors user-list)
+$primary:      #6366f1;
+$primary-dark: #4f46e5;
+$danger:       #ef4444;
+$gray-50:      #f9fafb;
+$gray-100:     #f3f4f6;
+$gray-200:     #e5e7eb;
+$gray-300:     #d1d5db;
+$gray-400:     #9ca3af;
+$gray-500:     #6b7280;
+$gray-600:     #4b5563;
+$gray-700:     #374151;
+$gray-900:     #111827;
+
+$radius-sm:    8px;
+$radius-md:    12px;
+$radius-lg:    16px;
+
+// ============================================================================
+// SHELL
+// ============================================================================
+
+.user-detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+// ============================================================================
+// BREADCRUMB
+// ============================================================================
+
+.detail-breadcrumb {
+  margin-bottom: 1.5rem;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  color: $gray-700;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-300;
+    transform: translateX(-2px);
+  }
+}
+
+// ============================================================================
+// LOADING / ERROR STATES
+// ============================================================================
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  gap: 1.5rem;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid $gray-200;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    color: $gray-600;
+    font-weight: 500;
+  }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  gap: 1rem;
+  text-align: center;
+  color: $gray-400;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $gray-900;
+    margin: 0;
+  }
+
+  p {
+    color: $gray-500;
+    margin: 0;
+    max-width: 400px;
+  }
+
+  .btn-retry {
+    margin-top: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background: $primary;
+    border: none;
+    border-radius: $radius-md;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $primary-dark;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ============================================================================
+// MAIN LAYOUT  (tabs + sidebar)
+// ============================================================================
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+  margin-top: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================================================
+// TABS
+// ============================================================================
+
+.detail-main {
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid $gray-200;
+  overflow-x: auto;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar { height: 3px; }
+  &::-webkit-scrollbar-thumb {
+    background: $gray-200;
+    border-radius: 2px;
+  }
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: $gray-500;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: $primary;
+    background: $gray-50;
+  }
+
+  &.active {
+    color: $primary;
+    border-bottom-color: $primary;
+    background: rgba($primary, 0.03);
+    font-weight: 600;
+  }
+
+  .tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    background: $gray-100;
+    color: $gray-600;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+.tab-content {
+  padding: 1.5rem;
+  min-height: 400px;
+}
+
+// ============================================================================
+// SIDEBAR
+// ============================================================================
+
+.detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1.5rem;
+
+  @media (max-width: 1024px) {
+    position: static;
+  }
+}
+
+// ============================================================================
+// MUTATION ERROR  (below sidebar actions panel)
+// ============================================================================
+
+.mutation-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  background: rgba($danger, 0.06);
+  border: 1px solid rgba($danger, 0.25);
+  border-radius: $radius-md;
+  color: darken($danger, 5%);
+  font-size: 0.875rem;
+
+  svg { flex-shrink: 0; margin-top: 1px; }
+
+  span { flex: 1; }
+
+  .dismiss-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    padding: 0;
+    line-height: 1;
+
+    &:hover { opacity: 1; }
+  }
+}

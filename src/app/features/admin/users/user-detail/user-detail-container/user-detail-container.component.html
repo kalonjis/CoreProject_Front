@@ -1,0 +1,149 @@
+<!-- src/app/features/admin/users/user-detail/user-detail-container.component.html -->
+
+<div class="user-detail-container">
+
+  <!-- =========================================================================
+       BACK LINK
+  ========================================================================== -->
+  <div class="detail-breadcrumb">
+    <a routerLink="/admin/users/list" class="btn-back">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M11 14L6 9L11 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Retour à la liste
+    </a>
+  </div>
+
+  <!-- =========================================================================
+       LOADING
+  ========================================================================== -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement du profil utilisateur...</p>
+    </div>
+  }
+
+  <!-- =========================================================================
+       ERROR
+  ========================================================================== -->
+  @else if (userError()) {
+    <div class="error-state">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+        <path d="M24 14V26M24 34H24.02" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h3>Impossible de charger l'utilisateur</h3>
+      <p>{{ userError() }}</p>
+      <button class="btn-retry" (click)="retry()">Réessayer</button>
+    </div>
+  }
+
+  <!-- =========================================================================
+       CONTENT
+  ========================================================================== -->
+  @else if (isReady()) {
+
+    <!-- Header — avatar, display name, status badge -->
+    <app-user-detail-header [user]="user()!" />
+
+    <!-- Main layout: tabs on the left, actions panel on the right -->
+    <div class="detail-layout">
+
+      <!-- =====================================================================
+           TABS
+      ====================================================================== -->
+      <div class="detail-main">
+
+        <!-- Tab navigation -->
+        <div class="tabs-nav">
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'info'"
+            (click)="setActiveTab('info')">
+            Informations
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'devices'"
+            (click)="setActiveTab('devices')">
+            Appareils
+            @if (user()!.deviceCount) {
+              <span class="tab-badge">{{ user()!.deviceCount }}</span>
+            }
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'activity'"
+            (click)="setActiveTab('activity')">
+            Activité
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'permissions'"
+            (click)="setActiveTab('permissions')">
+            Autorisations
+          </button>
+        </div>
+
+        <!-- Tab content -->
+        <div class="tab-content">
+
+          @if (activeTab() === 'info') {
+            <app-user-info-tab [user]="user()!" />
+          }
+
+          @if (activeTab() === 'devices') {
+            <app-user-devices-tab [publicUserId]="user()!.publicId" />
+          }
+
+          @if (activeTab() === 'activity') {
+            <!-- Reuses the existing shared component directly -->
+            <app-user-logs [publicUserId]="user()!.publicId" />
+          }
+
+          @if (activeTab() === 'permissions') {
+            <app-user-permissions-tab [user]="user()!" />
+          }
+
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           ACTIONS PANEL (sticky sidebar)
+      ====================================================================== -->
+      <aside class="detail-sidebar">
+        <app-user-detail-actions
+          [user]="user()!"
+          (deactivateRequested)="openDeactivateModal()"
+          (userDeleted)="onUserDeleted()" />
+
+        <!-- Mutation error displayed below the actions panel -->
+        @if (mutationError()) {
+          <div class="mutation-error">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5V8M8 11H8.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>{{ mutationError() }}</span>
+            <button class="dismiss-btn" (click)="facade.clearMutationError()">✕</button>
+          </div>
+        }
+      </aside>
+
+    </div>
+
+  }
+
+  <!-- =========================================================================
+       DEACTIVATION MODAL (portal-style, rendered at container level)
+  ========================================================================== -->
+  @if (showDeactivateModal() && user()) {
+    <app-admin-deactivate-modal
+      [publicId]="user()!.publicId"
+      [username]="user()!.username"
+      (confirmed)="onDeactivationConfirmed()"
+      (cancelled)="onDeactivationCancelled()" />
+  }
+
+</div>
