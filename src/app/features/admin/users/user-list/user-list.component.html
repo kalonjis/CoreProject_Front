@@ -75,8 +75,9 @@
       </div>
 
       @if (!showAdvancedSearch()) {
+        <!-- Remplacer "search-input-wrapper" par "search-input-group" -->
         <div class="simple-search">
-          <div class="search-input-wrapper">
+          <div class="search-input-group">   <!-- ← était "search-input-wrapper" -->
             <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
               <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
               <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -88,7 +89,7 @@
               placeholder="Rechercher par nom, email, username..."
               (keyup.enter)="searchUsers()">
             @if (searchForm.get('searchQuery')?.value) {
-              <button type="button" class="clear-btn" (click)="resetSearch()">
+              <button type="button" class="btn-clear" (click)="resetSearch()">  <!-- ← était "clear-btn" -->
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>

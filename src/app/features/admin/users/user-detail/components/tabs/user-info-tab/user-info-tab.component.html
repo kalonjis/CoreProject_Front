@@ -95,7 +95,7 @@
       <div class="info-row">
         <dt class="info-label">Créé le</dt>
         <dd class="info-value">
-          {{ user.createdAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+          {{ user.createdAt | date: 'dd MMM yyyy, HH:mm' }}
         </dd>
       </div>
 
@@ -103,7 +103,7 @@
         <dt class="info-label">Activé le</dt>
         <dd class="info-value">
           @if (user.activatedAt) {
-            {{ user.activatedAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+            {{ user.activatedAt | date: 'dd MMM yyyy, HH:mm' }}
           } @else {
             <span class="empty-value">Jamais activé</span>
           }
@@ -114,7 +114,7 @@
         <div class="info-row">
           <dt class="info-label">Désactivé le</dt>
           <dd class="info-value info-value--warning">
-            {{ user.deactivatedAt | date: 'dd MMM yyyy, HH:mm' : '' : 'fr' }}
+            {{ user.deactivatedAt | date: 'dd MMM yyyy, HH:mm' }}
           </dd>
         </div>
       }

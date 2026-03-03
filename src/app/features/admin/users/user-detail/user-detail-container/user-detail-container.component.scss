@@ -216,6 +216,44 @@ $radius-lg:    16px;
     font-size: 0.75rem;
     font-weight: 600;
   }
+  .tab-refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;         
+    padding: 0.4rem 0.875rem;
+    background: transparent;
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    color: $gray-500;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: $primary;
+      color: $primary;
+      background: rgba($primary, 0.05);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+
+    svg.spinning {
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 }
 
 .tab-content {
