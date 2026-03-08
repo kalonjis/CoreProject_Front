@@ -64,6 +64,7 @@ export class LoginContainerComponent extends FeedbackBase implements OnInit {
         // Navigation is handled by AuthFacade
       },
       error: (error: HttpErrorResponse) => {
+        console.error(error);
         this.isSubmitting.set(false);
         this.handleLoginError(error);
       }

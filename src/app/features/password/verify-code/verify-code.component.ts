@@ -11,7 +11,7 @@ import { PasswordApiService } from '../services/password-api.service';
 @Component({
   selector: 'app-verify-code',
   standalone: true,
-  imports: [CommonModule, RouterLink, CodeInputComponent, FeedbackComponent],
+  imports: [CommonModule, CodeInputComponent, FeedbackComponent],
   templateUrl: './verify-code.component.html',
   styleUrl: './verify-code.component.scss'
 })
@@ -76,7 +76,7 @@ export class VerifyCodeComponent extends FeedbackBase implements OnInit, OnDestr
     this.codeError.set(null);
     this.clearFeedback();
 
-    this.passwordApi.verifySmsCode({ verificationCode: code }).subscribe({
+    this.passwordApi.verifyCode({ verificationCode: code }).subscribe({
       next: () => {
         this.isVerifying.set(false);
         this.displaySuccess(

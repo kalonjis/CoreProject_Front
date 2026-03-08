@@ -134,6 +134,7 @@ export class ChangePasswordComponent extends FeedbackBase {
         }, 5000);
       },
       error: (error: HttpErrorResponse) => {
+        console.error(error);
         this.isSubmitting.set(false);
 
         // Afficher le message d'erreur

@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { PasswordApiService } from '../services/password-api.service';
-import { PasswordResetType } from '../models/password-request.model';
+import { PasswordOperationResponse } from '../models/password-response.model';
+
+type ResetMethod = 'EMAIL_LINK' | 'EMAIL_CODE' | 'SMS_CODE';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,60 +25,34 @@ export class ForgotPasswordComponent extends FeedbackBase {
   private readonly router = inject(Router);
   private readonly passwordApi = inject(PasswordApiService);
 
-  // Component state
   isSubmitting = signal(false);
   resetRequested = signal(false);
-  selectedMethod = signal<PasswordResetType>('EMAIL_LINK');
+  selectedMethod = signal<ResetMethod>('EMAIL_LINK');
 
-  // Form
   resetForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
 
-  /**
-   * Select notification method (EMAIL or SMS).
-   */
-  selectMethod(method: PasswordResetType): void {
+  selectMethod(method: ResetMethod): void {
     this.selectedMethod.set(method);
   }
 
-  /**
-   * Handle form submission.
-   */
   onSubmit(): void {
     if (this.resetForm.invalid) {
-      Object.keys(this.resetForm.controls).forEach(key => {
-        this.resetForm.get(key)?.markAsTouched();
-      });
+      Object.keys(this.resetForm.controls).forEach(k => this.resetForm.get(k)?.markAsTouched());
       return;
     }
 
-    const email = this.resetForm.value.email?.trim() || '';
+    const email = this.resetForm.value.email?.trim().toLowerCase() || '';
     if (!email) return;
 
     this.isSubmitting.set(true);
     this.clearFeedback();
 
-    this.passwordApi.forgotPassword({
-      email,
-      resetType: this.selectedMethod()
-    }).subscribe({
-      next: () => {
+    this.callApi(email).subscribe({
+      next: (response) => {
         this.isSubmitting.set(false);
-
-        if (this.selectedMethod() === 'SMS_CODE'|| this.selectedMethod() === 'EMAIL_CODE' ) {
-          // Redirect to SMS verification page
-          this.router.navigate(['/password/verify-code']);
-        } else {
-          // Show success message for email
-          this.resetRequested.set(true);
-          this.displaySuccess(
-            'Si un compte existe avec cette adresse e-mail, vous recevrez un lien de réinitialisation dans quelques instants.',
-            'Retour à la connexion',
-            null
-          );
-          this.buttonAction = () => this.router.navigate(['/auth/login']);
-        }
+        this.handleSuccess(response);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting.set(false);
@@ -84,19 +61,39 @@ export class ForgotPasswordComponent extends FeedbackBase {
     });
   }
 
-  /**
-   * Handle API errors.
-   */
-  private handleError(error: HttpErrorResponse): void {
-    let message = 'Une erreur est survenue. Veuillez réessayer.';
+  // =========================================================================
+  // PRIVATE
+  // =========================================================================
 
-    if (error.error?.message) {
-      message = error.error.message;
-    } else if (error.status === 429) {
-      message = 'Trop de tentatives. Veuillez réessayer dans quelques minutes.';
+  private callApi(email: string): Observable<PasswordOperationResponse> {
+    const request = { email };
+    switch (this.selectedMethod()) {
+      case 'EMAIL_LINK':  return this.passwordApi.forgotPasswordEmailLink(request);
+      case 'EMAIL_CODE':  return this.passwordApi.forgotPasswordEmailCode(request);
+      case 'SMS_CODE':    return this.passwordApi.forgotPasswordSmsCode(request);
+    }
+  }
+
+  private handleSuccess(response: PasswordOperationResponse): void {
+    const method = this.selectedMethod();
+
+    if (method === 'EMAIL_CODE' || method === 'SMS_CODE') {
+      this.router.navigate(['/password/verify-code']);
+      return;
     }
 
-    this.displayError(message, 'Réessayer');
-    this.buttonAction = () => this.clearFeedback();
+    // EMAIL_LINK — show confirmation in place
+    this.resetRequested.set(true);
+    this.displaySuccess(
+      response.message ?? 'Si un compte existe avec cette adresse e-mail, vous recevrez un lien de réinitialisation dans quelques instants.',
+      'Retour à la connexion',
+      null
+    );
+    this.buttonAction = () => this.router.navigate(['/auth/login']);
+  }
+
+  private handleError(error: HttpErrorResponse): void {
+    const message = error.error?.message ?? 'Une erreur est survenue. Veuillez réessayer.';
+    this.displayError(message);
   }
 }

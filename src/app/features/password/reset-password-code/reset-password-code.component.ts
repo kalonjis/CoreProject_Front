@@ -134,20 +134,21 @@ export class ResetPasswordCodeComponent extends FeedbackBase implements OnInit {
   /**
    * Handle API errors.
    */
+  /**
+   * Handles API errors from the password reset endpoint (EMAIL_LINK flow).
+   *
+   * <p>404 and 498 (expired token) are handled directly in {@link onSubmit}
+   * before reaching this method, so they are not repeated here.
+   *
+   * <p>No cookie is involved in this flow — errors only concern
+   * password policy validation.
+   *
+   * @param error the HTTP error response from the reset endpoint
+   */
   private handleError(error: HttpErrorResponse): void {
     const errorCode = error.error?.error;
 
     switch (errorCode) {
-      case 'PERMISSION_EXPIRED':
-      case 'INVALID_PERMISSION':
-      case 'MISSING_PERMISSION_COOKIE':
-        this.displayError(
-          'Votre session a expiré. Veuillez recommencer le processus de réinitialisation.',
-          'Recommencer'
-        );
-        this.buttonAction = () => this.router.navigate(['/password/forgot']);
-        break;
-
       case 'INVALID_PASSWORD':
         this.displayError(
           'Le mot de passe ne respecte pas les critères de sécurité.',
@@ -164,12 +165,30 @@ export class ResetPasswordCodeComponent extends FeedbackBase implements OnInit {
         this.buttonAction = () => this.clearFeedback();
         break;
 
-      default:
+      case 'PASSWORD_ALREADY_USED':
         this.displayError(
-          error.error?.message || 'Une erreur est survenue. Veuillez réessayer.',
-          'Recommencer'
+          error.error?.message ||
+          'Ce mot de passe a déjà été utilisé récemment. Veuillez en choisir un autre.',
+          'Réessayer'
         );
-        this.buttonAction = () => this.router.navigate(['/password/forgot']);
+        this.buttonAction = () => this.clearFeedback();
+        break;
+
+      default:
+        if (error.status === 409) {
+          this.displayError(
+            error.error?.message ||
+            'Ce mot de passe a déjà été utilisé récemment. Veuillez en choisir un autre.',
+            'Réessayer'
+          );
+        } else {
+          this.displayError(
+            'Une erreur est survenue. Veuillez réessayer.',
+            'Réessayer'
+          );
+        }
+        this.buttonAction = () => this.clearFeedback();
+        break;
     }
   }
 }

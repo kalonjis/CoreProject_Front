@@ -1,19 +1,16 @@
 /**
- * Notification type for password reset delivery.
- */
-export type PasswordResetType = 'EMAIL_LINK' | 'EMAIL_CODE' | 'SMS_CODE';
-
-/**
- * Request to initiate password reset (forgot password).
- * POST /api/password/forgot
+ * Request to initiate password reset.
+ * The reset type is now determined by the endpoint:
+ *   POST /api/password/forgot/email-link
+ *   POST /api/password/forgot/email-code
+ *   POST /api/password/forgot/sms-code
  */
 export interface ForgotPasswordRequest {
   email: string;
-  resetType: PasswordResetType;
 }
 
 /**
- * Request to reset password using email token.
+ * Request to reset password using email token (EMAIL_LINK flow).
  * PUT /api/password/reset?token=xxx
  */
 export interface ResetPasswordRequest {
@@ -22,7 +19,7 @@ export interface ResetPasswordRequest {
 }
 
 /**
- * Request to reset password using SMS permission.
+ * Request to reset password using permission cookie (EMAIL_CODE + SMS_CODE flows).
  * PUT /api/password/reset-with-permission
  */
 export interface ResetPasswordWithPermissionRequest {
@@ -41,8 +38,8 @@ export interface ChangePasswordRequest {
 }
 
 /**
- * Request to set a password (authenticated user).
- * POST /api/password/define
+ * Request to define a first password (OAuth users).
+ * PUT /api/password/define
  */
 export interface DefinePasswordRequest {
   password: string;
@@ -50,9 +47,9 @@ export interface DefinePasswordRequest {
 }
 
 /**
- * Request to verify SMS code for password reset.
- * POST /api/password/verify-code-code
+ * Request to verify a 6-digit code (EMAIL_CODE + SMS_CODE flows).
+ * POST /api/password/verify-code
  */
-export interface VerifySmsCodeRequest {
+export interface VerifyCodeRequest {
   verificationCode: string;
 }
