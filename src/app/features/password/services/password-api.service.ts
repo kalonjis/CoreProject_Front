@@ -7,20 +7,24 @@ import {
   ResetPasswordRequest,
   ResetPasswordWithPermissionRequest,
   ChangePasswordRequest,
-  VerifySmsCodeRequest, DefinePasswordRequest
+  VerifyCodeRequest,
+  DefinePasswordRequest
 } from '../models/password-request.model';
 import { PasswordOperationResponse } from '../models/password-response.model';
 
 /**
- * PasswordApiService - HTTP calls for password operations.
+ * HTTP calls for password operations.
  *
  * Endpoints:
- * - POST /api/password/forgot          → Request password reset (email or SMS)
- * - PUT  /api/password/reset           → Reset with email token
- * - PUT  /api/password/reset-with-permission → Reset with SMS permission
- * - PUT  /api/password/change          → Change password (authenticated)
- * - GET  /api/password/reset/resend    → Resend expired token
- * - POST /api/password/verify-code-code → Verify SMS code
+ *   POST /api/password/forgot/email-link     → Reset via email link
+ *   POST /api/password/forgot/email-code     → Reset via email code
+ *   POST /api/password/forgot/sms-code       → Reset via SMS code
+ *   POST /api/password/verify-code           → Verify code (email-code + sms-code flows)
+ *   PUT  /api/password/reset                 → Complete reset via token (email-link flow)
+ *   PUT  /api/password/reset-with-permission → Complete reset via permission cookie
+ *   GET  /api/password/reset/resend          → Resend expired email-link token
+ *   PUT  /api/password/change                → Change password (authenticated)
+ *   PUT  /api/password/define                → Define password (OAuth users)
  */
 @Injectable({ providedIn: 'root' })
 export class PasswordApiService {
@@ -29,78 +33,53 @@ export class PasswordApiService {
   private readonly baseUrl = '/api/password';
 
   // =========================================================================
-  // FORGOT PASSWORD FLOW
+  // FORGOT PASSWORD
   // =========================================================================
 
-  /**
-   * Request password reset via email or SMS.
-   * Always returns success (security: prevents email enumeration).
-   */
-  forgotPassword(request: ForgotPasswordRequest): Observable<PasswordOperationResponse> {
-    return this.http.post(`${this.baseUrl}/forgot`, request);
+  forgotPasswordEmailLink(request: ForgotPasswordRequest): Observable<PasswordOperationResponse> {
+    return this.http.post(`${this.baseUrl}/forgot/email-link`, request);
   }
 
-  /**
-   * Resend password reset token (when expired).
-   */
-  resendResetToken(token: string): Observable<PasswordOperationResponse> {
-    return this.http.get(`${this.baseUrl}/reset/resend?token=${encodeURIComponent(token)}`);
+  forgotPasswordEmailCode(request: ForgotPasswordRequest): Observable<PasswordOperationResponse> {
+    return this.http.post(`${this.baseUrl}/forgot/email-code`, request);
   }
 
-  // TODO implements this in backend side
-  //resendSmsCode()
+  forgotPasswordSmsCode(request: ForgotPasswordRequest): Observable<PasswordOperationResponse> {
+    return this.http.post(`${this.baseUrl}/forgot/sms-code`, request);
+  }
+
+  // =========================================================================
+  // CODE VERIFICATION
+  // =========================================================================
+
+  verifyCode(request: VerifyCodeRequest): Observable<PasswordOperationResponse> {
+    return this.http.post(`${this.baseUrl}/verify-code`, request);
+  }
 
   // =========================================================================
   // RESET PASSWORD
   // =========================================================================
 
-  /**
-   * Reset password using email token.
-   */
   resetPassword(token: string, request: ResetPasswordRequest): Observable<PasswordOperationResponse> {
     return this.http.put(`${this.baseUrl}/reset?token=${encodeURIComponent(token)}`, request);
   }
 
-  /**
-   * Reset password using SMS permission (after SMS code verification).
-   * Requires password_reset_permission cookie to be set.
-   */
   resetPasswordWithPermission(request: ResetPasswordWithPermissionRequest): Observable<PasswordOperationResponse> {
     return this.http.put(`${this.baseUrl}/reset-with-permission`, request);
   }
 
-  // =========================================================================
-  // SMS VERIFICATION
-  // =========================================================================
-
-  /**
-   * Verify SMS code for password reset.
-   * On success, sets password_reset_permission cookie.
-   */
-  verifySmsCode(request: VerifySmsCodeRequest): Observable<PasswordOperationResponse> {
-    return this.http.post(`${this.baseUrl}/verify-code`, request);
+  resendResetToken(token: string): Observable<PasswordOperationResponse> {
+    return this.http.get(`${this.baseUrl}/reset/resend?token=${encodeURIComponent(token)}`);
   }
 
   // =========================================================================
-  // CHANGE PASSWORD (AUTHENTICATED)
+  // CHANGE / DEFINE PASSWORD
   // =========================================================================
 
-  /**
-   * Change password for authenticated user.
-   * Requires current password verification.
-   */
   changePassword(request: ChangePasswordRequest): Observable<PasswordOperationResponse> {
     return this.http.put(`${this.baseUrl}/change`, request);
   }
 
-  // =========================================================================
-  // DEFINE PASSWORD (OAUTH USERS)
-  // =========================================================================
-
-  /**
-   * Define password for OAuth users who don't have one yet.
-   * Does NOT require current password.
-   */
   definePassword(request: DefinePasswordRequest): Observable<PasswordOperationResponse> {
     return this.http.put(`${this.baseUrl}/define`, request);
   }

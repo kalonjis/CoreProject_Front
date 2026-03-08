@@ -20,6 +20,7 @@ import { HealthMetricsCardComponent } from '../components/health-metrics-card/he
 import { CircuitBreakerCardComponent } from '../components/circuit-breaker-card/circuit-breaker-card.component';
 import { ServerStatusCardComponent } from '../components/server-status-card/server-status-card.component';
 import { ExecutorMetricsCardComponent } from '../components/executor-metrics-card/executor-metrics-card.component';
+import {RouterLink} from '@angular/router';
 
 
 /** Auto-refresh interval in milliseconds (30 seconds) */
@@ -48,7 +49,8 @@ const REFRESH_INTERVAL_MS = 30_000;
     ServerStatusCardComponent,
     CircuitBreakerCardComponent,
     HealthMetricsCardComponent,
-    ExecutorMetricsCardComponent
+    ExecutorMetricsCardComponent,
+    RouterLink
   ],
   templateUrl: './system-health-container.component.html',
   styleUrl: './system-health-container.component.scss'

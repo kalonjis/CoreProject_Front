@@ -149,6 +149,7 @@
             };
           },
           error: (error: HttpErrorResponse) => {
+            console.error(error);
             this.isSubmitting.set(false);
 
             if(error.status === 404){
