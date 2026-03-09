@@ -27,11 +27,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-track-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './track-card.component.html',
-  styleUrl: './track-card.component.scss'
+    selector: 'app-track-card',
+    imports: [CommonModule],
+    templateUrl: './track-card.component.html',
+    styleUrl: './track-card.component.scss'
 })
 export class TrackCardComponent {
 

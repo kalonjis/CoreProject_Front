@@ -32,11 +32,10 @@ import { TotpSetupModalComponent } from './components/totp-setup-modal/totp-setu
  * Route: /account/security/two-factor/totp
  */
 @Component({
-  selector: 'app-totp-two-factor',
-  standalone: true,
-  imports: [CommonModule, TotpSetupModalComponent],
-  templateUrl: './totp-two-factor.component.html',
-  styleUrl: './totp-two-factor.component.scss'
+    selector: 'app-totp-two-factor',
+    imports: [CommonModule, TotpSetupModalComponent],
+    templateUrl: './totp-two-factor.component.html',
+    styleUrl: './totp-two-factor.component.scss'
 })
 export class TotpTwoFactorComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

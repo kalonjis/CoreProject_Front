@@ -22,11 +22,10 @@ import { ActivityLog } from '../../models/activity-log.model';
  * ```
  */
 @Component({
-  selector: 'app-activity-log-detail-panel',
-  standalone: true,
-  imports: [CommonModule, ActivityLogBadgeComponent],
-  templateUrl: './activity-log-detail-panel.component.html',
-  styleUrl: './activity-log-detail-panel.component.scss'
+    selector: 'app-activity-log-detail-panel',
+    imports: [CommonModule, ActivityLogBadgeComponent],
+    templateUrl: './activity-log-detail-panel.component.html',
+    styleUrl: './activity-log-detail-panel.component.scss'
 })
 export class ActivityLogDetailPanelComponent {
 

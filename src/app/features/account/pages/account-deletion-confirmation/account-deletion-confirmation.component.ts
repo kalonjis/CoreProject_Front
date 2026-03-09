@@ -21,11 +21,10 @@ import { AuthFacade } from '../../../../core/auth';
  * Route: /account/deletion?token=xxx
  */
 @Component({
-  selector: 'app-account-deletion-confirmation',
-  standalone: true,
-  imports: [CommonModule, FeedbackComponent],
-  templateUrl: './account-deletion-confirmation.component.html',
-  styleUrl: './account-deletion-confirmation.component.scss'
+    selector: 'app-account-deletion-confirmation',
+    imports: [CommonModule, FeedbackComponent],
+    templateUrl: './account-deletion-confirmation.component.html',
+    styleUrl: './account-deletion-confirmation.component.scss'
 })
 export class AccountDeletionConfirmationComponent extends FeedbackBase implements OnInit {
 

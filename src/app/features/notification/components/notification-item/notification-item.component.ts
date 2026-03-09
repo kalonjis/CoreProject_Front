@@ -21,11 +21,10 @@ import {
  * Used in both dropdown and full notification center.
  */
 @Component({
-  selector: 'app-notification-item',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './notification-item.component.html',
-  styleUrl: './notification-item.component.scss'
+    selector: 'app-notification-item',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './notification-item.component.html',
+    styleUrl: './notification-item.component.scss'
 })
 export class NotificationItemComponent {
 

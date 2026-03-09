@@ -55,16 +55,15 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-calendar-event-card',
-  standalone: true,
-  imports: [
-    CommonModule,
-    EventStatusPipe,
-    EventStatusIconPipe,
-    IsRecurringPipe
-  ],
-  templateUrl: './calendar-event-card.component.html',
-  styleUrl: './calendar-event-card.component.scss'
+    selector: 'app-calendar-event-card',
+    imports: [
+        CommonModule,
+        EventStatusPipe,
+        EventStatusIconPipe,
+        IsRecurringPipe
+    ],
+    templateUrl: './calendar-event-card.component.html',
+    styleUrl: './calendar-event-card.component.scss'
 })
 export class CalendarEventCardComponent {
   // ===========================================================================

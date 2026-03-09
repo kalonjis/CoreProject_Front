@@ -37,11 +37,10 @@ import {AddressInput} from '../../models';
  * ```
  */
 @Component({
-  selector: 'app-address-select',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './address-select.component.html',
-  styleUrl: './address-select.component.scss'
+    selector: 'app-address-select',
+    imports: [CommonModule],
+    templateUrl: './address-select.component.html',
+    styleUrl: './address-select.component.scss'
 })
 export class AddressSelectComponent implements OnInit {
 

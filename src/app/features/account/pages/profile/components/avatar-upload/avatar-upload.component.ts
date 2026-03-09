@@ -27,11 +27,10 @@ import {FeedbackService} from '../../../../../../shared/feedback/tools/feedback.
  * ```
  */
 @Component({
-  selector: 'app-avatar-upload',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './avatar-upload.component.html',
-  styleUrl: './avatar-upload.component.scss'
+    selector: 'app-avatar-upload',
+    imports: [CommonModule],
+    templateUrl: './avatar-upload.component.html',
+    styleUrl: './avatar-upload.component.scss'
 })
 export class AvatarUploadComponent {
 

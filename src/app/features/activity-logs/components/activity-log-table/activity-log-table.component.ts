@@ -26,11 +26,10 @@ import { ActivityLog } from '../../models/activity-log.model';
  * ```
  */
 @Component({
-  selector: 'app-activity-log-table',
-  standalone: true,
-  imports: [CommonModule, ActivityLogBadgeComponent],
-  templateUrl: './activity-log-table.component.html',
-  styleUrl: './activity-log-table.component.scss'
+    selector: 'app-activity-log-table',
+    imports: [CommonModule, ActivityLogBadgeComponent],
+    templateUrl: './activity-log-table.component.html',
+    styleUrl: './activity-log-table.component.scss'
 })
 export class ActivityLogTableComponent {
 

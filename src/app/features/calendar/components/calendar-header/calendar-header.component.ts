@@ -43,11 +43,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-calendar-header',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './calendar-header.component.html',
-  styleUrl: './calendar-header.component.scss'
+    selector: 'app-calendar-header',
+    imports: [CommonModule],
+    templateUrl: './calendar-header.component.html',
+    styleUrl: './calendar-header.component.scss'
 })
 export class CalendarHeaderComponent {
   // ===========================================================================

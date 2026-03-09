@@ -29,11 +29,10 @@ import { AuthFacade } from '../../../core/auth/services/auth.facade';
  * Route: /password/define
  */
 @Component({
-  selector: 'app-define-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
-  templateUrl: './define-password.component.html',
-  styleUrl: './define-password.component.scss'
+    selector: 'app-define-password',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
+    templateUrl: './define-password.component.html',
+    styleUrl: './define-password.component.scss'
 })
 export class DefinePasswordComponent extends FeedbackBase implements OnInit {
 

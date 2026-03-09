@@ -45,17 +45,16 @@ import {ActivatedRoute, Router} from '@angular/router';
  * ```
  */
 @Component({
-  selector: 'app-calendar-event-detail',
-  standalone: true,
-  imports: [
-    CommonModule,
-    EventStatusPipe,
-    EventStatusColorPipe,
-    EventRecurrencePipe,
-    DateRangePipe
-  ],
-  templateUrl: './calendar-event-detail.component.html',
-  styleUrl: './calendar-event-detail.component.scss'
+    selector: 'app-calendar-event-detail',
+    imports: [
+        CommonModule,
+        EventStatusPipe,
+        EventStatusColorPipe,
+        EventRecurrencePipe,
+        DateRangePipe
+    ],
+    templateUrl: './calendar-event-detail.component.html',
+    styleUrl: './calendar-event-detail.component.scss'
 })
 export class CalendarEventDetailComponent implements OnInit {
   // ===========================================================================

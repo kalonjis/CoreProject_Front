@@ -23,16 +23,15 @@ import { OwnerStats } from '../../models/owner-stats.model';
  * Route: /sport
  */
 @Component({
-  selector: 'app-sport-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TrackListComponent,
-    StatsSummaryComponent,
-    TrackImportDialogComponent
-  ],
-  templateUrl: './sport-dashboard.component.html',
-  styleUrl: './sport-dashboard.component.scss'
+    selector: 'app-sport-dashboard',
+    imports: [
+        CommonModule,
+        TrackListComponent,
+        StatsSummaryComponent,
+        TrackImportDialogComponent
+    ],
+    templateUrl: './sport-dashboard.component.html',
+    styleUrl: './sport-dashboard.component.scss'
 })
 export class SportDashboardComponent implements OnInit {
 

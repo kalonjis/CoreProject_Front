@@ -38,11 +38,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-calendar-mini-month',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './calendar-mini-month.component.html',
-  styleUrl: './calendar-mini-month.component.scss'
+    selector: 'app-calendar-mini-month',
+    imports: [CommonModule],
+    templateUrl: './calendar-mini-month.component.html',
+    styleUrl: './calendar-mini-month.component.scss'
 })
 export class CalendarMiniMonthComponent {
   // ===========================================================================

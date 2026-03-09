@@ -8,11 +8,10 @@ import {DeviceFacade} from '../../core/device';
 import {FeedbackService} from '../feedback/tools/feedback.service';
 
 @Component({
-  selector: 'app-device-alert-banner',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './device-alert-banner.component.html',
-  styleUrl: './device-alert-banner.component.scss'
+    selector: 'app-device-alert-banner',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './device-alert-banner.component.html',
+    styleUrl: './device-alert-banner.component.scss'
 })
 export class DeviceAlertBannerComponent implements OnInit {
   private authFacade = inject(AuthFacade);

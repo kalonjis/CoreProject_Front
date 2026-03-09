@@ -8,11 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-account-reactivation',
-  standalone: true,
-  imports: [FeedbackComponent, CommonModule, FormsModule, RouterLink],
-  templateUrl: './account-reactivation.component.html',
-  styleUrl: './account-reactivation.component.scss',
+    selector: 'app-account-reactivation',
+    imports: [FeedbackComponent, CommonModule, FormsModule, RouterLink],
+    templateUrl: './account-reactivation.component.html',
+    styleUrl: './account-reactivation.component.scss'
 })
 export class AccountReactivationComponent extends FeedbackBase implements OnInit {
 

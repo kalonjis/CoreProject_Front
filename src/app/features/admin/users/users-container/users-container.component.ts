@@ -16,11 +16,10 @@ import { UserStats } from '../../models/user-stats.model';
  * This is the main entry point after clicking "User Management" on the dashboard.
  */
 @Component({
-  selector: 'app-users-container',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './users-container.component.html',
-  styleUrl: './users-container.component.scss'
+    selector: 'app-users-container',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './users-container.component.html',
+    styleUrl: './users-container.component.scss'
 })
 export class UsersContainerComponent implements OnInit {
   private statsApi = inject(AdminStatsApiService);

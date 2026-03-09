@@ -20,11 +20,10 @@ import { TwoFactorMethod } from '../../../../core/auth/models/two-factor.model';
  * - Recovery Options: Account recovery (future)
  */
 @Component({
-  selector: 'app-security',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './security.component.html',
-  styleUrl: './security.component.scss'
+    selector: 'app-security',
+    imports: [CommonModule],
+    templateUrl: './security.component.html',
+    styleUrl: './security.component.scss'
 })
 export class SecurityComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

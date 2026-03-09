@@ -53,21 +53,20 @@ const VALID_TABS: UserDetailTab[] = ['info', 'devices', 'activity', 'permissions
  * - {@link AdminDeactivateModalComponent} — deactivation modal (opened from actions)
  */
 @Component({
-  selector: 'app-user-detail-container',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    UserDetailHeaderComponent,
-    UserDetailActionsComponent,
-    UserInfoTabComponent,
-    UserDevicesTabComponent,
-    UserPermissionsTabComponent,
-    AdminDeactivateModalComponent,
-    UserLogsComponent,
-  ],
-  templateUrl: './user-detail-container.component.html',
-  styleUrl: './user-detail-container.component.scss',
+    selector: 'app-user-detail-container',
+    imports: [
+        CommonModule,
+        RouterLink,
+        UserDetailHeaderComponent,
+        UserDetailActionsComponent,
+        UserInfoTabComponent,
+        UserDevicesTabComponent,
+        UserPermissionsTabComponent,
+        AdminDeactivateModalComponent,
+        UserLogsComponent,
+    ],
+    templateUrl: './user-detail-container.component.html',
+    styleUrl: './user-detail-container.component.scss'
 })
 export class UserDetailContainerComponent implements OnInit, OnDestroy {
 

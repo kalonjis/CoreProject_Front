@@ -22,16 +22,15 @@ import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/conf
  * - Bulk actions
  */
 @Component({
-  selector: 'app-notification-center',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    NotificationItemComponent,
-    NotificationFiltersComponent
-  ],
-  templateUrl: './notification-center.component.html',
-  styleUrl: './notification-center.component.scss'
+    selector: 'app-notification-center',
+    imports: [
+        CommonModule,
+        RouterLink,
+        NotificationItemComponent,
+        NotificationFiltersComponent
+    ],
+    templateUrl: './notification-center.component.html',
+    styleUrl: './notification-center.component.scss'
 })
 export class NotificationCenterComponent implements OnInit {
 

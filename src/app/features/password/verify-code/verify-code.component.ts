@@ -9,11 +9,10 @@ import { FeedbackBase } from '../../../shared/feedback/tools/feedback.base';
 import { PasswordApiService } from '../services/password-api.service';
 
 @Component({
-  selector: 'app-verify-code',
-  standalone: true,
-  imports: [CommonModule, CodeInputComponent, FeedbackComponent],
-  templateUrl: './verify-code.component.html',
-  styleUrl: './verify-code.component.scss'
+    selector: 'app-verify-code',
+    imports: [CommonModule, CodeInputComponent, FeedbackComponent],
+    templateUrl: './verify-code.component.html',
+    styleUrl: './verify-code.component.scss'
 })
 export class VerifyCodeComponent extends FeedbackBase implements OnInit, OnDestroy {
 

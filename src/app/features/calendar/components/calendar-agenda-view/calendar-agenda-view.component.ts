@@ -51,18 +51,17 @@ interface DateGroup {
  * ```
  */
 @Component({
-  selector: 'app-calendar-agenda-view',
-  standalone: true,
-  imports: [
-    CommonModule,
-    CalendarEventCardComponent,
-    RelativeDatePipe,
-    DateRangePipe,
-    EventStatusPipe,
-    IsRecurringPipe
-  ],
-  templateUrl: './calendar-agenda-view.component.html',
-  styleUrl: './calendar-agenda-view.component.scss'
+    selector: 'app-calendar-agenda-view',
+    imports: [
+        CommonModule,
+        CalendarEventCardComponent,
+        RelativeDatePipe,
+        DateRangePipe,
+        EventStatusPipe,
+        IsRecurringPipe
+    ],
+    templateUrl: './calendar-agenda-view.component.html',
+    styleUrl: './calendar-agenda-view.component.scss'
 })
 export class CalendarAgendaViewComponent {
   // ===========================================================================

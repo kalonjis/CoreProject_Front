@@ -58,11 +58,10 @@ const MAIN_ORDER: DeactivationMainCategory[] = [
  * ```
  */
 @Component({
-  selector:    'app-admin-deactivate-modal',
-  standalone:  true,
-  imports:     [CommonModule, FormsModule],
-  templateUrl: './admin-deactivate-modal.component.html',
-  styleUrl:    './admin-deactivate-modal.component.scss',
+    selector: 'app-admin-deactivate-modal',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './admin-deactivate-modal.component.html',
+    styleUrl: './admin-deactivate-modal.component.scss'
 })
 export class AdminDeactivateModalComponent implements OnInit {
 

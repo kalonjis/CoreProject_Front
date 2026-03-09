@@ -31,11 +31,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-address-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './address-card.component.html',
-  styleUrl: './address-card.component.scss'
+    selector: 'app-address-card',
+    imports: [CommonModule],
+    templateUrl: './address-card.component.html',
+    styleUrl: './address-card.component.scss'
 })
 export class AddressCardComponent {
 

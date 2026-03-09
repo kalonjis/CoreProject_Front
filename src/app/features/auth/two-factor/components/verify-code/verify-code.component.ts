@@ -47,11 +47,10 @@ import { BackupCodeInputComponent } from '../../../../../shared/backup-code-inpu
  * ```
  */
 @Component({
-  selector: 'app-verify-code',
-  standalone: true,
-  imports: [CommonModule, CodeInputComponent, BackupCodeInputComponent],
-  templateUrl: './verify-code.component.html',
-  styleUrl: './verify-code.component.scss'
+    selector: 'app-verify-code',
+    imports: [CommonModule, CodeInputComponent, BackupCodeInputComponent],
+    templateUrl: './verify-code.component.html',
+    styleUrl: './verify-code.component.scss'
 })
 export class VerifyCodeComponent implements OnInit, OnDestroy, OnChanges {
 

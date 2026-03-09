@@ -41,11 +41,10 @@ export type AddressFormMode = 'create' | 'edit';
  * ```
  */
 @Component({
-  selector: 'app-address-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './address-form.component.html',
-  styleUrl: './address-form.component.scss'
+    selector: 'app-address-form',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './address-form.component.html',
+    styleUrl: './address-form.component.scss'
 })
 export class AddressFormComponent implements OnInit, OnChanges {
 

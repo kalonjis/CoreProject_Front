@@ -32,11 +32,10 @@ import { CommonModule } from '@angular/common';
  * - Confirmation before closing
  */
 @Component({
-  selector: 'app-backup-codes-modal',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './backup-codes-modal.component.html',
-  styleUrl: './backup-codes-modal.component.scss'
+    selector: 'app-backup-codes-modal',
+    imports: [CommonModule],
+    templateUrl: './backup-codes-modal.component.html',
+    styleUrl: './backup-codes-modal.component.scss'
 })
 export class BackupCodesModalComponent implements OnInit {
 

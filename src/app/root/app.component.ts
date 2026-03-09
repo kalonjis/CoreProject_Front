@@ -10,11 +10,10 @@ import { NotificationFacade } from '../features/notification';
 
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent, DeviceAlertBannerComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [RouterOutlet, FooterComponent, HeaderComponent, GlobalFeedbackComponent, DeviceAlertBannerComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   private authFacade = inject(AuthFacade);

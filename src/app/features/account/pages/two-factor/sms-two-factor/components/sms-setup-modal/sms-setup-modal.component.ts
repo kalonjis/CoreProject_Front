@@ -38,11 +38,10 @@ import { TwoFactorApiService } from '../../../../../../../core/auth/services/two
  * ```
  */
 @Component({
-  selector: 'app-sms-setup-modal',
-  standalone: true,
-  imports: [CommonModule, VerifyCodeComponent],
-  templateUrl: './sms-setup-modal.component.html',
-  styleUrl: './sms-setup-modal.component.scss'
+    selector: 'app-sms-setup-modal',
+    imports: [CommonModule, VerifyCodeComponent],
+    templateUrl: './sms-setup-modal.component.html',
+    styleUrl: './sms-setup-modal.component.scss'
 })
 export class SmsSetupModalComponent implements OnInit {
   private twoFactorApi = inject(TwoFactorApiService);

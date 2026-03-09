@@ -33,16 +33,15 @@ import {HttpErrorResponse} from '@angular/common/http';
  * 5. After verification → complete login (handled by AuthFacade)
  */
 @Component({
-  selector: 'app-two-factor-container',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    MethodSelectorComponent,
-    VerifyCodeComponent
-  ],
-  templateUrl: './two-factor-container.component.html',
-  styleUrl: './two-factor-container.component.scss'
+    selector: 'app-two-factor-container',
+    imports: [
+        CommonModule,
+        RouterLink,
+        MethodSelectorComponent,
+        VerifyCodeComponent
+    ],
+    templateUrl: './two-factor-container.component.html',
+    styleUrl: './two-factor-container.component.scss'
 })
 export class TwoFactorContainerComponent implements OnInit {
 

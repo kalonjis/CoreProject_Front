@@ -28,11 +28,10 @@ import { AdminDeviceApiService } from '../../../../../services/admin-device-api.
  * ```
  */
 @Component({
-  selector:    'app-user-devices-tab',
-  standalone:  true,
-  imports:     [CommonModule, FormsModule],
-  templateUrl: './user-devices-tab.component.html',
-  styleUrl:    './user-devices-tab.component.scss',
+    selector: 'app-user-devices-tab',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './user-devices-tab.component.html',
+    styleUrl: './user-devices-tab.component.scss'
 })
 export class UserDevicesTabComponent implements OnInit {
 

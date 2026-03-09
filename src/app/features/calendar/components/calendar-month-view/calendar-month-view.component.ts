@@ -48,11 +48,10 @@ import { CalendarEventCardComponent } from '../calendar-event-card/calendar-even
  * ```
  */
 @Component({
-  selector: 'app-calendar-month-view',
-  standalone: true,
-  imports: [CommonModule, CalendarEventCardComponent],
-  templateUrl: './calendar-month-view.component.html',
-  styleUrl: './calendar-month-view.component.scss'
+    selector: 'app-calendar-month-view',
+    imports: [CommonModule, CalendarEventCardComponent],
+    templateUrl: './calendar-month-view.component.html',
+    styleUrl: './calendar-month-view.component.scss'
 })
 export class CalendarMonthViewComponent {
   // ===========================================================================

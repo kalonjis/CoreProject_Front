@@ -25,11 +25,10 @@ import { GdprExportApiService } from '../../services/gdpr-export-api.service';
  * pattern used across all account confirmation pages.
  */
 @Component({
-  selector: 'app-export-confirmation',
-  standalone: true,
-  imports: [CommonModule, FeedbackComponent],
-  templateUrl: './export-confirmation.component.html',
-  styleUrl: './export-confirmation.component.scss',
+    selector: 'app-export-confirmation',
+    imports: [CommonModule, FeedbackComponent],
+    templateUrl: './export-confirmation.component.html',
+    styleUrl: './export-confirmation.component.scss'
 })
 export class ExportConfirmationComponent extends FeedbackBase implements OnInit {
 

@@ -29,11 +29,10 @@ import { AdminUser } from '../models';
  * - "New user" button → /admin/users/new
  */
 @Component({
-  selector: 'app-user-list',
-  standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, FeedbackComponent],
-  templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.scss'
+    selector: 'app-user-list',
+    imports: [CommonModule, RouterLink, ReactiveFormsModule, FeedbackComponent],
+    templateUrl: './user-list.component.html',
+    styleUrl: './user-list.component.scss'
 })
 export class UserListComponent extends FeedbackBase implements OnInit {
 

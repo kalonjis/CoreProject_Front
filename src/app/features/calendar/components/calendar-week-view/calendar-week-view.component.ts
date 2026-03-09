@@ -43,11 +43,10 @@ import { CalendarEventCardComponent } from '../calendar-event-card/calendar-even
  * ```
  */
 @Component({
-  selector: 'app-calendar-week-view',
-  standalone: true,
-  imports: [CommonModule, CalendarEventCardComponent],
-  templateUrl: './calendar-week-view.component.html',
-  styleUrl: './calendar-week-view.component.scss'
+    selector: 'app-calendar-week-view',
+    imports: [CommonModule, CalendarEventCardComponent],
+    templateUrl: './calendar-week-view.component.html',
+    styleUrl: './calendar-week-view.component.scss'
 })
 export class CalendarWeekViewComponent {
   // ===========================================================================

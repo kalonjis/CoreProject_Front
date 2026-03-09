@@ -24,11 +24,10 @@ import {HealthStatus, ServerStatus} from '../../models';
  * Used in the System Health dashboard.
  */
 @Component({
-  selector: 'app-server-status-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './server-status-card.component.html',
-  styleUrl: './server-status-card.component.scss'
+    selector: 'app-server-status-card',
+    imports: [CommonModule],
+    templateUrl: './server-status-card.component.html',
+    styleUrl: './server-status-card.component.scss'
 })
 export class ServerStatusCardComponent {
 

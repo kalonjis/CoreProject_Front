@@ -7,14 +7,13 @@ import { CommonModule } from '@angular/common';
 import {AccountApiService} from '../../services';
 
 @Component({
-  selector: 'app-account-confirmation',
-  standalone: true,
-  imports: [
-    FeedbackComponent,
-    CommonModule
-  ],
-  templateUrl: './account-confirmation.component.html',
-  styleUrl: './account-confirmation.component.scss'
+    selector: 'app-account-confirmation',
+    imports: [
+        FeedbackComponent,
+        CommonModule
+    ],
+    templateUrl: './account-confirmation.component.html',
+    styleUrl: './account-confirmation.component.scss'
 })
 export class AccountConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);

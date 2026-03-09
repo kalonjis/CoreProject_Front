@@ -19,11 +19,10 @@ import { NotificationFilterState } from '../../models/notification.model';
  * - Filter by notification type
  */
 @Component({
-  selector: 'app-notification-filters',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './notification-filters.component.html',
-  styleUrl: './notification-filters.component.scss'
+    selector: 'app-notification-filters',
+    imports: [CommonModule],
+    templateUrl: './notification-filters.component.html',
+    styleUrl: './notification-filters.component.scss'
 })
 export class NotificationFiltersComponent {
 

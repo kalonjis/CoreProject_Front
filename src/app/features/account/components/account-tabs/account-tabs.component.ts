@@ -13,11 +13,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
  * - Devices: Device management and trust levels
  */
 @Component({
-  selector: 'app-account-tabs',
-  standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
-  templateUrl: './account-tabs.component.html',
-  styleUrl: './account-tabs.component.scss'
+    selector: 'app-account-tabs',
+    imports: [CommonModule, RouterLink, RouterLinkActive],
+    templateUrl: './account-tabs.component.html',
+    styleUrl: './account-tabs.component.scss'
 })
 export class AccountTabsComponent {
 

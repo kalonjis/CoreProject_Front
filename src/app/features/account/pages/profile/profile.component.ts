@@ -14,11 +14,10 @@ import {AvatarUploadComponent} from './components/avatar-upload/avatar-upload.co
 import {AvatarResponse, FileUploadResponse} from '../../../../core/storage';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent, AvatarUploadComponent ],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+    selector: 'app-profile',
+    imports: [CommonModule, ReactiveFormsModule, AddressSummaryCardComponent, AvatarUploadComponent],
+    templateUrl: './profile.component.html',
+    styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
   private http = inject(HttpClient);

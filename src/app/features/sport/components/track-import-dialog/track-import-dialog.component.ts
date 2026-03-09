@@ -27,11 +27,10 @@ import { FeedbackService } from '../../../../shared/feedback/tools/feedback.serv
  * ```
  */
 @Component({
-  selector: 'app-track-import-dialog',
-  standalone: true,
-  imports: [CommonModule, FormsModule, GpxUploadComponent],
-  templateUrl: './track-import-dialog.component.html',
-  styleUrl: './track-import-dialog.component.scss'
+    selector: 'app-track-import-dialog',
+    imports: [CommonModule, FormsModule, GpxUploadComponent],
+    templateUrl: './track-import-dialog.component.html',
+    styleUrl: './track-import-dialog.component.scss'
 })
 export class TrackImportDialogComponent implements OnChanges {
 

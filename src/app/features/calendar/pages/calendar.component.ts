@@ -54,18 +54,17 @@ import { FeedbackService } from '../../../shared/feedback/tools/feedback.service
  * ```
  */
 @Component({
-  selector: 'app-calendar',
-  standalone: true,
-  imports: [
-    CommonModule,
-    CalendarHeaderComponent,
-    CalendarFiltersComponent,
-    CalendarViewSwitcherComponent,
-    CalendarMiniMonthComponent,
-    CalendarEventDetailComponent
-  ],
-  templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.scss'
+    selector: 'app-calendar',
+    imports: [
+        CommonModule,
+        CalendarHeaderComponent,
+        CalendarFiltersComponent,
+        CalendarViewSwitcherComponent,
+        CalendarMiniMonthComponent,
+        CalendarEventDetailComponent
+    ],
+    templateUrl: './calendar.component.html',
+    styleUrl: './calendar.component.scss'
 })
 export class CalendarComponent implements OnInit {
   // ===========================================================================

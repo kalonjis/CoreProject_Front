@@ -7,14 +7,13 @@ import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-email-confirmation',
-  standalone: true,
-  imports: [
-    FeedbackComponent,
-    CommonModule
-  ],
-  templateUrl: './email-confirmation.component.html',
-  styleUrl: './email-confirmation.component.scss'
+    selector: 'app-email-confirmation',
+    imports: [
+        FeedbackComponent,
+        CommonModule
+    ],
+    templateUrl: './email-confirmation.component.html',
+    styleUrl: './email-confirmation.component.scss'
 })
 export class EmailConfirmationComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);

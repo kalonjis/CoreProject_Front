@@ -24,11 +24,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-activity-log-stats-card',
-  standalone: true,
-  imports: [CommonModule, ActivityLogBadgeComponent],
-  templateUrl: './activity-log-stats-card.component.html',
-  styleUrl: './activity-log-stats-card.component.scss'
+    selector: 'app-activity-log-stats-card',
+    imports: [CommonModule, ActivityLogBadgeComponent],
+    templateUrl: './activity-log-stats-card.component.html',
+    styleUrl: './activity-log-stats-card.component.scss'
 })
 export class ActivityLogStatsCardComponent {
 

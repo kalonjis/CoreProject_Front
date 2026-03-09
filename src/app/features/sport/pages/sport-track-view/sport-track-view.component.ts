@@ -26,16 +26,15 @@ import { FeedbackService } from '../../../../shared/feedback/tools/feedback.serv
  * Route: /sport/:publicId
  */
 @Component({
-  selector: 'app-sport-track-view',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TrackDetailComponent,
-    TrackMapComponent,
-    ElevationChartComponent
-  ],
-  templateUrl: './sport-track-view.component.html',
-  styleUrl: './sport-track-view.component.scss'
+    selector: 'app-sport-track-view',
+    imports: [
+        CommonModule,
+        TrackDetailComponent,
+        TrackMapComponent,
+        ElevationChartComponent
+    ],
+    templateUrl: './sport-track-view.component.html',
+    styleUrl: './sport-track-view.component.scss'
 })
 export class SportTrackViewComponent implements OnInit {
 

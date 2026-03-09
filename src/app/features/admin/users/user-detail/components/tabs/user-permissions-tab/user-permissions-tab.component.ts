@@ -56,11 +56,10 @@ const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
  * ```
  */
 @Component({
-  selector:    'app-user-permissions-tab',
-  standalone:  true,
-  imports:     [CommonModule],
-  templateUrl: './user-permissions-tab.component.html',
-  styleUrl:    './user-permissions-tab.component.scss',
+    selector: 'app-user-permissions-tab',
+    imports: [CommonModule],
+    templateUrl: './user-permissions-tab.component.html',
+    styleUrl: './user-permissions-tab.component.scss'
 })
 export class UserPermissionsTabComponent {
 

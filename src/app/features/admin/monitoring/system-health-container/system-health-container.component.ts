@@ -42,18 +42,17 @@ const REFRESH_INTERVAL_MS = 30_000;
  * - Aggregated loading and error states
  */
 @Component({
-  selector: 'app-system-health-container',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ServerStatusCardComponent,
-    CircuitBreakerCardComponent,
-    HealthMetricsCardComponent,
-    ExecutorMetricsCardComponent,
-    RouterLink
-  ],
-  templateUrl: './system-health-container.component.html',
-  styleUrl: './system-health-container.component.scss'
+    selector: 'app-system-health-container',
+    imports: [
+        CommonModule,
+        ServerStatusCardComponent,
+        CircuitBreakerCardComponent,
+        HealthMetricsCardComponent,
+        ExecutorMetricsCardComponent,
+        RouterLink
+    ],
+    templateUrl: './system-health-container.component.html',
+    styleUrl: './system-health-container.component.scss'
 })
 export class SystemHealthContainerComponent implements OnInit, OnDestroy {
 

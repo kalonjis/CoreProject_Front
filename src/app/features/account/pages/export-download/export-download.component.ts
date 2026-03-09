@@ -31,11 +31,10 @@ import { GdprExportApiService } from '../../services/gdpr-export-api.service';
  * FeedbackComponent pattern used across all account confirmation pages.
  */
 @Component({
-  selector: 'app-export-download',
-  standalone: true,
-  imports: [CommonModule, FeedbackComponent],
-  templateUrl: './export-download.component.html',
-  styleUrl: './export-download.component.scss',
+    selector: 'app-export-download',
+    imports: [CommonModule, FeedbackComponent],
+    templateUrl: './export-download.component.html',
+    styleUrl: './export-download.component.scss'
 })
 export class ExportDownloadComponent extends FeedbackBase implements OnInit {
   private readonly route = inject(ActivatedRoute);

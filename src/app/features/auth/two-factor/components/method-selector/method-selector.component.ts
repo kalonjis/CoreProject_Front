@@ -27,11 +27,10 @@ import { TwoFactorMethod, TwoFactorType } from '../../../../../core/auth';
  * ```
  */
 @Component({
-  selector: 'app-method-selector',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './method-selector.component.html',
-  styleUrl: './method-selector.component.scss'
+    selector: 'app-method-selector',
+    imports: [CommonModule],
+    templateUrl: './method-selector.component.html',
+    styleUrl: './method-selector.component.scss'
 })
 export class MethodSelectorComponent {
 

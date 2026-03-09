@@ -27,11 +27,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-address-detail',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './address-detail.component.html',
-  styleUrl: './address-detail.component.scss'
+    selector: 'app-address-detail',
+    imports: [CommonModule],
+    templateUrl: './address-detail.component.html',
+    styleUrl: './address-detail.component.scss'
 })
 export class AddressDetailComponent {
 

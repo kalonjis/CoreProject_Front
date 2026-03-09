@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { FeedbackType } from './tools/feedback.model';
 
 @Component({
-  selector: 'app-feedback',
-  templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.scss'],
-  standalone: true,
-  imports: [CommonModule]
+    selector: 'app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
+    imports: [CommonModule]
 })
 export class FeedbackComponent {
   @Input() message: string = '';

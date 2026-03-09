@@ -17,17 +17,16 @@ import { ActivityLogFilter } from '../../models/activity-log.model';
  * Layout: stats card (top) + filters + table + detail panel (side).
  */
 @Component({
-  selector: 'app-all-logs',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ActivityLogTableComponent,
-    ActivityLogFiltersComponent,
-    ActivityLogStatsCardComponent,
-    ActivityLogDetailPanelComponent,
-  ],
-  templateUrl: './all-logs.component.html',
-  styleUrl: './all-logs.component.scss'
+    selector: 'app-all-logs',
+    imports: [
+        CommonModule,
+        ActivityLogTableComponent,
+        ActivityLogFiltersComponent,
+        ActivityLogStatsCardComponent,
+        ActivityLogDetailPanelComponent,
+    ],
+    templateUrl: './all-logs.component.html',
+    styleUrl: './all-logs.component.scss'
 })
 export class AllLogsComponent implements OnInit {
 

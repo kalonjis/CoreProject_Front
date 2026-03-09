@@ -22,11 +22,10 @@ import { TwoFactorMethod, TwoFactorType } from '../../../../../core/auth/models/
  * Route: /account/security/recovery
  */
 @Component({
-  selector: 'app-recovery-overview',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './recovery-overview.component.html',
-  styleUrl: './recovery-overview.component.scss'
+    selector: 'app-recovery-overview',
+    imports: [CommonModule],
+    templateUrl: './recovery-overview.component.html',
+    styleUrl: './recovery-overview.component.scss'
 })
 export class RecoveryOverviewComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

@@ -73,16 +73,15 @@ import {AddressSelectComponent} from '../address-select/address-select.component
  * ```
  */
 @Component({
-  selector: 'app-calendar-event-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    AddressFormComponent,
-    AddressSelectComponent
-  ],
-  templateUrl: './calendar-event-form.component.html',
-  styleUrl: './calendar-event-form.component.scss'
+    selector: 'app-calendar-event-form',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        AddressFormComponent,
+        AddressSelectComponent
+    ],
+    templateUrl: './calendar-event-form.component.html',
+    styleUrl: './calendar-event-form.component.scss'
 })
 export class CalendarEventFormComponent implements OnInit, HasUnsavedChanges {
   // ===========================================================================

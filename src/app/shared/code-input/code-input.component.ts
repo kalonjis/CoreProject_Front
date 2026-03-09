@@ -34,11 +34,10 @@ import { CommonModule } from '@angular/common';
  * ```
  */
 @Component({
-  selector: 'app-code-input',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './code-input.component.html',
-  styleUrl: './code-input.component.scss'
+    selector: 'app-code-input',
+    imports: [CommonModule],
+    templateUrl: './code-input.component.html',
+    styleUrl: './code-input.component.scss'
 })
 export class CodeInputComponent implements OnInit, AfterViewInit {
 

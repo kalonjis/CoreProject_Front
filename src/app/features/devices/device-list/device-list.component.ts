@@ -12,11 +12,10 @@ import { ConfirmDialogService } from '../../../shared/confirm-dialog/tools/confi
 import {DeviceFacade} from '../../../core/device';
 
 @Component({
-  selector: 'app-device-list',
-  standalone: true,
-  imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
-  templateUrl: './device-list.component.html',
-  styleUrls: ['./device-list.component.scss']
+    selector: 'app-device-list',
+    imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
+    templateUrl: './device-list.component.html',
+    styleUrls: ['./device-list.component.scss']
 })
 export class DeviceListComponent extends FeedbackBase implements OnInit {
   private deviceFacade = inject(DeviceFacade);

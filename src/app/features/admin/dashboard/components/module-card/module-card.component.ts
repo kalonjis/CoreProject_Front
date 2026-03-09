@@ -13,11 +13,10 @@ import { ModuleCardConfig } from '../../../models/module-card-config.model';
  * <app-module-card [config]="moduleConfig"></app-module-card>
  */
 @Component({
-  selector: 'app-module-card',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './module-card.component.html',
-  styleUrl: './module-card.component.scss'
+    selector: 'app-module-card',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './module-card.component.html',
+    styleUrl: './module-card.component.scss'
 })
 export class ModuleCardComponent {
   /**
