@@ -1,7 +1,8 @@
 // src/app/features/sport/components/track-list/track-list.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .track-list {
   display: flex;
@@ -17,7 +18,7 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
   }
 }
 
@@ -26,10 +27,10 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.5rem 1rem;
-  border: 1px solid $border-color;
+  border: 1px solid variables.$border-color;
   border-radius: 2rem;
   background: white;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -37,17 +38,17 @@
   white-space: nowrap;
 
   &:hover {
-    border-color: $primary-color;
-    color: $primary-color;
+    border-color: variables.$primary-color;
+    color: variables.$primary-color;
   }
 
   &--active {
-    background: $primary-color;
-    border-color: $primary-color;
+    background: variables.$primary-color;
+    border-color: variables.$primary-color;
     color: white;
 
     &:hover {
-      background: darken($primary-color, 5%);
+      background: color.adjust(variables.$primary-color, $lightness: -5%);
       color: white;
     }
   }
@@ -63,7 +64,7 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 
   p {
     margin: 1rem 0 0;
@@ -74,8 +75,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid $border-color;
-  border-top-color: $primary-color;
+  border: 3px solid variables.$border-color;
+  border-top-color: variables.$primary-color;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 
@@ -97,9 +98,9 @@
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  background: $gray-light;
-  border-radius: $border-radius-lg;
-  border: 2px dashed $border-color;
+  background: variables.$gray-light;
+  border-radius: variables.$border-radius-lg;
+  border: 2px dashed variables.$border-color;
 }
 
 .track-list__empty-icon {
@@ -112,12 +113,12 @@
   margin: 0 0 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 .track-list__empty-text {
   margin: 0;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   max-width: 300px;
 }
 
@@ -130,11 +131,11 @@
   grid-template-columns: 1fr;
   gap: 1rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @include respond-to('desktop') {
+  @include mixins.respond-to('desktop') {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -154,18 +155,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   background: white;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    border-color: $primary-color;
-    color: $primary-color;
+    border-color: variables.$primary-color;
+    color: variables.$primary-color;
   }
 
   &:disabled {

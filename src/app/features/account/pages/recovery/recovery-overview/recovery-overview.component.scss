@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/account/pages/recovery/recovery-overview/recovery-overview.component.scss
 
 // Variables
@@ -155,7 +156,7 @@ $shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
       }
     }
   }
@@ -382,7 +383,7 @@ $shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 
             &.coming-soon {
               background-color: rgba($warning-color, 0.1);
-              color: darken($warning-color, 20%);
+              color: color.adjust($warning-color, $lightness: -20%);
               border: 1px solid rgba($warning-color, 0.3);
             }
           }

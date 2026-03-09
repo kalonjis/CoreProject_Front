@@ -1,7 +1,8 @@
 // src/app/features/account/components/data-warning-dialog/data-warning-dialog.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // OVERLAY
@@ -15,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
@@ -26,15 +27,15 @@
 
 .dialog-container {
   background: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   width: 100%;
   max-width: 460px;
-  border-top: 4px solid $warning-color;
+  border-top: 4px solid variables.$warning-color;
   animation: scaleIn 0.2s ease-out;
   overflow: hidden;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     max-width: 100%;
   }
 }
@@ -48,7 +49,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
 }
 
 .dialog-icon {
@@ -60,7 +61,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 // =============================================================================
@@ -78,11 +79,11 @@
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: $text-color;
+  color: variables.$text-color;
 
   &--emphasis {
     font-weight: 500;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 }
 
@@ -95,8 +96,8 @@
   flex-direction: column;
   gap: 0;
   padding: 1.25rem 1.5rem;
-  background: $gray-light;
-  border-top: 1px solid $border-color;
+  background: variables.$gray-light;
+  border-top: 1px solid variables.$border-color;
 }
 
 // Séparateur "or"
@@ -111,12 +112,12 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: $border-color;
+    background: variables.$border-color;
   }
 
   span {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -134,7 +135,7 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.75rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -149,13 +150,13 @@
 
   // Bouton principal — télécharger les données (mis en avant)
   &--export {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
-    box-shadow: 0 2px 6px rgba($primary-color, 0.35);
+    box-shadow: 0 2px 6px rgba(variables.$primary-color, 0.35);
 
     &:hover {
-      background-color: darken($primary-color, 8%);
-      box-shadow: 0 4px 10px rgba($primary-color, 0.4);
+      background-color: color.adjust(variables.$primary-color, $lightness: -8%);
+      box-shadow: 0 4px 10px rgba(variables.$primary-color, 0.4);
       transform: translateY(-1px);
     }
 
@@ -168,13 +169,13 @@
   // Bouton secondaire — continuer la suppression (discret, pas de couleur agressive)
   &--delete {
     background-color: transparent;
-    color: $gray-dark;
-    border: 1px solid $border-color;
+    color: variables.$gray-dark;
+    border: 1px solid variables.$border-color;
 
     &:hover {
       background-color: white;
-      color: $danger-color;
-      border-color: $danger-color;
+      color: variables.$danger-color;
+      border-color: variables.$danger-color;
     }
 
     &:active {

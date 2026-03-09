@@ -1,20 +1,21 @@
-@import '../../../../../style/variables';
-@import '../../../../../style/mixins';
+@use "sass:color";
+@use '../../../../../style/variables';
+@use '../../../../../style/mixins';
 
 .deactivation-confirmation-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - #{$header-height} - 100px);
-  margin-top: $header-height;
+  min-height: calc(100vh - #{variables.$header-height} - 100px);
+  margin-top: variables.$header-height;
   padding: 2rem;
-  background-color: $gray-light;
+  background-color: variables.$gray-light;
 }
 
 .deactivation-confirmation-card {
   background-color: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow;
   width: 100%;
   max-width: 600px;
   padding: 2rem;
@@ -23,9 +24,9 @@
 }
 
 .title {
-  color: $secondary-color;
+  color: variables.$secondary-color;
   margin-bottom: 1.5rem;
-  font-weight: $font-weight-bold;
+  font-weight: variables.$font-weight-bold;
 }
 
 // ─── Loading ────────────────────────────────────────────────────────────────
@@ -39,15 +40,15 @@
   .spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid rgba($danger-color, 0.2);
+    border: 4px solid rgba(variables.$danger-color, 0.2);
     border-radius: 50%;
-    border-top-color: $danger-color;
+    border-top-color: variables.$danger-color;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
   }
 
   p {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 }
@@ -63,7 +64,7 @@
   }
 
   p {
-    color: $text-color;
+    color: variables.$text-color;
     font-size: 1.05rem;
     margin-bottom: 0.75rem;
     line-height: 1.6;
@@ -71,7 +72,7 @@
 
   .sub {
     font-size: 0.9rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }
 
@@ -83,17 +84,17 @@
 
 .btn-danger {
   padding: 0.75rem 2rem;
-  background-color: $danger-color;
+  background-color: variables.$danger-color;
   color: white;
-  font-weight: $font-weight-bold;
+  font-weight: variables.$font-weight-bold;
   font-size: 1rem;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: darken($danger-color, 10%);
+    background-color: color.adjust(variables.$danger-color, $lightness: -10%);
     transform: translateY(-2px);
   }
 
@@ -121,7 +122,7 @@
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
 
-@media (max-width: $breakpoint-tablet) {
+@media (max-width: variables.$breakpoint-tablet) {
   .deactivation-confirmation-card {
     padding: 1.5rem;
   }
@@ -131,7 +132,7 @@
   }
 }
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: variables.$breakpoint-mobile) {
   .deactivation-confirmation-container {
     padding: 1rem;
   }

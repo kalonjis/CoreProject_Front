@@ -1,26 +1,26 @@
 // src/app/features/sport/components/track-card/track-card.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 .track-card {
   background: white;
-  border-radius: $border-radius-lg;
-  border: 1px solid $border-color;
+  border-radius: variables.$border-radius-lg;
+  border: 1px solid variables.$border-color;
   padding: 1.25rem;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: $box-shadow;
+    border-color: variables.$primary-color;
+    box-shadow: variables.$box-shadow;
     transform: translateY(-2px);
   }
 
   &:focus-visible {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    border-color: variables.$primary-color;
+    box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.15);
   }
 
   &:active {
@@ -47,17 +47,17 @@
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.875rem;
   }
 
   &__date-text {
     font-weight: 500;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   &__time {
-    color: $gray-dark;
+    color: variables.$gray-dark;
 
     &::before {
       content: '•';
@@ -73,7 +73,7 @@
     margin: 0 0 1rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     line-height: 1.3;
 
     // Truncate long names
@@ -91,7 +91,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 
-    @include respond-to('tablet') {
+    @include mixins.respond-to('tablet') {
       grid-template-columns: repeat(4, 1fr);
     }
   }
@@ -118,13 +118,13 @@
   &__metric-value {
     font-size: 0.95rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     white-space: nowrap;
   }
 
   &__metric-label {
     font-size: 0.75rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     white-space: nowrap;
   }
 }

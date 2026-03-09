@@ -1,4 +1,5 @@
-@import 'variables';
+@use "sass:color";
+@use 'variables';
 
 :host {
   display: block;
@@ -10,7 +11,7 @@
   flex-direction: column;
   height: 100%;
   background: #fff;
-  border-left: 1px solid $border-color;
+  border-left: 1px solid variables.$border-color;
   overflow-y: auto;
 }
 
@@ -21,7 +22,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
   gap: 0.75rem;
 }
 
@@ -35,7 +36,7 @@
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: 600;
-  color: $text-color;
+  color: variables.$text-color;
 }
 
 .close-btn {
@@ -43,14 +44,14 @@
   background: none;
   border: none;
   font-size: 1rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   cursor: pointer;
   padding: 0.1rem 0.3rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: $gray-medium;
+    background-color: variables.$gray-medium;
   }
 }
 
@@ -65,13 +66,13 @@
   font-weight: 600;
 
   &--ok {
-    background-color: color-mix(in srgb, $success-color 12%, transparent);
-    color: darken($success-color, 15%);
+    background-color: color-mix(in srgb, variables.$success-color 12%, transparent);
+    color: color.adjust(variables.$success-color, $lightness: -15%);
   }
 
   &--fail {
-    background-color: color-mix(in srgb, $danger-color 12%, transparent);
-    color: darken($danger-color, 10%);
+    background-color: color-mix(in srgb, variables.$danger-color 12%, transparent);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
   }
 }
 
@@ -99,27 +100,27 @@
   dt {
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
 
   dd {
     font-size: 0.85rem;
-    color: $text-color;
+    color: variables.$text-color;
     margin: 0;
     word-break: break-all;
 
     code {
       font-family: monospace;
       font-size: 0.8rem;
-      background: $gray-light;
+      background: variables.$gray-light;
       padding: 0.1rem 0.3rem;
-      border-radius: $border-radius-sm;
+      border-radius: variables.$border-radius-sm;
     }
   }
 
   &--muted {
-    dt, dd { color: $gray-dark; }
+    dt, dd { color: variables.$gray-dark; }
   }
 }

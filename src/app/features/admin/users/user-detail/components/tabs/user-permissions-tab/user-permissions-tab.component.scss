@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/tabs/user-permissions-tab/user-permissions-tab.component.scss
 
 $primary:  #6366f1;
@@ -40,7 +41,7 @@ $radius-md: 10px;
   border: 1px solid rgba($info, 0.25);
   border-radius: $radius-md;
   font-size: 0.875rem;
-  color: darken($info, 12%);
+  color: color.adjust($info, $lightness: -12%);
 
   svg { flex-shrink: 0; }
 }
@@ -164,7 +165,7 @@ $radius-md: 10px;
   border: 1px solid rgba($success, 0.35);
   background: rgba($success, 0.08);
   border-radius: 999px;
-  color: darken($success, 8%);
+  color: color.adjust($success, $lightness: -8%);
   cursor: pointer;
   transition: background 0.12s;
   white-space: nowrap;

@@ -4,7 +4,7 @@
 // To use these, include this file in the global styles.scss
 
 // Import variables
-@import 'variables';
+@use 'variables';
 
 // Display utilities
 .d-none { display: none !important; }
@@ -56,36 +56,36 @@
 .font-weight-normal { font-weight: 400 !important; }
 .font-weight-bold { font-weight: 700 !important; }
 
-.text-primary { color: $primary-color !important; }
-.text-secondary { color: $secondary-color !important; }
-.text-accent { color: $accent-color !important; }
-.text-success { color: $success-color !important; }
-.text-danger { color: $danger-color !important; }
-.text-warning { color: $warning-color !important; }
-.text-info { color: $info-color !important; }
-.text-light { color: $light-color !important; }
-.text-dark { color: $dark-color !important; }
+.text-primary { color: variables.$primary-color !important; }
+.text-secondary { color: variables.$secondary-color !important; }
+.text-accent { color: variables.$accent-color !important; }
+.text-success { color: variables.$success-color !important; }
+.text-danger { color: variables.$danger-color !important; }
+.text-warning { color: variables.$warning-color !important; }
+.text-info { color: variables.$info-color !important; }
+.text-light { color: variables.$light-color !important; }
+.text-dark { color: variables.$dark-color !important; }
 
 // Background utilities
-.bg-primary { background-color: $primary-color !important; }
-.bg-secondary { background-color: $secondary-color !important; }
-.bg-accent { background-color: $accent-color !important; }
-.bg-success { background-color: $success-color !important; }
-.bg-danger { background-color: $danger-color !important; }
-.bg-warning { background-color: $warning-color !important; }
-.bg-info { background-color: $info-color !important; }
-.bg-light { background-color: $light-color !important; }
-.bg-dark { background-color: $dark-color !important; }
+.bg-primary { background-color: variables.$primary-color !important; }
+.bg-secondary { background-color: variables.$secondary-color !important; }
+.bg-accent { background-color: variables.$accent-color !important; }
+.bg-success { background-color: variables.$success-color !important; }
+.bg-danger { background-color: variables.$danger-color !important; }
+.bg-warning { background-color: variables.$warning-color !important; }
+.bg-info { background-color: variables.$info-color !important; }
+.bg-light { background-color: variables.$light-color !important; }
+.bg-dark { background-color: variables.$dark-color !important; }
 
 // Spacing utilities
 // Margins
 @each $size, $value in (
   0: 0,
-  1: $spacer-1,
-  2: $spacer-2,
-  3: $spacer-3,
-  4: $spacer-4,
-  5: $spacer-5,
+  1: variables.$spacer-1,
+  2: variables.$spacer-2,
+  3: variables.$spacer-3,
+  4: variables.$spacer-4,
+  5: variables.$spacer-5,
 ) {
   .m-#{$size} { margin: $value !important; }
   .mt-#{$size} { margin-top: $value !important; }
@@ -120,11 +120,11 @@
 // Paddings
 @each $size, $value in (
   0: 0,
-  1: $spacer-1,
-  2: $spacer-2,
-  3: $spacer-3,
-  4: $spacer-4,
-  5: $spacer-5,
+  1: variables.$spacer-1,
+  2: variables.$spacer-2,
+  3: variables.$spacer-3,
+  4: variables.$spacer-4,
+  5: variables.$spacer-5,
 ) {
   .p-#{$size} { padding: $value !important; }
   .pt-#{$size} { padding-top: $value !important; }
@@ -142,11 +142,11 @@
 }
 
 // Border utilities
-.border { border: 1px solid $border-color !important; }
-.border-top { border-top: 1px solid $border-color !important; }
-.border-right { border-right: 1px solid $border-color !important; }
-.border-bottom { border-bottom: 1px solid $border-color !important; }
-.border-left { border-left: 1px solid $border-color !important; }
+.border { border: 1px solid variables.$border-color !important; }
+.border-top { border-top: 1px solid variables.$border-color !important; }
+.border-right { border-right: 1px solid variables.$border-color !important; }
+.border-bottom { border-bottom: 1px solid variables.$border-color !important; }
+.border-left { border-left: 1px solid variables.$border-color !important; }
 
 .border-0 { border: 0 !important; }
 .border-top-0 { border-top: 0 !important; }
@@ -154,27 +154,27 @@
 .border-bottom-0 { border-bottom: 0 !important; }
 .border-left-0 { border-left: 0 !important; }
 
-.border-primary { border-color: $primary-color !important; }
-.border-secondary { border-color: $secondary-color !important; }
-.border-accent { border-color: $accent-color !important; }
+.border-primary { border-color: variables.$primary-color !important; }
+.border-secondary { border-color: variables.$secondary-color !important; }
+.border-accent { border-color: variables.$accent-color !important; }
 
 // Border radius
-.rounded { border-radius: $border-radius !important; }
+.rounded { border-radius: variables.$border-radius !important; }
 .rounded-top {
-  border-top-left-radius: $border-radius !important;
-  border-top-right-radius: $border-radius !important;
+  border-top-left-radius: variables.$border-radius !important;
+  border-top-right-radius: variables.$border-radius !important;
 }
 .rounded-right {
-  border-top-right-radius: $border-radius !important;
-  border-bottom-right-radius: $border-radius !important;
+  border-top-right-radius: variables.$border-radius !important;
+  border-bottom-right-radius: variables.$border-radius !important;
 }
 .rounded-bottom {
-  border-bottom-right-radius: $border-radius !important;
-  border-bottom-left-radius: $border-radius !important;
+  border-bottom-right-radius: variables.$border-radius !important;
+  border-bottom-left-radius: variables.$border-radius !important;
 }
 .rounded-left {
-  border-top-left-radius: $border-radius !important;
-  border-bottom-left-radius: $border-radius !important;
+  border-top-left-radius: variables.$border-radius !important;
+  border-bottom-left-radius: variables.$border-radius !important;
 }
 .rounded-circle { border-radius: 50% !important; }
 .rounded-0 { border-radius: 0 !important; }
@@ -196,7 +196,7 @@
   top: 0;
   right: 0;
   left: 0;
-  z-index: $z-index-fixed;
+  z-index: variables.$z-index-fixed;
 }
 
 .fixed-bottom {
@@ -204,13 +204,13 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: $z-index-fixed;
+  z-index: variables.$z-index-fixed;
 }
 
 // Shadows
-.shadow-sm { box-shadow: $box-shadow-sm !important; }
-.shadow { box-shadow: $box-shadow !important; }
-.shadow-lg { box-shadow: $box-shadow-lg !important; }
+.shadow-sm { box-shadow: variables.$box-shadow-sm !important; }
+.shadow { box-shadow: variables.$box-shadow !important; }
+.shadow-lg { box-shadow: variables.$box-shadow-lg !important; }
 .shadow-none { box-shadow: none !important; }
 
 // Width and height
@@ -233,19 +233,19 @@
 .overflow-scroll { overflow: scroll !important; }
 
 // Responsive display utilities
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: variables.$breakpoint-mobile) {
   .d-mobile-none { display: none !important; }
   .d-mobile-block { display: block !important; }
   .d-mobile-flex { display: flex !important; }
 }
 
-@media (min-width: $breakpoint-mobile + 0.02) and (max-width: $breakpoint-tablet) {
+@media (min-width: variables.$breakpoint-mobile + 0.02) and (max-width: variables.$breakpoint-tablet) {
   .d-tablet-none { display: none !important; }
   .d-tablet-block { display: block !important; }
   .d-tablet-flex { display: flex !important; }
 }
 
-@media (min-width: $breakpoint-tablet + 0.02) {
+@media (min-width: variables.$breakpoint-tablet + 0.02) {
   .d-desktop-none { display: none !important; }
   .d-desktop-block { display: block !important; }
   .d-desktop-flex { display: flex !important; }

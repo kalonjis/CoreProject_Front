@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/tabs/user-info-tab/user-info-tab.component.scss
 
 $primary:  #6366f1;
@@ -92,7 +93,7 @@ $radius-md: 10px;
   color: $gray-700;
 
   &--mono    { font-family: 'Menlo', 'Consolas', monospace; font-size: 0.8rem; color: $gray-600; }
-  &--warning { color: darken($warning, 12%); font-weight: 500; }
+  &--warning { color: color.adjust($warning, $lightness: -12%); font-weight: 500; }
 }
 
 .empty-value {
@@ -148,7 +149,7 @@ $radius-md: 10px;
   border: 1px solid transparent;
 
   &--super-admin { background: rgba(#7c3aed, 0.1); color: #6d28d9; border-color: rgba(#7c3aed, 0.25); }
-  &--admin       { background: rgba($primary, 0.1); color: darken($primary, 10%); border-color: rgba($primary, 0.25); }
+  &--admin       { background: rgba($primary, 0.1); color: color.adjust($primary, $lightness: -10%); border-color: rgba($primary, 0.25); }
   &--moderator   { background: rgba(#3b82f6, 0.1); color: #1d4ed8; border-color: rgba(#3b82f6, 0.25); }
   &--user        { background: $gray-100; color: $gray-600; border-color: $gray-200; }
   &--guest       { background: $gray-50;  color: $gray-400; border-color: $gray-200; }
@@ -165,8 +166,8 @@ $radius-md: 10px;
   border-radius: $radius-sm;
   padding: 2px 8px;
 
-  &--on      { background: rgba($success, 0.1); color: darken($success, 8%); }
+  &--on      { background: rgba($success, 0.1); color: color.adjust($success, $lightness: -8%); }
   &--off     { background: $gray-100; color: $gray-500; }
-  &--warn    { background: rgba($warning, 0.12); color: darken($warning, 12%); }
+  &--warn    { background: rgba($warning, 0.12); color: color.adjust($warning, $lightness: -12%); }
   &--neutral { background: $gray-100; color: $gray-500; }
 }

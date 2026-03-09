@@ -1,10 +1,10 @@
-@import 'variables';
+@use 'variables';
 
 .stats-card {
   padding: 1.25rem;
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
@@ -21,12 +21,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 }
 
 .stats-total {
   font-size: 0.8rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 }
 
 // ── Loading ───────────────────────────────────────────────────────────────────
@@ -39,8 +39,8 @@
   .spinner {
     width: 1.5rem;
     height: 1.5rem;
-    border: 3px solid $gray-medium;
-    border-top-color: $primary-color;
+    border: 3px solid variables.$gray-medium;
+    border-top-color: variables.$primary-color;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
@@ -55,7 +55,7 @@
 .stats-empty {
   text-align: center;
   font-size: 0.85rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   padding: 1rem 0;
 }
 
@@ -81,14 +81,14 @@
 
 .stats-bar-wrap {
   height: 6px;
-  background: $gray-medium;
+  background: variables.$gray-medium;
   border-radius: 999px;
   overflow: hidden;
 }
 
 .stats-bar {
   height: 100%;
-  background: $primary-color;
+  background: variables.$primary-color;
   border-radius: 999px;
   transition: width 0.4s ease;
   min-width: 2px;
@@ -100,11 +100,11 @@
   font-size: 0.8rem;
   font-weight: 600;
   text-align: right;
-  color: $text-color;
+  color: variables.$text-color;
 }
 
 .stats-percent {
   font-size: 0.75rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   text-align: right;
 }

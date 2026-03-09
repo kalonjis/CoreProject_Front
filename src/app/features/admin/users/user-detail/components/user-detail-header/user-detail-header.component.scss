@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/user-detail-header/user-detail-header.component.scss
 
 $primary:      #6366f1;
@@ -33,7 +34,7 @@ $radius-lg:    16px;
   background: rgba($danger, 0.06);
   border: 1px solid rgba($danger, 0.25);
   border-radius: $radius-md;
-  color: darken($danger, 8%);
+  color: color.adjust($danger, $lightness: -8%);
   font-size: 0.875rem;
   line-height: 1.5;
 
@@ -94,8 +95,8 @@ $radius-lg:    16px;
 
   &.avatar--super-admin { background: linear-gradient(135deg, #f43f5e, #dc2626); }
   &.avatar--admin       { background: linear-gradient(135deg, $primary, $primary-dark); }
-  &.avatar--moderator   { background: linear-gradient(135deg, $warning, darken($warning, 15%)); }
-  &.avatar--user        { background: linear-gradient(135deg, $info, darken($info, 15%)); }
+  &.avatar--moderator   { background: linear-gradient(135deg, $warning, color.adjust($warning, $lightness: -15%)); }
+  &.avatar--user        { background: linear-gradient(135deg, $info, color.adjust($info, $lightness: -15%)); }
   &.avatar--guest       { background: linear-gradient(135deg, $gray-400, $gray-500); }
 }
 
@@ -148,7 +149,7 @@ $radius-lg:    16px;
 
   &.status-pill--active {
     background: rgba($success, 0.1);
-    color: darken($success, 4%);
+    color: color.adjust($success, $lightness: -4%);
     .status-dot { background: $success; }
   }
 }
@@ -190,8 +191,8 @@ $radius-lg:    16px;
 
   &.role-super-admin { background: linear-gradient(135deg, #f43f5e, #dc2626); color: white; }
   &.role-admin       { background: linear-gradient(135deg, $primary, $primary-dark); color: white; }
-  &.role-moderator   { background: rgba($warning, 0.15); color: darken($warning, 10%); }
-  &.role-user        { background: rgba($info, 0.15); color: darken($info, 10%); }
+  &.role-moderator   { background: rgba($warning, 0.15); color: color.adjust($warning, $lightness: -10%); }
+  &.role-user        { background: rgba($info, 0.15); color: color.adjust($info, $lightness: -10%); }
   &.role-guest       { background: $gray-100; color: $gray-500; }
 }
 
@@ -204,9 +205,9 @@ $radius-lg:    16px;
   font-size: 0.7rem;
   font-weight: 600;
 
-  &--success { background: rgba($success, 0.1); color: darken($success, 6%); }
-  &--info    { background: rgba($info, 0.1);    color: darken($info, 8%); }
-  &--warning { background: rgba($warning, 0.1); color: darken($warning, 12%); }
+  &--success { background: rgba($success, 0.1); color: color.adjust($success, $lightness: -6%); }
+  &--info    { background: rgba($info, 0.1);    color: color.adjust($info, $lightness: -8%); }
+  &--warning { background: rgba($warning, 0.1); color: color.adjust($warning, $lightness: -12%); }
   &--neutral { background: $gray-100;           color: $gray-500; }
 }
 

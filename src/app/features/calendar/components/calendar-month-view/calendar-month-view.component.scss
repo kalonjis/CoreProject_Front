@@ -1,3 +1,4 @@
+@use "sass:color";
 // =============================================================================
 // Variables
 // =============================================================================
@@ -170,7 +171,7 @@ $selected-bg: #eff6ff;
     font-weight: 600;
 
     &:hover {
-      background-color: darken($today-color, 10%);
+      background-color: color.adjust($today-color, $lightness: -10%);
     }
   }
 }

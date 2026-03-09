@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/tabs/admin-deactivation-audit/admin-deactivation-audit.component.scss
 
 $danger:   #ef4444;
@@ -43,7 +44,7 @@ $radius-md: 10px;
   margin: 0 0 2px 0;
   font-size: 0.875rem;
   font-weight: 700;
-  color: darken($danger, 8%);
+  color: color.adjust($danger, $lightness: -8%);
 }
 
 .audit-subtitle {

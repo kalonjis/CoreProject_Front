@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .filters {
   display: flex;
@@ -6,8 +6,8 @@
   gap: 0.75rem;
   padding: 1rem;
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
 }
 
 // ── Row ───────────────────────────────────────────────────────────────────────
@@ -20,14 +20,14 @@
 
   &--sub {
     padding-left: 1rem;
-    border-left: 2px solid $gray-medium;
+    border-left: 2px solid variables.$gray-medium;
   }
 }
 
 .filter-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   min-width: 5rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -43,21 +43,21 @@
 
 .chip {
   padding: 0.3rem 0.75rem;
-  border: 1px solid $border-color;
+  border: 1px solid variables.$border-color;
   border-radius: 999px;
   background: transparent;
   font-size: 0.8rem;
   cursor: pointer;
-  color: $text-color;
+  color: variables.$text-color;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: $gray-medium;
+    background-color: variables.$gray-medium;
   }
 
   &--active {
-    background-color: $primary-color;
-    border-color: $primary-color;
+    background-color: variables.$primary-color;
+    border-color: variables.$primary-color;
     color: #fff;
   }
 
@@ -78,15 +78,15 @@
 
 .filter-input {
   padding: 0.35rem 0.6rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   font-size: 0.85rem;
-  color: $text-color;
+  color: variables.$text-color;
   background: #fff;
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
   }
 
   &--select {
@@ -95,7 +95,7 @@
 }
 
 .filter-sep {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-size: 0.8rem;
 }
 
@@ -104,16 +104,16 @@
 .reset-btn {
   margin-left: auto;
   padding: 0.3rem 0.75rem;
-  border: 1px solid $danger-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$danger-color;
+  border-radius: variables.$border-radius;
   background: transparent;
-  color: $danger-color;
+  color: variables.$danger-color;
   font-size: 0.8rem;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: $danger-color;
+    background-color: variables.$danger-color;
     color: #fff;
   }
 }

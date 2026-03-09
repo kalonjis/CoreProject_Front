@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .user-logs {
   display: flex;
@@ -7,7 +7,7 @@
 }
 
 .no-user {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-size: 0.9rem;
   padding: 2rem 0;
   text-align: center;

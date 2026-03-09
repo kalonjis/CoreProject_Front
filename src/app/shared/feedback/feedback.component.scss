@@ -1,6 +1,7 @@
 // src/app/shared/feedback/feedback.component.scss
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .feedback {
   position: fixed;
@@ -10,8 +11,8 @@
   z-index: 1000;
   width: 320px;
   padding: 1rem;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  border-radius: variables.$border-radius;
+  box-shadow: variables.$box-shadow;
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -19,19 +20,19 @@
 
   // Types de feedback
   &.feedback-success {
-    border-left: 4px solid $success-color;
+    border-left: 4px solid variables.$success-color;
   }
 
   &.feedback-error {
-    border-left: 4px solid $danger-color;
+    border-left: 4px solid variables.$danger-color;
   }
 
   &.feedback-warning {
-    border-left: 4px solid $warning-color;
+    border-left: 4px solid variables.$warning-color;
   }
 
   &.feedback-info {
-    border-left: 4px solid $info-color;
+    border-left: 4px solid variables.$info-color;
   }
 
   .feedback-content {
@@ -54,35 +55,35 @@
 
   // Couleurs des icônes selon le type
   &.feedback-success .feedback-icon {
-    background-color: rgba($success-color, 0.2);
-    color: $success-color;
+    background-color: rgba(variables.$success-color, 0.2);
+    color: variables.$success-color;
   }
 
   &.feedback-error .feedback-icon {
-    background-color: rgba($danger-color, 0.2);
-    color: $danger-color;
+    background-color: rgba(variables.$danger-color, 0.2);
+    color: variables.$danger-color;
   }
 
   &.feedback-warning .feedback-icon {
-    background-color: rgba($warning-color, 0.2);
-    color: $warning-color;
+    background-color: rgba(variables.$warning-color, 0.2);
+    color: variables.$warning-color;
   }
 
   &.feedback-info .feedback-icon {
-    background-color: rgba($info-color, 0.2);
-    color: $info-color;
+    background-color: rgba(variables.$info-color, 0.2);
+    color: variables.$info-color;
   }
 
   .feedback-message {
     font-size: 0.95rem;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   .feedback-button {
     align-self: flex-end;
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -90,38 +91,38 @@
 
   // Couleurs des boutons selon le type
   .button-success {
-    background-color: $success-color;
+    background-color: variables.$success-color;
     color: white;
 
     &:hover {
-      background-color: darken($success-color, 5%);
+      background-color: color.adjust(variables.$success-color, $lightness: -5%);
     }
   }
 
   .button-error {
-    background-color: $danger-color;
+    background-color: variables.$danger-color;
     color: white;
 
     &:hover {
-      background-color: darken($danger-color, 5%);
+      background-color: color.adjust(variables.$danger-color, $lightness: -5%);
     }
   }
 
   .button-warning {
-    background-color: $warning-color;
+    background-color: variables.$warning-color;
     color: white;
 
     &:hover {
-      background-color: darken($warning-color, 5%);
+      background-color: color.adjust(variables.$warning-color, $lightness: -5%);
     }
   }
 
   .button-info {
-    background-color: $info-color;
+    background-color: variables.$info-color;
     color: white;
 
     &:hover {
-      background-color: darken($info-color, 5%);
+      background-color: color.adjust(variables.$info-color, $lightness: -5%);
     }
   }
 }
@@ -138,7 +139,7 @@
 }
 
 /* Responsive */
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: variables.$breakpoint-mobile) {
   .feedback {
     width: 90%;
     max-width: 320px;

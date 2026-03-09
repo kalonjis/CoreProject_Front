@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/admin-deactivate-modal/admin-deactivate-modal.component.scss
 
 $danger:   #ef4444;
@@ -91,7 +92,7 @@ $radius-md: 12px;
   margin: 0 0 3px 0;
   font-size: 1rem;
   font-weight: 700;
-  color: darken($danger, 10%);
+  color: color.adjust($danger, $lightness: -10%);
 }
 
 .modal-subtitle {
@@ -186,8 +187,8 @@ $radius-md: 12px;
   padding: 1px 7px;
   white-space: nowrap;
 
-  &--reactivable { background: rgba($success, 0.1); color: darken($success, 8%); }
-  &--permanent   { background: rgba($danger,  0.1); color: darken($danger,  8%); }
+  &--reactivable { background: rgba($success, 0.1); color: color.adjust($success, $lightness: -8%); }
+  &--permanent   { background: rgba($danger,  0.1); color: color.adjust($danger,  $lightness: -8%); }
 }
 
 // Field footer (error + char count)
@@ -222,7 +223,7 @@ $radius-md: 12px;
   border: 1px solid rgba($danger, 0.25);
   border-radius: $radius-sm;
   font-size: 0.8125rem;
-  color: darken($danger, 8%);
+  color: color.adjust($danger, $lightness: -8%);
 
   svg { flex-shrink: 0; }
 }
@@ -268,7 +269,7 @@ $radius-md: 12px;
   cursor: pointer;
   transition: background 0.12s;
 
-  &:hover:not(:disabled)  { background: darken($danger, 6%); }
+  &:hover:not(:disabled)  { background: color.adjust($danger, $lightness: -6%); }
   &:disabled              { opacity: 0.45; cursor: not-allowed; }
 }
 

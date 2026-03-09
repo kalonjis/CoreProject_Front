@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/components/tabs/user-devices-tab/user-devices-tab.component.scss
 
 $primary:  #6366f1;
@@ -244,10 +245,10 @@ $panel-width: 320px;
   padding: 2px 8px;
   border: 1px solid transparent;
 
-  &.trust--untrusted      { background: rgba($danger, 0.1); color: darken($danger, 8%); border-color: rgba($danger, 0.25); }
-  &.trust--basic          { background: rgba($warning, 0.1); color: darken($warning, 12%); border-color: rgba($warning, 0.25); }
-  &.trust--trusted        { background: rgba($success, 0.1); color: darken($success, 8%); border-color: rgba($success, 0.25); }
-  &.trust--highly-trusted { background: rgba($primary, 0.1); color: darken($primary, 10%); border-color: rgba($primary, 0.25); }
+  &.trust--untrusted      { background: rgba($danger, 0.1); color: color.adjust($danger, $lightness: -8%); border-color: rgba($danger, 0.25); }
+  &.trust--basic          { background: rgba($warning, 0.1); color: color.adjust($warning, $lightness: -12%); border-color: rgba($warning, 0.25); }
+  &.trust--trusted        { background: rgba($success, 0.1); color: color.adjust($success, $lightness: -8%); border-color: rgba($success, 0.25); }
+  &.trust--highly-trusted { background: rgba($primary, 0.1); color: color.adjust($primary, $lightness: -10%); border-color: rgba($primary, 0.25); }
 }
 
 // ============================================================================
@@ -261,10 +262,10 @@ $panel-width: 320px;
   border-radius: $radius-sm;
   padding: 2px 7px;
 
-  &.status--active       { background: rgba($success, 0.1); color: darken($success, 8%); }
+  &.status--active       { background: rgba($success, 0.1); color: color.adjust($success, $lightness: -8%); }
   &.status--offline      { background: $gray-100; color: $gray-500; }
-  &.status--unconfirmed  { background: rgba($warning, 0.1); color: darken($warning, 12%); }
-  &.status--blacklisted  { background: rgba($danger, 0.1); color: darken($danger, 8%); }
+  &.status--unconfirmed  { background: rgba($warning, 0.1); color: color.adjust($warning, $lightness: -12%); }
+  &.status--blacklisted  { background: rgba($danger, 0.1); color: color.adjust($danger, $lightness: -8%); }
 }
 
 // ============================================================================
@@ -398,21 +399,21 @@ $panel-width: 320px;
 
   &--warning {
     background: rgba($warning, 0.1);
-    color: darken($warning, 12%);
+    color: color.adjust($warning, $lightness: -12%);
     border-color: rgba($warning, 0.3);
     &:hover:not(:disabled) { background: rgba($warning, 0.18); }
   }
 
   &--danger {
     background: rgba($danger, 0.08);
-    color: darken($danger, 8%);
+    color: color.adjust($danger, $lightness: -8%);
     border-color: rgba($danger, 0.25);
     &:hover:not(:disabled) { background: rgba($danger, 0.15); }
   }
 
   &--success {
     background: rgba($success, 0.08);
-    color: darken($success, 8%);
+    color: color.adjust($success, $lightness: -8%);
     border-color: rgba($success, 0.25);
     &:hover:not(:disabled) { background: rgba($success, 0.15); }
   }

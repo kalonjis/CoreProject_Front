@@ -1,6 +1,7 @@
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 // Header styles
 .app-header {
@@ -27,12 +28,12 @@
     font-weight: bold;
 
     a {
-      color: $secondary-color;
+      color: variables.$secondary-color;
       text-decoration: none;
       transition: color 0.3s ease;
 
       &:hover {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
   }
@@ -42,7 +43,7 @@
 .main-nav {
   display: flex;
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: variables.$breakpoint-tablet) {
     display: none; // Hide on mobile, show in mobile menu instead
   }
 
@@ -60,12 +61,12 @@
     a {
       display: block;
       padding: 0.5rem 1rem;
-      color: $dark-color;
+      color: variables.$dark-color;
       text-decoration: none;
       transition: color 0.3s ease;
 
       &:hover, &.active {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
   }
@@ -76,7 +77,7 @@
   display: flex;
   align-items: center;
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: variables.$breakpoint-tablet) {
     display: none; // Hide on mobile, show in mobile menu instead
   }
 
@@ -91,8 +92,8 @@
     margin-left: 0.5rem;
 
     &.btn-login {
-      color: $primary-color;
-      border: 1px solid $primary-color;
+      color: variables.$primary-color;
+      border: 1px solid variables.$primary-color;
 
       &:hover {
         background-color: rgba(74, 144, 226, 0.1);
@@ -100,11 +101,11 @@
     }
 
     &.btn-signup {
-      background-color: $primary-color;
+      background-color: variables.$primary-color;
       color: white;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust(variables.$primary-color, $lightness: -10%);
       }
     }
   }
@@ -121,7 +122,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      color: $dark-color;
+      color: variables.$dark-color;
       font-weight: 500;
       transition: all 0.2s ease;
 
@@ -131,7 +132,7 @@
 
       .dropdown-icon {
         margin-left: 8px;
-        border: solid $dark-color;
+        border: solid variables.$dark-color;
         border-width: 0 2px 2px 0;
         display: inline-block;
         padding: 3px;
@@ -155,7 +156,7 @@
       .dropdown-item {
         display: block;
         padding: 0.6rem 1rem;
-        color: $dark-color;
+        color: variables.$dark-color;
         text-decoration: none;
         transition: background-color 0.2s ease;
 
@@ -165,7 +166,7 @@
         }
 
         &.logout-item {
-          color: $accent-color;
+          color: variables.$accent-color;
           cursor: pointer;
 
           &:hover {
@@ -177,7 +178,7 @@
       .dropdown-divider {
         height: 1px;
         margin: 0.5rem 0;
-        background-color: $border-color;
+        background-color: variables.$border-color;
       }
     }
   }
@@ -195,14 +196,14 @@
   cursor: pointer;
   padding: 0;
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: variables.$breakpoint-tablet) {
     display: flex;
   }
 
   .bar {
     height: 3px;
     width: 100%;
-    background-color: $dark-color;
+    background-color: variables.$dark-color;
     border-radius: 10px;
     transition: transform 0.3s ease;
   }
@@ -252,18 +253,18 @@
     a {
       display: block;
       padding: 0.75rem 1rem;
-      color: $dark-color;
+      color: variables.$dark-color;
       text-decoration: none;
       font-size: 1.1rem;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid variables.$border-color;
 
       &:hover {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
 
     .logout-btn {
-      color: $accent-color;
+      color: variables.$accent-color;
     }
   }
 }

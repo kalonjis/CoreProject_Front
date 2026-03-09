@@ -1,3 +1,4 @@
+@use "sass:color";
 // =============================================================================
 // Variables
 // =============================================================================
@@ -118,7 +119,7 @@ $today-bg: rgba(59, 130, 246, 0.05);
 
   &:hover {
     background-color: $hover-bg;
-    border-color: darken($border-color, 5%);
+    border-color: color.adjust($border-color, $lightness: -5%);
     transform: translateX(4px);
   }
 

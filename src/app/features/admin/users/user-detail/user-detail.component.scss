@@ -1,12 +1,13 @@
 // src/app/features/admin/users/user-detail/user-detail.component.scss
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .user-detail-container {
   padding: 2rem 1rem;
-  margin-top: $header-height;
-  min-height: calc(100vh - #{$header-height});
-  background-color: $gray-light;
+  margin-top: variables.$header-height;
+  min-height: calc(100vh - #{variables.$header-height});
+  background-color: variables.$gray-light;
 }
 
 .user-detail-header {
@@ -14,19 +15,19 @@
   margin: 0 auto 2rem;
 
   h1 {
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin-top: 0.5rem;
   }
 
   .back-link {
     display: inline-block;
     padding: 0.5rem 0;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: $primary-color;
+      color: variables.$primary-color;
     }
   }
 }
@@ -35,23 +36,23 @@
   padding: 3rem;
   text-align: center;
   background-color: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow;
   max-width: 1200px;
   margin: 0 auto;
 
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid rgba($primary-color, 0.2);
+    border: 3px solid rgba(variables.$primary-color, 0.2);
     border-radius: 50%;
-    border-top-color: $primary-color;
+    border-top-color: variables.$primary-color;
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;
   }
 
   p {
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }
 
@@ -59,36 +60,36 @@
   padding: 3rem;
   text-align: center;
   background-color: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow;
   max-width: 1200px;
   margin: 0 auto;
 
   p {
-    color: $danger-color;
+    color: variables.$danger-color;
     margin-bottom: 1rem;
   }
 
   .btn-primary {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
     border: none;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 500;
     cursor: pointer;
 
     &:hover {
-      background-color: darken($primary-color, 10%);
+      background-color: color.adjust(variables.$primary-color, $lightness: -10%);
     }
   }
 }
 
 .user-card {
   background-color: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow;
   max-width: 1200px;
   margin: 0 auto;
   overflow: hidden;
@@ -98,14 +99,14 @@
   display: flex;
   align-items: center;
   padding: 2rem;
-  background-color: rgba($light-color, 0.5);
-  border-bottom: 1px solid $border-color;
+  background-color: rgba(variables.$light-color, 0.5);
+  border-bottom: 1px solid variables.$border-color;
 
   .user-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
     display: flex;
     align-items: center;
@@ -121,13 +122,13 @@
 
     h2 {
       margin: 0 0 0.25rem;
-      color: $secondary-color;
+      color: variables.$secondary-color;
       font-size: 1.75rem;
     }
 
     .user-email {
       margin: 0 0 0.25rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 1rem;
     }
 
@@ -149,13 +150,13 @@
       }
 
       .status-active {
-        background-color: rgba($success-color, 0.1);
-        color: darken($success-color, 10%);
+        background-color: rgba(variables.$success-color, 0.1);
+        color: color.adjust(variables.$success-color, $lightness: -10%);
       }
 
       .status-inactive {
-        background-color: rgba($gray-dark, 0.1);
-        color: $gray-dark;
+        background-color: rgba(variables.$gray-dark, 0.1);
+        color: variables.$gray-dark;
       }
     }
   }
@@ -167,7 +168,7 @@
   .tabs-nav {
     display: flex;
     gap: 0.25rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     margin-bottom: 1.5rem;
     overflow-x: auto;
     scrollbar-width: thin; // Pour Firefox
@@ -177,7 +178,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: $border-color;
+      background-color: variables.$border-color;
       border-radius: 4px;
     }
 
@@ -186,19 +187,19 @@
       background: none;
       border: none;
       border-bottom: 3px solid transparent;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s ease;
 
       &:hover {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
 
       &.active {
-        color: $primary-color;
-        border-bottom-color: $primary-color;
+        color: variables.$primary-color;
+        border-bottom-color: variables.$primary-color;
       }
     }
   }
@@ -207,20 +208,20 @@
     min-height: 300px;
 
     h3 {
-      color: $secondary-color;
+      color: variables.$secondary-color;
       margin-top: 0;
       margin-bottom: 1.5rem;
       font-size: 1.3rem;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid variables.$border-color;
       padding-bottom: 0.5rem;
     }
 
     .placeholder-text {
       text-align: center;
       padding: 2rem;
-      background-color: rgba($light-color, 0.5);
-      border-radius: $border-radius;
-      color: $gray-dark;
+      background-color: rgba(variables.$light-color, 0.5);
+      border-radius: variables.$border-radius;
+      color: variables.$gray-dark;
       font-style: italic;
     }
   }
@@ -232,19 +233,19 @@
   .tabs-placeholder {
     margin-bottom: 2rem;
     padding: 1rem;
-    background-color: rgba($light-color, 0.5);
-    border-radius: $border-radius;
+    background-color: rgba(variables.$light-color, 0.5);
+    border-radius: variables.$border-radius;
     text-align: center;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   .user-info-section {
     h3 {
-      color: $secondary-color;
+      color: variables.$secondary-color;
       margin-top: 0;
       margin-bottom: 1.5rem;
       font-size: 1.3rem;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid variables.$border-color;
       padding-bottom: 0.5rem;
     }
 
@@ -257,7 +258,7 @@
         .info-label {
           display: block;
           font-size: 0.85rem;
-          color: $gray-dark;
+          color: variables.$gray-dark;
           margin-bottom: 0.25rem;
         }
 
@@ -270,8 +271,8 @@
         .role-badge {
           display: inline-block;
           padding: 0.2rem 0.5rem;
-          background-color: rgba($primary-color, 0.1);
-          color: darken($primary-color, 15%);
+          background-color: rgba(variables.$primary-color, 0.1);
+          color: color.adjust(variables.$primary-color, $lightness: -15%);
           border-radius: 4px;
           font-size: 0.85rem;
           margin-right: 0.25rem;
@@ -284,11 +285,11 @@
 
 .user-actions {
   padding: 2rem;
-  background-color: rgba($light-color, 0.3);
-  border-top: 1px solid $border-color;
+  background-color: rgba(variables.$light-color, 0.3);
+  border-top: 1px solid variables.$border-color;
 
   h3 {
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin-top: 0;
     margin-bottom: 1.5rem;
     font-size: 1.3rem;
@@ -305,44 +306,44 @@
       gap: 0.5rem;
       padding: 0.75rem 1.25rem;
       border: none;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.2s ease;
 
       &.btn-success {
-        background-color: $success-color;
+        background-color: variables.$success-color;
         color: white;
 
         &:hover {
-          background-color: darken($success-color, 10%);
+          background-color: color.adjust(variables.$success-color, $lightness: -10%);
         }
       }
 
       &.btn-warning {
-        background-color: $warning-color;
+        background-color: variables.$warning-color;
         color: white;
 
         &:hover {
-          background-color: darken($warning-color, 10%);
+          background-color: color.adjust(variables.$warning-color, $lightness: -10%);
         }
       }
 
       &.btn-info {
-        background-color: $info-color;
+        background-color: variables.$info-color;
         color: white;
 
         &:hover {
-          background-color: darken($info-color, 10%);
+          background-color: color.adjust(variables.$info-color, $lightness: -10%);
         }
       }
 
       &.btn-danger {
-        background-color: $danger-color;
+        background-color: variables.$danger-color;
         color: white;
 
         &:hover {
-          background-color: darken($danger-color, 10%);
+          background-color: color.adjust(variables.$danger-color, $lightness: -10%);
         }
       }
     }
@@ -367,7 +368,7 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 0.5rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.8rem;
     white-space: nowrap;
     margin-bottom: 0.5rem;
@@ -389,9 +390,9 @@
   .empty-state {
     text-align: center;
     padding: 2rem;
-    background-color: rgba($light-color, 0.5);
-    border-radius: $border-radius;
-    color: $gray-dark;
+    background-color: rgba(variables.$light-color, 0.5);
+    border-radius: variables.$border-radius;
+    color: variables.$gray-dark;
   }
 
   .loading-container.small {
@@ -411,36 +412,36 @@
       border-collapse: collapse;
 
       th {
-        background-color: $light-color;
+        background-color: variables.$light-color;
         text-align: left;
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid variables.$border-color;
         font-weight: 600;
-        color: $secondary-color;
+        color: variables.$secondary-color;
       }
 
       td {
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid variables.$border-color;
         vertical-align: top;
       }
 
       tr:hover {
-        background-color: rgba($light-color, 0.5);
+        background-color: rgba(variables.$light-color, 0.5);
       }
 
       tr.error-row {
-        background-color: rgba($danger-color, 0.05);
+        background-color: rgba(variables.$danger-color, 0.05);
 
         &:hover {
-          background-color: rgba($danger-color, 0.1);
+          background-color: rgba(variables.$danger-color, 0.1);
         }
       }
 
       // Colonnes spécifiques
       .date-column {
         white-space: nowrap;
-        color: $gray-dark;
+        color: variables.$gray-dark;
         font-size: 0.9rem;
         width: 130px;
       }
@@ -456,38 +457,38 @@
         }
 
         .action-auth {
-          background-color: rgba($primary-color, 0.1);
-          color: darken($primary-color, 15%);
+          background-color: rgba(variables.$primary-color, 0.1);
+          color: color.adjust(variables.$primary-color, $lightness: -15%);
         }
 
         .action-account {
-          background-color: rgba($info-color, 0.1);
-          color: darken($info-color, 15%);
+          background-color: rgba(variables.$info-color, 0.1);
+          color: color.adjust(variables.$info-color, $lightness: -15%);
         }
 
         .action-password {
-          background-color: rgba($warning-color, 0.1);
-          color: darken($warning-color, 15%);
+          background-color: rgba(variables.$warning-color, 0.1);
+          color: color.adjust(variables.$warning-color, $lightness: -15%);
         }
 
         .action-email {
-          background-color: rgba($success-color, 0.1);
-          color: darken($success-color, 15%);
+          background-color: rgba(variables.$success-color, 0.1);
+          color: color.adjust(variables.$success-color, $lightness: -15%);
         }
 
         .action-device {
-          background-color: rgba($secondary-color, 0.1);
-          color: darken($secondary-color, 15%);
+          background-color: rgba(variables.$secondary-color, 0.1);
+          color: color.adjust(variables.$secondary-color, $lightness: -15%);
         }
 
         .action-security {
-          background-color: rgba($danger-color, 0.1);
-          color: darken($danger-color, 15%);
+          background-color: rgba(variables.$danger-color, 0.1);
+          color: color.adjust(variables.$danger-color, $lightness: -15%);
         }
 
         .action-other {
-          background-color: rgba($gray-dark, 0.1);
-          color: $gray-dark;
+          background-color: rgba(variables.$gray-dark, 0.1);
+          color: variables.$gray-dark;
         }
 
         .action-description {
@@ -497,7 +498,7 @@
 
         .action-details {
           font-size: 0.85rem;
-          color: $gray-dark;
+          color: variables.$gray-dark;
         }
       }
 
@@ -515,7 +516,7 @@
 
         .ip-address {
           font-size: 0.85rem;
-          color: $gray-dark;
+          color: variables.$gray-dark;
           font-family: monospace;
         }
       }
@@ -533,18 +534,18 @@
         }
 
         .status-success {
-          background-color: rgba($success-color, 0.1);
-          color: darken($success-color, 15%);
+          background-color: rgba(variables.$success-color, 0.1);
+          color: color.adjust(variables.$success-color, $lightness: -15%);
         }
 
         .status-failure {
-          background-color: rgba($danger-color, 0.1);
-          color: darken($danger-color, 15%);
+          background-color: rgba(variables.$danger-color, 0.1);
+          color: color.adjust(variables.$danger-color, $lightness: -15%);
         }
 
         .failure-reason {
           font-size: 0.85rem;
-          color: $danger-color;
+          color: variables.$danger-color;
           margin-top: 0.25rem;
         }
       }
@@ -568,12 +569,12 @@
       height: 36px;
       border-radius: 4px;
       background-color: white;
-      border: 1px solid $border-color;
+      border: 1px solid variables.$border-color;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover:not(:disabled) {
-        background-color: $light-color;
+        background-color: variables.$light-color;
       }
 
       &:disabled {
@@ -584,14 +585,14 @@
 
     .pagination-info {
       padding: 0 1rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 0.9rem;
     }
   }
 }
 
 // Responsive pour la table d'activité
-@media (max-width: $breakpoint-tablet) {
+@media (max-width: variables.$breakpoint-tablet) {
   .activity-table-container {
     .activity-table {
       th, td {
@@ -611,22 +612,22 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-  box-shadow: $box-shadow-sm;
+  box-shadow: variables.$box-shadow-sm;
 
   th, td {
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
   }
 
   th {
-    background-color: $light-color;
-    font-weight: $font-weight-bold;
-    color: $secondary-color;
+    background-color: variables.$light-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$secondary-color;
   }
 
   tr:hover {
-    background-color: rgba($primary-color, 0.05);
+    background-color: rgba(variables.$primary-color, 0.05);
   }
 }
 
@@ -634,28 +635,28 @@
 .trust-level {
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  border-radius: $border-radius-sm;
+  border-radius: variables.$border-radius-sm;
   font-size: 0.85rem;
-  font-weight: $font-weight-bold;
+  font-weight: variables.$font-weight-bold;
 
   &.level-highly-trusted {
-    background-color: rgba($success-color, 0.2);
-    color: darken($success-color, 10%);
+    background-color: rgba(variables.$success-color, 0.2);
+    color: color.adjust(variables.$success-color, $lightness: -10%);
   }
 
   &.level-trusted {
-    background-color: rgba($info-color, 0.2);
-    color: darken($info-color, 10%);
+    background-color: rgba(variables.$info-color, 0.2);
+    color: color.adjust(variables.$info-color, $lightness: -10%);
   }
 
   &.level-basic {
-    background-color: rgba($warning-color, 0.2);
-    color: darken($warning-color, 10%);
+    background-color: rgba(variables.$warning-color, 0.2);
+    color: color.adjust(variables.$warning-color, $lightness: -10%);
   }
 
   &.level-untrusted {
-    background-color: rgba($danger-color, 0.2);
-    color: darken($danger-color, 10%);
+    background-color: rgba(variables.$danger-color, 0.2);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
   }
 }
 
@@ -663,23 +664,23 @@
 .device-status {
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  border-radius: $border-radius-sm;
+  border-radius: variables.$border-radius-sm;
   font-size: 0.85rem;
-  font-weight: $font-weight-bold;
+  font-weight: variables.$font-weight-bold;
 
   &.status-confirmed {
-    background-color: rgba($success-color, 0.2);
-    color: darken($success-color, 10%);
+    background-color: rgba(variables.$success-color, 0.2);
+    color: color.adjust(variables.$success-color, $lightness: -10%);
   }
 
   &.status-unconfirmed {
-    background-color: rgba($warning-color, 0.2);
-    color: darken($warning-color, 10%);
+    background-color: rgba(variables.$warning-color, 0.2);
+    color: color.adjust(variables.$warning-color, $lightness: -10%);
   }
 
   &.status-blacklisted {
-    background-color: rgba($danger-color, 0.2);
-    color: darken($danger-color, 10%);
+    background-color: rgba(variables.$danger-color, 0.2);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
   }
 }
 
@@ -687,16 +688,16 @@
 // Styles pour l'onglet Autorisations
 .permissions-section {
   h3 {
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin-top: 0;
     margin-bottom: 1.5rem;
     font-size: 1.3rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     padding-bottom: 0.5rem;
   }
 
   h4 {
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin: 1.5rem 0 1rem;
     font-size: 1.1rem;
   }
@@ -708,9 +709,9 @@
   gap: 1rem;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  background-color: rgba($info-color, 0.1);
-  border-left: 4px solid $info-color;
-  border-radius: $border-radius;
+  background-color: rgba(variables.$info-color, 0.1);
+  border-left: 4px solid variables.$info-color;
+  border-radius: variables.$border-radius;
 
   .icon {
     font-size: 1.5rem;
@@ -721,16 +722,16 @@
 
     p {
       margin: 0;
-      color: darken($info-color, 15%);
+      color: color.adjust(variables.$info-color, $lightness: -15%);
     }
   }
 }
 
 .roles-container {
   background-color: white;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
-  box-shadow: $box-shadow-sm;
+  box-shadow: variables.$box-shadow-sm;
   margin-bottom: 2rem;
 }
 
@@ -742,8 +743,8 @@
 
   .role-card {
     flex: 1 1 300px;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     overflow: hidden;
 
     .role-header {
@@ -751,12 +752,12 @@
       justify-content: space-between;
       align-items: center;
       padding: 0.75rem 1rem;
-      background-color: $light-color;
-      border-bottom: 1px solid $border-color;
+      background-color: variables.$light-color;
+      border-bottom: 1px solid variables.$border-color;
 
       .role-name {
-        font-weight: $font-weight-bold;
-        color: $secondary-color;
+        font-weight: variables.$font-weight-bold;
+        color: variables.$secondary-color;
       }
 
       .role-action {
@@ -767,15 +768,15 @@
         justify-content: center;
         border: none;
         border-radius: 50%;
-        background-color: $light-color;
+        background-color: variables.$light-color;
         cursor: pointer;
 
         &.remove {
-          color: $danger-color;
+          color: variables.$danger-color;
           font-weight: bold;
 
           &:hover {
-            background-color: rgba($danger-color, 0.1);
+            background-color: rgba(variables.$danger-color, 0.1);
           }
         }
 
@@ -789,7 +790,7 @@
     .role-description {
       padding: 0.75rem 1rem;
       font-size: 0.9rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
   }
 
@@ -797,15 +798,15 @@
     width: 100%;
     padding: 2rem;
     text-align: center;
-    background-color: $light-color;
-    border-radius: $border-radius;
-    color: $gray-dark;
+    background-color: variables.$light-color;
+    border-radius: variables.$border-radius;
+    color: variables.$gray-dark;
   }
 }
 
 .available-roles {
   margin-top: 2rem;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid variables.$border-color;
   padding-top: 1.5rem;
 
   .updating-roles {
@@ -814,14 +815,14 @@
     gap: 0.5rem;
     margin-bottom: 1rem;
     font-size: 0.9rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
 
     .spinner-sm {
       width: 20px;
       height: 20px;
-      border: 2px solid rgba($primary-color, 0.2);
+      border: 2px solid rgba(variables.$primary-color, 0.2);
       border-radius: 50%;
-      border-top-color: $primary-color;
+      border-top-color: variables.$primary-color;
       animation: spin 1s linear infinite;
     }
   }
@@ -836,16 +837,16 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       background-color: white;
-      color: $primary-color;
+      color: variables.$primary-color;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: rgba($primary-color, 0.1);
-        border-color: $primary-color;
+        background-color: rgba(variables.$primary-color, 0.1);
+        border-color: variables.$primary-color;
       }
 
       &:disabled {
@@ -873,18 +874,18 @@
     .search-input {
       width: 300px;
       padding: 0.6rem 1rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-size: 0.95rem;
       transition: all 0.2s ease;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        border-color: variables.$primary-color;
+        box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.1);
       }
 
-      @media (max-width: $breakpoint-mobile) {
+      @media (max-width: variables.$breakpoint-mobile) {
         width: 100%;
       }
     }
@@ -895,15 +896,15 @@
       gap: 0.5rem;
       padding: 0.6rem 1rem;
       background-color: white;
-      color: $secondary-color;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      color: variables.$secondary-color;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover:not(:disabled) {
-        background-color: $light-color;
+        background-color: variables.$light-color;
       }
 
       &:disabled {
@@ -933,14 +934,14 @@
   }
 
   .empty-state {
-    background-color: $light-color;
+    background-color: variables.$light-color;
     padding: 2rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     text-align: center;
     margin-bottom: 1rem;
 
     p {
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-style: italic;
       margin: 0;
     }
@@ -956,18 +957,18 @@
     border-collapse: collapse;
 
     th {
-      background-color: $light-color;
-      color: $secondary-color;
+      background-color: variables.$light-color;
+      color: variables.$secondary-color;
       font-weight: 500;
       text-align: left;
       padding: 0.75rem 1rem;
-      border-bottom: 2px solid darken($light-color, 5%);
+      border-bottom: 2px solid color.adjust(variables.$light-color, $lightness: -5%);
       cursor: pointer;
       transition: background-color 0.2s ease;
       white-space: nowrap;
 
       &:hover {
-        background-color: darken($light-color, 3%);
+        background-color: color.adjust(variables.$light-color, $lightness: -3%);
       }
 
       .sort-indicator {
@@ -980,21 +981,21 @@
 
     td {
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid variables.$border-color;
       font-size: 0.95rem;
     }
 
     tr {
       &:nth-child(even) {
-        background-color: rgba($light-color, 0.4);
+        background-color: rgba(variables.$light-color, 0.4);
       }
 
       &:hover {
-        background-color: rgba($primary-color, 0.05);
+        background-color: rgba(variables.$primary-color, 0.05);
       }
 
       &.highlighted {
-        background-color: rgba($primary-color, 0.08);
+        background-color: rgba(variables.$primary-color, 0.08);
       }
     }
 
@@ -1008,7 +1009,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba($primary-color, 0.1);
+        background-color: rgba(variables.$primary-color, 0.1);
         border-radius: 50%;
         margin-right: 0.75rem;
         font-size: 1.1rem;
@@ -1025,23 +1026,23 @@
       white-space: nowrap;
 
       &.level-highly-trusted {
-        background-color: rgba($success-color, 0.1);
-        color: $success-color;
+        background-color: rgba(variables.$success-color, 0.1);
+        color: variables.$success-color;
       }
 
       &.level-trusted {
-        background-color: rgba($info-color, 0.1);
-        color: $info-color;
+        background-color: rgba(variables.$info-color, 0.1);
+        color: variables.$info-color;
       }
 
       &.level-basic {
-        background-color: rgba($warning-color, 0.1);
-        color: $warning-color;
+        background-color: rgba(variables.$warning-color, 0.1);
+        color: variables.$warning-color;
       }
 
       &.level-untrusted {
-        background-color: rgba($danger-color, 0.1);
-        color: $danger-color;
+        background-color: rgba(variables.$danger-color, 0.1);
+        color: variables.$danger-color;
       }
     }
 
@@ -1054,23 +1055,23 @@
       white-space: nowrap;
 
       &.status-confirmed {
-        background-color: rgba($success-color, 0.1);
-        color: $success-color;
+        background-color: rgba(variables.$success-color, 0.1);
+        color: variables.$success-color;
       }
 
       &.status-unconfirmed {
-        background-color: rgba($warning-color, 0.1);
-        color: $warning-color;
+        background-color: rgba(variables.$warning-color, 0.1);
+        color: variables.$warning-color;
       }
 
       &.status-disconnected {
-        background-color: rgba($gray-dark, 0.1);
-        color: $gray-dark;
+        background-color: rgba(variables.$gray-dark, 0.1);
+        color: variables.$gray-dark;
       }
 
       &.status-blacklisted {
-        background-color: rgba($danger-color, 0.1);
-        color: $danger-color;
+        background-color: rgba(variables.$danger-color, 0.1);
+        color: variables.$danger-color;
       }
     }
 
@@ -1091,13 +1092,13 @@
         height: 28px;
         border-radius: 50%;
         background-color: white;
-        border: 1px solid $border-color;
+        border: 1px solid variables.$border-color;
         cursor: pointer;
         transition: all 0.2s ease;
-        color: $secondary-color;
+        color: variables.$secondary-color;
 
         &:hover:not(:disabled) {
-          background-color: $light-color;
+          background-color: variables.$light-color;
           transform: scale(1.1);
         }
 
@@ -1107,11 +1108,11 @@
         }
 
         &.view {
-          color: $info-color;
+          color: variables.$info-color;
         }
 
         &.blacklist {
-          color: $danger-color;
+          color: variables.$danger-color;
         }
       }
     }
@@ -1128,15 +1129,15 @@
       gap: 0.5rem;
       padding: 0.6rem 1.25rem;
       background-color: white;
-      color: $primary-color;
-      border: 1px solid $primary-color;
-      border-radius: $border-radius;
+      color: variables.$primary-color;
+      border: 1px solid variables.$primary-color;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       text-decoration: none;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: rgba($primary-color, 0.1);
+        background-color: rgba(variables.$primary-color, 0.1);
       }
 
       &::after {
@@ -1158,7 +1159,7 @@
   max-width: 90vw;
   background-color: white;
   box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
@@ -1168,13 +1169,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
 
     h2 {
       margin: 0;
       font-size: 1.25rem;
       font-weight: 500;
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
 
     .close-btn {
@@ -1187,13 +1188,13 @@
       border: none;
       border-radius: 50%;
       cursor: pointer;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 1.25rem;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: $light-color;
-        color: $danger-color;
+        background-color: variables.$light-color;
+        color: variables.$danger-color;
       }
     }
   }
@@ -1217,7 +1218,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba($primary-color, 0.1);
+        background-color: rgba(variables.$primary-color, 0.1);
         border-radius: 50%;
         font-size: 1.75rem;
         margin-right: 1rem;
@@ -1226,24 +1227,24 @@
 
       .device-name {
         font-size: 1.4rem;
-        color: $secondary-color;
+        color: variables.$secondary-color;
         margin: 0;
         line-height: 1.3;
       }
     }
 
     .detail-section {
-      background-color: $light-color;
-      border-radius: $border-radius;
+      background-color: variables.$light-color;
+      border-radius: variables.$border-radius;
       padding: 1.25rem;
       margin-bottom: 1.5rem;
 
       h3 {
         font-size: 1.1rem;
-        color: $secondary-color;
+        color: variables.$secondary-color;
         margin-top: 0;
         margin-bottom: 1rem;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid variables.$border-color;
         padding-bottom: 0.5rem;
       }
 
@@ -1257,50 +1258,50 @@
         .detail-label {
           display: block;
           font-size: 0.85rem;
-          color: $gray-dark;
+          color: variables.$gray-dark;
           margin-bottom: 0.25rem;
         }
 
         .detail-value {
           font-weight: 500;
-          color: $secondary-color;
+          color: variables.$secondary-color;
         }
 
         .trust-level, .status {
           display: inline-block;
           padding: 0.25rem 0.5rem;
-          border-radius: $border-radius-sm;
+          border-radius: variables.$border-radius-sm;
           font-size: 0.9rem;
         }
 
         .level-highly-trusted {
-          background-color: rgba($success-color, 0.1);
-          color: darken($success-color, 10%);
+          background-color: rgba(variables.$success-color, 0.1);
+          color: color.adjust(variables.$success-color, $lightness: -10%);
         }
 
         .level-trusted {
-          background-color: rgba($info-color, 0.1);
-          color: darken($info-color, 10%);
+          background-color: rgba(variables.$info-color, 0.1);
+          color: color.adjust(variables.$info-color, $lightness: -10%);
         }
 
         .level-basic {
-          background-color: rgba($warning-color, 0.1);
-          color: darken($warning-color, 10%);
+          background-color: rgba(variables.$warning-color, 0.1);
+          color: color.adjust(variables.$warning-color, $lightness: -10%);
         }
 
         .level-untrusted {
-          background-color: rgba($danger-color, 0.1);
-          color: darken($danger-color, 10%);
+          background-color: rgba(variables.$danger-color, 0.1);
+          color: color.adjust(variables.$danger-color, $lightness: -10%);
         }
 
         .status-confirmed {
-          background-color: rgba($success-color, 0.1);
-          color: darken($success-color, 10%);
+          background-color: rgba(variables.$success-color, 0.1);
+          color: color.adjust(variables.$success-color, $lightness: -10%);
         }
 
         .status-unconfirmed {
-          background-color: rgba($warning-color, 0.1);
-          color: darken($warning-color, 10%);
+          background-color: rgba(variables.$warning-color, 0.1);
+          color: color.adjust(variables.$warning-color, $lightness: -10%);
         }
       }
     }
@@ -1316,7 +1317,7 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.25rem;
-        border-radius: $border-radius;
+        border-radius: variables.$border-radius;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -1324,12 +1325,12 @@
         flex: 1;
 
         &.btn-danger {
-          background-color: $danger-color;
+          background-color: variables.$danger-color;
           color: white;
           border: none;
 
           &:hover:not(:disabled) {
-            background-color: darken($danger-color, 10%);
+            background-color: color.adjust(variables.$danger-color, $lightness: -10%);
           }
 
           &:disabled {
@@ -1339,12 +1340,12 @@
         }
 
         &.btn-secondary {
-          background-color: $light-color;
-          color: $dark-color;
-          border: 1px solid $border-color;
+          background-color: variables.$light-color;
+          color: variables.$dark-color;
+          border: 1px solid variables.$border-color;
 
           &:hover {
-            background-color: darken($light-color, 5%);
+            background-color: color.adjust(variables.$light-color, $lightness: -5%);
           }
         }
       }
@@ -1360,15 +1361,15 @@
 .error-message {
   margin-top: 1rem;
   padding: 0.75rem 1rem;
-  background-color: rgba($danger-color, 0.1);
-  border-left: 4px solid $danger-color;
-  color: darken($danger-color, 10%);
-  border-radius: $border-radius;
+  background-color: rgba(variables.$danger-color, 0.1);
+  border-left: 4px solid variables.$danger-color;
+  color: color.adjust(variables.$danger-color, $lightness: -10%);
+  border-radius: variables.$border-radius;
 }
 
 .permissions-info {
-  background-color: rgba($light-color, 0.5);
-  border-radius: $border-radius;
+  background-color: rgba(variables.$light-color, 0.5);
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
 
   .role-info-list {
@@ -1383,7 +1384,7 @@
       }
 
       strong {
-        color: $secondary-color;
+        color: variables.$secondary-color;
       }
     }
   }
@@ -1395,7 +1396,7 @@
 }
 
 // Responsive adjustments
-@media (max-width: $breakpoint-tablet) {
+@media (max-width: variables.$breakpoint-tablet) {
   .current-roles {
     .role-card {
       flex: 1 1 100%;
@@ -1407,7 +1408,7 @@
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 
   p {
     margin-bottom: 1rem;
@@ -1422,7 +1423,7 @@
 
 // Responsive adjustments
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: variables.$breakpoint-mobile) {
   .tabs-nav {
     .tab-btn {
       padding: 0.75rem 0.5rem;
@@ -1432,7 +1433,7 @@
 }
 
 
-@media (max-width: $breakpoint-tablet) {
+@media (max-width: variables.$breakpoint-tablet) {
   .user-card-header {
     flex-direction: column;
     text-align: center;

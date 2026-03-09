@@ -5,9 +5,10 @@
  */
 
 // Import shared styles
-@import 'style/variables';
-@import 'style/mixins';
-@import 'style/utilities';
+@use "sass:color";
+@use 'style/variables';
+@use 'style/mixins';
+@use 'style/utilities';
 
 /* CSS Reset */
 *, *::before, *::after {
@@ -42,11 +43,11 @@ footer, header, hgroup, menu, nav, section {
 }
 
 body {
-  line-height: $line-height-base;
-  font-family: $font-family-base;
-  font-size: $font-size-base;
-  color: $text-color;
-  background-color: $body-bg;
+  line-height: variables.$line-height-base;
+  font-family: variables.$font-family-base;
+  font-size: variables.$font-size-base;
+  color: variables.$text-color;
+  background-color: variables.$body-bg;
 }
 
 ol, ul {
@@ -71,7 +72,7 @@ table {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.5em;
-  font-weight: $font-weight-bold;
+  font-weight: variables.$font-weight-bold;
   line-height: 1.2;
 }
 
@@ -87,12 +88,12 @@ p {
 }
 
 a {
-  color: $primary-color;
+  color: variables.$primary-color;
   text-decoration: none;
   transition: color 0.3s ease;
 
   &:hover {
-    color: darken($primary-color, 15%);
+    color: color.adjust(variables.$primary-color, $lightness: -15%);
   }
 }
 
@@ -117,17 +118,17 @@ select {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
-  color: $text-color;
+  color: variables.$text-color;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:focus {
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(variables.$primary-color, 0.25);
   }
 }
 

@@ -1,7 +1,8 @@
 // src/app/features/account/pages/two-factor/two-factor-overview/two-factor-overview.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .two-factor-overview {
   max-width: 600px;
@@ -20,7 +21,7 @@
     padding: 0.5rem 0;
     background: none;
     border: none;
-    color: $primary-color;
+    color: variables.$primary-color;
     font-size: 0.875rem;
     cursor: pointer;
     margin-bottom: 1rem;
@@ -38,12 +39,12 @@
     margin: 0 0 0.5rem;
     font-size: 1.5rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   .subtitle {
     margin: 0;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.95rem;
   }
 }
@@ -54,13 +55,13 @@
   flex-direction: column;
   align-items: center;
   padding: 3rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 
   .spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid $border-color;
-    border-top-color: $primary-color;
+    border: 3px solid variables.$border-color;
+    border-top-color: variables.$primary-color;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 1rem;
@@ -73,7 +74,7 @@
   padding: 2rem;
 
   .error-message {
-    color: $danger-color;
+    color: variables.$danger-color;
     margin-bottom: 1rem;
   }
 }
@@ -91,18 +92,18 @@
   justify-content: space-between;
   padding: 1rem 1.25rem;
   background: white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   &.enabled {
-    border-left: 3px solid $success-color;
+    border-left: 3px solid variables.$success-color;
   }
 
   .method-info {
@@ -118,7 +119,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $light-color;
+    background: variables.$light-color;
     border-radius: 50%;
   }
 
@@ -127,13 +128,13 @@
       margin: 0 0 0.25rem;
       font-size: 1rem;
       font-weight: 500;
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
 
     .method-description {
       margin: 0;
       font-size: 0.8125rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
   }
 
@@ -150,27 +151,27 @@
     font-weight: 500;
 
     &.enabled {
-      background: rgba($success-color, 0.1);
-      color: $success-color;
+      background: rgba(variables.$success-color, 0.1);
+      color: variables.$success-color;
     }
 
     &.disabled {
-      background: $light-color;
-      color: $gray-dark;
+      background: variables.$light-color;
+      color: variables.$gray-dark;
     }
   }
 
   .primary-badge {
     padding: 0.25rem 0.5rem;
-    background: rgba($primary-color, 0.1);
-    color: $primary-color;
+    background: rgba(variables.$primary-color, 0.1);
+    color: variables.$primary-color;
     border-radius: 0.25rem;
     font-size: 0.7rem;
     font-weight: 500;
   }
 
   .chevron {
-    color: $gray-medium;
+    color: variables.$gray-medium;
     font-size: 1rem;
   }
 }
@@ -179,28 +180,28 @@
 .help-text {
   margin-top: 2rem;
   padding: 1rem;
-  background: rgba($info-color, 0.05);
-  border-radius: $border-radius;
+  background: rgba(variables.$info-color, 0.05);
+  border-radius: variables.$border-radius;
 
   p {
     margin: 0;
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }
 
 // Buttons
 .btn-primary {
   padding: 0.6rem 1.25rem;
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-weight: 500;
   cursor: pointer;
 
   &:hover {
-    background: darken($primary-color, 8%);
+    background: color.adjust(variables.$primary-color, $lightness: -8%);
   }
 }
 

@@ -1,7 +1,8 @@
 // src/app/features/account/pages/two-factor/email-two-factor/email-two-factor.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .email-two-factor {
   max-width: 600px;
@@ -20,7 +21,7 @@
     padding: 0.5rem 0;
     background: none;
     border: none;
-    color: $primary-color;
+    color: variables.$primary-color;
     font-size: 0.875rem;
     cursor: pointer;
     margin-bottom: 1.5rem;
@@ -43,7 +44,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $light-color;
+    background: variables.$light-color;
     border-radius: 50%;
   }
 
@@ -51,12 +52,12 @@
     margin: 0 0 0.25rem;
     font-size: 1.5rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   .subtitle {
     margin: 0;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.95rem;
   }
 }
@@ -67,13 +68,13 @@
   flex-direction: column;
   align-items: center;
   padding: 3rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 
   .spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid $border-color;
-    border-top-color: $primary-color;
+    border: 3px solid variables.$border-color;
+    border-top-color: variables.$primary-color;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 1rem;
@@ -86,7 +87,7 @@
   padding: 2rem;
 
   .error-message {
-    color: $danger-color;
+    color: variables.$danger-color;
     margin-bottom: 1rem;
   }
 }
@@ -94,13 +95,13 @@
 // Status Card
 .status-card {
   background: white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 
   &.enabled {
-    border-left: 4px solid $success-color;
+    border-left: 4px solid variables.$success-color;
   }
 
   .status-header {
@@ -109,11 +110,11 @@
     justify-content: space-between;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
 
     .status-label {
       font-weight: 500;
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
 
     .status-badge {
@@ -123,13 +124,13 @@
       font-weight: 500;
 
       &.enabled {
-        background: rgba($success-color, 0.1);
-        color: $success-color;
+        background: rgba(variables.$success-color, 0.1);
+        color: variables.$success-color;
       }
 
       &.disabled {
-        background: $light-color;
-        color: $gray-dark;
+        background: variables.$light-color;
+        color: variables.$gray-dark;
       }
     }
   }
@@ -146,16 +147,16 @@
     align-items: center;
 
     .detail-label {
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 0.875rem;
     }
 
     .detail-value {
       font-weight: 500;
-      color: $secondary-color;
+      color: variables.$secondary-color;
 
       &.primary {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
   }
@@ -163,8 +164,8 @@
 
 // Info Section
 .info-section {
-  background: rgba($info-color, 0.05);
-  border-radius: $border-radius;
+  background: rgba(variables.$info-color, 0.05);
+  border-radius: variables.$border-radius;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
 
@@ -172,7 +173,7 @@
     margin: 0 0 0.75rem;
     font-size: 1rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   .info-list {
@@ -182,7 +183,7 @@
     li {
       margin-bottom: 0.5rem;
       font-size: 0.875rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       line-height: 1.5;
 
       &:last-child {
@@ -205,7 +206,7 @@
   width: 100%;
   padding: 0.875rem 1.5rem;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -213,21 +214,21 @@
 }
 
 .btn-primary {
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
 
   &:hover {
-    background: darken($primary-color, 8%);
+    background: color.adjust(variables.$primary-color, $lightness: -8%);
   }
 }
 
 .btn-danger {
   background: white;
-  color: $danger-color;
-  border: 1px solid $danger-color;
+  color: variables.$danger-color;
+  border: 1px solid variables.$danger-color;
 
   &:hover {
-    background: rgba($danger-color, 0.05);
+    background: rgba(variables.$danger-color, 0.05);
   }
 }
 

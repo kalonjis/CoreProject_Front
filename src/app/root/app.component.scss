@@ -1,6 +1,6 @@
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // Reset and base styles
 * {
@@ -33,7 +33,7 @@ body {
 // Main content
 .main-content {
   flex: 1;
-  padding-top: $header-height; // Space for fixed header
+  padding-top: variables.$header-height; // Space for fixed header
   width: 100%;
   padding-left: 1rem;
   padding-right: 1rem;

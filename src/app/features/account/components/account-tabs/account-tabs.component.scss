@@ -1,12 +1,12 @@
 // src/app/features/account/components/account-tabs/account-tabs.component.scss
 
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 .account-tabs {
   margin-bottom: 2rem;
-  border-bottom: 2px solid $border-color;
+  border-bottom: 2px solid variables.$border-color;
 
   .tabs-wrapper {
     display: flex;
@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     padding: 1rem 1.5rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     text-decoration: none;
     background-color: transparent;
     border-bottom: 3px solid transparent;
@@ -44,15 +44,15 @@
 
     // Hover state
     &:hover {
-      color: $primary-color;
-      background-color: rgba($primary-color, 0.05);
+      color: variables.$primary-color;
+      background-color: rgba(variables.$primary-color, 0.05);
     }
 
     // Active state (RouterLinkActive)
     &.active {
-      color: $primary-color;
-      border-bottom-color: $primary-color;
-      background-color: rgba($primary-color, 0.05);
+      color: variables.$primary-color;
+      border-bottom-color: variables.$primary-color;
+      background-color: rgba(variables.$primary-color, 0.05);
     }
   }
 }

@@ -1,6 +1,7 @@
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .profile-tab {
   padding: 1.5rem;
@@ -20,22 +21,22 @@
     justify-content: center;
     padding: 2rem;
     background: white;
-    border-radius: $border-radius-lg;
-    box-shadow: $box-shadow;
+    border-radius: variables.$border-radius-lg;
+    box-shadow: variables.$box-shadow;
     animation: fadeIn 0.3s ease-in-out;
 
     .spinner {
       width: 50px;
       height: 50px;
-      border: 4px solid rgba($primary-color, 0.2);
+      border: 4px solid rgba(variables.$primary-color, 0.2);
       border-radius: 50%;
-      border-top-color: $primary-color;
+      border-top-color: variables.$primary-color;
       animation: spin 1s ease-in-out infinite;
       margin-bottom: 1.5rem;
     }
 
     p {
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 1.1rem;
     }
   }
@@ -53,17 +54,17 @@
   .loading-indicator {
     padding: 1rem;
     text-align: center;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
-    background-color: rgba($light-color, 0.5);
-    border-radius: $border-radius;
+    background-color: rgba(variables.$light-color, 0.5);
+    border-radius: variables.$border-radius;
   }
 
   // Alert Messages
   .alert {
     padding: 1rem;
     margin-bottom: 1.5rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 500;
     animation: slideIn 0.3s ease-out;
 
@@ -74,20 +75,20 @@
     }
 
     &.alert-success {
-      background-color: rgba($success-color, 0.1);
-      color: darken($success-color, 10%);
-      border: 1px solid rgba($success-color, 0.3);
+      background-color: rgba(variables.$success-color, 0.1);
+      color: color.adjust(variables.$success-color, $lightness: -10%);
+      border: 1px solid rgba(variables.$success-color, 0.3);
     }
 
     &.alert-danger {
-      background-color: rgba($danger-color, 0.1);
-      color: darken($danger-color, 10%);
-      border: 1px solid rgba($danger-color, 0.3);
+      background-color: rgba(variables.$danger-color, 0.1);
+      color: color.adjust(variables.$danger-color, $lightness: -10%);
+      border: 1px solid rgba(variables.$danger-color, 0.3);
 
       .btn-retry {
         background-color: rgba(white, 0.3);
         border: 1px solid currentColor;
-        border-radius: $border-radius;
+        border-radius: variables.$border-radius;
         padding: 0.25rem 0.75rem;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -128,8 +129,8 @@
   // Profile Card
   .profile-card {
     background-color: white;
-    border-radius: $border-radius-lg;
-    box-shadow: $box-shadow;
+    border-radius: variables.$border-radius-lg;
+    box-shadow: variables.$box-shadow;
     overflow: hidden;
     animation: fadeInUp 0.4s ease-out;
   }
@@ -148,7 +149,7 @@
   // Profile Sections
   .profile-section {
     padding: 1.5rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
 
     &:last-child {
       border-bottom: none;
@@ -161,7 +162,7 @@
       margin-bottom: 1.5rem;
 
       h2 {
-        color: $secondary-color;
+        color: variables.$secondary-color;
         font-size: 1.25rem;
         margin: 0;
       }
@@ -172,7 +173,7 @@
       }
 
       .link-primary {
-        color: $primary-color;
+        color: variables.$primary-color;
         text-decoration: none;
         font-size: 0.875rem;
         font-weight: 500;
@@ -201,7 +202,7 @@
         font-weight: 500;
         width: 150px;
         flex-shrink: 0;
-        color: $gray-dark;
+        color: variables.$gray-dark;
       }
 
       .value {
@@ -213,7 +214,7 @@
         background: none;
         border: none;
         padding: 0;
-        color: $primary-color;
+        color: variables.$primary-color;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.875rem;
@@ -238,7 +239,7 @@
     gap: 1rem;
     margin-bottom: 1rem;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       flex-direction: column;
       gap: 0;
     }
@@ -255,31 +256,31 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
-      color: $dark-color;
+      color: variables.$dark-color;
     }
 
     .form-control {
       width: 100%;
       padding: 0.75rem;
       font-size: 1rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       background-color: white;
       transition: border-color 0.2s ease;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+        border-color: variables.$primary-color;
+        box-shadow: 0 0 0 2px rgba(variables.$primary-color, 0.2);
       }
 
       &.is-invalid {
-        border-color: $danger-color;
+        border-color: variables.$danger-color;
       }
     }
 
     .error-message {
-      color: $danger-color;
+      color: variables.$danger-color;
       font-size: 0.875rem;
       margin-top: 0.25rem;
     }
@@ -292,7 +293,7 @@
 
     button {
       padding: 0.75rem 1.5rem;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -304,19 +305,19 @@
     }
 
     .btn-primary {
-      background-color: $primary-color;
+      background-color: variables.$primary-color;
       color: white;
       border: none;
 
       &:hover:not(:disabled) {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust(variables.$primary-color, $lightness: -10%);
       }
     }
 
     .btn-outline {
       background-color: transparent;
-      color: $dark-color;
-      border: 1px solid $border-color;
+      color: variables.$dark-color;
+      border: 1px solid variables.$border-color;
 
       &:hover:not(:disabled) {
         background-color: rgba(0, 0, 0, 0.05);
@@ -335,9 +336,9 @@
       align-items: center;
       padding: 0.75rem 1.5rem;
       background-color: transparent;
-      color: $dark-color;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      color: variables.$dark-color;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -361,12 +362,12 @@
       align-items: center;
       padding: 1rem;
       margin-bottom: 0.5rem;
-      border-radius: $border-radius;
-      background-color: $light-color;
+      border-radius: variables.$border-radius;
+      background-color: variables.$light-color;
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: darken($light-color, 2%);
+        background-color: color.adjust(variables.$light-color, $lightness: -2%);
       }
 
       &:last-child {
@@ -377,7 +378,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: rgba($primary-color, 0.1);
+        background-color: rgba(variables.$primary-color, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -397,7 +398,7 @@
           display: flex;
           align-items: center;
           font-size: 0.875rem;
-          color: $gray-dark;
+          color: variables.$gray-dark;
 
           .trust-level {
             padding: 0.25rem 0.5rem;
@@ -406,8 +407,8 @@
             font-weight: 500;
             text-transform: uppercase;
             margin-right: 1rem;
-            background-color: rgba($info-color, 0.1);
-            color: $info-color;
+            background-color: rgba(variables.$info-color, 0.1);
+            color: variables.$info-color;
           }
 
           .last-seen {
@@ -420,10 +421,10 @@
 
   .no-data {
     padding: 1.5rem;
-    background-color: $light-color;
-    border-radius: $border-radius;
+    background-color: variables.$light-color;
+    border-radius: variables.$border-radius;
     text-align: center;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 
@@ -436,7 +437,7 @@
   .refresh-button {
     background: none;
     border: none;
-    color: $primary-color;
+    color: variables.$primary-color;
     cursor: pointer;
     font-size: 0.875rem;
     display: flex;
@@ -460,7 +461,7 @@
       display: flex;
       align-items: center;
       font-weight: 500;
-      color: $dark-color;
+      color: variables.$dark-color;
       margin-bottom: 0.75rem;
 
       .icon {
@@ -475,7 +476,7 @@
       align-items: center;
       gap: 0.75rem;
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         flex-direction: column;
         align-items: stretch;
         gap: 0.75rem;
@@ -489,20 +490,20 @@
 
       &:focus {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+        box-shadow: 0 4px 12px rgba(variables.$primary-color, 0.15);
       }
 
       &.valid {
-        border-color: $success-color;
+        border-color: variables.$success-color;
 
         &:focus {
-          box-shadow: 0 0 0 2px rgba($success-color, 0.2);
+          box-shadow: 0 0 0 2px rgba(variables.$success-color, 0.2);
         }
       }
 
       &.verified {
-        border-color: $success-color;
-        background: linear-gradient(to right, rgba($success-color, 0.05), transparent);
+        border-color: variables.$success-color;
+        background: linear-gradient(to right, rgba(variables.$success-color, 0.05), transparent);
       }
     }
 
@@ -515,7 +516,7 @@
       pointer-events: none;
       z-index: 1;
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         position: static;
         order: -1;
         justify-content: center;
@@ -524,14 +525,14 @@
     }
 
     .check-icon {
-      color: $success-color;
+      color: variables.$success-color;
       font-weight: bold;
       font-size: 1.2rem;
       animation: checkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
     .error-icon {
-      color: $danger-color;
+      color: variables.$danger-color;
       font-weight: bold;
       font-size: 1.2rem;
     }
@@ -541,10 +542,10 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.25rem;
-      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      background: linear-gradient(135deg, variables.$primary-color, color.adjust(variables.$primary-color, $lightness: -10%));
       color: white;
       border: none;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -552,9 +553,9 @@
       font-size: 0.9rem;
 
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, darken($primary-color, 5%), darken($primary-color, 15%));
+        background: linear-gradient(135deg, color.adjust(variables.$primary-color, $lightness: -5%), color.adjust(variables.$primary-color, $lightness: -15%));
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+        box-shadow: 0 4px 12px rgba(variables.$primary-color, 0.3);
       }
 
       &:disabled {
@@ -572,7 +573,7 @@
         animation: spin 1s linear infinite;
       }
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         justify-content: center;
         width: 100%;
       }
@@ -581,21 +582,21 @@
     .status-message {
       margin-top: 0.75rem;
       padding: 0.75rem 1rem;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       font-size: 0.875rem;
       font-weight: 500;
       animation: slideDown 0.3s ease;
 
       &.success {
-        background-color: rgba($success-color, 0.1);
-        color: darken($success-color, 20%);
-        border: 1px solid rgba($success-color, 0.3);
+        background-color: rgba(variables.$success-color, 0.1);
+        color: color.adjust(variables.$success-color, $lightness: -20%);
+        border: 1px solid rgba(variables.$success-color, 0.3);
       }
 
       &.info {
-        background-color: rgba($info-color, 0.1);
-        color: darken($info-color, 20%);
-        border: 1px solid rgba($info-color, 0.3);
+        background-color: rgba(variables.$info-color, 0.1);
+        color: color.adjust(variables.$info-color, $lightness: -20%);
+        border: 1px solid rgba(variables.$info-color, 0.3);
       }
     }
   }
@@ -612,18 +613,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: $z-index-modal;
+    z-index: variables.$z-index-modal;
     animation: fadeIn 0.3s ease;
     padding: 1rem;
   }
 
   .verification-modal {
     background: white;
-    border-radius: $border-radius-lg;
+    border-radius: variables.$border-radius-lg;
     padding: 2rem;
     max-width: 420px;
     width: 100%;
-    box-shadow: $box-shadow-lg;
+    box-shadow: variables.$box-shadow-lg;
     animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     .modal-header {
@@ -638,13 +639,13 @@
 
       h3 {
         font-size: 1.5rem;
-        font-weight: $font-weight-bold;
-        color: $secondary-color;
+        font-weight: variables.$font-weight-bold;
+        color: variables.$secondary-color;
         margin: 0 0 0.5rem 0;
       }
 
       p {
-        color: $gray-dark;
+        color: variables.$gray-dark;
         margin: 0;
         font-size: 0.9rem;
         line-height: 1.4;
@@ -657,7 +658,7 @@
       justify-content: center;
       margin-bottom: 2rem;
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         gap: 0.5rem;
       }
     }
@@ -667,21 +668,21 @@
       height: 50px;
       text-align: center;
       font-size: 1.25rem;
-      font-weight: $font-weight-bold;
-      border: 2px solid $border-color;
-      border-radius: $border-radius;
-      background: $gray-light;
+      font-weight: variables.$font-weight-bold;
+      border: 2px solid variables.$border-color;
+      border-radius: variables.$border-radius;
+      background: variables.$gray-light;
       transition: all 0.2s ease;
       outline: none;
 
       &:focus {
-        border-color: $primary-color;
+        border-color: variables.$primary-color;
         background: white;
-        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.1);
         transform: scale(1.05);
       }
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         width: 45px;
         height: 45px;
         font-size: 1.1rem;
@@ -693,7 +694,7 @@
       gap: 1rem;
       justify-content: center;
 
-      @include respond-to('mobile') {
+      @include mixins.respond-to('mobile') {
         flex-direction: column;
         gap: 0.75rem;
       }
@@ -705,7 +706,7 @@
       justify-content: center;
       gap: 0.5rem;
       padding: 0.875rem 1.5rem;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -715,11 +716,11 @@
     }
 
     .verify-code-btn {
-      background: linear-gradient(135deg, $success-color, darken($success-color, 10%));
+      background: linear-gradient(135deg, variables.$success-color, color.adjust(variables.$success-color, $lightness: -10%));
       color: white;
 
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, darken($success-color, 5%), darken($success-color, 15%));
+        background: linear-gradient(135deg, color.adjust(variables.$success-color, $lightness: -5%), color.adjust(variables.$success-color, $lightness: -15%));
         transform: translateY(-1px);
       }
 
@@ -740,13 +741,13 @@
     }
 
     .cancel-btn {
-      background: $gray-light;
-      color: $gray-dark;
-      border: 1px solid $border-color;
+      background: variables.$gray-light;
+      color: variables.$gray-dark;
+      border: 1px solid variables.$border-color;
 
       &:hover {
-        background: $gray-medium;
-        color: $dark-color;
+        background: variables.$gray-medium;
+        color: variables.$dark-color;
       }
     }
   }

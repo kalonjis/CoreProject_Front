@@ -1,7 +1,8 @@
 // src/app/features/sport/components/track-import-dialog/track-import-dialog.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // OVERLAY
@@ -15,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
@@ -26,14 +27,14 @@
 
 .dialog-container {
   background: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   width: 100%;
   max-width: 500px;
   animation: slideUp 0.3s ease-out;
   overflow: hidden;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     max-width: 100%;
     margin: 0;
   }
@@ -48,30 +49,30 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
 }
 
 .dialog-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 .close-button {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   line-height: 1;
-  border-radius: $border-radius-sm;
+  border-radius: variables.$border-radius-sm;
   transition: all 0.2s ease;
 
   &:hover {
-    background: $gray-light;
-    color: $secondary-color;
+    background: variables.$gray-light;
+    color: variables.$secondary-color;
   }
 }
 
@@ -101,10 +102,10 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: rgba($success-color, 0.1);
-  border: 1px solid rgba($success-color, 0.3);
-  border-radius: $border-radius;
-  color: darken($success-color, 15%);
+  background: rgba(variables.$success-color, 0.1);
+  border: 1px solid rgba(variables.$success-color, 0.3);
+  border-radius: variables.$border-radius;
+  color: color.adjust(variables.$success-color, $lightness: -15%);
 
   .file-icon {
     font-size: 1.25rem;
@@ -120,7 +121,7 @@
 
   .file-check {
     font-weight: bold;
-    color: $success-color;
+    color: variables.$success-color;
   }
 }
 
@@ -134,23 +135,23 @@
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 .form-input,
 .form-select {
   padding: 0.75rem 1rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   font-size: 1rem;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   background: white;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    border-color: variables.$primary-color;
+    box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.15);
   }
 }
 
@@ -169,14 +170,14 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  background: $gray-light;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
+  background: variables.$gray-light;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
     background: white;
 
     .edit-button {
@@ -187,7 +188,7 @@
   .name-text {
     flex: 1;
     font-size: 1rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -223,8 +224,8 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background: $gray-light;
-  border-top: 1px solid $border-color;
+  background: variables.$gray-light;
+  border-top: 1px solid variables.$border-color;
 }
 
 // Buttons
@@ -234,7 +235,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.65rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -249,20 +250,20 @@
 
 .btn-secondary {
   background: white;
-  color: $gray-dark;
-  border: 1px solid $border-color;
+  color: variables.$gray-dark;
+  border: 1px solid variables.$border-color;
 
   &:hover:not(:disabled) {
-    background: darken(white, 3%);
+    background: color.adjust(white, $lightness: -3%);
   }
 }
 
 .btn-primary {
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
 
   &:hover:not(:disabled) {
-    background: darken($primary-color, 5%);
+    background: color.adjust(variables.$primary-color, $lightness: -5%);
   }
 }
 

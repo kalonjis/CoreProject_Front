@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/admin/users/user-detail/user-detail-container.component.scss
 
 // Variables (mirrors user-list)
@@ -289,7 +290,7 @@ $radius-lg:    16px;
   background: rgba($danger, 0.06);
   border: 1px solid rgba($danger, 0.25);
   border-radius: $radius-md;
-  color: darken($danger, 5%);
+  color: color.adjust($danger, $lightness: -5%);
   font-size: 0.875rem;
 
   svg { flex-shrink: 0; margin-top: 1px; }
