@@ -58,9 +58,7 @@ import {
     selector: 'app-calendar-event-card',
     imports: [
         CommonModule,
-        EventStatusPipe,
-        EventStatusIconPipe,
-        IsRecurringPipe
+        EventStatusPipe
     ],
     templateUrl: './calendar-event-card.component.html',
     styleUrl: './calendar-event-card.component.scss'
