@@ -27,11 +27,10 @@ import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/conf
  * - Toggle cells to enable/disable
  */
 @Component({
-  selector: 'app-notification-preferences',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './notification-preferences.component.html',
-  styleUrl: './notification-preferences.component.scss'
+    selector: 'app-notification-preferences',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './notification-preferences.component.html',
+    styleUrl: './notification-preferences.component.scss'
 })
 export class NotificationPreferencesComponent implements OnInit {
 

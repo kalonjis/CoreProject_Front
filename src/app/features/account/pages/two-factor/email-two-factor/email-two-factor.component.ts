@@ -24,11 +24,10 @@ import { EmailSetupModalComponent } from './components/email-setup-modal/email-s
  * Route: /account/security/two-factor/email
  */
 @Component({
-  selector: 'app-email-two-factor',
-  standalone: true,
-  imports: [CommonModule, EmailSetupModalComponent],
-  templateUrl: './email-two-factor.component.html',
-  styleUrl: './email-two-factor.component.scss'
+    selector: 'app-email-two-factor',
+    imports: [CommonModule, EmailSetupModalComponent],
+    templateUrl: './email-two-factor.component.html',
+    styleUrl: './email-two-factor.component.scss'
 })
 export class EmailTwoFactorComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

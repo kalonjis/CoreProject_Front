@@ -7,13 +7,12 @@ import {DeviceFacade} from '../../../core/device';
 import {AuthFacade} from '../../../core/auth';
 
 @Component({
-  selector: 'app-device-confirmation',
-  standalone: true,
-  imports: [
-    FeedbackComponent
-  ],
-  templateUrl: './device-confirmation.component.html',
-  styleUrl: './device-confirmation.component.scss'
+    selector: 'app-device-confirmation',
+    imports: [
+        FeedbackComponent
+    ],
+    templateUrl: './device-confirmation.component.html',
+    styleUrl: './device-confirmation.component.scss'
 })
 export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);

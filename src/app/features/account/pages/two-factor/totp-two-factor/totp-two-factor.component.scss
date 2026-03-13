@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/account/pages/two-factor/totp-two-factor/totp-two-factor.component.scss
 
 // Variables (adjust based on your project's design system)
@@ -142,7 +143,7 @@ $spacing-lg: 2rem;
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
       }
     }
   }
@@ -351,7 +352,7 @@ $spacing-lg: 2rem;
       color: white;
 
       &:hover:not(:disabled) {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
         transform: translateY(-1px);
       }
     }
@@ -361,7 +362,7 @@ $spacing-lg: 2rem;
       color: white;
 
       &:hover:not(:disabled) {
-        background-color: darken($danger-color, 10%);
+        background-color: color.adjust($danger-color, $lightness: -10%);
         transform: translateY(-1px);
       }
     }

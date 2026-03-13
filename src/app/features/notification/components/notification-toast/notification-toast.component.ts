@@ -21,11 +21,10 @@ import { NOTIFICATION_PRIORITY_COLORS } from '../../models/notification.enums';
  * Auto-dismisses after a timeout, can be clicked to navigate.
  */
 @Component({
-  selector: 'app-notification-toast',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './notification-toast.component.html',
-  styleUrl: './notification-toast.component.scss'
+    selector: 'app-notification-toast',
+    imports: [CommonModule],
+    templateUrl: './notification-toast.component.html',
+    styleUrl: './notification-toast.component.scss'
 })
 export class NotificationToastComponent implements OnDestroy {
 

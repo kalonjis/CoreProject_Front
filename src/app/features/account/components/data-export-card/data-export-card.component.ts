@@ -36,11 +36,10 @@ const POLLING_INTERVAL_MS = 15_000;
  * ```
  */
 @Component({
-  selector: 'app-data-export-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './data-export-card.component.html',
-  styleUrl: './data-export-card.component.scss',
+    selector: 'app-data-export-card',
+    imports: [CommonModule],
+    templateUrl: './data-export-card.component.html',
+    styleUrl: './data-export-card.component.scss'
 })
 export class DataExportCardComponent implements OnInit, OnDestroy {
 

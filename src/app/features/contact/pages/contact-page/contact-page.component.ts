@@ -11,11 +11,10 @@ import { LeadType, LEAD_TYPE_LABELS, SubmitLeadRequest } from '../../models/lead
 import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
 
 @Component({
-  selector: 'app-contact-page',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './contact-page.component.html',
-  styleUrl: './contact-page.component.scss'
+    selector: 'app-contact-page',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './contact-page.component.html',
+    styleUrl: './contact-page.component.scss'
 })
 export class ContactPageComponent {
 

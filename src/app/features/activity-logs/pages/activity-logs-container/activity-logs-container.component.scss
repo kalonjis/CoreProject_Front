@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .logs-container {
   display: flex;
@@ -16,14 +16,14 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
   padding-bottom: 1rem;
 }
 
 .logs-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: $text-color;
+  color: variables.$text-color;
   margin: 0;
 }
 
@@ -36,20 +36,20 @@
 
 .tab {
   padding: 0.4rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   font-weight: 500;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: $gray-medium;
-    color: $text-color;
+    background-color: variables.$gray-medium;
+    color: variables.$text-color;
   }
 
   &--active {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: #fff;
   }
 }

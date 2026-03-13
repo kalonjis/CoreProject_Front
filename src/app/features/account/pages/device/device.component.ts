@@ -12,11 +12,10 @@ import {DeviceUtilsService} from '../../../../shared/services/device-utils.servi
 import {DeviceFacade} from '../../../../core/device';
 
 @Component({
-  selector: 'device',
-  standalone: true,
-  imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
-  templateUrl: './device.component.html',
-  styleUrls: ['./device.component.scss']
+    selector: 'device',
+    imports: [CommonModule, FormsModule, FeedbackComponent, DeviceDetailComponent],
+    templateUrl: './device.component.html',
+    styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent extends FeedbackBase implements OnInit {
   private deviceFacade = inject(DeviceFacade);

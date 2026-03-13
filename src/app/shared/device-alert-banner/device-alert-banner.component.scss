@@ -1,14 +1,15 @@
 // src/app/shared/device-alert-banner/device-alert-banner.component.scss
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .device-alert-banner {
   position: fixed;
-  top: $header-height; // Positionnement juste en dessous de la navbar
+  top: variables.$header-height; // Positionnement juste en dessous de la navbar
   left: 0;
   right: 0;
-  background-color: rgba($warning-color, 0.95);
-  color: darken($warning-color, 35%);
+  background-color: rgba(variables.$warning-color, 0.95);
+  color: color.adjust(variables.$warning-color, $lightness: -35%);
   z-index: 900; // Z-index plus faible que la navbar (1000)
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-out;
@@ -21,7 +22,7 @@
     align-items: center;
     gap: 1rem;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       flex-direction: column;
       align-items: flex-start;
       padding: 0.75rem;
@@ -46,7 +47,7 @@
     color: inherit;
     text-decoration: none;
     padding: 0.5rem 1rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 600;
     font-size: 0.85rem;
     white-space: nowrap;
@@ -73,9 +74,9 @@
     .spinner {
       width: 16px;
       height: 16px;
-      border: 2px solid rgba(darken($warning-color, 35%), 0.3);
+      border: 2px solid rgba(color.adjust(variables.$warning-color, $lightness: -35%), 0.3);
       border-radius: 50%;
-      border-top-color: darken($warning-color, 35%);
+      border-top-color: color.adjust(variables.$warning-color, $lightness: -35%);
       animation: spin 1s linear infinite;
     }
   }
@@ -98,7 +99,7 @@
       opacity: 1;
     }
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       top: 10px;
       transform: none;
     }

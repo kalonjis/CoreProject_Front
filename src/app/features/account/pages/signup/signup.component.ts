@@ -8,11 +8,10 @@ import {AccountApiService} from '../../services';
 import {SignupRequest} from '../../models';
 
 @Component({
-  selector: 'app-signup',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+    selector: 'app-signup',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink],
+    templateUrl: './signup.component.html',
+    styleUrl: './signup.component.scss'
 })
 export class SignupComponent {
   private fb = inject(FormBuilder);

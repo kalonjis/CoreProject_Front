@@ -1,5 +1,5 @@
 // app.config.ts
-import {ApplicationConfig, APP_INITIALIZER, LOCALE_ID} from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -21,11 +21,9 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authInterceptor])
     ),
     { provide: LOCALE_ID, useValue: 'fr' },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeAuth,
-      deps: [AuthFacade],
-      multi: true
-    }
+    provideAppInitializer(() => {
+        const initializerFn = (initializeAuth)(inject(AuthFacade));
+        return initializerFn();
+      })
   ]
 };

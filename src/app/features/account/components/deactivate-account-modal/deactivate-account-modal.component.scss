@@ -1,8 +1,8 @@
 // src/app/features/account/pages/privacy/components/deactivate-account-modal/deactivate-account-modal.component.scss
 
 @use 'sass:color';
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // OVERLAY & CONTAINER
@@ -16,15 +16,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
 .modal-container {
   background: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   width: 100%;
   max-width: 520px;
   max-height: 90vh;
@@ -33,7 +33,7 @@
   flex-direction: column;
   animation: slideUp 0.3s ease-out;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     max-width: 100%;
   }
 }
@@ -47,7 +47,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
   position: sticky;
   top: 0;
   background: white;
@@ -58,23 +58,23 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 .close-button {
   background: none;
   border: none;
   font-size: 1.1rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
-  border-radius: $border-radius-sm;
+  border-radius: variables.$border-radius-sm;
   transition: all 0.2s ease;
   line-height: 1;
 
   &:hover {
-    background: $gray-light;
-    color: $secondary-color;
+    background: variables.$gray-light;
+    color: variables.$secondary-color;
   }
 }
 
@@ -87,24 +87,24 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: $gray-light;
-  border-bottom: 1px solid $border-color;
+  background: variables.$gray-light;
+  border-bottom: 1px solid variables.$border-color;
   font-size: 0.875rem;
 }
 
 .step {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-weight: 500;
   transition: color 0.2s ease;
 
   &--active {
-    color: $primary-color;
+    color: variables.$primary-color;
     font-weight: 600;
   }
 }
 
 .step-separator {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-size: 1rem;
 }
 
@@ -129,11 +129,11 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   margin-bottom: 0.5rem;
 
   &__required {
-    color: $danger-color;
+    color: variables.$danger-color;
     margin-left: 0.2rem;
   }
 }
@@ -141,10 +141,10 @@
 .form-select {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   font-size: 0.9rem;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   background: white;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -156,23 +156,23 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    border-color: variables.$primary-color;
+    box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.15);
   }
 
   &--error {
-    border-color: $danger-color;
-    &:focus { box-shadow: 0 0 0 3px rgba($danger-color, 0.15); }
+    border-color: variables.$danger-color;
+    &:focus { box-shadow: 0 0 0 3px rgba(variables.$danger-color, 0.15); }
   }
 }
 
 .form-textarea {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   font-size: 0.9rem;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   resize: vertical;
   min-height: 100px;
   font-family: inherit;
@@ -181,13 +181,13 @@
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    border-color: variables.$primary-color;
+    box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.15);
   }
 
   &--error {
-    border-color: $danger-color;
-    &:focus { box-shadow: 0 0 0 3px rgba($danger-color, 0.15); }
+    border-color: variables.$danger-color;
+    &:focus { box-shadow: 0 0 0 3px rgba(variables.$danger-color, 0.15); }
   }
 }
 
@@ -201,15 +201,15 @@
 }
 
 .char-count {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin-left: auto;
   flex-shrink: 0;
 
-  &--max { color: $danger-color; font-weight: 600; }
+  &--max { color: variables.$danger-color; font-weight: 600; }
 }
 
 .field-error {
-  color: $danger-color;
+  color: variables.$danger-color;
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -224,7 +224,7 @@
   display: flex;
   gap: 0.75rem;
   padding: 0.875rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   margin-bottom: 1.25rem;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -235,22 +235,22 @@
   &__icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
 
   &--info {
-    background: color.adjust($primary-color, $lightness: 45%);
-    border-left: 4px solid $primary-color;
-    color: color.adjust($primary-color, $lightness: -20%);
+    background: color.adjust(variables.$primary-color, $lightness: 45%);
+    border-left: 4px solid variables.$primary-color;
+    color: color.adjust(variables.$primary-color, $lightness: -20%);
   }
 
   &--warning {
-    background: color.adjust($warning-color, $lightness: 38%);
-    border-left: 4px solid $warning-color;
-    color: color.adjust($warning-color, $lightness: -35%);
+    background: color.adjust(variables.$warning-color, $lightness: 38%);
+    border-left: 4px solid variables.$warning-color;
+    color: color.adjust(variables.$warning-color, $lightness: -35%);
     margin-top: 1.5rem;
   }
 
   &--danger {
-    background: color.adjust($danger-color, $lightness: 42%);
-    border-left: 4px solid $danger-color;
-    color: color.adjust($danger-color, $lightness: -15%);
+    background: color.adjust(variables.$danger-color, $lightness: 42%);
+    border-left: 4px solid variables.$danger-color;
+    color: color.adjust(variables.$danger-color, $lightness: -15%);
     margin-top: 1.5rem;
   }
 }
@@ -260,8 +260,8 @@
 // =============================================================================
 
 .confirm-summary {
-  background: $gray-light;
-  border-radius: $border-radius;
+  background: variables.$gray-light;
+  border-radius: variables.$border-radius;
   padding: 1rem 1.25rem;
   margin-bottom: 1.25rem;
 
@@ -270,7 +270,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin: 0.75rem 0 0.25rem;
 
     &:first-child { margin-top: 0; }
@@ -278,7 +278,7 @@
 
   &__value {
     font-size: 0.9rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin: 0;
     line-height: 1.5;
   }
@@ -293,7 +293,7 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1.25rem;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid variables.$border-color;
   margin-top: 0.5rem;
 }
 
@@ -303,7 +303,7 @@
 
 .btn {
   padding: 0.625rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -317,31 +317,31 @@
 
   &--secondary {
     background: white;
-    border-color: $border-color;
-    color: $gray-dark;
+    border-color: variables.$border-color;
+    color: variables.$gray-dark;
 
     &:hover:not(:disabled) {
-      background: $gray-light;
-      border-color: $gray-dark;
+      background: variables.$gray-light;
+      border-color: variables.$gray-dark;
     }
   }
 
   &--danger-outline {
     background: white;
-    border-color: $danger-color;
-    color: $danger-color;
+    border-color: variables.$danger-color;
+    color: variables.$danger-color;
 
     &:hover:not(:disabled) {
-      background: color.adjust($danger-color, $lightness: 42%);
+      background: color.adjust(variables.$danger-color, $lightness: 42%);
     }
   }
 
   &--danger {
-    background: $danger-color;
+    background: variables.$danger-color;
     color: white;
 
     &:hover:not(:disabled) {
-      background: color.adjust($danger-color, $lightness: -8%);
+      background: color.adjust(variables.$danger-color, $lightness: -8%);
     }
   }
 }

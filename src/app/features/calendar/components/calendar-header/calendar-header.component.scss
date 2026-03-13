@@ -1,3 +1,4 @@
+@use "sass:color";
 // =============================================================================
 // Variables
 // =============================================================================
@@ -178,7 +179,7 @@ $border-radius: 0.375rem;
 
   &:hover:not(:disabled) {
     background-color: $bg-hover;
-    border-color: darken($border-color, 5%);
+    border-color: color.adjust($border-color, $lightness: -5%);
   }
 
   &:disabled {
@@ -204,7 +205,7 @@ $border-radius: 0.375rem;
 
   &:hover:not(:disabled) {
     background-color: $bg-hover;
-    border-color: darken($border-color, 5%);
+    border-color: color.adjust($border-color, $lightness: -5%);
   }
 
   &:disabled {

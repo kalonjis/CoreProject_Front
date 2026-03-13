@@ -42,11 +42,10 @@ type ModalStep = 'form' | 'confirm';
  * ```
  */
 @Component({
-  selector: 'app-deactivate-account-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './deactivate-account-modal.component.html',
-  styleUrl: './deactivate-account-modal.component.scss'
+    selector: 'app-deactivate-account-modal',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './deactivate-account-modal.component.html',
+    styleUrl: './deactivate-account-modal.component.scss'
 })
 export class DeactivateAccountModalComponent {
 

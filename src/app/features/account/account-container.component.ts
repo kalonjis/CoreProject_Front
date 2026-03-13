@@ -16,11 +16,10 @@ import { AccountTabsComponent } from './components/account-tabs/account-tabs.com
  * Uses child routes to organize different account sections.
  */
 @Component({
-  selector: 'app-account',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, AccountTabsComponent],
-  templateUrl: './account-container.component.html',
-  styleUrl: './account-container.component.scss'
+    selector: 'app-account',
+    imports: [CommonModule, RouterOutlet, AccountTabsComponent],
+    templateUrl: './account-container.component.html',
+    styleUrl: './account-container.component.scss'
 })
 export class AccountContainerComponent {
 

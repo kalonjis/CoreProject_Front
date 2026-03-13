@@ -9,11 +9,10 @@ export interface LoginFormData {
 }
 
 @Component({
-  selector: 'app-login-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './login-form.component.html',
-  styleUrl: './login-form.component.scss'
+    selector: 'app-login-form',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './login-form.component.html',
+    styleUrl: './login-form.component.scss'
 })
 export class LoginFormComponent {
   private fb = inject(FormBuilder);

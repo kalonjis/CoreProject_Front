@@ -26,11 +26,10 @@ import { Page } from '../../../../shared/models/page.model';
  * ```
  */
 @Component({
-  selector: 'app-track-list',
-  standalone: true,
-  imports: [CommonModule, TrackCardComponent],
-  templateUrl: './track-list.component.html',
-  styleUrl: './track-list.component.scss'
+    selector: 'app-track-list',
+    imports: [CommonModule, TrackCardComponent],
+    templateUrl: './track-list.component.html',
+    styleUrl: './track-list.component.scss'
 })
 export class TrackListComponent implements OnInit {
 

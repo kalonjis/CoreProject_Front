@@ -1,10 +1,11 @@
 // src/app/features/devices/device-detail/device-detail.component.scss
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .device-detail {
   background-color: white;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -20,7 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba($primary-color, 0.1);
+    background-color: rgba(variables.$primary-color, 0.1);
     border-radius: 50%;
     font-size: 1.75rem;
     margin-right: 1rem;
@@ -29,7 +30,7 @@
 
   .device-name {
     font-size: 1.4rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin: 0;
     line-height: 1.3;
   }
@@ -38,26 +39,26 @@
 .current-device-badge {
   display: inline-block;
   padding: 0.5rem 1rem;
-  background-color: rgba($primary-color, 0.1);
-  color: $primary-color;
-  border-radius: $border-radius;
+  background-color: rgba(variables.$primary-color, 0.1);
+  color: variables.$primary-color;
+  border-radius: variables.$border-radius;
   font-weight: 500;
   margin-bottom: 1.5rem;
-  border-left: 3px solid $primary-color;
+  border-left: 3px solid variables.$primary-color;
 }
 
 .detail-section {
-  background-color: $light-color;
-  border-radius: $border-radius;
+  background-color: variables.$light-color;
+  border-radius: variables.$border-radius;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
 
   h3 {
     font-size: 1.1rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin-top: 0;
     margin-bottom: 1rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     padding-bottom: 0.5rem;
   }
 
@@ -66,7 +67,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       grid-template-columns: 1fr;
     }
   }
@@ -75,63 +76,63 @@
     .detail-label {
       display: block;
       font-size: 0.85rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       margin-bottom: 0.25rem;
     }
 
     .detail-value {
       font-weight: 500;
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
 
     .trust-level {
       display: inline-block;
       padding: 0.25rem 0.5rem;
-      border-radius: $border-radius-sm;
+      border-radius: variables.$border-radius-sm;
       font-size: 0.9rem;
     }
 
     .level-highly-trusted {
-      background-color: rgba($success-color, 0.1);
-      color: darken($success-color, 10%);
+      background-color: rgba(variables.$success-color, 0.1);
+      color: color.adjust(variables.$success-color, $lightness: -10%);
     }
 
     .level-trusted {
-      background-color: rgba($info-color, 0.1);
-      color: darken($info-color, 10%);
+      background-color: rgba(variables.$info-color, 0.1);
+      color: color.adjust(variables.$info-color, $lightness: -10%);
     }
 
     .level-basic {
-      background-color: rgba($warning-color, 0.1);
-      color: darken($warning-color, 10%);
+      background-color: rgba(variables.$warning-color, 0.1);
+      color: color.adjust(variables.$warning-color, $lightness: -10%);
     }
 
     .level-untrusted {
-      background-color: rgba($danger-color, 0.1);
-      color: darken($danger-color, 10%);
+      background-color: rgba(variables.$danger-color, 0.1);
+      color: color.adjust(variables.$danger-color, $lightness: -10%);
     }
 
     .status {
       display: inline-block;
       padding: 0.25rem 0.5rem;
-      border-radius: $border-radius-sm;
+      border-radius: variables.$border-radius-sm;
       font-size: 0.9rem;
     }
 
     .status-confirmed {
-      background-color: rgba($success-color, 0.1);
-      color: darken($success-color, 10%);
+      background-color: rgba(variables.$success-color, 0.1);
+      color: color.adjust(variables.$success-color, $lightness: -10%);
     }
 
     .status-unconfirmed {
-      background-color: rgba($warning-color, 0.1);
-      color: darken($warning-color, 10%);
+      background-color: rgba(variables.$warning-color, 0.1);
+      color: color.adjust(variables.$warning-color, $lightness: -10%);
     }
   }
 }
 
 .trust-level-section {
-  background-color: rgba($light-color, 0.5);
+  background-color: rgba(variables.$light-color, 0.5);
 
   .trust-level-options {
     display: flex;
@@ -142,7 +143,7 @@
 
   .trust-level-btn {
     padding: 0.5rem 1rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -163,28 +164,28 @@
   }
 
   .level-highly-trusted {
-    background-color: rgba($success-color, 0.1);
-    color: darken($success-color, 10%);
+    background-color: rgba(variables.$success-color, 0.1);
+    color: color.adjust(variables.$success-color, $lightness: -10%);
   }
 
   .level-trusted {
-    background-color: rgba($info-color, 0.1);
-    color: darken($info-color, 10%);
+    background-color: rgba(variables.$info-color, 0.1);
+    color: color.adjust(variables.$info-color, $lightness: -10%);
   }
 
   .level-basic {
-    background-color: rgba($warning-color, 0.1);
-    color: darken($warning-color, 10%);
+    background-color: rgba(variables.$warning-color, 0.1);
+    color: color.adjust(variables.$warning-color, $lightness: -10%);
   }
 
   .level-untrusted {
-    background-color: rgba($danger-color, 0.1);
-    color: darken($danger-color, 10%);
+    background-color: rgba(variables.$danger-color, 0.1);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
   }
 
   .trust-level-info {
     font-size: 0.85rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-top: 0.5rem;
 
     p {
@@ -199,7 +200,7 @@
   margin-top: 1.5rem;
   flex-wrap: wrap;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: variables.$breakpoint-mobile) {
     flex-direction: column;
   }
 
@@ -208,7 +209,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.25rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -216,12 +217,12 @@
     justify-content: center;
 
     &.btn-danger {
-      background-color: $danger-color;
+      background-color: variables.$danger-color;
       color: white;
       border: none;
 
       &:hover:not(:disabled) {
-        background-color: darken($danger-color, 10%);
+        background-color: color.adjust(variables.$danger-color, $lightness: -10%);
       }
 
       &:disabled {
@@ -231,12 +232,12 @@
     }
 
     &.btn-secondary {
-      background-color: $light-color;
-      color: $dark-color;
-      border: 1px solid $border-color;
+      background-color: variables.$light-color;
+      color: variables.$dark-color;
+      border: 1px solid variables.$border-color;
 
       &:hover {
-        background-color: darken($light-color, 5%);
+        background-color: color.adjust(variables.$light-color, $lightness: -5%);
       }
     }
   }
@@ -246,9 +247,9 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.25rem;
-    background-color: $light-color;
-    border-radius: $border-radius;
-    color: $gray-dark;
+    background-color: variables.$light-color;
+    border-radius: variables.$border-radius;
+    color: variables.$gray-dark;
     flex: 1;
     font-size: 0.9rem;
   }

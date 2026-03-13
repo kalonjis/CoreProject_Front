@@ -34,11 +34,10 @@ export interface CircuitBreakerActionEvent {
  * Used in the System Health dashboard.
  */
 @Component({
-  selector: 'app-circuit-breaker-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './circuit-breaker-card.component.html',
-  styleUrl: './circuit-breaker-card.component.scss'
+    selector: 'app-circuit-breaker-card',
+    imports: [CommonModule],
+    templateUrl: './circuit-breaker-card.component.html',
+    styleUrl: './circuit-breaker-card.component.scss'
 })
 export class CircuitBreakerCardComponent {
 

@@ -31,15 +31,14 @@ Chart.register(...registerables);
  * ```
  */
 @Component({
-  selector: 'app-elevation-chart',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-elevation-chart',
+    imports: [CommonModule],
+    template: `
     <div class="elevation-chart" [style.height.px]="height()">
       <canvas #chartCanvas></canvas>
     </div>
   `,
-  styles: [`
+    styles: [`
     .elevation-chart {
       width: 100%;
       position: relative;

@@ -9,11 +9,10 @@ import {DataExportCardComponent} from '../../components/data-export-card/data-ex
 import {ActivatedRoute, RouterLink} from '@angular/router';
 
 @Component({
-  selector: 'app-privacy',
-  standalone: true,
-  imports: [CommonModule, DeactivateAccountModalComponent, DataExportCardComponent, RouterLink],
-  templateUrl: './privacy.component.html',
-  styleUrl: './privacy.component.scss'
+    selector: 'app-privacy',
+    imports: [CommonModule, DeactivateAccountModalComponent, DataExportCardComponent, RouterLink],
+    templateUrl: './privacy.component.html',
+    styleUrl: './privacy.component.scss'
 })
 export class PrivacyComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

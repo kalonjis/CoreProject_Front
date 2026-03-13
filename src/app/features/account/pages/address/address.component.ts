@@ -32,17 +32,16 @@ type ModalMode = 'create' | 'edit';
  * Route: /account/addresses
  */
 @Component({
-  selector: 'app-address',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    AddressListComponent,
-    AddressDetailComponent,
-    AddressFormModalComponent
-  ],
-  templateUrl: './address.component.html',
-  styleUrl: './address.component.scss'
+    selector: 'app-address',
+    imports: [
+        CommonModule,
+        RouterLink,
+        AddressListComponent,
+        AddressDetailComponent,
+        AddressFormModalComponent
+    ],
+    templateUrl: './address.component.html',
+    styleUrl: './address.component.scss'
 })
 export class AddressComponent implements OnInit {
 

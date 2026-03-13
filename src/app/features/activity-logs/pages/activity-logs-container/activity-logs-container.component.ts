@@ -13,11 +13,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
  * Access is restricted to ADMIN | SUPER_ADMIN via adminGuard on routes.
  */
 @Component({
-  selector: 'app-activity-logs-container',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './activity-logs-container.component.html',
-  styleUrl: './activity-logs-container.component.scss'
+    selector: 'app-activity-logs-container',
+    imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+    templateUrl: './activity-logs-container.component.html',
+    styleUrl: './activity-logs-container.component.scss'
 })
 export class ActivityLogsContainerComponent {
 

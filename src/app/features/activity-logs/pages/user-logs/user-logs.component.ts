@@ -20,16 +20,15 @@ import { ActivityLogFilter } from '../../models/activity-log.model';
  * @Input takes priority over route params when both are present.
  */
 @Component({
-  selector: 'app-user-logs',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ActivityLogTableComponent,
-    ActivityLogFiltersComponent,
-    ActivityLogDetailPanelComponent,
-  ],
-  templateUrl: './user-logs.component.html',
-  styleUrl: './user-logs.component.scss'
+    selector: 'app-user-logs',
+    imports: [
+        CommonModule,
+        ActivityLogTableComponent,
+        ActivityLogFiltersComponent,
+        ActivityLogDetailPanelComponent,
+    ],
+    templateUrl: './user-logs.component.html',
+    styleUrl: './user-logs.component.scss'
 })
 export class UserLogsComponent implements OnInit, OnChanges {
 

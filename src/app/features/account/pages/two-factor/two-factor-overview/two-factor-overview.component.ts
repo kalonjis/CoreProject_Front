@@ -18,11 +18,10 @@ import { TwoFactorMethod, TwoFactorType } from '../../../../../core/auth/models/
  * Route: /account/security/two-factor
  */
 @Component({
-  selector: 'app-two-factor-overview',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './two-factor-overview.component.html',
-  styleUrl: './two-factor-overview.component.scss'
+    selector: 'app-two-factor-overview',
+    imports: [CommonModule],
+    templateUrl: './two-factor-overview.component.html',
+    styleUrl: './two-factor-overview.component.scss'
 })
 export class TwoFactorOverviewComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

@@ -1,7 +1,7 @@
 // src/app/features/sport/components/track-detail/track-detail.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 .track-detail {
   display: flex;
@@ -26,7 +26,7 @@
     align-items: center;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__type {
@@ -34,15 +34,15 @@
     align-items: center;
     gap: 0.35rem;
     padding: 0.35rem 0.75rem;
-    background: rgba($primary-color, 0.1);
-    color: $primary-color;
+    background: rgba(variables.$primary-color, 0.1);
+    color: variables.$primary-color;
     border-radius: 2rem;
     font-weight: 500;
   }
 
   &__date {
     font-weight: 500;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   &__time {
@@ -65,10 +65,10 @@
     margin: 0;
     font-size: 1.75rem;
     font-weight: 700;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     line-height: 1.2;
 
-    @include respond-to('mobile') {
+    @include mixins.respond-to('mobile') {
       font-size: 1.5rem;
     }
   }
@@ -84,21 +84,21 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   background: white;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
-    background: rgba($primary-color, 0.05);
+    border-color: variables.$primary-color;
+    background: rgba(variables.$primary-color, 0.05);
   }
 
   &--danger:hover {
-    border-color: $danger-color;
-    background: rgba($danger-color, 0.05);
+    border-color: variables.$danger-color;
+    background: rgba(variables.$danger-color, 0.05);
   }
 }
 
@@ -111,7 +111,7 @@
     margin: 0 0 1rem;
     font-size: 1rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 }
 
@@ -120,7 +120,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     grid-template-columns: repeat(4, 1fr);
   }
 
@@ -141,20 +141,20 @@
   gap: 0.75rem;
   padding: 1.25rem;
   background: white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   transition: box-shadow 0.2s ease;
 
   &:hover {
-    box-shadow: $box-shadow-sm;
+    box-shadow: variables.$box-shadow-sm;
   }
 
   &--primary {
-    background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-color, 0.02));
-    border-color: rgba($primary-color, 0.2);
+    background: linear-gradient(135deg, rgba(variables.$primary-color, 0.05), rgba(variables.$primary-color, 0.02));
+    border-color: rgba(variables.$primary-color, 0.2);
 
     .metric-card__value {
-      color: $primary-color;
+      color: variables.$primary-color;
     }
   }
 
@@ -173,12 +173,12 @@
   &__value {
     font-size: 1.25rem;
     font-weight: 700;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     white-space: nowrap;
   }
 
   &__label {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }

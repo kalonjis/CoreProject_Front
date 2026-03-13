@@ -25,11 +25,10 @@ import {AdminUser} from '../../../models';
  * ```
  */
 @Component({
-  selector: 'app-user-detail-header',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './user-detail-header.component.html',
-  styleUrl: './user-detail-header.component.scss',
+    selector: 'app-user-detail-header',
+    imports: [CommonModule],
+    templateUrl: './user-detail-header.component.html',
+    styleUrl: './user-detail-header.component.scss'
 })
 export class UserDetailHeaderComponent {
 

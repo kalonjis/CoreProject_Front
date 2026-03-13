@@ -11,11 +11,10 @@ import {AdminUserApiService} from '../services/admin-user-api.service';
 import {combineLatest, startWith} from 'rxjs';
 
 @Component({
-  selector: 'app-user-register',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FeedbackComponent],
-  templateUrl: './user-register.component.html',
-  styleUrl: './user-register.component.scss'
+    selector: 'app-user-register',
+    imports: [CommonModule, ReactiveFormsModule, FeedbackComponent],
+    templateUrl: './user-register.component.html',
+    styleUrl: './user-register.component.scss'
 })
 export class UserRegisterComponent extends FeedbackBase implements OnInit {
   private fb = inject(FormBuilder);

@@ -26,11 +26,10 @@ import { AdminDeactivationAuditComponent } from '../admin-deactivation-audit/adm
  * ```
  */
 @Component({
-  selector:    'app-user-info-tab',
-  standalone:  true,
-  imports:     [CommonModule, AdminDeactivationAuditComponent],
-  templateUrl: './user-info-tab.component.html',
-  styleUrl:    './user-info-tab.component.scss',
+    selector: 'app-user-info-tab',
+    imports: [CommonModule, AdminDeactivationAuditComponent],
+    templateUrl: './user-info-tab.component.html',
+    styleUrl: './user-info-tab.component.scss'
 })
 export class UserInfoTabComponent {
 

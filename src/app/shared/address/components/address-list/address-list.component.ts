@@ -36,11 +36,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-address-list',
-  standalone: true,
-  imports: [CommonModule, FormsModule, AddressCardComponent],
-  templateUrl: './address-list.component.html',
-  styleUrl: './address-list.component.scss'
+    selector: 'app-address-list',
+    imports: [CommonModule, FormsModule, AddressCardComponent],
+    templateUrl: './address-list.component.html',
+    styleUrl: './address-list.component.scss'
 })
 export class AddressListComponent {
 

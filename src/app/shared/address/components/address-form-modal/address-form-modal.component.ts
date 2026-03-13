@@ -31,11 +31,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-address-form-modal',
-  standalone: true,
-  imports: [CommonModule, AddressFormComponent],
-  templateUrl: './address-form-modal.component.html',
-  styleUrl: './address-form-modal.component.scss'
+    selector: 'app-address-form-modal',
+    imports: [CommonModule, AddressFormComponent],
+    templateUrl: './address-form-modal.component.html',
+    styleUrl: './address-form-modal.component.scss'
 })
 export class AddressFormModalComponent implements OnChanges {
 

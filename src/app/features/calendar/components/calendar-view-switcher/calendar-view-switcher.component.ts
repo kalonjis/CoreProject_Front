@@ -36,17 +36,16 @@ import { CalendarAgendaViewComponent } from '../calendar-agenda-view/calendar-ag
  * ```
  */
 @Component({
-  selector: 'app-calendar-view-switcher',
-  standalone: true,
-  imports: [
-    CommonModule,
-    CalendarDayViewComponent,
-    CalendarWeekViewComponent,
-    CalendarMonthViewComponent,
-    CalendarAgendaViewComponent
-  ],
-  templateUrl: './calendar-view-switcher.component.html',
-  styleUrl: './calendar-view-switcher.component.scss'
+    selector: 'app-calendar-view-switcher',
+    imports: [
+        CommonModule,
+        CalendarDayViewComponent,
+        CalendarWeekViewComponent,
+        CalendarMonthViewComponent,
+        CalendarAgendaViewComponent
+    ],
+    templateUrl: './calendar-view-switcher.component.html',
+    styleUrl: './calendar-view-switcher.component.scss'
 })
 export class CalendarViewSwitcherComponent {
   // ===========================================================================

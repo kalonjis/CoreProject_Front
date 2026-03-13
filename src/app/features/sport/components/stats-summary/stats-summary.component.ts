@@ -16,11 +16,10 @@ import { OwnerStats } from '../../models/owner-stats.model';
  * ```
  */
 @Component({
-  selector: 'app-stats-summary',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './stats-summary.component.html',
-  styleUrl: './stats-summary.component.scss'
+    selector: 'app-stats-summary',
+    imports: [CommonModule],
+    templateUrl: './stats-summary.component.html',
+    styleUrl: './stats-summary.component.scss'
 })
 export class StatsSummaryComponent {
 

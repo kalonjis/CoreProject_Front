@@ -17,17 +17,16 @@ export interface LoginFormData {
 }
 
 @Component({
-  selector: 'app-login-container',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    FeedbackComponent,
-    LoginFormComponent,
-    OAuthButtonComponent
-  ],
-  templateUrl: './login-container.component.html',
-  styleUrl: './login-container.component.scss'
+    selector: 'app-login-container',
+    imports: [
+        CommonModule,
+        RouterLink,
+        FeedbackComponent,
+        LoginFormComponent,
+        OAuthButtonComponent
+    ],
+    templateUrl: './login-container.component.html',
+    styleUrl: './login-container.component.scss'
 })
 export class LoginContainerComponent extends FeedbackBase implements OnInit {
   private router = inject(Router);

@@ -1,13 +1,14 @@
 // src/app/features/contact/pages/contact-page/contact-page.component.scss
 
-@import '../../../../../style/variables';
+@use "sass:color";
+@use '../../../../../style/variables';
 
 .contact-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  background-color: $gray-light;
+  background-color: variables.$gray-light;
   padding: 40px 20px;
 }
 
@@ -17,18 +18,18 @@
   padding: 2rem;
   background-color: white;
   border-radius: 8px;
-  box-shadow: $box-shadow;
+  box-shadow: variables.$box-shadow;
 
   h1 {
     margin: 0 0 0.5rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     font-size: 1.75rem;
     text-align: center;
   }
 
   .subtitle {
     text-align: center;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 2rem;
   }
 }
@@ -40,14 +41,14 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: $dark-color;
+    color: variables.$dark-color;
 
     .required {
-      color: $danger-color;
+      color: variables.$danger-color;
     }
 
     .optional {
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-weight: normal;
       font-size: 0.875rem;
     }
@@ -59,19 +60,19 @@
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid $border-color;
+    border: 1px solid variables.$border-color;
     border-radius: 4px;
     transition: border-color 0.2s ease;
     font-family: inherit;
 
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+      border-color: variables.$primary-color;
+      box-shadow: 0 0 0 2px rgba(variables.$primary-color, 0.2);
     }
 
     &::placeholder {
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
   }
 
@@ -89,12 +90,12 @@
 .char-count {
   text-align: right;
   font-size: 0.75rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin-top: 0.25rem;
 }
 
 .validation-error {
-  color: $danger-color;
+  color: variables.$danger-color;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
@@ -124,14 +125,14 @@
     font-size: 1rem;
     font-weight: 500;
     color: white;
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      background-color: darken($primary-color, 8%);
+      background-color: color.adjust(variables.$primary-color, $lightness: -8%);
     }
 
     &:disabled {

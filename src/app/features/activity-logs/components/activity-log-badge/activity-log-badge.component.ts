@@ -19,11 +19,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-activity-log-badge',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './activity-log-badge.component.html',
-  styleUrl: './activity-log-badge.component.scss'
+    selector: 'app-activity-log-badge',
+    imports: [CommonModule],
+    templateUrl: './activity-log-badge.component.html',
+    styleUrl: './activity-log-badge.component.scss'
 })
 export class ActivityLogBadgeComponent {
 

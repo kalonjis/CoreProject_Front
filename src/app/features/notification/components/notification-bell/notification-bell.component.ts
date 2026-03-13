@@ -23,11 +23,10 @@ import { SseConnectionStatus } from '../../models/notification.state';
  * - Dropdown on click
  */
 @Component({
-  selector: 'app-notification-bell',
-  standalone: true,
-  imports: [CommonModule, RouterLink, NotificationDropdownComponent],
-  templateUrl: './notification-bell.component.html',
-  styleUrl: './notification-bell.component.scss'
+    selector: 'app-notification-bell',
+    imports: [CommonModule, RouterLink, NotificationDropdownComponent],
+    templateUrl: './notification-bell.component.html',
+    styleUrl: './notification-bell.component.scss'
 })
 export class NotificationBellComponent {
 

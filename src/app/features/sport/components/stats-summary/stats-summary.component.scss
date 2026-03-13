@@ -1,14 +1,15 @@
 // src/app/features/sport/components/stats-summary/stats-summary.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .stats-summary {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -19,12 +20,12 @@
   gap: 1rem;
   padding: 1.25rem;
   background: white;
-  border-radius: $border-radius-lg;
-  border: 1px solid $border-color;
+  border-radius: variables.$border-radius-lg;
+  border: 1px solid variables.$border-color;
   transition: all 0.2s ease;
 
   &:hover {
-    box-shadow: $box-shadow-sm;
+    box-shadow: variables.$box-shadow-sm;
   }
 
   &__icon {
@@ -42,7 +43,7 @@
   &__value {
     font-size: 1.25rem;
     font-weight: 700;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -52,19 +53,19 @@
       height: 1.25rem;
       background: linear-gradient(
           90deg,
-          $gray-light 25%,
-          darken($gray-light, 5%) 50%,
-          $gray-light 75%
+          variables.$gray-light 25%,
+          color.adjust(variables.$gray-light, $lightness: -5%) 50%,
+          variables.$gray-light 75%
       );
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
-      border-radius: $border-radius-sm;
+      border-radius: variables.$border-radius-sm;
     }
   }
 
   &__label {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     white-space: nowrap;
   }
 }

@@ -1,3 +1,4 @@
+@use "sass:color";
 // src/app/features/calendar/components/calendar-event-form/calendar-event-form.component.scss
 
 // =============================================================================
@@ -70,13 +71,13 @@ $spacing-xl: 2rem;
 
   &.alert-warning {
     background-color: #fffbeb;
-    color: darken($warning-color, 10%);
+    color: color.adjust($warning-color, $lightness: -10%);
     border: 1px solid #fde68a;
   }
 
   &.alert-success {
     background-color: #f0fdf4;
-    color: darken($success-color, 10%);
+    color: color.adjust($success-color, $lightness: -10%);
     border: 1px solid #bbf7d0;
   }
 }
@@ -259,7 +260,7 @@ $spacing-xl: 2rem;
 
   &:hover {
     span {
-      color: darken($text-color, 10%);
+      color: color.adjust($text-color, $lightness: -10%);
     }
   }
 }
@@ -520,7 +521,7 @@ $spacing-xl: 2rem;
           border-radius: 4px;
 
           &:hover {
-            background: darken($border-color, 10%);
+            background: color.adjust($border-color, $lightness: -10%);
           }
         }
       }
@@ -624,7 +625,7 @@ $spacing-xl: 2rem;
 
   &:hover:not(:disabled) {
     background-color: $bg-light;
-    border-color: darken($border-color, 10%);
+    border-color: color.adjust($border-color, $lightness: -10%);
   }
 
   &:active:not(:disabled) {
@@ -698,7 +699,7 @@ $spacing-xl: 2rem;
 
   &:hover:not(:disabled) {
     background-color: $bg-color;
-    border-color: darken($border-color, 10%);
+    border-color: color.adjust($border-color, $lightness: -10%);
   }
 
   &:disabled {

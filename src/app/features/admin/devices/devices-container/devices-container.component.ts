@@ -16,11 +16,10 @@ import { DeviceStats } from '../../models/device-stats.model';
  * This is the main entry point after clicking "Device Management" on the dashboard.
  */
 @Component({
-  selector: 'app-devices-container',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './devices-container.component.html',
-  styleUrl: './devices-container.component.scss'
+    selector: 'app-devices-container',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './devices-container.component.html',
+    styleUrl: './devices-container.component.scss'
 })
 export class DevicesContainerComponent implements OnInit {
   private statsApi = inject(AdminStatsApiService);

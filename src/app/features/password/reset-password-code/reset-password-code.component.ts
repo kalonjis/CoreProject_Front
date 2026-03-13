@@ -9,11 +9,10 @@ import { FeedbackComponent } from '../../../shared/feedback/feedback.component';
 import { PasswordApiService } from '../services/password-api.service';
 
 @Component({
-  selector: 'app-reset-password-code',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
-  templateUrl: './reset-password-code.component.html',
-  styleUrl: './reset-password-code.component.scss'
+    selector: 'app-reset-password-code',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
+    templateUrl: './reset-password-code.component.html',
+    styleUrl: './reset-password-code.component.scss'
 })
 export class ResetPasswordCodeComponent extends FeedbackBase implements OnInit {
 

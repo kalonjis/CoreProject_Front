@@ -1,8 +1,8 @@
 // src/app/features/account/pages/two-factor/sms-two-factor/components/sms-setup-modal/sms-setup-modal.component.scss
 
 @use 'sass:color';
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // MODAL OVERLAY
@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   animation: fadeIn 0.2s ease-out;
   padding: 1rem;
 }
@@ -30,14 +30,14 @@
 
 .modal-container {
   background: white;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   max-width: 480px;
   width: 100%;
   animation: slideUp 0.3s ease-out;
   overflow: hidden;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     max-width: 100%;
     margin: 0 1rem;
   }
@@ -52,30 +52,30 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
 }
 
 .modal-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 .close-button {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   cursor: pointer;
   padding: 0.25rem;
   line-height: 1;
-  border-radius: $border-radius-sm;
+  border-radius: variables.$border-radius-sm;
   transition: all 0.2s ease;
 
   &:hover {
-    background: $gray-light;
-    color: $secondary-color;
+    background: variables.$gray-light;
+    color: variables.$secondary-color;
   }
 }
 
@@ -89,12 +89,12 @@
 
 .modal-description {
   text-align: center;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin-bottom: 1.5rem;
   line-height: 1.5;
 
   strong {
-    color: $secondary-color;
+    color: variables.$secondary-color;
     font-weight: 600;
   }
 }
@@ -104,10 +104,10 @@
 // =============================================================================
 
 .resend-success {
-  background: color.adjust($success-color, $lightness: 45%);
-  color: color.adjust($success-color, $lightness: -20%);
-  border: 1px solid color.adjust($success-color, $lightness: 30%);
-  border-radius: $border-radius;
+  background: color.adjust(variables.$success-color, $lightness: 45%);
+  color: color.adjust(variables.$success-color, $lightness: -20%);
+  border: 1px solid color.adjust(variables.$success-color, $lightness: 30%);
+  border-radius: variables.$border-radius;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -124,24 +124,24 @@
   display: flex;
   justify-content: flex-end;
   padding: 1rem 1.5rem;
-  border-top: 1px solid $border-color;
-  background: $gray-light;
+  border-top: 1px solid variables.$border-color;
+  background: variables.$gray-light;
 }
 
 .btn-secondary {
   padding: 0.625rem 1.25rem;
-  border: 1px solid $border-color;
+  border: 1px solid variables.$border-color;
   background: white;
-  color: $gray-dark;
-  border-radius: $border-radius;
+  color: variables.$gray-dark;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: $gray-light;
-    border-color: $gray-dark;
+    background: variables.$gray-light;
+    border-color: variables.$gray-dark;
   }
 
   &:disabled {

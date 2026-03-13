@@ -26,11 +26,10 @@ import {TwoFactorApiService} from '../../../../../core/auth';
  * Route: /account/security/recovery/backup-codes
  */
 @Component({
-  selector: 'app-backup-codes',
-  standalone: true,
-  imports: [CommonModule, BackupCodesModalComponent],
-  templateUrl: './backup-codes.component.html',
-  styleUrl: './backup-codes.component.scss'
+    selector: 'app-backup-codes',
+    imports: [CommonModule, BackupCodesModalComponent],
+    templateUrl: './backup-codes.component.html',
+    styleUrl: './backup-codes.component.scss'
 })
 export class BackupCodesComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

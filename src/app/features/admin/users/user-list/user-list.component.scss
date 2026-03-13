@@ -1,3 +1,4 @@
+@use "sass:color";
 // Variables
 $primary: #6366f1;
 $primary-dark: #4f46e5;
@@ -146,7 +147,7 @@ $radius-lg: 16px;
   background: rgba($danger, 0.06);
   border: 1px solid rgba($danger, 0.25);
   border-radius: $radius-md;
-  color: darken($danger, 5%);
+  color: color.adjust($danger, $lightness: -5%);
   font-size: 0.9rem;
   font-weight: 500;
 
@@ -615,12 +616,12 @@ $radius-lg: 16px;
 
       &.role-moderator {
         background: rgba($warning, 0.15);
-        color: darken($warning, 10%);
+        color: color.adjust($warning, $lightness: -10%);
       }
 
       &.role-user {
         background: rgba($info, 0.15);
-        color: darken($info, 10%);
+        color: color.adjust($info, $lightness: -10%);
       }
 
       &.role-guest {
@@ -646,7 +647,7 @@ $radius-lg: 16px;
 
       &.warning {
         background: rgba($warning, 0.1);
-        color: darken($warning, 10%);
+        color: color.adjust($warning, $lightness: -10%);
         border: 1px solid rgba($warning, 0.3);
       }
 
@@ -658,7 +659,7 @@ $radius-lg: 16px;
 
       &.danger {
         background: rgba($danger, 0.08);
-        color: darken($danger, 5%);
+        color: color.adjust($danger, $lightness: -5%);
         border: 1px solid rgba($danger, 0.25);
       }
 

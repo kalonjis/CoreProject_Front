@@ -38,11 +38,10 @@ import { CalendarEventCardComponent } from '../calendar-event-card/calendar-even
  * ```
  */
 @Component({
-  selector: 'app-calendar-day-view',
-  standalone: true,
-  imports: [CommonModule, CalendarEventCardComponent],
-  templateUrl: './calendar-day-view.component.html',
-  styleUrl: './calendar-day-view.component.scss'
+    selector: 'app-calendar-day-view',
+    imports: [CommonModule, CalendarEventCardComponent],
+    templateUrl: './calendar-day-view.component.html',
+    styleUrl: './calendar-day-view.component.scss'
 })
 export class CalendarDayViewComponent {
   // ===========================================================================

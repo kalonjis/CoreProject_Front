@@ -9,10 +9,9 @@ import { FeedbackService } from './tools/feedback.service';
  * À placer dans app.component.html pour des notifications accessibles depuis n'importe où.
  */
 @Component({
-  selector: 'app-global-feedback',
-  standalone: true,
-  imports: [CommonModule, FeedbackComponent],
-  template: `
+    selector: 'app-global-feedback',
+    imports: [CommonModule, FeedbackComponent],
+    template: `
     @if (feedbackService.feedback()) {
       <app-feedback
         [message]="feedbackService.feedback()?.message ?? ''"
@@ -24,7 +23,7 @@ import { FeedbackService } from './tools/feedback.service';
       ></app-feedback>
     }
   `,
-  styles: [`
+    styles: [`
     .navbar-adjusted-feedback {
       margin-top: 80px; /* Ajustez cette valeur selon la hauteur de votre navbar */
       position: fixed;

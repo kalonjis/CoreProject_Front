@@ -33,17 +33,16 @@ import { TrackPoint } from '../../models/sport-track.model';
  * ```
  */
 @Component({
-  selector: 'app-track-map',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-track-map',
+    imports: [CommonModule],
+    template: `
     <div
       #mapContainer
       class="track-map"
       [style.height.px]="height()">
     </div>
   `,
-  styles: [`
+    styles: [`
     .track-map {
       width: 100%;
       border-radius: 0.5rem;

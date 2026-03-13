@@ -33,11 +33,10 @@ import { SmsSetupModalComponent } from './components/sms-setup-modal/sms-setup-m
  * ```
  */
 @Component({
-  selector: 'app-sms-two-factor',
-  standalone: true,
-  imports: [CommonModule, SmsSetupModalComponent],
-  templateUrl: './sms-two-factor.component.html',
-  styleUrl: './sms-two-factor.component.scss'
+    selector: 'app-sms-two-factor',
+    imports: [CommonModule, SmsSetupModalComponent],
+    templateUrl: './sms-two-factor.component.html',
+    styleUrl: './sms-two-factor.component.scss'
 })
 export class SmsTwoFactorComponent implements OnInit {
   private destroyRef = inject(DestroyRef);

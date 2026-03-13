@@ -13,11 +13,10 @@ import { PasswordOperationResponse } from '../models/password-response.model';
 type ResetMethod = 'EMAIL_LINK' | 'EMAIL_CODE' | 'SMS_CODE';
 
 @Component({
-  selector: 'app-forgot-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss'
+    selector: 'app-forgot-password',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
+    templateUrl: './forgot-password.component.html',
+    styleUrl: './forgot-password.component.scss'
 })
 export class ForgotPasswordComponent extends FeedbackBase {
 

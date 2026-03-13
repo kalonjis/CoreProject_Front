@@ -1,6 +1,7 @@
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .home-container {
   padding: 2rem 0;
@@ -16,7 +17,7 @@
 .hero-section {
   text-align: center;
   padding: 3rem 1rem;
-  background-color: $gray-light;
+  background-color: variables.$gray-light;
   border-radius: 8px;
   margin-bottom: 3rem;
 
@@ -28,19 +29,19 @@
   h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       font-size: 2rem;
     }
   }
 
   .lead {
     font-size: 1.25rem;
-    color: lighten($text-color, 15%);
+    color: color.adjust(variables.$text-color, $lightness: 15%);
     margin-bottom: 2rem;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       font-size: 1.1rem;
     }
   }
@@ -52,7 +53,7 @@
   justify-content: center;
   gap: 1rem;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: variables.$breakpoint-mobile) {
     flex-direction: column;
     align-items: center;
   }
@@ -65,22 +66,22 @@
     transition: all 0.3s ease;
 
     &.btn-primary {
-      background-color: $primary-color;
+      background-color: variables.$primary-color;
       color: white;
       border: none;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust(variables.$primary-color, $lightness: -10%);
       }
     }
 
     &.btn-outline {
       background-color: transparent;
-      color: $primary-color;
-      border: 1px solid $primary-color;
+      color: variables.$primary-color;
+      border: 1px solid variables.$primary-color;
 
       &:hover {
-        background-color: rgba($primary-color, 0.1);
+        background-color: rgba(variables.$primary-color, 0.1);
       }
     }
 
@@ -99,14 +100,14 @@
     text-align: center;
     font-size: 2rem;
     margin-bottom: 3rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
 
     &::after {
       content: '';
       display: block;
       width: 50px;
       height: 3px;
-      background-color: $primary-color;
+      background-color: variables.$primary-color;
       margin: 1rem auto 0;
     }
   }
@@ -117,7 +118,7 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: variables.$breakpoint-mobile) {
     grid-template-columns: 1fr;
   }
 }
@@ -140,27 +141,27 @@
     justify-content: center;
     width: 60px;
     height: 60px;
-    background-color: rgba($primary-color, 0.1);
+    background-color: rgba(variables.$primary-color, 0.1);
     border-radius: 50%;
     margin-bottom: 1.5rem;
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 
   h3 {
     font-size: 1.25rem;
     margin-bottom: 1rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   p {
-    color: lighten($text-color, 15%);
+    color: color.adjust(variables.$text-color, $lightness: 15%);
     margin-bottom: 0;
   }
 }
 
 // CTA Section
 .cta-section {
-  background-color: $secondary-color;
+  background-color: variables.$secondary-color;
   color: white;
   padding: 3rem;
   border-radius: 8px;
@@ -175,7 +176,7 @@
     font-size: 2rem;
     margin-bottom: 1rem;
 
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: variables.$breakpoint-mobile) {
       font-size: 1.75rem;
     }
   }

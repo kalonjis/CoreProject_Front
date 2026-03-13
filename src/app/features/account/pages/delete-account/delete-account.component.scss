@@ -1,8 +1,8 @@
 // src/app/features/account/pages/delete-account/delete-account.component.scss
 
 @use 'sass:color';
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // PAGE
@@ -24,19 +24,19 @@
 
 .delete-page__header {
   padding-bottom: 1rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
 }
 
 .delete-page__title {
   font-size: 1.5rem;
-  font-weight: $font-weight-bold;
-  color: $danger-color;
+  font-weight: variables.$font-weight-bold;
+  color: variables.$danger-color;
   margin: 0 0 0.25rem;
 }
 
 .delete-page__subtitle {
   font-size: 0.9rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin: 0;
 }
 
@@ -48,9 +48,9 @@
   display: flex;
   gap: 1rem;
   padding: 1.5rem;
-  background: color.adjust($danger-color, $lightness: 46%);
-  border: 1px solid color.adjust($danger-color, $lightness: 30%);
-  border-radius: $border-radius-lg;
+  background: color.adjust(variables.$danger-color, $lightness: 46%);
+  border: 1px solid color.adjust(variables.$danger-color, $lightness: 30%);
+  border-radius: variables.$border-radius-lg;
 
   &__icon {
     font-size: 1.5rem;
@@ -62,14 +62,14 @@
     h2 {
       font-size: 1rem;
       font-weight: 600;
-      color: color.adjust($danger-color, $lightness: -10%);
+      color: color.adjust(variables.$danger-color, $lightness: -10%);
       margin: 0 0 0.75rem;
     }
   }
 
   &__note {
     font-size: 0.875rem;
-    color: color.adjust($danger-color, $lightness: -10%);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
     margin: 0.75rem 0 0;
     line-height: 1.5;
   }
@@ -84,7 +84,7 @@
 
   li {
     font-size: 0.875rem;
-    color: color.adjust($danger-color, $lightness: -10%);
+    color: color.adjust(variables.$danger-color, $lightness: -10%);
     line-height: 1.5;
   }
 }
@@ -95,17 +95,17 @@
 
 .confirm-section {
   background: white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  box-shadow: $box-shadow;
+  box-shadow: variables.$box-shadow;
 
   &__instruction {
     font-size: 0.9rem;
-    color: $text-color;
+    color: variables.$text-color;
     margin: 0;
     line-height: 1.6;
   }
@@ -113,37 +113,37 @@
   &__expected {
     display: inline-block;
     padding: 0.1rem 0.4rem;
-    background: $gray-light;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-sm;
+    background: variables.$gray-light;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-sm;
     font-family: monospace;
     font-size: 0.875rem;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     user-select: all;
   }
 
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1.5px solid $border-color;
-    border-radius: $border-radius;
+    border: 1.5px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.95rem;
     font-family: monospace;
-    color: $secondary-color;
-    background: $gray-light;
+    color: variables.$secondary-color;
+    background: variables.$gray-light;
     transition: border-color 0.2s ease;
     box-sizing: border-box;
 
     &::placeholder {
-      color: $gray-dark;
+      color: variables.$gray-dark;
       opacity: 0.5;
     }
 
     &:focus {
       outline: none;
-      border-color: $danger-color;
+      border-color: variables.$danger-color;
       background: white;
-      box-shadow: 0 0 0 3px color.adjust($danger-color, $lightness: 38%);
+      box-shadow: 0 0 0 3px color.adjust(variables.$danger-color, $lightness: 38%);
     }
   }
 }
@@ -158,7 +158,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -166,11 +166,11 @@
   transition: all 0.2s ease;
 
   &--danger {
-    background: $danger-color;
+    background: variables.$danger-color;
     color: white;
 
     &:hover:not(:disabled) {
-      background: color.adjust($danger-color, $lightness: -8%);
+      background: color.adjust(variables.$danger-color, $lightness: -8%);
     }
 
     &:disabled {

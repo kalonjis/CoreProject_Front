@@ -1,7 +1,8 @@
 // src/app/features/account/components/security-tab/components/two-factor-section/components/email-setup-modal/email-setup-modal.component.scss
 
-@import '../../../../../../../../style/variables';
-@import '../../../../../../../../style/mixins';
+@use "sass:color";
+@use '../../../../../../../../style/variables';
+@use '../../../../../../../../style/mixins';
 
 .modal-overlay {
   position: fixed;
@@ -19,7 +20,7 @@
 
 .modal-container {
   background-color: white;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 90%;
   max-width: 420px;
@@ -32,27 +33,27 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid variables.$border-color;
 
   .modal-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
   }
 
   .close-button {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
     padding: 0.25rem;
     line-height: 1;
     transition: color 0.2s ease;
 
     &:hover {
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
   }
 }
@@ -63,21 +64,21 @@
   .modal-description {
     margin: 0 0 1.5rem;
     font-size: 0.95rem;
-    color: $text-color;
+    color: variables.$text-color;
     text-align: center;
     line-height: 1.5;
 
     strong {
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
   }
 }
 
 .resend-success {
-  background-color: rgba($success-color, 0.1);
-  color: $success-color;
+  background-color: rgba(variables.$success-color, 0.1);
+  color: variables.$success-color;
   padding: 0.75rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   text-align: center;
   margin-bottom: 1rem;
@@ -88,22 +89,22 @@
   display: flex;
   justify-content: flex-end;
   padding: 1rem 1.5rem;
-  background-color: $light-color;
-  border-top: 1px solid $border-color;
+  background-color: variables.$light-color;
+  border-top: 1px solid variables.$border-color;
 }
 
 .btn-secondary {
   padding: 0.6rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-weight: 500;
   cursor: pointer;
   background-color: white;
-  color: $gray-dark;
-  border: 1px solid $border-color;
+  color: variables.$gray-dark;
+  border: 1px solid variables.$border-color;
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background-color: darken(white, 5%);
+    background-color: color.adjust(white, $lightness: -5%);
   }
 
   &:disabled {

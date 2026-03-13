@@ -27,11 +27,10 @@ import {FeedbackService} from '../../../../shared/feedback/tools/feedback.servic
  * ```
  */
 @Component({
-  selector: 'app-gpx-upload',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './gpx-upload.component.html',
-  styleUrl: './gpx-upload.component.scss'
+    selector: 'app-gpx-upload',
+    imports: [CommonModule],
+    templateUrl: './gpx-upload.component.html',
+    styleUrl: './gpx-upload.component.scss'
 })
 export class GpxUploadComponent {
 

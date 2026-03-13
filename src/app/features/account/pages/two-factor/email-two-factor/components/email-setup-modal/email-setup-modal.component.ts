@@ -29,11 +29,10 @@ import { TwoFactorApiService } from '../../../../../../../core/auth/services/two
  * Resend: re-calls initiate endpoint (generates new code)
  */
 @Component({
-  selector: 'app-email-setup-modal',
-  standalone: true,
-  imports: [CommonModule, VerifyCodeComponent],
-  templateUrl: './email-setup-modal.component.html',
-  styleUrl: './email-setup-modal.component.scss'
+    selector: 'app-email-setup-modal',
+    imports: [CommonModule, VerifyCodeComponent],
+    templateUrl: './email-setup-modal.component.html',
+    styleUrl: './email-setup-modal.component.scss'
 })
 export class EmailSetupModalComponent implements OnInit {
   private twoFactorApi = inject(TwoFactorApiService);

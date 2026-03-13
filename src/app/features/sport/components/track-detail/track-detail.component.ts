@@ -28,11 +28,10 @@ import {
  * ```
  */
 @Component({
-  selector: 'app-track-detail',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './track-detail.component.html',
-  styleUrl: './track-detail.component.scss'
+    selector: 'app-track-detail',
+    imports: [CommonModule],
+    templateUrl: './track-detail.component.html',
+    styleUrl: './track-detail.component.scss'
 })
 export class TrackDetailComponent {
 

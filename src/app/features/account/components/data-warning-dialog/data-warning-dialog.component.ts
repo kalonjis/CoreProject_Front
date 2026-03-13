@@ -21,11 +21,10 @@ import { CommonModule } from '@angular/common';
  * ```
  */
 @Component({
-  selector: 'app-data-warning-dialog',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './data-warning-dialog.component.html',
-  styleUrl: './data-warning-dialog.component.scss'
+    selector: 'app-data-warning-dialog',
+    imports: [CommonModule],
+    templateUrl: './data-warning-dialog.component.html',
+    styleUrl: './data-warning-dialog.component.scss'
 })
 export class DataWarningDialogComponent {
 

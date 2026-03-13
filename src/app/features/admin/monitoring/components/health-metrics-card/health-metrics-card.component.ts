@@ -22,11 +22,10 @@ import {HealthMetrics} from '../../models';
  * Used in the System Health dashboard.
  */
 @Component({
-  selector: 'app-health-metrics-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './health-metrics-card.component.html',
-  styleUrl: './health-metrics-card.component.scss'
+    selector: 'app-health-metrics-card',
+    imports: [CommonModule],
+    templateUrl: './health-metrics-card.component.html',
+    styleUrl: './health-metrics-card.component.scss'
 })
 export class HealthMetricsCardComponent {
 

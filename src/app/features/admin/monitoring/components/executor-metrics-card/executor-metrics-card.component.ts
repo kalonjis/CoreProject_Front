@@ -24,11 +24,10 @@ import { ExecutorMetrics, EXECUTOR_DISPLAY_CONFIG } from '../../models';
  * This creates silent failures invisible to circuit breakers.
  */
 @Component({
-  selector: 'app-executor-metrics-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './executor-metrics-card.component.html',
-  styleUrl: './executor-metrics-card.component.scss'
+    selector: 'app-executor-metrics-card',
+    imports: [CommonModule],
+    templateUrl: './executor-metrics-card.component.html',
+    styleUrl: './executor-metrics-card.component.scss'
 })
 export class ExecutorMetricsCardComponent {
 

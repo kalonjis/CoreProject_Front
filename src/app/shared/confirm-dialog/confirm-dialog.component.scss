@@ -1,6 +1,7 @@
 // confirm-dialog.component.scss
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .confirm-dialog-overlay {
   position: fixed;
@@ -18,7 +19,7 @@
 
 .confirm-dialog {
   background-color: white;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 90%;
   max-width: 400px;
@@ -26,15 +27,15 @@
   overflow: hidden;
 
   &.confirm-dialog-warning {
-    border-top: 4px solid $warning-color;
+    border-top: 4px solid variables.$warning-color;
   }
 
   &.confirm-dialog-danger {
-    border-top: 4px solid $danger-color;
+    border-top: 4px solid variables.$danger-color;
   }
 
   &.confirm-dialog-info {
-    border-top: 4px solid $info-color;
+    border-top: 4px solid variables.$info-color;
   }
 }
 
@@ -47,7 +48,7 @@
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     flex: 1;
   }
 
@@ -64,7 +65,7 @@
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
-    color: $text-color;
+    color: variables.$text-color;
   }
 }
 
@@ -72,14 +73,14 @@
   display: flex;
   justify-content: flex-end;
   padding: 1rem 1.5rem;
-  background-color: $light-color;
-  border-top: 1px solid $border-color;
+  background-color: variables.$light-color;
+  border-top: 1px solid variables.$border-color;
   gap: 0.75rem;
 }
 
 .confirm-dialog-button {
   padding: 0.6rem 1.2rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-weight: 500;
   cursor: pointer;
   border: none;
@@ -87,20 +88,20 @@
 
   &.cancel-button {
     background-color: white;
-    color: $gray-dark;
-    border: 1px solid $border-color;
+    color: variables.$gray-dark;
+    border: 1px solid variables.$border-color;
 
     &:hover {
-      background-color: darken(white, 5%);
+      background-color: color.adjust(white, $lightness: -5%);
     }
   }
 
   &.confirm-button {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
 
     &:hover {
-      background-color: darken($primary-color, 5%);
+      background-color: color.adjust(variables.$primary-color, $lightness: -5%);
     }
 
     &:active {

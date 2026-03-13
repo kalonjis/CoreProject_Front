@@ -25,11 +25,10 @@ import { UserRole } from '../../../data/models/user/user-role';
  * Future modules can be easily added by extending the modules array.
  */
 @Component({
-  selector: 'app-admin-dashboard',
-  standalone: true,
-  imports: [CommonModule, ModuleCardComponent],
-  templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss'
+    selector: 'app-admin-dashboard',
+    imports: [CommonModule, ModuleCardComponent],
+    templateUrl: './admin-dashboard.component.html',
+    styleUrl: './admin-dashboard.component.scss'
 })
 export class AdminDashboardComponent implements OnInit {
 

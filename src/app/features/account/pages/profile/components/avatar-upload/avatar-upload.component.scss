@@ -1,7 +1,7 @@
 // src/app/features/account/pages/profile/components/avatar-upload/avatar-upload.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 .avatar-upload {
   display: flex;
@@ -20,7 +20,7 @@
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: $box-shadow;
+  box-shadow: variables.$box-shadow;
 }
 
 .avatar-image {
@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $gray-light;
+  background-color: variables.$gray-light;
 
   .placeholder-icon {
     font-size: 3rem;
@@ -117,14 +117,14 @@
 .help-text {
   margin: 0;
   font-size: 0.75rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 }
 
 // ===========================================================================
 // RESPONSIVE
 // ===========================================================================
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: variables.$breakpoint-mobile) {
   .avatar-preview {
     width: 100px;
     height: 100px;

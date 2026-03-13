@@ -1,8 +1,8 @@
 // src/app/features/account/pages/two-factor/sms-two-factor/sms-two-factor.component.scss
 
 @use 'sass:color';
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // CONTAINER
@@ -13,7 +13,7 @@
   margin: 0 auto;
   padding: 2rem;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     padding: 1rem;
   }
 }
@@ -29,7 +29,7 @@
 .back-button {
   background: none;
   border: none;
-  color: $primary-color;
+  color: variables.$primary-color;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -38,14 +38,14 @@
   transition: color 0.2s ease;
 
   &:hover {
-    color: color.adjust($primary-color, $lightness: -10%);
+    color: color.adjust(variables.$primary-color, $lightness: -10%);
   }
 }
 
 .page-title {
   font-size: 1.75rem;
-  font-weight: $font-weight-bold;
-  color: $secondary-color;
+  font-weight: variables.$font-weight-bold;
+  color: variables.$secondary-color;
   margin: 0;
 }
 
@@ -59,13 +59,13 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
 
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid $gray-light;
-    border-top-color: $primary-color;
+    border: 3px solid variables.$gray-light;
+    border-top-color: variables.$primary-color;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
@@ -79,9 +79,9 @@
 .error-state {
   text-align: center;
   padding: 2rem;
-  background: color.adjust($danger-color, $lightness: 45%);
-  border: 1px solid color.adjust($danger-color, $lightness: 30%);
-  border-radius: $border-radius-lg;
+  background: color.adjust(variables.$danger-color, $lightness: 45%);
+  border: 1px solid color.adjust(variables.$danger-color, $lightness: 30%);
+  border-radius: variables.$border-radius-lg;
 
   .error-icon {
     font-size: 2rem;
@@ -90,7 +90,7 @@
   }
 
   p {
-    color: color.adjust($danger-color, $lightness: -20%);
+    color: color.adjust(variables.$danger-color, $lightness: -20%);
     margin-bottom: 1rem;
   }
 }
@@ -114,9 +114,9 @@
   gap: 1rem;
   padding: 1.5rem;
   background: white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-sm;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-sm;
 }
 
 .method-icon {
@@ -131,12 +131,12 @@
 .method-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
   margin: 0 0 0.5rem 0;
 }
 
 .method-description {
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin: 0 0 1rem 0;
   line-height: 1.5;
 }
@@ -153,22 +153,22 @@
   border-radius: 999px;
   font-size: 0.875rem;
   font-weight: 500;
-  background: $gray-light;
-  color: $gray-dark;
+  background: variables.$gray-light;
+  color: variables.$gray-dark;
 
   .status-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: $gray-dark;
+    background: variables.$gray-dark;
   }
 
   &.enabled {
-    background: color.adjust($success-color, $lightness: 40%);
-    color: color.adjust($success-color, $lightness: -25%);
+    background: color.adjust(variables.$success-color, $lightness: 40%);
+    color: color.adjust(variables.$success-color, $lightness: -25%);
 
     .status-dot {
-      background: $success-color;
+      background: variables.$success-color;
     }
   }
 }
@@ -182,7 +182,7 @@
   display: flex;
   gap: 0.75rem;
   padding: 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   line-height: 1.5;
 
@@ -195,7 +195,7 @@
   }
 
   a {
-    color: $primary-color;
+    color: variables.$primary-color;
     text-decoration: none;
     font-weight: 500;
 
@@ -206,15 +206,15 @@
 }
 
 .info-card {
-  background: color.adjust($info-color, $lightness: 42%);
-  border: 1px solid color.adjust($info-color, $lightness: 30%);
-  color: color.adjust($info-color, $lightness: -25%);
+  background: color.adjust(variables.$info-color, $lightness: 42%);
+  border: 1px solid color.adjust(variables.$info-color, $lightness: 30%);
+  color: color.adjust(variables.$info-color, $lightness: -25%);
 }
 
 .warning-card {
-  background: color.adjust($warning-color, $lightness: 35%);
-  border: 1px solid color.adjust($warning-color, $lightness: 20%);
-  color: color.adjust($warning-color, $lightness: -30%);
+  background: color.adjust(variables.$warning-color, $lightness: 35%);
+  border: 1px solid color.adjust(variables.$warning-color, $lightness: 20%);
+  color: color.adjust(variables.$warning-color, $lightness: -30%);
 }
 
 .info-icon,
@@ -232,7 +232,7 @@
   gap: 1rem;
   padding-top: 0.5rem;
 
-  @include respond-to('mobile') {
+  @include mixins.respond-to('mobile') {
     flex-direction: column;
   }
 }
@@ -241,7 +241,7 @@
 .btn-danger {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -254,20 +254,20 @@
 }
 
 .btn-primary {
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
 
   &:hover:not(:disabled) {
-    background: color.adjust($primary-color, $lightness: -8%);
+    background: color.adjust(variables.$primary-color, $lightness: -8%);
   }
 }
 
 .btn-danger {
-  background: $danger-color;
+  background: variables.$danger-color;
   color: white;
 
   &:hover:not(:disabled) {
-    background: color.adjust($danger-color, $lightness: -8%);
+    background: color.adjust(variables.$danger-color, $lightness: -8%);
   }
 }
 
@@ -277,13 +277,13 @@
 
 .help-section {
   padding: 1.5rem;
-  background: $gray-light;
-  border-radius: $border-radius-lg;
+  background: variables.$gray-light;
+  border-radius: variables.$border-radius-lg;
 
   h3 {
     font-size: 1rem;
     font-weight: 600;
-    color: $secondary-color;
+    color: variables.$secondary-color;
     margin: 0 0 1rem 0;
   }
 }
@@ -291,7 +291,7 @@
 .help-list {
   margin: 0;
   padding-left: 1.25rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   line-height: 1.8;
 
   li {

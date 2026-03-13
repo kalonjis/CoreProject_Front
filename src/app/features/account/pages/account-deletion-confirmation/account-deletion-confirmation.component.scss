@@ -1,8 +1,8 @@
 // src/app/features/account/pages/account-deletion-confirmation/account-deletion-confirmation.component.scss
 
 @use 'sass:color';
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // =============================================================================
 // PAGE
@@ -23,10 +23,10 @@
 
 .deletion-card {
   background: white;
-  border: 1px solid rgba($danger-color, 0.25);
-  border-top: 4px solid $danger-color;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border: 1px solid rgba(variables.$danger-color, 0.25);
+  border-top: 4px solid variables.$danger-color;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   width: 100%;
   max-width: 480px;
   overflow: hidden;
@@ -38,7 +38,7 @@
   &__header {
     padding: 2rem 2rem 1.5rem;
     text-align: center;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
   }
 
   &__icon {
@@ -49,14 +49,14 @@
 
   &__title {
     font-size: 1.35rem;
-    font-weight: $font-weight-bold;
-    color: $danger-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$danger-color;
     margin: 0 0 0.5rem;
   }
 
   &__subtitle {
     font-size: 0.9rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     line-height: 1.6;
     margin: 0;
   }
@@ -71,7 +71,7 @@
     justify-content: center;
     gap: 0.75rem;
     padding: 1.5rem 2rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.9rem;
 
     p { margin: 0; }
@@ -96,7 +96,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -104,11 +104,11 @@
   transition: all 0.2s ease;
 
   &--danger {
-    background: $danger-color;
+    background: variables.$danger-color;
     color: white;
 
     &:hover:not(:disabled) {
-      background: color.adjust($danger-color, $lightness: -8%);
+      background: color.adjust(variables.$danger-color, $lightness: -8%);
     }
 
     &:disabled {
@@ -127,8 +127,8 @@
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba($danger-color, 0.25);
-  border-top-color: $danger-color;
+  border: 2px solid rgba(variables.$danger-color, 0.25);
+  border-top-color: variables.$danger-color;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;

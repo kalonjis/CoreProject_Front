@@ -80,11 +80,10 @@ const MAIN_CATEGORY_CLASS: Record<DeactivationMainCategory, string> = {
  * ```
  */
 @Component({
-  selector:    'app-admin-deactivation-audit',
-  standalone:  true,
-  imports:     [CommonModule],
-  templateUrl: './admin-deactivation-audit.component.html',
-  styleUrl:    './admin-deactivation-audit.component.scss',
+    selector: 'app-admin-deactivation-audit',
+    imports: [CommonModule],
+    templateUrl: './admin-deactivation-audit.component.html',
+    styleUrl: './admin-deactivation-audit.component.scss'
 })
 export class AdminDeactivationAuditComponent {
 

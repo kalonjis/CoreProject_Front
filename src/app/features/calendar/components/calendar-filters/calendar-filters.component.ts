@@ -42,11 +42,10 @@ import { groupEventsByStatus } from '../../utils';
  * ```
  */
 @Component({
-  selector: 'app-calendar-filters',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './calendar-filters.component.html',
-  styleUrl: './calendar-filters.component.scss'
+    selector: 'app-calendar-filters',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './calendar-filters.component.html',
+    styleUrl: './calendar-filters.component.scss'
 })
 export class CalendarFiltersComponent {
   // ===========================================================================

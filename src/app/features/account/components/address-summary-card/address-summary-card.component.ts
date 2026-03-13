@@ -18,11 +18,10 @@ import {RouterLink} from '@angular/router';
  * Affiche les 3 premières adresses avec un lien vers la page complète.
  */
 @Component({
-  selector: 'app-address-summary-card',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './address-summary-card.component.html',
-  styleUrl: './address-summary-card.component.scss'
+    selector: 'app-address-summary-card',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './address-summary-card.component.html',
+    styleUrl: './address-summary-card.component.scss'
 })
 export class AddressSummaryCardComponent implements OnInit {
 

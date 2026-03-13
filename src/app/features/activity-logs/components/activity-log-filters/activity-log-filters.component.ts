@@ -29,11 +29,10 @@ import { ActivityLogFilter } from '../../models/activity-log.model';
  * ```
  */
 @Component({
-  selector: 'app-activity-log-filters',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './activity-log-filters.component.html',
-  styleUrl: './activity-log-filters.component.scss'
+    selector: 'app-activity-log-filters',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './activity-log-filters.component.html',
+    styleUrl: './activity-log-filters.component.scss'
 })
 export class ActivityLogFiltersComponent {
 

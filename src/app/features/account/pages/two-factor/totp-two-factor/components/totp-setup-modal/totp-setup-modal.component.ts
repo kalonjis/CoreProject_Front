@@ -37,11 +37,10 @@ import {TotpSetupInitiateResponse, TotpSetupResponse} from '../../../../../../..
  * - Error handling and loading states
  */
 @Component({
-  selector: 'app-totp-setup-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './totp-setup-modal.component.html',
-  styleUrl: './totp-setup-modal.component.scss'
+    selector: 'app-totp-setup-modal',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './totp-setup-modal.component.html',
+    styleUrl: './totp-setup-modal.component.scss'
 })
 export class TotpSetupModalComponent implements OnInit {
   private formBuilder = inject(FormBuilder);

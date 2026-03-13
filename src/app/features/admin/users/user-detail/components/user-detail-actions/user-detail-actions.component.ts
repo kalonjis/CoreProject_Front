@@ -37,11 +37,10 @@ import {AdminUserFacade} from '../../../services/admin-user-facade.service';
  * ```
  */
 @Component({
-  selector: 'app-user-detail-actions',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './user-detail-actions.component.html',
-  styleUrl: './user-detail-actions.component.scss',
+    selector: 'app-user-detail-actions',
+    imports: [CommonModule],
+    templateUrl: './user-detail-actions.component.html',
+    styleUrl: './user-detail-actions.component.scss'
 })
 export class UserDetailActionsComponent {
 

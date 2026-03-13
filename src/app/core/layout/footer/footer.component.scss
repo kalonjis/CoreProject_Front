@@ -1,10 +1,10 @@
 // Import variables and mixins
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 // Footer styles
 .app-footer {
-  background-color: rgba($secondary-color, 0.85); // Semi-transparent
+  background-color: rgba(variables.$secondary-color, 0.85); // Semi-transparent
   backdrop-filter: blur(5px); // Effet de flou
   color: rgba(255, 255, 255, 0.9);
   position: fixed;
@@ -29,7 +29,7 @@
   align-items: center;
   padding: 0.75rem 0;
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: variables.$breakpoint-tablet) {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
@@ -82,7 +82,7 @@
   display: flex;
   gap: 2rem;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: variables.$breakpoint-mobile) {
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
@@ -121,8 +121,8 @@
     position: absolute;
     bottom: 100%; // Positionné au-dessus du footer au lieu d'en-dessous
     left: 0;
-    background-color: rgba($secondary-color, 0.95);
-    border-radius: $border-radius;
+    background-color: rgba(variables.$secondary-color, 0.95);
+    border-radius: variables.$border-radius;
     padding: 0;
     max-height: 0;
     overflow: hidden;
@@ -207,7 +207,7 @@
     }
   }
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: variables.$breakpoint-mobile) {
     flex-direction: column;
     gap: 0.5rem;
     align-items: flex-start;

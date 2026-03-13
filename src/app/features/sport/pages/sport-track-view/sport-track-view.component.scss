@@ -1,14 +1,15 @@
 // src/app/features/sport/pages/sport-track-view/sport-track-view.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .track-view {
   max-width: 1000px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     padding: 2rem;
   }
 
@@ -30,7 +31,7 @@
     align-items: center;
     justify-content: center;
     padding: 4rem 2rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
 
     p {
       margin: 1rem 0 0;
@@ -57,12 +58,12 @@
     h2 {
       margin: 0 0 0.5rem;
       font-size: 1.5rem;
-      color: $secondary-color;
+      color: variables.$secondary-color;
     }
 
     p {
       margin: 0 0 1.5rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
   }
 
@@ -78,8 +79,8 @@
 
   &__section {
     background: white;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color;
+    border-radius: variables.$border-radius-lg;
+    border: 1px solid variables.$border-color;
     overflow: hidden;
 
     // Map section - no padding
@@ -105,13 +106,13 @@
   padding: 0.5rem 0;
   background: none;
   border: none;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   font-size: 0.95rem;
   cursor: pointer;
   transition: color 0.2s ease;
 
   &:hover {
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 }
 
@@ -123,7 +124,7 @@
   margin: 0 0 1rem;
   font-size: 1.1rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }
 
 // ===========================================================================
@@ -131,8 +132,8 @@
 // ===========================================================================
 
 .chart-container {
-  background: $gray-light;
-  border-radius: $border-radius;
+  background: variables.$gray-light;
+  border-radius: variables.$border-radius;
   padding: 1rem;
 }
 
@@ -145,17 +146,17 @@
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.5rem;
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease;
 
   &:hover {
-    background: darken($primary-color, 5%);
+    background: color.adjust(variables.$primary-color, $lightness: -5%);
   }
 }
 
@@ -166,8 +167,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid $border-color;
-  border-top-color: $primary-color;
+  border: 3px solid variables.$border-color;
+  border-top-color: variables.$primary-color;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

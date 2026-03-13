@@ -1,14 +1,15 @@
 // src/app/features/sport/pages/sport-dashboard/sport-dashboard.component.scss
 
-@import 'variables';
-@import 'mixins';
+@use "sass:color";
+@use 'variables';
+@use 'mixins';
 
 .sport-dashboard {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     padding: 2rem;
   }
 }
@@ -23,7 +24,7 @@
   gap: 1rem;
   margin-bottom: 2rem;
 
-  @include respond-to('tablet') {
+  @include mixins.respond-to('tablet') {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -37,16 +38,16 @@
     margin: 0;
     font-size: 1.75rem;
     font-weight: 700;
-    color: $secondary-color;
+    color: variables.$secondary-color;
 
-    @include respond-to('tablet') {
+    @include mixins.respond-to('tablet') {
       font-size: 2rem;
     }
   }
 
   &__subtitle {
     margin: 0.25rem 0 0;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.95rem;
   }
 }
@@ -56,10 +57,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: $primary-color;
+  background: variables.$primary-color;
   color: white;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -67,9 +68,9 @@
   white-space: nowrap;
 
   &:hover {
-    background: darken($primary-color, 5%);
+    background: color.adjust(variables.$primary-color, $lightness: -5%);
     transform: translateY(-1px);
-    box-shadow: $box-shadow;
+    box-shadow: variables.$box-shadow;
   }
 
   &:active {
@@ -99,5 +100,5 @@
   margin: 0 0 1rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: $secondary-color;
+  color: variables.$secondary-color;
 }

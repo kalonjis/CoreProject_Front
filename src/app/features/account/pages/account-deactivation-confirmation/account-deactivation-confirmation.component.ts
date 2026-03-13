@@ -6,11 +6,10 @@ import { FeedbackComponent } from '../../../../shared/feedback/feedback.componen
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-account-deactivation-confirmation',
-  standalone: true,
-  imports: [FeedbackComponent, CommonModule],
-  templateUrl: './account-deactivation-confirmation.component.html',
-  styleUrl: './account-deactivation-confirmation.component.scss'
+    selector: 'app-account-deactivation-confirmation',
+    imports: [FeedbackComponent, CommonModule],
+    templateUrl: './account-deactivation-confirmation.component.html',
+    styleUrl: './account-deactivation-confirmation.component.scss'
 })
 export class AccountDeactivationConfirmationComponent extends FeedbackBase implements OnInit {
 

@@ -19,11 +19,10 @@ import { CommonModule } from '@angular/common';
  * Utilise signals comme code-input pour la cohérence
  */
 @Component({
-  selector: 'app-backup-code-input',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './backup-code-input.component.html',
-  styleUrl: './backup-code-input.component.scss'
+    selector: 'app-backup-code-input',
+    imports: [CommonModule],
+    templateUrl: './backup-code-input.component.html',
+    styleUrl: './backup-code-input.component.scss'
 })
 export class BackupCodeInputComponent implements OnInit {
 

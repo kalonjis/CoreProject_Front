@@ -28,11 +28,10 @@ import { DataWarningDialogComponent } from '../../components/data-warning-dialog
  * Route: /account/deletion-request
  */
 @Component({
-  selector: 'app-delete-account-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule, FeedbackComponent, DataWarningDialogComponent],
-  templateUrl: './delete-account.component.html',
-  styleUrl: './delete-account.component.scss'
+    selector: 'app-delete-account-page',
+    imports: [CommonModule, FormsModule, FeedbackComponent, DataWarningDialogComponent],
+    templateUrl: './delete-account.component.html',
+    styleUrl: './delete-account.component.scss'
 })
 export class DeleteAccountComponent extends FeedbackBase {
 

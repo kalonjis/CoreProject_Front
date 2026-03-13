@@ -16,11 +16,10 @@ import {ConfirmDialogService} from '../../../../shared/confirm-dialog/tools/conf
  * Includes quick actions and link to full notification center.
  */
 @Component({
-  selector: 'app-notification-dropdown',
-  standalone: true,
-  imports: [CommonModule, RouterLink, NotificationItemComponent],
-  templateUrl: './notification-dropdown.component.html',
-  styleUrl: './notification-dropdown.component.scss'
+    selector: 'app-notification-dropdown',
+    imports: [CommonModule, RouterLink, NotificationItemComponent],
+    templateUrl: './notification-dropdown.component.html',
+    styleUrl: './notification-dropdown.component.scss'
 })
 export class NotificationDropdownComponent {
 

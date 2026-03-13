@@ -9,11 +9,10 @@ import {PasswordApiService} from '../services/password-api.service';
 import {AuthFacade} from '../../../core/auth';
 
 @Component({
-  selector: 'app-change-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
-  templateUrl: './change-password.component.html',
-  styleUrl: './change-password.component.scss'
+    selector: 'app-change-password',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, FeedbackComponent],
+    templateUrl: './change-password.component.html',
+    styleUrl: './change-password.component.scss'
 })
 export class ChangePasswordComponent extends FeedbackBase {
   private fb = inject(FormBuilder);
