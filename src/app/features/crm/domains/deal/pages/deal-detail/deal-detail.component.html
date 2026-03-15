@@ -1,0 +1,116 @@
+<div class="deal-detail">
+  <div class="deal-detail__breadcrumb">
+    <a routerLink="/crm/deals">Deals</a>
+    <span> / </span>
+    <span>{{ deal()?.title ?? '…' }}</span>
+  </div>
+
+  @if (loading()) {
+    <p class="deal-detail__info">Chargement…</p>
+  } @else if (error()) {
+    <p class="deal-detail__error">{{ error() }}</p>
+  } @else if (deal(); as d) {
+    <div class="deal-detail__layout">
+
+      <div class="deal-detail__main">
+        <app-deal-info-card [deal]="d" />
+
+        <div class="deal-detail__timeline">
+          <div class="deal-detail__timeline-header">
+            <h3 class="deal-detail__timeline-title">Historique</h3>
+            <button class="btn btn--secondary" (click)="showLogForm.set(!showLogForm())">
+              {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
+            </button>
+          </div>
+
+          @if (showLogForm()) {
+            <app-interaction-log-form
+              [dealPublicId]="d.publicId"
+              (logged)="onInteractionLogged()"
+              (cancelled)="showLogForm.set(false)"
+            />
+          }
+
+          <app-interaction-timeline
+            [interactions]="interactions()"
+            [loading]="timelineLoading()"
+            (deleteRequested)="onInteractionDelete($event)"
+          />
+        </div>
+      </div>
+
+      <aside class="deal-detail__sidebar">
+        <div class="deal-detail__actions">
+          <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
+          @if (d.status === 'OPEN') {
+            <button
+              class="btn btn--ghost"
+              [class.btn--active]="activeAction() === 'move'"
+              (click)="setAction('move')">
+              Changer d'étape
+            </button>
+          }
+          <button
+            class="btn btn--ghost"
+            [class.btn--active]="activeAction() === 'reassign'"
+            (click)="setAction('reassign')">
+            Réassigner
+          </button>
+        </div>
+
+        @switch (activeAction()) {
+          @case ('move') {
+            <app-deal-action-move-stage
+              [publicId]="d.publicId"
+              [pipelinePublicId]="d.pipelinePublicId"
+              [currentStagePublicId]="d.stagePublicId"
+              (moved)="onActionDone()"
+              (cancelled)="setAction(null)"
+            />
+          }
+          @case ('reassign') {
+            <app-deal-action-reassign
+              [publicId]="d.publicId"
+              (reassigned)="onActionDone()"
+              (cancelled)="setAction(null)"
+            />
+          }
+        }
+
+        <div class="deal-detail__actions-section">
+          <div class="deal-detail__actions-header">
+            <h4 class="deal-detail__actions-title">Actions</h4>
+            <button class="btn btn--ghost btn--sm" (click)="showActionForm.set(!showActionForm())">
+              {{ showActionForm() ? '✕' : '+' }}
+            </button>
+          </div>
+
+          @if (showActionForm()) {
+            <app-commercial-action-form
+              [dealPublicId]="d.publicId"
+              [currentUserPublicId]="currentUserPublicId"
+              (created)="onActionCreated()"
+              (cancelled)="showActionForm.set(false)"
+            />
+          }
+
+          @if (actionsLoading()) {
+            <p class="deal-detail__actions-state">Chargement…</p>
+          } @else if (commercialActions().length === 0) {
+            <p class="deal-detail__actions-state">Aucune action.</p>
+          } @else {
+            @for (action of commercialActions(); track action.publicId) {
+              <app-commercial-action-card
+                [action]="action"
+                (completed)="onActionComplete($event)"
+                (cancelled)="onActionCancel($event)"
+              />
+            }
+          }
+        </div>
+
+      </aside>
+
+    </div>
+  }
+</div>

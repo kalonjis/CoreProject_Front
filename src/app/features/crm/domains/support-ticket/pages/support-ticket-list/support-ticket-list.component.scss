@@ -1,0 +1,114 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.ticket-list {
+  padding: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $dark-color;
+    margin: 0;
+  }
+
+  &__filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  &__search {
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    flex: 1;
+    min-width: 180px;
+    max-width: 300px;
+    &:focus { outline: none; border-color: $primary-color; }
+  }
+
+  select {
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    background: #fff;
+    color: $text-color;
+    cursor: pointer;
+    &:focus { outline: none; border-color: $primary-color; }
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: $text-color;
+    cursor: pointer;
+    input { cursor: pointer; }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      font-weight: 600;
+      color: $gray-dark;
+      border-bottom: 2px solid $border-color;
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f4f6;
+      color: $text-color;
+    }
+  }
+
+  &__row {
+    cursor: pointer;
+    transition: background 0.1s;
+    &:hover td { background: #f9fafb; }
+  }
+
+  &__subject {
+    font-weight: 500;
+    color: $dark-color;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__state {
+    color: $gray-dark;
+    font-style: italic;
+    font-size: 0.875rem;
+    padding: 1rem 0;
+  }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: $gray-dark;
+  }
+}

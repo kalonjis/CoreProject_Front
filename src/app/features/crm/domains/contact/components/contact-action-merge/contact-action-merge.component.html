@@ -1,0 +1,16 @@
+<div class="action-panel action-panel--danger">
+  <h3 class="action-panel__title">Fusionner avec un autre contact</h3>
+  <p class="action-panel__hint">Le contact source sera absorbé par celui-ci (cible). Toutes ses données seront transférées.</p>
+
+  <div class="action-panel__row">
+    <label>Public ID du contact source (à supprimer)</label>
+    <input type="text" [(ngModel)]="sourcePublicId" placeholder="uuid du contact source" />
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !sourcePublicId.trim()">
+      Fusionner
+    </button>
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+</div>

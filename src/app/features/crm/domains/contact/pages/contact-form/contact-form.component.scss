@@ -1,0 +1,66 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.contact-form {
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__header { display: flex; align-items: center; gap: 1rem; }
+
+  &__back {
+    background: none;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: $gray-dark;
+    transition: $transition-fast;
+    white-space: nowrap;
+    &:hover { border-color: $primary-color; color: $primary-color; }
+  }
+
+  &__title { font-size: 1.25rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; }
+
+  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
+
+  &__card {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &--full { grid-column: 1 / -1; }
+
+    label { font-size: 0.8rem; font-weight: 600; color: $gray-dark; }
+
+    input, textarea {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      font-family: inherit;
+      resize: vertical;
+      &:focus { outline: none; border-color: $primary-color; }
+    }
+  }
+
+  &__actions { display: flex; gap: 0.75rem; }
+}

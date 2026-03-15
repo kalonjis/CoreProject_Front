@@ -1,0 +1,82 @@
+<div class="org-list">
+  <div class="org-list__header">
+    <h1 class="org-list__title">Organisations</h1>
+    <button class="btn btn--primary" (click)="goCreate()">+ Nouvelle organisation</button>
+  </div>
+
+  <div class="org-list__filters">
+    <input
+      type="text"
+      placeholder="Rechercher…"
+      [(ngModel)]="keyword"
+      (ngModelChange)="onKeywordChange()"
+      class="org-list__search"
+    />
+    <select [(ngModel)]="selectedSize" (ngModelChange)="onFilterChange()">
+      <option value="">Toutes les tailles</option>
+      @for (s of sizes; track s) {
+        <option [value]="s">{{ sizeLabels[s] }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading()) {
+    <p class="org-list__info">Chargement…</p>
+  } @else if (error()) {
+    <p class="org-list__error">{{ error() }}</p>
+  } @else if (organisations().length === 0) {
+    <app-crm-empty-state
+      icon="🏢"
+      title="Aucune organisation trouvée"
+      subtitle="Ajoutez votre première organisation ou modifiez vos filtres"
+      ctaLabel="+ Nouvelle organisation"
+      (ctaClick)="goCreate()"
+    />
+  } @else {
+    <div class="org-list__count">{{ totalElements() }} organisation(s)</div>
+    <table class="org-list__table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Secteur</th>
+          <th>Taille</th>
+          <th>Téléphone</th>
+          <th>Site web</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (org of organisations(); track org.publicId) {
+          <tr class="org-list__row" (click)="viewDetail(org.publicId)">
+            <td class="org-list__name">{{ org.name }}</td>
+            <td>{{ org.industry ?? '—' }}</td>
+            <td>
+              @if (org.size) {
+                <app-organisation-size-badge [size]="org.size" />
+              } @else {
+                <span>—</span>
+              }
+            </td>
+            <td>{{ org.phone ?? '—' }}</td>
+            <td>
+              @if (org.website) {
+                <a [href]="org.website" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
+                  {{ org.website }}
+                </a>
+              } @else {
+                <span>—</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="org-list__pagination">
+        <button [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Préc.</button>
+        <span>Page {{ currentPage + 1 }} / {{ totalPages() }}</span>
+        <button [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suiv. ›</button>
+      </div>
+    }
+  }
+</div>

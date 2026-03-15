@@ -1,0 +1,61 @@
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CrmDashboardApiService } from '../domains/dashboard/services/crm-dashboard-api.service';
+
+const STORAGE_KEY = 'crm-sidebar-collapsed';
+
+interface CrmNavItem {
+  label: string;
+  icon: string;
+  route: string;
+  badgeKey?: 'leads' | 'actions';
+}
+
+@Component({
+  selector: 'app-crm-sidebar',
+  imports: [CommonModule, RouterLink, RouterLinkActive],
+  templateUrl: './crm-sidebar.component.html',
+  styleUrl: './crm-sidebar.component.scss'
+})
+export class CrmSidebarComponent implements OnInit {
+
+  private readonly dashboardApi = inject(CrmDashboardApiService);
+
+  readonly collapsed    = signal(localStorage.getItem(STORAGE_KEY) === 'true');
+  readonly leadsBadge   = signal(0);
+  readonly actionsBadge = signal(0);
+
+  toggle(): void {
+    const next = !this.collapsed();
+    this.collapsed.set(next);
+    localStorage.setItem(STORAGE_KEY, String(next));
+  }
+
+  readonly navItems: CrmNavItem[] = [
+    { label: 'Dashboard',            icon: '🏠', route: '/crm/dashboard' },
+    { label: 'Leads',                icon: '📥', route: '/crm/leads',               badgeKey: 'leads' },
+    { label: 'Contacts',             icon: '👤', route: '/crm/contacts' },
+    { label: 'Organisations',        icon: '🏢', route: '/crm/organisations' },
+    { label: 'Deals',                icon: '💼', route: '/crm/deals' },
+    { label: 'Pipeline',             icon: '📊', route: '/crm/pipeline' },
+    { label: 'Interactions',         icon: '💬', route: '/crm/interactions' },
+    { label: 'Actions commerciales', icon: '✅', route: '/crm/commercial-actions',   badgeKey: 'actions' },
+    { label: 'Support',              icon: '🎫', route: '/crm/support-tickets' },
+  ];
+
+  ngOnInit(): void {
+    this.dashboardApi.getStats().subscribe({
+      next: s => {
+        this.leadsBadge.set(s.leadsNew + s.leadsInReview);
+        this.actionsBadge.set(s.overdueActions);
+      }
+    });
+  }
+
+  getBadge(item: CrmNavItem): number {
+    if (item.badgeKey === 'leads')   return this.leadsBadge();
+    if (item.badgeKey === 'actions') return this.actionsBadge();
+    return 0;
+  }
+}

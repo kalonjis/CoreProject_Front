@@ -1,0 +1,12 @@
+<div class="crm-empty">
+  <span class="crm-empty__icon">{{ icon() }}</span>
+  <p class="crm-empty__title">{{ title() }}</p>
+  @if (subtitle()) {
+    <p class="crm-empty__subtitle">{{ subtitle() }}</p>
+  }
+  @if (ctaLabel()) {
+    <button class="btn btn--primary crm-empty__cta" (click)="ctaClick.emit()">
+      {{ ctaLabel() }}
+    </button>
+  }
+</div>

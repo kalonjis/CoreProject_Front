@@ -1,0 +1,52 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.ca-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    .ca-form__field { flex: 1; min-width: 140px; }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    input, select, textarea {
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      padding: 6px 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      background: #fff;
+      color: $text-color;
+      transition: border-color 0.15s;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+      }
+    }
+
+    textarea { resize: vertical; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}

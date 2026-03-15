@@ -1,0 +1,15 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.action-panel__hint {
+  font-size: 0.875rem;
+  color: $gray-dark;
+  margin: 0;
+
+  code {
+    background: $gray-medium;
+    padding: 0.1rem 0.4rem;
+    border-radius: $border-radius-sm;
+    font-size: 0.8rem;
+  }
+}

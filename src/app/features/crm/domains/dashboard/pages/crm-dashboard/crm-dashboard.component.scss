@@ -1,0 +1,191 @@
+@import 'variables';
+
+.dash {
+  padding: 0;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 0.9rem;
+    color: $gray-dark;
+    margin: 0;
+  }
+
+  &__loading {
+    color: $gray-dark;
+    font-style: italic;
+    padding: 2rem 0;
+  }
+
+  &__error {
+    color: $danger-color;
+    padding: 2rem 0;
+  }
+
+  // ─── KPI Primary Grid (4 cols) ────────────────────────────────────────────
+
+  &__kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 600px)  { grid-template-columns: 1fr; }
+  }
+
+  // ─── KPI Secondary Grid (2 cols) ─────────────────────────────────────────
+
+  &__secondary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+  }
+
+  // ─── KPI Card ─────────────────────────────────────────────────────────────
+
+  &__kpi {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s;
+
+    &:hover {
+      box-shadow: $box-shadow-sm;
+      border-color: darken($border-color, 10%);
+    }
+
+    &--primary {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.25rem;
+    }
+
+    &--secondary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+    }
+
+    &--alert {
+      border-color: #e65100;
+      background: #fff8f5;
+
+      &:hover { border-color: darken(#e65100, 5%); }
+    }
+  }
+
+  // ─── KPI Icon ─────────────────────────────────────────────────────────────
+
+  &__kpi-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+
+    &--blue   { background: #e3f2fd; color: #1565c0; }
+    &--green  { background: #e8f5e9; color: #2e7d32; }
+    &--red    { background: #fce4ec; color: #c62828; }
+    &--orange { background: #fff3e0; color: #e65100; }
+    &--gray   { background: $gray-medium; color: $gray-dark; }
+  }
+
+  // ─── KPI Body ─────────────────────────────────────────────────────────────
+
+  &__kpi-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__kpi-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+  }
+
+  &__kpi-value {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    line-height: 1.2;
+    color: $text-color;
+    margin-bottom: 0.2rem;
+  }
+
+  &__kpi-unit {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: $gray-dark;
+  }
+
+  &__kpi-sub {
+    font-size: 0.78rem;
+    color: $gray-dark;
+  }
+
+  &__kpi-arrow {
+    font-size: 1.1rem;
+    color: $gray-dark;
+    flex-shrink: 0;
+  }
+
+  // ─── Quick Links ──────────────────────────────────────────────────────────
+
+  &__section {
+    margin-top: 0.5rem;
+  }
+
+  &__section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.75rem;
+  }
+
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid $border-color;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: $text-color;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+
+    &:hover {
+      background: $primary-color;
+      border-color: $primary-color;
+      color: #fff;
+    }
+  }
+}

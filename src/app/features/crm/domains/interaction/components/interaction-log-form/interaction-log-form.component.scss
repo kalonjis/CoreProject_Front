@@ -1,0 +1,67 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .log-form__field { flex: 1; min-width: 140px; }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    input, select, textarea {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      background: #fff;
+      color: #111827;
+      transition: border-color 0.15s;
+
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+      }
+    }
+
+    textarea { resize: vertical; }
+  }
+
+  &__section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+  }
+
+  &__section-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}

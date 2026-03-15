@@ -1,0 +1,54 @@
+<div class="contact-form">
+
+  <div class="contact-form__header">
+    <button class="contact-form__back" (click)="back()">← Retour</button>
+    <h1 class="contact-form__title">{{ mode() === 'create' ? 'Nouveau contact' : 'Modifier le contact' }}</h1>
+  </div>
+
+  @if (loading()) {
+    <p class="contact-form__loading">Chargement…</p>
+  } @else {
+    <div class="contact-form__card">
+      <div class="contact-form__grid">
+        <div class="contact-form__field">
+          <label>Prénom *</label>
+          <input type="text" [(ngModel)]="form.firstName" placeholder="Prénom" />
+        </div>
+        <div class="contact-form__field">
+          <label>Nom *</label>
+          <input type="text" [(ngModel)]="form.lastName" placeholder="Nom" />
+        </div>
+        <div class="contact-form__field">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="form.email" placeholder="email@exemple.com" />
+        </div>
+        <div class="contact-form__field">
+          <label>Téléphone</label>
+          <input type="text" [(ngModel)]="form.phone" placeholder="+33 6 …" />
+        </div>
+        <div class="contact-form__field">
+          <label>Poste</label>
+          <input type="text" [(ngModel)]="form.jobTitle" placeholder="Directeur commercial…" />
+        </div>
+        @if (mode() === 'create') {
+          <div class="contact-form__field">
+            <label>Organisation (public ID)</label>
+            <input type="text" [(ngModel)]="form.organisationPublicId" placeholder="uuid organisation" />
+          </div>
+        }
+        <div class="contact-form__field contact-form__field--full">
+          <label>Notes</label>
+          <textarea [(ngModel)]="form.notes" placeholder="Notes internes…" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="contact-form__actions">
+        <button class="btn btn--primary" (click)="submit()" [disabled]="saving() || !isValid">
+          {{ saving() ? 'Enregistrement…' : (mode() === 'create' ? 'Créer' : 'Enregistrer') }}
+        </button>
+        <button class="btn btn--ghost" (click)="back()">Annuler</button>
+      </div>
+    </div>
+  }
+
+</div>

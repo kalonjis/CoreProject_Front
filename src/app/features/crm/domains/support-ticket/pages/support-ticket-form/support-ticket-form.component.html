@@ -1,0 +1,55 @@
+<div class="ticket-form">
+
+  <div class="ticket-form__breadcrumb">
+    <a routerLink="/crm/support-tickets">Support</a>
+    <span> / </span>
+    <span>Nouveau ticket</span>
+  </div>
+
+  <h1 class="ticket-form__title">Nouveau ticket</h1>
+
+  <form class="ticket-form__form" (ngSubmit)="submit()">
+
+    <div class="ticket-form__field">
+      <label>Sujet *</label>
+      <input type="text" [(ngModel)]="subject" name="subject" placeholder="Décrire le problème en une ligne" required />
+    </div>
+
+    <div class="ticket-form__field">
+      <label>Description</label>
+      <textarea [(ngModel)]="description" name="description" rows="5" placeholder="Détails, étapes pour reproduire, contexte…"></textarea>
+    </div>
+
+    <div class="ticket-form__field">
+      <label>Contact (publicId) *</label>
+      <input
+        type="text"
+        [(ngModel)]="submittedByPublicId"
+        name="submittedByPublicId"
+        placeholder="publicId du contact concerné"
+        required
+      />
+    </div>
+
+    <div class="ticket-form__field">
+      <label>Assigner à (publicId)</label>
+      <input
+        type="text"
+        [(ngModel)]="assignedToPublicId"
+        name="assignedToPublicId"
+        placeholder="Laisser vide pour non assigné"
+      />
+    </div>
+
+    <div class="ticket-form__actions">
+      <button
+        type="submit"
+        class="btn btn--primary"
+        [disabled]="saving() || !subject.trim() || !submittedByPublicId.trim()">
+        {{ saving() ? 'Création…' : 'Créer le ticket' }}
+      </button>
+      <a routerLink="/crm/support-tickets" class="btn btn--ghost">Annuler</a>
+    </div>
+
+  </form>
+</div>

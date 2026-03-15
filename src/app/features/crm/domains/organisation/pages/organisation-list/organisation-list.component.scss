@@ -1,0 +1,130 @@
+@import 'variables';
+
+.org-list {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    margin: 0;
+  }
+
+  &__filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__count {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin-bottom: 0.5rem;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 2px solid $border-color;
+      font-weight: $font-weight-bold;
+      color: $gray-dark;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid $border-color;
+      vertical-align: middle;
+    }
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-size: 0.8rem;
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  &__row {
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background-color: rgba($primary-color, 0.04); }
+  }
+
+  &__name {
+    font-weight: $font-weight-bold;
+  }
+
+  &__info {
+    color: $gray-dark;
+    font-style: italic;
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  &__error {
+    color: $danger-color;
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+
+    button {
+      padding: 0.35rem 0.75rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      background: #fff;
+      cursor: pointer;
+      &:disabled { opacity: 0.4; cursor: default; }
+      &:not(:disabled):hover { background: $body-bg; }
+    }
+  }
+}
+
+input, select {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  background: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.btn {
+  &--primary {
+    padding: 0.45rem 1rem;
+    background: $primary-color;
+    color: #fff;
+    border: none;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+    cursor: pointer;
+    &:hover { opacity: 0.88; }
+  }
+}

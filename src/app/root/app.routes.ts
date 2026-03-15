@@ -55,6 +55,10 @@ export const routes: Routes = [
     canActivate: [() => authGuard()],
     loadChildren: () => import('../features/notification')
       .then(m => m.NOTIFICATION_ROUTES),
+  },
+  {
+    path: 'crm',
+    loadChildren: () => import('../features/crm/crm.routes').then(r => r.CRM_ROUTES)
   }
 /*
   // Routes authentifiées standard

@@ -26,17 +26,22 @@ export class FeedbackBase {
    */
   // In FeedbackBase class
   displayFeedback(type: FeedbackType, message: string, buttonText: string = '', timeout: number | null = null) {
-    // Clear any existing feedback first
-    this.showFeedback.set(false);
-
-    // Small timeout to ensure the feedback component is properly removed and re-added
-    setTimeout(() => {
+    const applyFeedback = () => {
       this.feedbackType.set(type);
       this.feedbackMessage.set(message);
       this.buttonText.set(buttonText);
       this.feedbackTimeout.set(timeout);
       this.showFeedback.set(true);
-    }, 10);
+    };
+
+    if (this.showFeedback()) {
+      // Cycle through false so FeedbackComponent resets its internal state
+      this.showFeedback.set(false);
+      setTimeout(applyFeedback, 10);
+    } else {
+      // Defer to next macrotask to avoid NG0100 (ExpressionChangedAfterItHasBeenChecked)
+      setTimeout(applyFeedback, 0);
+    }
   }
   /**
    * Affiche un message de succès

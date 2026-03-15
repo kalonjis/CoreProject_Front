@@ -1,0 +1,125 @@
+<div class="ticket-detail">
+
+  <div class="ticket-detail__breadcrumb">
+    <a routerLink="/crm/support-tickets">Support</a>
+    <span> / </span>
+    <span>{{ ticket()?.subject ?? '…' }}</span>
+  </div>
+
+  @if (loading()) { <p class="ticket-detail__state">Chargement…</p> }
+  @if (error())   { <p class="ticket-detail__error">{{ error() }}</p> }
+
+  @if (ticket(); as t) {
+    <div class="ticket-detail__layout">
+
+      <div class="ticket-detail__main">
+        <div class="ticket-detail__meta">
+          <app-support-ticket-status-badge [status]="t.status" />
+          <span class="ticket-detail__date">Créé le {{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          @if (t.updatedAt !== t.createdAt) {
+            <span class="ticket-detail__date">· Modifié {{ t.updatedAt | date:'dd/MM/yy HH:mm' }}</span>
+          }
+        </div>
+
+        <h1 class="ticket-detail__subject">{{ t.subject }}</h1>
+
+        @if (t.description) {
+          <p class="ticket-detail__description">{{ t.description }}</p>
+        } @else {
+          <p class="ticket-detail__no-description">Pas de description.</p>
+        }
+
+        <dl class="ticket-detail__info">
+          <dt>Contact</dt>
+          <dd>
+            <a [routerLink]="['/crm/contacts', t.contactPublicId]">{{ t.contactFullName }}</a>
+          </dd>
+          <dt>Assigné à</dt>
+          <dd>{{ t.assignedToUsername ?? '—' }}</dd>
+        </dl>
+      </div>
+
+      <aside class="ticket-detail__sidebar">
+        @if (!isClosed) {
+          <div class="ticket-detail__actions">
+            <button
+              class="btn btn--ghost"
+              [class.btn--active]="activePanel() === 'status'"
+              (click)="togglePanel('status')">
+              Changer statut
+            </button>
+            <button
+              class="btn btn--ghost"
+              [class.btn--active]="activePanel() === 'assign'"
+              (click)="togglePanel('assign')">
+              Assigner
+            </button>
+            <button
+              class="btn btn--ghost"
+              [class.btn--active]="activePanel() === 'edit'"
+              (click)="togglePanel('edit')">
+              Modifier
+            </button>
+          </div>
+        }
+
+        @switch (activePanel()) {
+
+          @case ('status') {
+            <div class="ticket-detail__panel">
+              <h4 class="ticket-detail__panel-title">Changer le statut</h4>
+              @if (allowedTransitions.length === 0) {
+                <p class="ticket-detail__panel-hint">Aucune transition disponible.</p>
+              } @else {
+                <select [(ngModel)]="newStatus">
+                  <option value="">— Choisir —</option>
+                  @for (s of allowedTransitions; track s) {
+                    <option [value]="s">{{ statusLabels[s] }}</option>
+                  }
+                </select>
+                <div class="ticket-detail__panel-footer">
+                  <button class="btn btn--primary" [disabled]="saving() || !newStatus" (click)="submitStatus()">
+                    {{ saving() ? '…' : 'Appliquer' }}
+                  </button>
+                  <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
+                </div>
+              }
+            </div>
+          }
+
+          @case ('assign') {
+            <div class="ticket-detail__panel">
+              <h4 class="ticket-detail__panel-title">Assigner</h4>
+              <label class="ticket-detail__label">PublicId du commercial</label>
+              <input type="text" [(ngModel)]="assigneePublicId" placeholder="Laisser vide pour désassigner" />
+              <div class="ticket-detail__panel-footer">
+                <button class="btn btn--primary" [disabled]="saving()" (click)="submitAssign()">
+                  {{ saving() ? '…' : 'Assigner' }}
+                </button>
+                <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
+              </div>
+            </div>
+          }
+
+          @case ('edit') {
+            <div class="ticket-detail__panel">
+              <h4 class="ticket-detail__panel-title">Modifier</h4>
+              <label class="ticket-detail__label">Sujet</label>
+              <input type="text" [(ngModel)]="editSubject" />
+              <label class="ticket-detail__label">Description</label>
+              <textarea [(ngModel)]="editDescription" rows="4"></textarea>
+              <div class="ticket-detail__panel-footer">
+                <button class="btn btn--primary" [disabled]="saving() || !editSubject.trim()" (click)="submitEdit()">
+                  {{ saving() ? '…' : 'Enregistrer' }}
+                </button>
+                <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
+              </div>
+            </div>
+          }
+
+        }
+      </aside>
+
+    </div>
+  }
+</div>

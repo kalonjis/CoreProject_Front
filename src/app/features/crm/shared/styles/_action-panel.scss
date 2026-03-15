@@ -1,0 +1,87 @@
+@import 'variables';
+
+.action-panel {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+
+  &--danger {
+    border-color: #fca5a5;
+    background: #fff5f5;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $dark-color;
+  }
+
+  &__error {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $danger-color;
+    padding: 0.4rem 0.75rem;
+    background: #fee2e2;
+    border-radius: $border-radius;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &--full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $gray-dark;
+    }
+
+    input, textarea {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      font-family: inherit;
+      resize: vertical;
+
+      &:focus { outline: none; border-color: $primary-color; }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// ─── Buttons (partagés dans tout le CRM) ─────────────────────────────────────
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: $border-radius;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &--primary   { background: $primary-color;  color: #fff;        border-color: $primary-color;  &:hover:not(:disabled) { background: darken($primary-color, 8%); } }
+  &--secondary { background: $gray-medium;    color: $text-color; border-color: $border-color;   &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } }
+  &--danger    { background: $danger-color;   color: #fff;        border-color: $danger-color;   &:hover:not(:disabled) { background: darken($danger-color, 8%); } }
+  &--ghost     { background: transparent;     color: $gray-dark;  border-color: $border-color;   &:hover:not(:disabled) { color: $text-color; } }
+}

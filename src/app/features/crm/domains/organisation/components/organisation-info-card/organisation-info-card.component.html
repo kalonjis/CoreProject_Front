@@ -1,0 +1,43 @@
+<div class="info-card">
+  <div class="info-card__header">
+    <h2 class="info-card__name">{{ organisation.name }}</h2>
+    @if (organisation.size) {
+      <app-organisation-size-badge [size]="organisation.size" />
+    }
+  </div>
+
+  <dl class="info-card__fields">
+    @if (organisation.industry) {
+      <div class="info-card__field">
+        <dt>Secteur</dt>
+        <dd>{{ organisation.industry }}</dd>
+      </div>
+    }
+    @if (organisation.website) {
+      <div class="info-card__field">
+        <dt>Site web</dt>
+        <dd><a [href]="organisation.website" target="_blank" rel="noopener">{{ organisation.website }}</a></dd>
+      </div>
+    }
+    @if (organisation.phone) {
+      <div class="info-card__field">
+        <dt>Téléphone</dt>
+        <dd>{{ organisation.phone }}</dd>
+      </div>
+    }
+    @if (organisation.notes) {
+      <div class="info-card__field info-card__field--full">
+        <dt>Notes</dt>
+        <dd class="info-card__notes">{{ organisation.notes }}</dd>
+      </div>
+    }
+    <div class="info-card__field">
+      <dt>Créé le</dt>
+      <dd>{{ organisation.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+    <div class="info-card__field">
+      <dt>Modifié le</dt>
+      <dd>{{ organisation.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+  </dl>
+</div>

@@ -1,0 +1,92 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.contact-detail {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
+  &__error   { text-align: center; padding: 2rem; color: $danger-color; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__back {
+    background: none;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: $gray-dark;
+    transition: $transition-fast;
+    white-space: nowrap;
+    &:hover { border-color: $primary-color; color: $primary-color; }
+  }
+
+  &__identity { flex: 1; display: flex; flex-direction: column; gap: 0.15rem; }
+
+  &__name {
+    font-size: 1.25rem;
+    font-weight: $font-weight-bold;
+    color: $dark-color;
+    margin: 0;
+  }
+
+  &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
+
+  &__action-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+  &__timeline {
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+  }
+
+  &__timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__timeline-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+  }
+
+  &__actions-section {
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__actions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__actions-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+  }
+
+  &__actions-state {
+    font-size: 0.8125rem;
+    color: $gray-dark;
+    font-style: italic;
+    margin: 0;
+  }
+}

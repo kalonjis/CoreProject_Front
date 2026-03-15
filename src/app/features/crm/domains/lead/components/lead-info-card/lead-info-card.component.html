@@ -1,0 +1,42 @@
+<div class="lead-info-card">
+  <div class="lead-info-card__row">
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Statut</span>
+      <app-lead-status-badge [status]="lead.status" />
+    </div>
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Type</span>
+      <app-lead-type-badge [type]="lead.leadType" />
+    </div>
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Assigné à</span>
+      <span class="lead-info-card__value">{{ lead.assignedToUsername ?? '—' }}</span>
+    </div>
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Soumis le</span>
+      <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+    @if (lead.convertedAt) {
+      <div class="lead-info-card__field">
+        <span class="lead-info-card__label">Converti le</span>
+        <span class="lead-info-card__value">{{ lead.convertedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+    }
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Mis à jour</span>
+      <span class="lead-info-card__value">{{ lead.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+  </div>
+
+  <div class="lead-info-card__subject">
+    <span class="lead-info-card__label">Sujet</span>
+    <p class="lead-info-card__value">{{ lead.subject }}</p>
+  </div>
+
+  @if (lead.rejectionReason) {
+    <div class="lead-info-card__rejection">
+      <span class="lead-info-card__label">Motif de rejet</span>
+      <p class="lead-info-card__value lead-info-card__value--danger">{{ lead.rejectionReason }}</p>
+    </div>
+  }
+</div>

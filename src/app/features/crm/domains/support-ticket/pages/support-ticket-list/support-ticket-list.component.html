@@ -1,0 +1,76 @@
+<div class="ticket-list">
+
+  <div class="ticket-list__header">
+    <h1 class="ticket-list__title">Support</h1>
+    <button class="btn btn--primary" (click)="newTicket()">+ Nouveau ticket</button>
+  </div>
+
+  <div class="ticket-list__filters">
+    <input
+      class="ticket-list__search"
+      type="text"
+      [(ngModel)]="keyword"
+      placeholder="Rechercher…"
+      (keydown.enter)="search()"
+    />
+    <select [(ngModel)]="statusFilter" (change)="search()">
+      <option value="">Tous les statuts</option>
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ statusLabels[s] }}</option>
+      }
+    </select>
+    <label class="ticket-list__checkbox">
+      <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="search()" />
+      Non assignés
+    </label>
+    <button class="btn btn--secondary" (click)="search()">Filtrer</button>
+  </div>
+
+  @if (loading()) {
+    <p class="ticket-list__state">Chargement…</p>
+  } @else if (page() && page()!.content.length === 0) {
+    <app-crm-empty-state
+      icon="🎫"
+      title="Aucun ticket trouvé"
+      subtitle="Aucune demande de support en attente"
+      ctaLabel="+ Nouveau ticket"
+      (ctaClick)="newTicket()"
+    />
+  } @else if (page(); as p) {
+    <table class="ticket-list__table">
+      <thead>
+        <tr>
+          <th>Sujet</th>
+          <th>Contact</th>
+          <th>Statut</th>
+          <th>Assigné à</th>
+          <th>Créé le</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ticket of p.content; track ticket.publicId) {
+          <tr class="ticket-list__row" (click)="openDetail(ticket.publicId)">
+            <td class="ticket-list__subject">{{ ticket.subject }}</td>
+            <td>{{ ticket.contactFullName }}</td>
+            <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
+            <td>{{ ticket.assignedToUsername ?? '—' }}</td>
+            <td>{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (p.totalPages > 1) {
+      <div class="ticket-list__pagination">
+        <button class="btn btn--ghost btn--sm" [disabled]="currentPage === 0" (click)="goTo(currentPage - 1)">
+          ← Préc.
+        </button>
+        <span>{{ currentPage + 1 }} / {{ p.totalPages }}</span>
+        <button class="btn btn--ghost btn--sm" [disabled]="currentPage >= p.totalPages - 1" (click)="goTo(currentPage + 1)">
+          Suiv. →
+        </button>
+      </div>
+    }
+  }
+
+</div>

@@ -1,0 +1,22 @@
+<div class="action-panel">
+  <h3 class="action-panel__title">Organisation</h3>
+
+  @if (currentOrgPublicId) {
+    <p class="action-panel__hint">Liée à : <code>{{ currentOrgPublicId }}</code></p>
+    <div class="action-panel__footer">
+      <button class="btn btn--secondary" (click)="unlink()" [disabled]="loading()">Délier</button>
+      <button class="btn btn--ghost" (click)="cancelled.emit()">Fermer</button>
+    </div>
+  } @else {
+    <div class="action-panel__row">
+      <label>Public ID de l'organisation</label>
+      <input type="text" [(ngModel)]="organisationPublicId" placeholder="uuid organisation" />
+    </div>
+    <div class="action-panel__footer">
+      <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !organisationPublicId.trim()">
+        Lier
+      </button>
+      <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+    </div>
+  }
+</div>

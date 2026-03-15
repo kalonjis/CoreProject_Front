@@ -1,0 +1,70 @@
+<div class="lead-detail">
+
+  @if (loading()) {
+    <p class="lead-detail__loading">Chargement…</p>
+  }
+
+  @if (error()) {
+    <p class="lead-detail__error">{{ error() }}</p>
+  }
+
+  @if (lead(); as l) {
+
+    <!-- ─── Header ──────────────────────────────────────────────────────── -->
+    <div class="lead-detail__header">
+      <button class="lead-detail__back" (click)="back()">← Retour</button>
+      <div class="lead-detail__identity">
+        <h1 class="lead-detail__email">{{ l.email }}</h1>
+        @if (l.name) { <span class="lead-detail__name">{{ l.name }}</span> }
+      </div>
+    </div>
+
+    <!-- ─── Info card ────────────────────────────────────────────────────── -->
+    <app-lead-info-card [lead]="l" />
+
+    <!-- ─── Actions (non-terminal only) ──────────────────────────────────── -->
+    @if (!isTerminal()) {
+      <div class="lead-detail__action-bar">
+        <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
+
+        @if (l.status === LeadStatus.NEW) {
+          <button class="btn btn--secondary" (click)="markInReview()" [disabled]="actionLoading()">
+            Mettre en revue
+          </button>
+        }
+
+        @if (canConvert()) {
+          <button class="btn btn--primary" (click)="toggleAction('convert')">
+            Convertir en contact
+          </button>
+        }
+
+        <button class="btn btn--danger" (click)="toggleAction('reject')">Rejeter</button>
+      </div>
+
+      @switch (activeAction()) {
+        @case ('assign') {
+          <app-lead-action-assign
+            [publicId]="l.publicId"
+            (assigned)="onActionDone()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
+        @case ('convert') {
+          <app-lead-action-convert
+            [publicId]="l.publicId"
+            (converted)="onActionDone()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
+        @case ('reject') {
+          <app-lead-action-reject
+            [publicId]="l.publicId"
+            (rejected)="onActionDone()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
+      }
+    }
+  }
+</div>

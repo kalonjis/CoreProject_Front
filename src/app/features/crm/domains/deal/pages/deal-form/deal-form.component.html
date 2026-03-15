@@ -1,0 +1,87 @@
+<div class="deal-form">
+  <div class="deal-form__breadcrumb">
+    <a routerLink="/crm/deals">Deals</a>
+    <span> / </span>
+    <span>{{ mode === 'create' ? 'Nouveau deal' : 'Modifier' }}</span>
+  </div>
+
+  <h1 class="deal-form__title">
+    {{ mode === 'create' ? 'Nouveau deal' : 'Modifier le deal' }}
+  </h1>
+
+  @if (loading() && mode === 'edit') {
+    <p class="deal-form__info">Chargement…</p>
+  } @else {
+    <form class="deal-form__body" (ngSubmit)="submit()">
+
+      <div class="deal-form__row deal-form__row--full">
+        <label>Titre *</label>
+        <input type="text" [(ngModel)]="form.title" name="title" placeholder="Titre du deal" required />
+      </div>
+
+      <div class="deal-form__row">
+        <label>Montant</label>
+        <input type="number" [(ngModel)]="form.amount" name="amount" placeholder="0" min="0" step="0.01" />
+      </div>
+
+      <div class="deal-form__row">
+        <label>Devise</label>
+        <input type="text" [(ngModel)]="form.currency" name="currency" placeholder="EUR" maxlength="3" />
+      </div>
+
+      @if (mode === 'create') {
+        <div class="deal-form__row">
+          <label>Pipeline *</label>
+          <select [(ngModel)]="form.pipelinePublicId" name="pipelinePublicId" (ngModelChange)="onPipelineChange()">
+            <option value="">— Choisir un pipeline —</option>
+            @for (p of pipelines(); track p.publicId) {
+              <option [value]="p.publicId">{{ p.name }}{{ p.isDefault ? ' (défaut)' : '' }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="deal-form__row">
+          <label>Étape *</label>
+          <select [(ngModel)]="form.stagePublicId" name="stagePublicId">
+            <option value="">— Choisir une étape —</option>
+            @for (s of steps(); track s.publicId) {
+              <option [value]="s.publicId">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="deal-form__row">
+          <label>Contact (public ID) *</label>
+          <input type="text" [(ngModel)]="form.contactPublicId" name="contactPublicId" placeholder="uuid contact" />
+        </div>
+
+        <div class="deal-form__row">
+          <label>Organisation (public ID)</label>
+          <input type="text" [(ngModel)]="form.organisationPublicId" name="organisationPublicId" placeholder="uuid organisation (optionnel)" />
+        </div>
+
+        <div class="deal-form__row deal-form__row--full">
+          <label>Responsable (public ID) *</label>
+          <input type="text" [(ngModel)]="form.assignedToPublicId" name="assignedToPublicId" placeholder="uuid commercial" />
+        </div>
+      }
+
+      <div class="deal-form__row">
+        <label>Clôture prévue</label>
+        <input type="date" [(ngModel)]="form.expectedCloseDate" name="expectedCloseDate" />
+      </div>
+
+      <div class="deal-form__row deal-form__row--full">
+        <label>Notes</label>
+        <textarea [(ngModel)]="form.notes" name="notes" rows="3" placeholder="Notes internes…"></textarea>
+      </div>
+
+      <div class="deal-form__footer">
+        <button type="submit" class="btn btn--primary" [disabled]="loading() || !isValid">
+          {{ mode === 'create' ? 'Créer' : 'Enregistrer' }}
+        </button>
+        <a routerLink="/crm/deals" class="btn btn--ghost">Annuler</a>
+      </div>
+    </form>
+  }
+</div>

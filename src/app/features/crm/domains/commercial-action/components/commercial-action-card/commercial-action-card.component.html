@@ -1,0 +1,33 @@
+<div class="action-card" [class.action-card--overdue]="action.isOverdue" [class.action-card--done]="action.status === CommercialActionStatus.DONE">
+  <div class="action-card__header">
+    <app-commercial-action-priority-badge [priority]="action.priority" />
+    <app-commercial-action-status-badge [status]="action.status" />
+    @if (action.isOverdue) {
+      <span class="action-card__overdue-label">En retard</span>
+    }
+    <span class="action-card__assignee">{{ action.assignedToUsername }}</span>
+  </div>
+
+  <p class="action-card__title">{{ action.title }}</p>
+
+  @if (action.description) {
+    <p class="action-card__description">{{ action.description }}</p>
+  }
+
+  @if (action.dueDate) {
+    <p class="action-card__due">
+      Échéance : <strong>{{ action.dueDate | date:'dd/MM/yyyy' }}</strong>
+    </p>
+  }
+
+  @if (isPending) {
+    <div class="action-card__actions">
+      <button class="btn btn--primary btn--sm" (click)="completed.emit(action.publicId)">
+        ✓ Terminer
+      </button>
+      <button class="btn btn--ghost btn--sm" (click)="cancelled.emit(action.publicId)">
+        Annuler
+      </button>
+    </div>
+  }
+</div>
