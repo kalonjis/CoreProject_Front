@@ -1,0 +1,41 @@
+@import 'variables';
+
+.lead-info-card {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  &__field,
+  &__subject,
+  &__rejection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $gray-dark;
+    font-weight: 600;
+  }
+
+  &__value {
+    font-size: 0.875rem;
+    color: $text-color;
+    margin: 0;
+
+    &--danger { color: $danger-color; }
+  }
+}

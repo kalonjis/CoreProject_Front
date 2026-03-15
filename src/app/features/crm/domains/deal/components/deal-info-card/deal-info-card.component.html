@@ -1,0 +1,72 @@
+<div class="info-card">
+  <div class="info-card__header">
+    <h2 class="info-card__title">{{ deal.title }}</h2>
+    <app-deal-status-badge [status]="deal.status" />
+    @if (deal.isOverdue) {
+      <span class="info-card__overdue">En retard</span>
+    }
+  </div>
+
+  <dl class="info-card__fields">
+    @if (deal.amount != null) {
+      <div class="info-card__field">
+        <dt>Montant</dt>
+        <dd>{{ deal.amount | currency:deal.currency:'symbol':'1.0-2':'fr' }}</dd>
+      </div>
+    }
+    <div class="info-card__field">
+      <dt>Pipeline</dt>
+      <dd>{{ deal.pipelineName }}</dd>
+    </div>
+    <div class="info-card__field">
+      <dt>Étape</dt>
+      <dd>{{ deal.stageName }}</dd>
+    </div>
+    <div class="info-card__field">
+      <dt>Contact</dt>
+      <dd>
+        <a [routerLink]="['/crm/contacts', deal.contactPublicId]">{{ deal.contactFullName }}</a>
+      </dd>
+    </div>
+    @if (deal.organisationName) {
+      <div class="info-card__field">
+        <dt>Organisation</dt>
+        <dd>
+          <a [routerLink]="['/crm/organisations', deal.organisationPublicId]">{{ deal.organisationName }}</a>
+        </dd>
+      </div>
+    }
+    <div class="info-card__field">
+      <dt>Responsable</dt>
+      <dd>{{ deal.assignedToUsername }}</dd>
+    </div>
+    @if (deal.expectedCloseDate) {
+      <div class="info-card__field">
+        <dt>Clôture prévue</dt>
+        <dd [class.info-card__overdue-text]="deal.isOverdue">
+          {{ deal.expectedCloseDate | date:'dd/MM/yyyy' }}
+        </dd>
+      </div>
+    }
+    @if (deal.closedAt) {
+      <div class="info-card__field">
+        <dt>Clôturé le</dt>
+        <dd>{{ deal.closedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+    }
+    @if (deal.notes) {
+      <div class="info-card__field info-card__field--full">
+        <dt>Notes</dt>
+        <dd class="info-card__notes">{{ deal.notes }}</dd>
+      </div>
+    }
+    <div class="info-card__field">
+      <dt>Créé le</dt>
+      <dd>{{ deal.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+    <div class="info-card__field">
+      <dt>Modifié le</dt>
+      <dd>{{ deal.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+  </dl>
+</div>

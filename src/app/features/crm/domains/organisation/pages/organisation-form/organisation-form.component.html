@@ -1,0 +1,60 @@
+<div class="org-form">
+  <div class="org-form__breadcrumb">
+    <a routerLink="/crm/organisations">Organisations</a>
+    <span> / </span>
+    <span>{{ mode === 'create' ? 'Nouvelle organisation' : 'Modifier' }}</span>
+  </div>
+
+  <h1 class="org-form__title">
+    {{ mode === 'create' ? 'Nouvelle organisation' : 'Modifier l\'organisation' }}
+  </h1>
+
+  @if (loading() && mode === 'edit') {
+    <p class="org-form__info">Chargement…</p>
+  } @else {
+    <form class="org-form__body" (ngSubmit)="submit()">
+
+      <div class="org-form__row org-form__row--full">
+        <label>Nom *</label>
+        <input type="text" [(ngModel)]="form.name" name="name" placeholder="Acme Corp" required />
+      </div>
+
+      <div class="org-form__row">
+        <label>Secteur</label>
+        <input type="text" [(ngModel)]="form.industry" name="industry" placeholder="SaaS, Finance…" />
+      </div>
+
+      <div class="org-form__row">
+        <label>Taille</label>
+        <select [(ngModel)]="form.size" name="size">
+          <option value="">— Non renseigné —</option>
+          @for (s of sizes; track s) {
+            <option [value]="s">{{ sizeLabels[s] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="org-form__row">
+        <label>Site web</label>
+        <input type="url" [(ngModel)]="form.website" name="website" placeholder="https://…" />
+      </div>
+
+      <div class="org-form__row">
+        <label>Téléphone</label>
+        <input type="text" [(ngModel)]="form.phone" name="phone" placeholder="+33 1 …" />
+      </div>
+
+      <div class="org-form__row org-form__row--full">
+        <label>Notes internes</label>
+        <textarea [(ngModel)]="form.notes" name="notes" rows="4" placeholder="Notes…"></textarea>
+      </div>
+
+      <div class="org-form__footer">
+        <button type="submit" class="btn btn--primary" [disabled]="loading() || !isValid">
+          {{ mode === 'create' ? 'Créer' : 'Enregistrer' }}
+        </button>
+        <a routerLink="/crm/organisations" class="btn btn--ghost">Annuler</a>
+      </div>
+    </form>
+  }
+</div>

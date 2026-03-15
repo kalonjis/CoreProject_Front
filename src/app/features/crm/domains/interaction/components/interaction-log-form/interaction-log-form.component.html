@@ -1,0 +1,100 @@
+<form class="log-form" (ngSubmit)="submit()">
+
+  <div class="log-form__row">
+    <div class="log-form__field">
+      <label>Type *</label>
+      <select [(ngModel)]="type" name="type">
+        @for (t of types; track t) {
+          <option [value]="t">{{ typeLabel(t) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="log-form__field">
+      <label>Direction</label>
+      <select [(ngModel)]="direction" name="direction">
+        <option value="">—</option>
+        <option value="OUTBOUND">Sortant</option>
+        <option value="INBOUND">Entrant</option>
+      </select>
+    </div>
+
+    <div class="log-form__field">
+      <label>Date *</label>
+      <input type="datetime-local" [(ngModel)]="occurredAt" name="occurredAt" required />
+    </div>
+  </div>
+
+  <div class="log-form__field">
+    <label>Sujet *</label>
+    <input type="text" [(ngModel)]="subject" name="subject" placeholder="Ex: Relance téléphonique Q2" required />
+  </div>
+
+  <div class="log-form__row">
+    <div class="log-form__field">
+      <label>Résultat</label>
+      <select [(ngModel)]="outcome" name="outcome">
+        <option value="">—</option>
+        @for (o of outcomes; track o) {
+          <option [value]="o">{{ outcomeLabel(o) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="log-form__field">
+      <label>Durée (min)</label>
+      <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="0" placeholder="0" />
+    </div>
+  </div>
+
+  <div class="log-form__field">
+    <label>Notes</label>
+    <textarea [(ngModel)]="notes" name="notes" rows="3" placeholder="Compte-rendu…"></textarea>
+  </div>
+
+  @if (isCall) {
+    <div class="log-form__section">
+      <h4 class="log-form__section-title">Détails appel</h4>
+      <div class="log-form__row">
+        <div class="log-form__field">
+          <label>Statut appel *</label>
+          <select [(ngModel)]="callStatus" name="callStatus">
+            @for (s of callStatuses; track s) {
+              <option [value]="s">{{ callStatusLabel(s) }}</option>
+            }
+          </select>
+        </div>
+        <div class="log-form__field">
+          <label>Téléphone</label>
+          <input type="tel" [(ngModel)]="callPhoneNumber" name="callPhoneNumber" placeholder="+33 6 …" />
+        </div>
+        <div class="log-form__field">
+          <label>Durée (sec)</label>
+          <input type="number" [(ngModel)]="callDurationSec" name="callDurationSec" min="0" />
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (isEmail) {
+    <div class="log-form__section">
+      <h4 class="log-form__section-title">Détails email</h4>
+      <div class="log-form__field">
+        <label>Sujet email *</label>
+        <input type="text" [(ngModel)]="emailSubject" name="emailSubject" placeholder="Objet du mail…" />
+      </div>
+      <div class="log-form__field">
+        <label>Extrait</label>
+        <textarea [(ngModel)]="emailSnippet" name="emailSnippet" rows="2" placeholder="Début du corps…"></textarea>
+      </div>
+    </div>
+  }
+
+  <div class="log-form__actions">
+    <button type="submit" class="btn btn--primary" [disabled]="saving() || !subject.trim()">
+      {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+    <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+
+</form>

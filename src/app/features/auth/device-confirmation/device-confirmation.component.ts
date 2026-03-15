@@ -1,10 +1,10 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FeedbackBase} from '../../../shared/feedback/tools/feedback.base';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FeedbackComponent} from '../../../shared/feedback/feedback.component';
 import {DeviceFacade} from '../../../core/device';
-import {AuthFacade} from '../../../core/auth';
 
 @Component({
     selector: 'app-device-confirmation',
@@ -18,15 +18,18 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private deviceFacade = inject(DeviceFacade);
-  private authFacade = inject(AuthFacade);
+  private destroyRef = inject(DestroyRef);
 
   isProcessing = false;
   token: string | null = null;
   action: 'confirm' | 'reject' | null = null;
 
   ngOnInit(): void {
-    // Extraire le token de l'URL
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(params => {
+      if (this.isProcessing) return;
+
       this.token = params.get('token');
       this.action = params.get('action') as 'confirm' | 'reject' | null;
 

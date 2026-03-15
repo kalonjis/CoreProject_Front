@@ -1,0 +1,127 @@
+.timeline {
+  &__state {
+    color: #6b7280;
+    font-style: italic;
+    font-size: 0.875rem;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e5e7eb;
+    }
+  }
+
+  &__item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  &__marker {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e5e7eb;
+    margin-top: 3px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__content {
+    flex: 1;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-left: auto;
+  }
+
+  &__author {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  &__subject {
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin: 0 0 4px;
+  }
+
+  &__notes {
+    font-size: 0.8125rem;
+    color: #4b5563;
+    margin: 0 0 4px;
+    white-space: pre-line;
+  }
+
+  &__meta {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  &__call-log,
+  &__email-log {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+
+  .badge-opened,
+  .badge-clicked {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .badge-opened  { background: #d1fae5; color: #065f46; }
+  .badge-clicked { background: #dbeafe; color: #1d4ed8; }
+
+  &__delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #d1d5db;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 2px 4px;
+
+    &:hover { color: #ef4444; }
+  }
+}

@@ -1,0 +1,61 @@
+<div class="timeline">
+  @if (loading) {
+    <p class="timeline__state">Chargement…</p>
+  } @else if (interactions.length === 0) {
+    <p class="timeline__state">Aucune interaction enregistrée.</p>
+  } @else {
+    <ul class="timeline__list">
+      @for (item of interactions; track item.publicId) {
+        <li class="timeline__item">
+          <div class="timeline__marker"></div>
+          <div class="timeline__content">
+            <div class="timeline__header">
+              <app-interaction-type-badge [type]="item.type" />
+              @if (item.outcome) {
+                <app-interaction-outcome-badge [outcome]="item.outcome" />
+              }
+              <span class="timeline__date">{{ item.occurredAt | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span class="timeline__author">{{ item.performedByUsername }}</span>
+            </div>
+
+            <p class="timeline__subject">{{ item.subject }}</p>
+
+            @if (item.notes) {
+              <p class="timeline__notes">{{ item.notes }}</p>
+            }
+
+            @if (item.durationMinutes) {
+              <span class="timeline__meta">Durée : {{ item.durationMinutes }} min</span>
+            }
+
+            @if (item.callLog) {
+              <div class="timeline__call-log">
+                @if (item.callLog.phoneNumber) {
+                  <span>📞 {{ item.callLog.phoneNumber }}</span>
+                }
+                @if (item.callLog.durationSeconds) {
+                  <span>{{ item.callLog.durationSeconds }}s</span>
+                }
+              </div>
+            }
+
+            @if (item.emailLog) {
+              <div class="timeline__email-log">
+                <span>{{ item.emailLog.emailSubject }}</span>
+                @if (item.emailLog.wasOpened) { <span class="badge-opened">Lu</span> }
+                @if (item.emailLog.wasClicked) { <span class="badge-clicked">Cliqué</span> }
+              </div>
+            }
+
+            <button
+              class="timeline__delete"
+              title="Supprimer"
+              (click)="deleteRequested.emit(item.publicId)">
+              ✕
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

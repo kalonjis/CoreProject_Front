@@ -1,0 +1,57 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.lead-detail {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
+  &__error   { text-align: center; padding: 2rem; color: $danger-color; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__back {
+    background: none;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: $gray-dark;
+    transition: $transition-fast;
+    white-space: nowrap;
+
+    &:hover { border-color: $primary-color; color: $primary-color; }
+  }
+
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__email {
+    font-size: 1.25rem;
+    font-weight: $font-weight-bold;
+    color: $dark-color;
+    margin: 0;
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    color: $gray-dark;
+  }
+
+  &__action-bar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}

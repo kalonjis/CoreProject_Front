@@ -1,0 +1,18 @@
+<div class="action-panel action-panel--danger">
+  <h3 class="action-panel__title">Fusionner avec une autre organisation</h3>
+
+  <div class="action-panel__grid">
+    <div class="action-panel__row action-panel__row--full">
+      <label>Public ID de l'organisation source *</label>
+      <input type="text" [(ngModel)]="sourcePublicId" placeholder="uuid organisation à absorber" />
+      <small>L'organisation source sera supprimée ; ses contacts seront transférés ici.</small>
+    </div>
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !isValid">
+      Fusionner
+    </button>
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+</div>

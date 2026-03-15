@@ -1,0 +1,43 @@
+<div class="org-detail">
+  <div class="org-detail__breadcrumb">
+    <a routerLink="/crm/organisations">Organisations</a>
+    <span> / </span>
+    <span>{{ organisation()?.name ?? '…' }}</span>
+  </div>
+
+  @if (loading()) {
+    <p class="org-detail__info">Chargement…</p>
+  } @else if (error()) {
+    <p class="org-detail__error">{{ error() }}</p>
+  } @else if (organisation(); as org) {
+    <div class="org-detail__layout">
+
+      <div class="org-detail__main">
+        <app-organisation-info-card [organisation]="org" />
+      </div>
+
+      <aside class="org-detail__sidebar">
+        <div class="org-detail__actions">
+          <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
+          <button
+            class="btn btn--ghost"
+            [class.btn--active]="activeAction() === 'merge'"
+            (click)="setAction('merge')">
+            Fusionner
+          </button>
+        </div>
+
+        @switch (activeAction()) {
+          @case ('merge') {
+            <app-organisation-action-merge
+              [publicId]="org.publicId"
+              (merged)="onMerged($event)"
+              (cancelled)="setAction(null)"
+            />
+          }
+        }
+      </aside>
+
+    </div>
+  }
+</div>

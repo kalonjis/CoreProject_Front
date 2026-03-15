@@ -1,0 +1,46 @@
+<form class="ca-form" (ngSubmit)="submit()">
+
+  <div class="ca-form__field">
+    <label>Titre *</label>
+    <input type="text" [(ngModel)]="title" name="title" placeholder="Ex: Rappeler M. Martin" required />
+  </div>
+
+  <div class="ca-form__field">
+    <label>Description</label>
+    <textarea [(ngModel)]="description" name="description" rows="2" placeholder="Contexte ou instructions…"></textarea>
+  </div>
+
+  <div class="ca-form__row">
+    <div class="ca-form__field">
+      <label>Priorité</label>
+      <select [(ngModel)]="priority" name="priority">
+        @for (p of priorities; track p) {
+          <option [value]="p">{{ priorityLabel(p) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="ca-form__field">
+      <label>Échéance</label>
+      <input type="date" [(ngModel)]="dueDate" name="dueDate" />
+    </div>
+  </div>
+
+  <div class="ca-form__field">
+    <label>Responsable (publicId)</label>
+    <input
+      type="text"
+      [(ngModel)]="assignedToPublicId"
+      name="assignedToPublicId"
+      [placeholder]="currentUserPublicId ? 'Moi par défaut' : 'publicId du commercial'"
+    />
+  </div>
+
+  <div class="ca-form__actions">
+    <button type="submit" class="btn btn--primary" [disabled]="saving() || !title.trim()">
+      {{ saving() ? 'Création…' : 'Créer l\'action' }}
+    </button>
+    <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+
+</form>

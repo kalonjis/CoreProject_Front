@@ -1,0 +1,81 @@
+@import 'variables';
+
+.action-card {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &--overdue {
+    border-left: 3px solid #ef4444;
+  }
+
+  &--done {
+    opacity: 0.6;
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__overdue-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #ef4444;
+    background: #fee2e2;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  &__assignee {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-left: auto;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: $dark-color;
+    margin: 0;
+  }
+
+  &__description {
+    font-size: 0.8125rem;
+    color: #4b5563;
+    margin: 0;
+  }
+
+  &__due {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}
+
+.btn {
+  padding: 0.4rem 0.875rem;
+  border-radius: $border-radius;
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &--sm { padding: 0.3rem 0.75rem; font-size: 0.75rem; }
+  &--primary { background: $primary-color; color: #fff; border-color: $primary-color; &:hover { opacity: 0.88; } }
+  &--ghost   { background: transparent; color: $gray-dark; border-color: $border-color; &:hover { color: $text-color; } }
+}

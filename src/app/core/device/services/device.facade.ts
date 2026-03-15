@@ -1,7 +1,7 @@
 // src/app/core/device/services/device.facade.ts
 
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap, catchError, throwError, finalize, switchMap, of } from 'rxjs';
+import { Observable, tap, catchError, throwError, finalize, switchMap, of, EMPTY } from 'rxjs';
 
 import { DeviceStore } from '../state/device.store';
 import { DeviceApiService, DeviceOperationResponse } from './device-api.service';
@@ -69,9 +69,9 @@ export class DeviceFacade {
 
     this.deviceApi.getSession().pipe(
       tap(device => this.deviceStore.setDevice(device)),
-      catchError(err => {
-        this.deviceStore.setError('Failed to load device session');
-        return throwError(() => err);
+      catchError(() => {
+        this.deviceStore.setLoading(false);
+        return EMPTY;
       }),
       finalize(() => this.deviceStore.setLoading(false))
     ).subscribe();

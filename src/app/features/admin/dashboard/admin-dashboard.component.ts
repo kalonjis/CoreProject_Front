@@ -94,6 +94,15 @@ export class AdminDashboardComponent implements OnInit {
       enabled: true,
       color: 'warning'
     },
+    {
+      id: 'crm',
+      icon: '💼',
+      title: 'CRM',
+      description: 'Manage leads, contacts, deals, pipeline and support tickets',
+      route: '/crm',
+      enabled: true,
+      color: 'info'
+    },
 
     // -------------------------------------------------------------------------
     // COMING SOON MODULES

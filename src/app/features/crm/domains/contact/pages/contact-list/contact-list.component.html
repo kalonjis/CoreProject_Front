@@ -1,0 +1,75 @@
+<div class="contact-list">
+
+  <div class="contact-list__header">
+    <h1 class="contact-list__title">Contacts</h1>
+    @if (!loading()) { <span class="contact-list__count">{{ totalElements() }} résultat(s)</span> }
+    <button class="btn btn--primary contact-list__create" (click)="goCreate()">+ Nouveau contact</button>
+  </div>
+
+  <div class="contact-list__filters">
+    <input
+      class="contact-list__search"
+      type="text"
+      placeholder="Rechercher par nom ou email…"
+      [(ngModel)]="keyword"
+      (input)="onKeywordChange()"
+    />
+    <select class="contact-list__select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+      <option value="">Tous les statuts</option>
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ statusLabels[s] }}</option>
+      }
+    </select>
+  </div>
+
+  @if (error()) { <div class="contact-list__error">{{ error() }}</div> }
+  @if (loading()) { <div class="contact-list__loading">Chargement…</div> }
+
+  @if (!loading()) {
+    @if (contacts().length === 0) {
+      <app-crm-empty-state
+        icon="👥"
+        title="Aucun contact trouvé"
+        subtitle="Ajoutez votre premier contact ou modifiez vos filtres"
+        ctaLabel="+ Nouveau contact"
+        (ctaClick)="goCreate()"
+      />
+    } @else {
+      <div class="contact-list__table-wrapper">
+        <table class="contact-list__table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Poste</th>
+              <th>Statut</th>
+              <th>Assigné à</th>
+              <th>Compte</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of contacts(); track c.publicId) {
+              <tr class="contact-list__row" (click)="viewDetail(c.publicId)">
+                <td class="contact-list__name">{{ c.firstName }} {{ c.lastName }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.jobTitle ?? '—' }}</td>
+                <td><app-contact-status-badge [status]="c.status" /></td>
+                <td>{{ c.assignedTo ?? '—' }}</td>
+                <td>{{ c.hasLinkedUser ? '✓' : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (totalPages() > 1) {
+    <div class="contact-list__pagination">
+      <button class="contact-list__page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Précédent</button>
+      <span class="contact-list__page-info">{{ currentPage + 1 }} / {{ totalPages() }}</span>
+      <button class="contact-list__page-btn" [disabled]="currentPage === totalPages() - 1" (click)="goToPage(currentPage + 1)">Suivant ›</button>
+    </div>
+  }
+
+</div>

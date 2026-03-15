@@ -1,0 +1,65 @@
+@import 'variables';
+@import '../../../../shared/styles/action-panel';
+
+.ticket-form {
+  padding: 1.5rem;
+  max-width: 640px;
+
+  &__breadcrumb {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin-bottom: 1.25rem;
+    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $dark-color;
+    margin: 0 0 1.5rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    input, textarea {
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      padding: 8px 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      background: #fff;
+      color: $text-color;
+      transition: border-color 0.15s;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+      }
+    }
+
+    textarea { resize: vertical; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+    align-items: center;
+  }
+}

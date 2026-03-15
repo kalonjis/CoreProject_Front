@@ -1,0 +1,85 @@
+@import 'variables';
+
+.deal-form {
+  max-width: 760px;
+
+  &__breadcrumb {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin-bottom: 1rem;
+    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    margin: 0 0 1.5rem;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: $font-weight-bold;
+      color: $gray-dark;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input, select, textarea {
+      padding: 0.45rem 0.65rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      background: #fff;
+      font-family: inherit;
+      &:focus { outline: none; border-color: $primary-color; }
+    }
+
+    textarea { resize: vertical; }
+    &--full { grid-column: 1 / -1; }
+  }
+
+  &__footer {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  &__info { color: $gray-dark; font-style: italic; }
+}
+
+.btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  transition: $transition-fast;
+
+  &--primary {
+    background: $primary-color;
+    color: #fff;
+    &:hover { opacity: 0.88; }
+    &:disabled { opacity: 0.5; cursor: default; }
+  }
+  &--ghost {
+    background: transparent;
+    color: $text-color;
+    border-color: $border-color;
+    &:hover { background: $body-bg; }
+  }
+}

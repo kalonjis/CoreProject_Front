@@ -1,0 +1,51 @@
+<div class="contact-info-card">
+  <div class="contact-info-card__row">
+    <div class="contact-info-card__field">
+      <span class="contact-info-card__label">Statut</span>
+      <app-contact-status-badge [status]="contact.status" />
+    </div>
+    <div class="contact-info-card__field">
+      <span class="contact-info-card__label">Email</span>
+      <span class="contact-info-card__value">{{ contact.email }}</span>
+    </div>
+    @if (contact.phone) {
+      <div class="contact-info-card__field">
+        <span class="contact-info-card__label">Téléphone</span>
+        <span class="contact-info-card__value">{{ contact.phone }}</span>
+      </div>
+    }
+    @if (contact.jobTitle) {
+      <div class="contact-info-card__field">
+        <span class="contact-info-card__label">Poste</span>
+        <span class="contact-info-card__value">{{ contact.jobTitle }}</span>
+      </div>
+    }
+    <div class="contact-info-card__field">
+      <span class="contact-info-card__label">Assigné à</span>
+      <span class="contact-info-card__value">{{ contact.assignedToUsername ?? '—' }}</span>
+    </div>
+    @if (contact.originLeadPublicId) {
+      <div class="contact-info-card__field">
+        <span class="contact-info-card__label">Lead d'origine</span>
+        <a class="contact-info-card__link" [routerLink]="['/crm/leads', contact.originLeadPublicId]">
+          Voir le lead →
+        </a>
+      </div>
+    }
+    <div class="contact-info-card__field">
+      <span class="contact-info-card__label">Compte lié</span>
+      <span class="contact-info-card__value">{{ contact.hasLinkedUser ? 'Oui' : 'Non' }}</span>
+    </div>
+    <div class="contact-info-card__field">
+      <span class="contact-info-card__label">Mis à jour</span>
+      <span class="contact-info-card__value">{{ contact.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+  </div>
+
+  @if (contact.notes) {
+    <div class="contact-info-card__notes">
+      <span class="contact-info-card__label">Notes</span>
+      <p class="contact-info-card__value">{{ contact.notes }}</p>
+    </div>
+  }
+</div>

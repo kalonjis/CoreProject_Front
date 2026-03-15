@@ -1,0 +1,95 @@
+<div class="dash">
+
+  <div class="dash__header">
+    <div>
+      <h1 class="dash__title">Tableau de bord</h1>
+      <p class="dash__subtitle">Vue d'ensemble de votre activité commerciale</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="dash__loading">Chargement…</div>
+  } @else if (error()) {
+    <div class="dash__error">{{ error() }}</div>
+  } @else if (stats(); as s) {
+
+    <!-- KPI PRIMARY -->
+    <div class="dash__kpi-grid">
+
+      <div class="dash__kpi dash__kpi--primary" (click)="navigate('pipeline')">
+        <div class="dash__kpi-icon dash__kpi-icon--blue">€</div>
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Valeur pipeline</div>
+          <div class="dash__kpi-value">{{ s.pipelineValue | number:'1.0-0':'fr' }} <span class="dash__kpi-unit">EUR</span></div>
+          <div class="dash__kpi-sub">{{ s.dealsOpen }} deal{{ s.dealsOpen > 1 ? 's' : '' }} en cours</div>
+        </div>
+      </div>
+
+      <div class="dash__kpi dash__kpi--primary" (click)="navigate('pipeline')">
+        <div class="dash__kpi-icon dash__kpi-icon--green">✓</div>
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Revenus ce mois</div>
+          <div class="dash__kpi-value">{{ s.revenueWonThisMonth | number:'1.0-0':'fr' }} <span class="dash__kpi-unit">EUR</span></div>
+          <div class="dash__kpi-sub">{{ s.dealsWonThisMonth }} deal{{ s.dealsWonThisMonth > 1 ? 's' : '' }} gagné{{ s.dealsWonThisMonth > 1 ? 's' : '' }}</div>
+        </div>
+      </div>
+
+      <div class="dash__kpi dash__kpi--primary" [class.dash__kpi--alert]="s.overdueActions > 0" (click)="navigate('commercial-actions')">
+        <div class="dash__kpi-icon" [class.dash__kpi-icon--red]="s.overdueActions > 0" [class.dash__kpi-icon--gray]="s.overdueActions === 0">!</div>
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Actions en retard</div>
+          <div class="dash__kpi-value">{{ s.overdueActions }}</div>
+          <div class="dash__kpi-sub">{{ s.overdueActions === 0 ? 'Tout est à jour' : 'À traiter en priorité' }}</div>
+        </div>
+      </div>
+
+      <div class="dash__kpi dash__kpi--primary" (click)="navigate('support-tickets')">
+        <div class="dash__kpi-icon dash__kpi-icon--orange">✉</div>
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Tickets actifs</div>
+          <div class="dash__kpi-value">{{ ticketsActive }}</div>
+          <div class="dash__kpi-sub">{{ s.ticketsOpen }} ouvert{{ s.ticketsOpen > 1 ? 's' : '' }}, {{ s.ticketsInProgress }} en cours</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KPI SECONDARY -->
+    <div class="dash__secondary-grid">
+
+      <div class="dash__kpi dash__kpi--secondary" (click)="navigate('leads')">
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Leads à traiter</div>
+          <div class="dash__kpi-value">{{ leadsTotal }}</div>
+          <div class="dash__kpi-sub">{{ s.leadsNew }} nouveau{{ s.leadsNew > 1 ? 'x' : '' }} · {{ s.leadsInReview }} en revue</div>
+        </div>
+        <div class="dash__kpi-arrow">→</div>
+      </div>
+
+      <div class="dash__kpi dash__kpi--secondary" (click)="navigate('deals')">
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Deals ouverts</div>
+          <div class="dash__kpi-value">{{ s.dealsOpen }}</div>
+          <div class="dash__kpi-sub">Voir la liste complète</div>
+        </div>
+        <div class="dash__kpi-arrow">→</div>
+      </div>
+
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="dash__section">
+      <h2 class="dash__section-title">Accès rapides</h2>
+      <div class="dash__links">
+        <button class="dash__link" (click)="navigate('leads')">Leads</button>
+        <button class="dash__link" (click)="navigate('contacts')">Contacts</button>
+        <button class="dash__link" (click)="navigate('organisations')">Organisations</button>
+        <button class="dash__link" (click)="navigate('deals')">Deals</button>
+        <button class="dash__link" (click)="navigate('pipeline')">Pipeline</button>
+        <button class="dash__link" (click)="navigate('commercial-actions')">Actions</button>
+        <button class="dash__link" (click)="navigate('support-tickets')">Support</button>
+      </div>
+    </div>
+
+  }
+</div>

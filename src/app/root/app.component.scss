@@ -38,6 +38,14 @@ body {
   padding-left: 1rem;
   padding-right: 1rem;
   // Padding bottom for footer will be added dynamically by FooterComponent
+
+  &--fullscreen {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
 }
 
 // Optional: Add a class for page sections

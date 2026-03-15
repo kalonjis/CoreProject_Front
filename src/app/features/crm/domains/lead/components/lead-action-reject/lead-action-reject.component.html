@@ -1,0 +1,15 @@
+<div class="action-panel action-panel--danger">
+  <h3 class="action-panel__title">Rejeter le lead</h3>
+
+  <div class="action-panel__row">
+    <label>Motif de rejet *</label>
+    <textarea [(ngModel)]="rejectionReason" placeholder="Spam, hors sujet, doublon…" rows="3"></textarea>
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !rejectionReason.trim()">
+      Rejeter
+    </button>
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+</div>

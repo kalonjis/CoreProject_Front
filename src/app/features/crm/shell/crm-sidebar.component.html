@@ -1,0 +1,38 @@
+<nav class="crm-sidebar" [class.crm-sidebar--collapsed]="collapsed()">
+
+  <div class="crm-sidebar__header">
+    <span class="crm-sidebar__logo">CRM</span>
+    <button class="crm-sidebar__toggle" (click)="toggle()" [title]="collapsed() ? 'Développer' : 'Réduire'">
+      {{ collapsed() ? '›' : '‹' }}
+    </button>
+  </div>
+
+  <ul class="crm-sidebar__nav">
+    @for (item of navItems; track item.route) {
+      <li class="crm-sidebar__item">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="crm-sidebar__link"
+          [title]="collapsed() ? item.label : ''"
+        >
+          <span class="crm-sidebar__icon">{{ item.icon }}</span>
+          <span class="crm-sidebar__label">{{ item.label }}</span>
+          @if (getBadge(item) > 0) {
+            <span class="crm-sidebar__badge" [class.crm-sidebar__badge--danger]="item.badgeKey === 'actions'">
+              {{ getBadge(item) }}
+            </span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div class="crm-sidebar__footer">
+    <a routerLink="/" class="crm-sidebar__back" [title]="collapsed() ? 'Quitter le CRM' : ''">
+      <span class="crm-sidebar__icon">←</span>
+      <span class="crm-sidebar__label">Quitter le CRM</span>
+    </a>
+  </div>
+
+</nav>

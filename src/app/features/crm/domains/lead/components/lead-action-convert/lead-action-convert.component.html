@@ -1,0 +1,33 @@
+<div class="action-panel">
+  <h3 class="action-panel__title">Convertir en contact</h3>
+
+  <div class="action-panel__grid">
+    <div class="action-panel__row">
+      <label>Prénom *</label>
+      <input type="text" [(ngModel)]="form.firstName" placeholder="Prénom" />
+    </div>
+    <div class="action-panel__row">
+      <label>Nom *</label>
+      <input type="text" [(ngModel)]="form.lastName" placeholder="Nom" />
+    </div>
+    <div class="action-panel__row">
+      <label>Poste</label>
+      <input type="text" [(ngModel)]="form.jobTitle" placeholder="Directeur commercial…" />
+    </div>
+    <div class="action-panel__row">
+      <label>Téléphone</label>
+      <input type="text" [(ngModel)]="form.phone" placeholder="+33 6 …" />
+    </div>
+    <div class="action-panel__row action-panel__row--full">
+      <label>Organisation (public ID, optionnel)</label>
+      <input type="text" [(ngModel)]="form.organisationPublicId" placeholder="uuid organisation" />
+    </div>
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !isValid">
+      Convertir
+    </button>
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+</div>

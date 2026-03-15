@@ -1,0 +1,111 @@
+@import 'variables';
+
+.deal-detail {
+  &__breadcrumb {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin-bottom: 1.25rem;
+    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__info  { color: $gray-dark; font-style: italic; }
+  &__error { color: $danger-color; }
+
+  &__timeline {
+    margin-top: 1.5rem;
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+  }
+
+  &__timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__timeline-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+  }
+
+  &__actions-section {
+    border-top: 1px solid $border-color;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__actions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__actions-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__actions-state {
+    font-size: 0.8125rem;
+    color: $gray-dark;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+.btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: $transition-fast;
+
+  &--secondary {
+    background: $primary-color;
+    color: #fff;
+    border-color: $primary-color;
+    &:hover { opacity: 0.88; }
+  }
+  &--ghost {
+    background: transparent;
+    color: $text-color;
+    border-color: $border-color;
+    &:hover { background: $body-bg; }
+  }
+  &--active {
+    background: rgba($primary-color, 0.1);
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
