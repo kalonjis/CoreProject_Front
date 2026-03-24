@@ -1,0 +1,66 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Terminer l'appel</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="crm-modal__body">
+
+        <div class="complete-context">
+          <p class="complete-context__label">Appel à clôturer</p>
+          <p class="complete-context__title">{{ action.title }}</p>
+        </div>
+
+        <div class="action-panel__row" style="margin-top: 1.25rem;">
+          <label>Résultat *</label>
+          <div class="call-status-pills">
+            <button type="button"
+              class="call-pill call-pill--answered"
+              [class.call-pill--active]="callStatus() === CallStatus.ANSWERED"
+              (click)="callStatus.set(CallStatus.ANSWERED)">
+              Répondu
+            </button>
+            <button type="button"
+              class="call-pill call-pill--voicemail"
+              [class.call-pill--active]="callStatus() === CallStatus.VOICEMAIL"
+              (click)="callStatus.set(CallStatus.VOICEMAIL)">
+              Messagerie
+            </button>
+            <button type="button"
+              class="call-pill call-pill--no-answer"
+              [class.call-pill--active]="callStatus() === CallStatus.NO_ANSWER"
+              (click)="callStatus.set(CallStatus.NO_ANSWER)">
+              Pas de réponse
+            </button>
+          </div>
+        </div>
+
+        <div class="action-panel__grid" style="margin-top: 1rem;">
+          <div class="action-panel__row">
+            <label>Numéro composé</label>
+            <input type="tel"
+              [ngModel]="phoneNumber()" (ngModelChange)="phoneNumber.set($event)"
+              name="phoneNumber" placeholder="+32 475 12 34 56" />
+          </div>
+          <div class="action-panel__row">
+            <label>Durée (secondes)</label>
+            <input type="number"
+              [ngModel]="durationSeconds()" (ngModelChange)="durationSeconds.set($event)"
+              name="durationSeconds" placeholder="Ex : 180" min="0" />
+            <span class="field-hint">180 s = 3 min</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="crm-modal__footer">
+        <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+        <button type="submit" class="btn btn--primary">Terminer l'appel</button>
+      </div>
+    </form>
+
+  </div>
+</div>

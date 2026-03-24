@@ -90,10 +90,19 @@
           @case ('assign') {
             <div class="ticket-detail__panel">
               <h4 class="ticket-detail__panel-title">Assigner</h4>
-              <label class="ticket-detail__label">PublicId du commercial</label>
-              <input type="text" [(ngModel)]="assigneePublicId" placeholder="Laisser vide pour désassigner" />
+              <label class="ticket-detail__label">Commercial</label>
+              @if (commercials().length === 0) {
+                <p>Chargement…</p>
+              } @else {
+                <select [(ngModel)]="assigneePublicId">
+                  <option value="" disabled>— Sélectionner un commercial —</option>
+                  @for (c of commercials(); track c.publicId) {
+                    <option [value]="c.publicId">{{ displayName(c) }}</option>
+                  }
+                </select>
+              }
               <div class="ticket-detail__panel-footer">
-                <button class="btn btn--primary" [disabled]="saving()" (click)="submitAssign()">
+                <button class="btn btn--primary" [disabled]="saving() || !assigneePublicId" (click)="submitAssign()">
                   {{ saving() ? '…' : 'Assigner' }}
                 </button>
                 <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>

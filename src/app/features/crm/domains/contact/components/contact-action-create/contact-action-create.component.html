@@ -1,0 +1,63 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Nouveau contact</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      <div class="action-panel">
+
+        @if (organisationName) {
+          <p class="action-panel__hint" style="margin-bottom: 1rem">
+            Organisation : <strong>{{ organisationName }}</strong>
+          </p>
+        }
+
+        <div class="action-panel__grid">
+
+          <div class="action-panel__row">
+            <label>Prénom *</label>
+            <input type="text" [(ngModel)]="firstName" placeholder="Prénom" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Nom *</label>
+            <input type="text" [(ngModel)]="lastName" placeholder="Nom" />
+          </div>
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="email" placeholder="contact@entreprise.com" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="phone" placeholder="+32 470 00 00 00" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Poste</label>
+            <input type="text" [(ngModel)]="jobTitle" placeholder="Directeur commercial…" />
+          </div>
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Notes</label>
+            <textarea [(ngModel)]="notes" rows="2" placeholder="Contexte de la rencontre…"></textarea>
+          </div>
+
+        </div>
+
+        <div class="action-panel__footer">
+          <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !isValid">
+            Créer le contact
+          </button>
+          <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

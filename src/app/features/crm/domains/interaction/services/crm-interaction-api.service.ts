@@ -17,14 +17,6 @@ export class CrmInteractionApiService {
     return this.http.get<InteractionResponse>(`${this.base}/${publicId}`);
   }
 
-  getTimelineByDeal(dealPublicId: string): Observable<InteractionResponse[]> {
-    return this.http.get<InteractionResponse[]>(`${this.base}/deal/${dealPublicId}`);
-  }
-
-  getTimelineByContact(contactPublicId: string): Observable<InteractionResponse[]> {
-    return this.http.get<InteractionResponse[]>(`${this.base}/contact/${contactPublicId}`);
-  }
-
   log(body: LogInteractionRequest): Observable<InteractionResponse> {
     return this.http.post<InteractionResponse>(this.base, body);
   }

@@ -34,6 +34,29 @@
   }
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  &--identity {
+    grid-template-columns: 100px 1fr 1fr;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr 1fr;
+
+      // Civility spans full width on mobile
+      .form-group:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-group {
   margin-bottom: 1.25rem;
 

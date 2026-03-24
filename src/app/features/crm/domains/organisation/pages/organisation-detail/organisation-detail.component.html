@@ -18,6 +18,8 @@
 
       <aside class="org-detail__sidebar">
         <div class="org-detail__actions">
+          <button class="btn btn--primary" (click)="showCreateContact.set(true)">+ Contact</button>
+          <button class="btn btn--primary" (click)="showCreateDeal.set(true)">+ Deal</button>
           <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
           <button
             class="btn btn--ghost"
@@ -39,5 +41,22 @@
       </aside>
 
     </div>
+
+    @if (showCreateContact()) {
+      <app-contact-action-create
+        [organisationPublicId]="org.publicId"
+        [organisationName]="org.name"
+        (created)="onContactCreated($event)"
+        (cancelled)="showCreateContact.set(false)"
+      />
+    }
+
+    @if (showCreateDeal()) {
+      <app-deal-action-create
+        [organisationPublicId]="org.publicId"
+        (created)="onDealCreated()"
+        (cancelled)="showCreateDeal.set(false)"
+      />
+    }
   }
 </div>

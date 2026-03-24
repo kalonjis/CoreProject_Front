@@ -2,102 +2,72 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { CrmLeadApiService } from '../../services/crm-lead-api.service';
-import { LeadSummary, LeadFilter, LeadStatus, LeadType, LEAD_STATUS_LABELS, LEAD_TYPE_LABELS } from '../../models/lead.model';
-import { LeadStatusBadgeComponent } from '../../components/lead-status-badge/lead-status-badge.component';
-import { LeadTypeBadgeComponent } from '../../components/lead-type-badge/lead-type-badge.component';
-import { CrmEmptyStateComponent } from '../../../../shared/empty-state/crm-empty-state.component';
+import { LeadFacade }   from '../../facades/lead.facade';
+import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
+import { LeadDetail, LeadFilter, LeadSource, LeadStatus, LeadType, LEAD_SOURCE_LABELS, LEAD_STATUS_LABELS, LEAD_TYPE_LABELS } from '../../models/lead.model';
+import { LeadStatusBadgeComponent }   from '../../components/lead-status-badge/lead-status-badge.component';
+import { LeadTypeBadgeComponent }     from '../../components/lead-type-badge/lead-type-badge.component';
+import { CrmEmptyStateComponent }     from '../../../../shared/empty-state/crm-empty-state.component';
+import { LeadActionCreateComponent }  from '../../components/lead-action-create/lead-action-create.component';
 
 @Component({
   selector: 'app-lead-list',
-  imports: [FormsModule, DatePipe, LeadStatusBadgeComponent, LeadTypeBadgeComponent, CrmEmptyStateComponent],
+  providers: [LeadFacade, InteractionFacade],
+  imports: [FormsModule, DatePipe, LeadStatusBadgeComponent, LeadTypeBadgeComponent, CrmEmptyStateComponent, LeadActionCreateComponent],
   templateUrl: './lead-list.component.html',
   styleUrl: './lead-list.component.scss'
 })
 export class LeadListComponent implements OnInit {
 
-  private readonly api    = inject(CrmLeadApiService);
+  readonly facade = inject(LeadFacade);
   private readonly router = inject(Router);
 
-  // ─── State ─────────────────────────────────────────────────────────────────
+  readonly loading= this.facade.listLoading;
+  readonly error= signal<string | null>(null);
+  readonly leads= this.facade.leads;
+  readonly totalElements= this.facade.totalElements;
+  readonly totalPages= this.facade.totalPages;
 
-  readonly leads         = signal<LeadSummary[]>([]);
-  readonly totalPages    = signal(0);
-  readonly totalElements = signal(0);
-  readonly loading       = signal(false);
-  readonly error         = signal<string | null>(null);
-
-  currentPage = 0;
-  readonly pageSize = 20;
-
-  // ─── Filter ────────────────────────────────────────────────────────────────
-
-  keyword        = '';
-  selectedStatus : LeadStatus | '' = '';
-  selectedType   : LeadType | ''   = '';
-  unassignedOnly = false;
-
-  // ─── Lookup tables ─────────────────────────────────────────────────────────
+  readonly showCreate = signal(false);
 
   readonly statuses     = Object.values(LeadStatus);
   readonly types        = Object.values(LeadType);
+  readonly sources      = Object.values(LeadSource);
   readonly statusLabels = LEAD_STATUS_LABELS;
   readonly typeLabels   = LEAD_TYPE_LABELS;
+  readonly sourceLabels = LEAD_SOURCE_LABELS;
 
-  // ─── Lifecycle ─────────────────────────────────────────────────────────────
+  currentPage    = 0;
+  readonly pageSize = 20;
+  keyword        = '';
+  selectedStatus: LeadStatus | '' = '';
+  selectedType:   LeadType   | '' = '';
+  selectedSource: LeadSource | '' = '';
+  unassignedOnly = false;
+  activeOnly     = true;
 
-  ngOnInit(): void {
-    this.loadLeads();
-  }
-
-  // ─── Data loading ──────────────────────────────────────────────────────────
+  ngOnInit(): void { this.loadLeads(); }
 
   loadLeads(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
     const f: LeadFilter = {};
     if (this.selectedStatus)  f.status        = this.selectedStatus;
     if (this.selectedType)    f.leadType       = this.selectedType;
+    if (this.selectedSource)  f.leadSource     = this.selectedSource;
     if (this.keyword.trim())  f.keyword        = this.keyword;
     if (this.unassignedOnly)  f.unassignedOnly = true;
-
-    this.api.findAll(f, this.currentPage, this.pageSize).subscribe({
-      next: page => {
-        this.leads.set(page.content);
-        this.totalPages.set(page.totalPages);
-        this.totalElements.set(page.totalElements);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Impossible de charger les leads.');
-        this.loading.set(false);
-      }
-    });
+    if (this.activeOnly && !this.selectedStatus) f.activeOnly = true;
+    this.facade.loadList(f, this.currentPage, this.pageSize);
   }
 
-  // ─── Handlers ──────────────────────────────────────────────────────────────
+  onFilterChange(): void { this.currentPage = 0; this.loadLeads(); }
+  onKeywordChange(): void { this.currentPage = 0; this.loadLeads(); }
+  goToPage(page: number): void { this.currentPage = page; this.loadLeads(); }
 
-  onFilterChange(): void {
-    this.currentPage = 0;
-    this.loadLeads();
-  }
+  viewDetail(publicId: string): void { this.router.navigate(['/crm/leads', publicId]); }
+  goPipeline(): void { this.router.navigate(['/crm/pipeline']); }
 
-  onKeywordChange(): void {
-    this.currentPage = 0;
-    this.loadLeads();
-  }
-
-  goToPage(page: number): void {
-    this.currentPage = page;
-    this.loadLeads();
-  }
-
-  viewDetail(publicId: string): void {
-    this.router.navigate(['/crm/leads', publicId]);
-  }
-
-  goPipeline(): void {
-    this.router.navigate(['/crm/pipeline']);
+  onLeadCreated(lead: LeadDetail): void {
+    this.showCreate.set(false);
+    this.router.navigate(['/crm/leads', lead.publicId]);
   }
 }

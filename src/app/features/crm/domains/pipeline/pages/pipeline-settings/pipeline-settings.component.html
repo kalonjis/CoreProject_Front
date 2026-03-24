@@ -1,0 +1,192 @@
+<div class="ps">
+
+  <div class="ps__header">
+    <h1 class="ps__title">Paramètres — Pipelines</h1>
+    <button class="btn btn--primary" (click)="openCreateForm()" [disabled]="showCreateForm">
+      + Nouveau pipeline
+    </button>
+  </div>
+
+  <!-- ─── Create form ──────────────────────────────────────────────────────── -->
+  @if (showCreateForm) {
+    <div class="action-panel ps__create-form">
+      <h3 class="action-panel__title">Nouveau pipeline</h3>
+      <div class="action-panel__grid">
+        <div class="action-panel__row">
+          <label for="new-name">Nom *</label>
+          <input id="new-name" type="text" [(ngModel)]="newName" placeholder="Ex: Ventes B2B" maxlength="100" />
+        </div>
+        <div class="action-panel__row">
+          <label for="new-desc">Description</label>
+          <input id="new-desc" type="text" [(ngModel)]="newDescription" placeholder="Optionnel" maxlength="255" />
+        </div>
+      </div>
+      <div class="action-panel__row action-panel__row--full">
+        <label class="ps__checkbox">
+          <input type="checkbox" [(ngModel)]="newIsDefault" />
+          Définir comme pipeline par défaut
+        </label>
+      </div>
+      <div class="action-panel__footer">
+        <button class="btn btn--primary" (click)="submitCreate()" [disabled]="saving() || !newName.trim()">Créer</button>
+        <button class="btn btn--ghost" (click)="cancelCreate()">Annuler</button>
+      </div>
+    </div>
+  }
+
+  <!-- ─── Pipeline list ────────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <p class="ps__state">Chargement…</p>
+  } @else if (pipelines().length === 0) {
+    <p class="ps__state">Aucun pipeline. Créez-en un pour commencer.</p>
+  } @else {
+    @for (p of pipelines(); track p.publicId) {
+      <div class="ps__card">
+
+        <!-- Pipeline header -->
+        @if (editingId === p.publicId) {
+          <!-- Edit form inline -->
+          <div class="ps__edit-form">
+            <div class="action-panel__grid">
+              <div class="action-panel__row">
+                <label>Nom *</label>
+                <input type="text" [(ngModel)]="editName" maxlength="100" />
+              </div>
+              <div class="action-panel__row">
+                <label>Description</label>
+                <input type="text" [(ngModel)]="editDescription" maxlength="255" />
+              </div>
+            </div>
+            <div class="action-panel__row action-panel__row--full">
+              <label class="ps__checkbox">
+                <input type="checkbox" [(ngModel)]="editIsDefault" />
+                Pipeline par défaut
+              </label>
+            </div>
+            <div class="action-panel__footer">
+              <button class="btn btn--primary btn--sm" (click)="submitEdit()" [disabled]="saving() || !editName.trim()">Enregistrer</button>
+              <button class="btn btn--ghost btn--sm" (click)="cancelEdit()">Annuler</button>
+            </div>
+          </div>
+        } @else {
+          <div class="ps__card-header">
+            <div class="ps__card-info">
+              <span class="ps__card-name">{{ p.name }}</span>
+              @if (p.isDefault) { <span class="ps__badge ps__badge--default">Défaut</span> }
+              <span class="ps__badge">{{ p.steps.length }} étape(s)</span>
+              @if (p.description) { <span class="ps__card-desc">{{ p.description }}</span> }
+            </div>
+            <div class="ps__card-actions">
+              <button class="btn btn--sm btn--secondary" (click)="startEdit(p)">Modifier</button>
+              <button class="btn btn--sm btn--secondary" (click)="toggleSteps(p.publicId)">
+                {{ expandedId === p.publicId ? 'Masquer étapes' : 'Gérer étapes' }}
+              </button>
+              <button class="btn btn--sm btn--danger" (click)="deletePipeline(p)">Supprimer</button>
+            </div>
+          </div>
+        }
+
+        <!-- Steps section -->
+        @if (expandedId === p.publicId) {
+          <div class="ps__steps">
+            <div class="ps__steps-header">
+              <span class="ps__steps-title">Étapes</span>
+              <button class="btn btn--sm btn--secondary" (click)="openAddStep(p.publicId, p.steps.length)" [disabled]="!!addingStepFor">
+                + Ajouter
+              </button>
+            </div>
+
+            <!-- Add step form -->
+            @if (addingStepFor === p.publicId) {
+              <div class="ps__step-form action-panel">
+                <div class="action-panel__grid">
+                  <div class="action-panel__row">
+                    <label>Nom *</label>
+                    <input type="text" [(ngModel)]="newStep.name" placeholder="Ex: Qualification" maxlength="100" />
+                  </div>
+                  <div class="action-panel__row">
+                    <label>Couleur</label>
+                    <div class="ps__color-row">
+                      <input type="color" [(ngModel)]="newStep.color" />
+                      <span class="ps__color-hex">{{ newStep.color }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="ps__step-flags">
+                  <label class="ps__checkbox">
+                    <input type="checkbox" [(ngModel)]="newStep.isWon" (change)="newStep.isWon && (newStep.isLost = false)" />
+                    Étape "Gagné"
+                  </label>
+                  <label class="ps__checkbox">
+                    <input type="checkbox" [(ngModel)]="newStep.isLost" (change)="newStep.isLost && (newStep.isWon = false)" />
+                    Étape "Perdu"
+                  </label>
+                </div>
+                <div class="action-panel__footer">
+                  <button class="btn btn--primary btn--sm" (click)="submitAddStep(p.publicId)" [disabled]="saving() || !newStep.name.trim()">Ajouter</button>
+                  <button class="btn btn--ghost btn--sm" (click)="cancelAddStep()">Annuler</button>
+                </div>
+              </div>
+            }
+
+            <!-- Step list -->
+            @for (step of getSteps(p); track step.publicId; let first = $first; let last = $last) {
+              <div class="ps__step">
+                @if (editingStepId === step.publicId) {
+                  <!-- Inline edit step -->
+                  <div class="ps__step-form action-panel">
+                    <div class="action-panel__grid">
+                      <div class="action-panel__row">
+                        <label>Nom *</label>
+                        <input type="text" [(ngModel)]="editStep.name" maxlength="100" />
+                      </div>
+                      <div class="action-panel__row">
+                        <label>Couleur</label>
+                        <div class="ps__color-row">
+                          <input type="color" [(ngModel)]="editStep.color" />
+                          <span class="ps__color-hex">{{ editStep.color }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ps__step-flags">
+                      <label class="ps__checkbox">
+                        <input type="checkbox" [(ngModel)]="editStep.isWon" (change)="editStep.isWon && (editStep.isLost = false)" />
+                        Étape "Gagné"
+                      </label>
+                      <label class="ps__checkbox">
+                        <input type="checkbox" [(ngModel)]="editStep.isLost" (change)="editStep.isLost && (editStep.isWon = false)" />
+                        Étape "Perdu"
+                      </label>
+                    </div>
+                    <div class="action-panel__footer">
+                      <button class="btn btn--primary btn--sm" (click)="submitEditStep(p.publicId, step.publicId)" [disabled]="saving() || !editStep.name.trim()">Enregistrer</button>
+                      <button class="btn btn--ghost btn--sm" (click)="cancelEditStep()">Annuler</button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="ps__step-row">
+                    <div class="ps__step-info">
+                      <span class="ps__step-color" [style.background]="step.color ?? '#dee2e6'"></span>
+                      <span class="ps__step-name">{{ step.name }}</span>
+                      @if (step.isWon)  { <span class="ps__badge ps__badge--won">Gagné</span> }
+                      @if (step.isLost) { <span class="ps__badge ps__badge--lost">Perdu</span> }
+                    </div>
+                    <div class="ps__step-actions">
+                      <button class="btn btn--sm btn--ghost" (click)="moveStep(p, step, 'up')" [disabled]="first" title="Monter">↑</button>
+                      <button class="btn btn--sm btn--ghost" (click)="moveStep(p, step, 'down')" [disabled]="last" title="Descendre">↓</button>
+                      <button class="btn btn--sm btn--secondary" (click)="startEditStep(step)">Modifier</button>
+                      <button class="btn btn--sm btn--danger" (click)="deleteStep(p, step)">Supprimer</button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @empty {
+              <p class="ps__step-empty">Aucune étape. Ajoutez-en une pour commencer.</p>
+            }
+          </div>
+        }
+
+      </div>
+    }
+  }
+</div>

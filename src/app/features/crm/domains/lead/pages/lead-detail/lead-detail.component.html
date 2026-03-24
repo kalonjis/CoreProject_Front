@@ -1,39 +1,35 @@
 <div class="lead-detail">
 
-  @if (loading()) {
+  @if (facade.detailLoading()) {
     <p class="lead-detail__loading">Chargement…</p>
   }
 
-  @if (error()) {
-    <p class="lead-detail__error">{{ error() }}</p>
-  }
+  @if (facade.lead(); as l) {
 
-  @if (lead(); as l) {
-
-    <!-- ─── Header ──────────────────────────────────────────────────────── -->
     <div class="lead-detail__header">
       <button class="lead-detail__back" (click)="back()">← Retour</button>
       <div class="lead-detail__identity">
         <h1 class="lead-detail__email">{{ l.email }}</h1>
-        @if (l.name) { <span class="lead-detail__name">{{ l.name }}</span> }
+        @if (l.firstName || l.lastName) {
+          <span class="lead-detail__name">{{ l.firstName }} {{ l.lastName }}</span>
+        }
       </div>
     </div>
 
-    <!-- ─── Info card ────────────────────────────────────────────────────── -->
     <app-lead-info-card [lead]="l" />
 
-    <!-- ─── Actions (non-terminal only) ──────────────────────────────────── -->
-    @if (!isTerminal()) {
+    @if (!facade.isTerminal()) {
       <div class="lead-detail__action-bar">
+        <button class="btn btn--secondary" (click)="toggleAction('enrich')">Enrichir</button>
         <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
 
-        @if (l.status === LeadStatus.NEW) {
-          <button class="btn btn--secondary" (click)="markInReview()" [disabled]="actionLoading()">
+        @if (canMarkInReview()) {
+          <button class="btn btn--secondary" (click)="facade.markInReview()" [disabled]="facade.actionLoading()">
             Mettre en revue
           </button>
         }
 
-        @if (canConvert()) {
+        @if (facade.canConvert()) {
           <button class="btn btn--primary" (click)="toggleAction('convert')">
             Convertir en contact
           </button>
@@ -43,6 +39,14 @@
       </div>
 
       @switch (activeAction()) {
+        @case ('enrich') {
+          <app-lead-action-enrich
+            [publicId]="l.publicId"
+            [lead]="l"
+            (enriched)="onActionDone()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
         @case ('assign') {
           <app-lead-action-assign
             [publicId]="l.publicId"
@@ -53,6 +57,7 @@
         @case ('convert') {
           <app-lead-action-convert
             [publicId]="l.publicId"
+            [lead]="l"
             (converted)="onActionDone()"
             (cancelled)="toggleAction(null)"
           />
@@ -66,5 +71,68 @@
         }
       }
     }
+
+    <div class="lead-detail__activities">
+
+      <section class="lead-detail__section">
+        <div class="lead-detail__section-header">
+          <h2 class="lead-detail__section-title">Interactions</h2>
+          @if (!facade.isTerminal()) {
+            <button class="btn btn--sm btn--secondary" (click)="toggleAction('log-interaction')">
+              + Enregistrer
+            </button>
+          }
+        </div>
+
+        @if (activeAction() === 'log-interaction') {
+          <app-interaction-log-form
+            [leadPublicId]="l.publicId"
+            (logged)="onInteractionLogged()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
+
+        <app-interaction-timeline
+          [entries]="interactionFacade.entries()"
+          [loading]="interactionFacade.loading()"
+          (deleteRequested)="onInteractionDelete($event)"
+        />
+      </section>
+
+      <section class="lead-detail__section">
+        <div class="lead-detail__section-header">
+          <h2 class="lead-detail__section-title">Actions commerciales</h2>
+          @if (!facade.isTerminal()) {
+            <button class="btn btn--sm btn--secondary" (click)="toggleAction('create-action')">
+              + Créer
+            </button>
+          }
+        </div>
+
+        @if (activeAction() === 'create-action') {
+          <app-commercial-action-form
+            [leadPublicId]="l.publicId"
+            (created)="onActionCreated()"
+            (cancelled)="toggleAction(null)"
+          />
+        }
+
+        @if (facade.actionsLoading()) {
+          <p class="lead-detail__state">Chargement…</p>
+        } @else if (facade.actions().length === 0) {
+          <p class="lead-detail__state">Aucune action enregistrée.</p>
+        } @else {
+          @for (action of facade.actions(); track action.publicId) {
+            <app-commercial-action-card
+              [action]="action"
+              (completed)="onActionComplete($event)"
+              (cancelled)="onActionCancel(action.publicId)"
+              (edited)="facade.actionCreated(l.publicId)"
+            />
+          }
+        }
+      </section>
+
+    </div>
   }
 </div>

@@ -10,6 +10,7 @@
         <li class="nav-item"><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
         <li class="nav-item"><a routerLink="/calendar" routerLinkActive="active">Calendrier</a></li>
         <li class="nav-item"><a routerLink="/sport" routerLinkActive="active">Sport</a></li>
+        <li class="nav-item"><a routerLink="/crm" routerLinkActive="active">CRM</a></li>
 
         @if (isAdmin()) {
           <li class="nav-item"><a routerLink="/admin" routerLinkActive="active">Administration</a></li>
@@ -57,6 +58,7 @@
     <li class="mobile-nav-item"><a routerLink="/contact" (click)="closeMobileMenu()">Contact</a></li>
     <li class="mobile-nav-item"><a routerLink="/calendar" (click)="closeMobileMenu()">Calendrier</a></li>
     <li class="mobile-nav-item"><a routerLink="/sport" (click)="closeMobileMenu()">Sport</a></li>
+    <li class="mobile-nav-item"><a routerLink="/crm" (click)="closeMobileMenu()">CRM</a></li>
 
     @if (!isAuthenticated()) {
       <li class="mobile-nav-item"><a routerLink="/auth/login" (click)="closeMobileMenu()">Connexion</a></li>

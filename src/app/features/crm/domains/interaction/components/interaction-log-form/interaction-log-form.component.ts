@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   InteractionType,
@@ -19,9 +19,14 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
   templateUrl: './interaction-log-form.component.html',
   styleUrl: './interaction-log-form.component.scss'
 })
-export class InteractionLogFormComponent {
+export class InteractionLogFormComponent implements OnInit {
   @Input() dealPublicId?: string;
   @Input() contactPublicId?: string;
+  @Input() leadPublicId?: string;
+  @Input() defaultType?: InteractionType;
+  @Input() defaultSubject?: string;
+  @Input() defaultNotes?: string;
+  @Input() defaultDurationMinutes?: number;
   @Output() logged    = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -32,13 +37,20 @@ export class InteractionLogFormComponent {
 
   // ─── Form fields ──────────────────────────────────────────────────────────
 
-  type: InteractionType         = InteractionType.NOTE;
+  type: InteractionType            = InteractionType.NOTE;
   direction: InteractionDirection | '' = '';
   subject    = '';
   notes      = '';
   outcome: InteractionOutcome | '' = '';
-  durationMinutes: number | null = null;
-  occurredAt = new Date().toISOString().slice(0, 16);   // datetime-local format
+  durationMinutes: number | null   = null;
+  occurredAt = new Date().toISOString().slice(0, 16);
+
+  ngOnInit(): void {
+    if (this.defaultType)            this.type            = this.defaultType;
+    if (this.defaultSubject)         this.subject         = this.defaultSubject;
+    if (this.defaultNotes)           this.notes           = this.defaultNotes;
+    if (this.defaultDurationMinutes) this.durationMinutes = this.defaultDurationMinutes;
+  }
 
   // Call log fields
   callPhoneNumber  = '';
@@ -79,6 +91,7 @@ export class InteractionLogFormComponent {
       ...(this.durationMinutes     && { durationMinutes: this.durationMinutes }),
       ...(this.dealPublicId        && { dealPublicId: this.dealPublicId }),
       ...(this.contactPublicId     && { contactPublicId: this.contactPublicId }),
+      ...(this.leadPublicId        && { leadPublicId: this.leadPublicId }),
     };
 
     if (this.isCall) {

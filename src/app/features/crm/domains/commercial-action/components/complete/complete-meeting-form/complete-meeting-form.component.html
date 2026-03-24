@@ -1,0 +1,58 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Clôturer la réunion</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="crm-modal__body">
+
+        <div class="complete-context">
+          <p class="complete-context__label">Réunion à clôturer</p>
+          <p class="complete-context__title">{{ action.title }}</p>
+        </div>
+
+        <div class="action-panel__row" style="margin-top: 1.25rem;">
+          <label>Résultat</label>
+          <div class="outcome-chips">
+            <button type="button"
+              class="outcome-chip outcome-chip--positive"
+              [class.outcome-chip--active]="outcome() === InteractionOutcome.POSITIVE"
+              (click)="selectOutcome(InteractionOutcome.POSITIVE)">
+              Positif
+            </button>
+            <button type="button"
+              class="outcome-chip outcome-chip--neutral"
+              [class.outcome-chip--active]="outcome() === InteractionOutcome.NEUTRAL"
+              (click)="selectOutcome(InteractionOutcome.NEUTRAL)">
+              Neutre
+            </button>
+            <button type="button"
+              class="outcome-chip outcome-chip--negative"
+              [class.outcome-chip--active]="outcome() === InteractionOutcome.NEGATIVE"
+              (click)="selectOutcome(InteractionOutcome.NEGATIVE)">
+              Négatif
+            </button>
+          </div>
+        </div>
+
+        <div class="action-panel__row" style="margin-top: 1rem;">
+          <label>Notes</label>
+          <textarea
+            [ngModel]="notes()" (ngModelChange)="notes.set($event)"
+            name="notes" rows="4"
+            placeholder="Résumé de la réunion, points abordés, prochaines étapes…"></textarea>
+        </div>
+
+      </div>
+
+      <div class="crm-modal__footer">
+        <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+        <button type="submit" class="btn btn--primary">Clôturer la réunion</button>
+      </div>
+    </form>
+
+  </div>
+</div>

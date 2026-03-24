@@ -1,15 +1,26 @@
-<div class="action-panel action-panel--danger">
-  <h3 class="action-panel__title">Rejeter le lead</h3>
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
 
-  <div class="action-panel__row">
-    <label>Motif de rejet *</label>
-    <textarea [(ngModel)]="rejectionReason" placeholder="Spam, hors sujet, doublon…" rows="3"></textarea>
-  </div>
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Rejeter le lead</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
 
-  <div class="action-panel__footer">
-    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !rejectionReason.trim()">
-      Rejeter
-    </button>
-    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+    <div class="crm-modal__body">
+      <div class="action-panel action-panel--danger">
+        <div class="action-panel__row">
+          <label>Motif de rejet *</label>
+          <textarea [(ngModel)]="rejectionReason" placeholder="Spam, hors sujet, doublon…" rows="3"></textarea>
+        </div>
+
+        <div class="action-panel__footer">
+          <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !rejectionReason.trim()">
+            Rejeter
+          </button>
+          <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

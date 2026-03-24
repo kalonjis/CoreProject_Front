@@ -8,7 +8,7 @@
     <span class="action-card__assignee">{{ action.assignedToUsername }}</span>
   </div>
 
-  <p class="action-card__title">{{ action.title }}</p>
+  <a class="action-card__title" [routerLink]="['/crm/commercial-actions', action.publicId]">{{ action.title }}</a>
 
   @if (action.description) {
     <p class="action-card__description">{{ action.description }}</p>
@@ -16,18 +16,41 @@
 
   @if (action.dueDate) {
     <p class="action-card__due">
-      Échéance : <strong>{{ action.dueDate | date:'dd/MM/yyyy' }}</strong>
+      {{ dueDateLabel }} : <strong>{{ action.dueDate | date:dueDateFormat }}</strong>
     </p>
   }
 
-  @if (isPending) {
-    <div class="action-card__actions">
-      <button class="btn btn--primary btn--sm" (click)="completed.emit(action.publicId)">
+  @if (action.location) {
+    <p class="action-card__location">📍 {{ action.location }}</p>
+  }
+
+  <div class="action-card__actions">
+    <button class="btn btn--ghost btn--sm" (click)="showEditModal.set(true)">
+      Modifier
+    </button>
+    @if (isPending) {
+      <button class="btn btn--primary btn--sm" (click)="onComplete()">
         ✓ Terminer
       </button>
-      <button class="btn btn--ghost btn--sm" (click)="cancelled.emit(action.publicId)">
+      <button class="btn btn--ghost btn--sm" (click)="onCancel()">
         Annuler
       </button>
-    </div>
-  }
+    }
+  </div>
 </div>
+
+@if (showEditModal()) {
+  <app-commercial-action-form
+    [existingAction]="action"
+    (updated)="onUpdated()"
+    (cancelled)="showEditModal.set(false)"
+  />
+}
+
+@if (showCompleteModal()) {
+  <app-commercial-action-complete-form
+    [action]="action"
+    (confirmed)="onConfirmed($event)"
+    (cancelled)="showCompleteModal.set(false)"
+  />
+}

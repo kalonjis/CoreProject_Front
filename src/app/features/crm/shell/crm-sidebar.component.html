@@ -29,6 +29,12 @@
   </ul>
 
   <div class="crm-sidebar__footer">
+    @if (isAdmin()) {
+      <a routerLink="/crm/settings/pipelines" routerLinkActive="active" class="crm-sidebar__link crm-sidebar__settings" [title]="collapsed() ? 'Paramètres' : ''">
+        <span class="crm-sidebar__icon">⚙️</span>
+        <span class="crm-sidebar__label">Paramètres</span>
+      </a>
+    }
     <a routerLink="/" class="crm-sidebar__back" [title]="collapsed() ? 'Quitter le CRM' : ''">
       <span class="crm-sidebar__icon">←</span>
       <span class="crm-sidebar__label">Quitter le CRM</span>

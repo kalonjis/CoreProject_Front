@@ -23,10 +23,11 @@ export class PipelineBoardComponent implements OnInit {
   private readonly confirm     = inject(ConfirmDialogService);
   private readonly feedback    = inject(FeedbackService);
 
-  readonly pipeline = signal<Pipeline | null>(null);
-  readonly deals    = signal<DealSummary[]>([]);
-  readonly loading  = signal(false);
-  readonly error    = signal<string | null>(null);
+  readonly allPipelines = signal<Pipeline[]>([]);
+  readonly pipeline     = signal<Pipeline | null>(null);
+  readonly deals        = signal<DealSummary[]>([]);
+  readonly loading      = signal(false);
+  readonly error        = signal<string | null>(null);
 
   readonly dealsByStage = computed(() => {
     const map = new Map<string, DealSummary[]>();
@@ -45,16 +46,26 @@ export class PipelineBoardComponent implements OnInit {
     this.pipelineApi.findAll().subscribe({
       next: list => {
         if (list.length === 0) {
-          this.error.set('Aucun pipeline configuré. Créez un pipeline via l\'API ou l\'admin.');
+          this.error.set('Aucun pipeline configuré. Créez un pipeline via les paramètres admin.');
           this.loading.set(false);
           return;
         }
+        this.allPipelines.set(list);
         const pipeline = list.find(p => p.isDefault) ?? list[0];
         this.pipeline.set(pipeline);
         this.loadDeals(pipeline.publicId);
       },
       error: () => { this.error.set('Impossible de charger le pipeline.'); this.loading.set(false); }
     });
+  }
+
+  selectPipeline(publicId: string): void {
+    const p = this.allPipelines().find(p => p.publicId === publicId);
+    if (!p || p.publicId === this.pipeline()?.publicId) return;
+    this.pipeline.set(p);
+    this.deals.set([]);
+    this.loading.set(true);
+    this.loadDeals(p.publicId);
   }
 
   private loadDeals(pipelinePublicId: string): void {

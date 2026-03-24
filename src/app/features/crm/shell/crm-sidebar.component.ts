@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CrmDashboardApiService } from '../domains/dashboard/services/crm-dashboard-api.service';
+import { AuthStore } from '../../../core/auth/state/auth.store';
 
 const STORAGE_KEY = 'crm-sidebar-collapsed';
 
@@ -21,6 +22,9 @@ interface CrmNavItem {
 export class CrmSidebarComponent implements OnInit {
 
   private readonly dashboardApi = inject(CrmDashboardApiService);
+  private readonly authStore    = inject(AuthStore);
+
+  readonly isAdmin = this.authStore.isAdmin;
 
   readonly collapsed    = signal(localStorage.getItem(STORAGE_KEY) === 'true');
   readonly leadsBadge   = signal(0);
@@ -39,8 +43,7 @@ export class CrmSidebarComponent implements OnInit {
     { label: 'Organisations',        icon: '🏢', route: '/crm/organisations' },
     { label: 'Deals',                icon: '💼', route: '/crm/deals' },
     { label: 'Pipeline',             icon: '📊', route: '/crm/pipeline' },
-    { label: 'Interactions',         icon: '💬', route: '/crm/interactions' },
-    { label: 'Actions commerciales', icon: '✅', route: '/crm/commercial-actions',   badgeKey: 'actions' },
+{ label: 'Actions commerciales', icon: '✅', route: '/crm/commercial-actions',   badgeKey: 'actions' },
     { label: 'Support',              icon: '🎫', route: '/crm/support-tickets' },
   ];
 

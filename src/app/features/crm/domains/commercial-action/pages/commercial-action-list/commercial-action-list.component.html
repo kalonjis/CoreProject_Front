@@ -2,60 +2,47 @@
 
   <div class="ca-list__header">
     <h1 class="ca-list__title">Mes actions</h1>
-    <button class="btn btn--primary" (click)="showForm.set(!showForm())">
-      {{ showForm() ? 'Annuler' : '+ Nouvelle action' }}
-    </button>
   </div>
-
-  @if (showForm()) {
-    <div class="ca-list__form-panel">
-      <h3 class="ca-list__form-title">Nouvelle action</h3>
-      <app-commercial-action-form
-        [currentUserPublicId]="currentUserPublicId"
-        (created)="onCreated()"
-        (cancelled)="showForm.set(false)"
-      />
-    </div>
-  }
 
   <div class="ca-list__filters">
     <button
       class="btn btn--filter"
-      [class.btn--filter-active]="activeFilter() === CommercialActionStatus.PENDING"
+      [class.btn--filter-active]="facade.filter() === CommercialActionStatus.PENDING"
       (click)="setFilter(CommercialActionStatus.PENDING)">
       En attente
     </button>
     <button
       class="btn btn--filter"
-      [class.btn--filter-active]="activeFilter() === CommercialActionStatus.DONE"
+      [class.btn--filter-active]="facade.filter() === CommercialActionStatus.DONE"
       (click)="setFilter(CommercialActionStatus.DONE)">
       Terminées
     </button>
     <button
       class="btn btn--filter"
-      [class.btn--filter-active]="activeFilter() === CommercialActionStatus.CANCELLED"
+      [class.btn--filter-active]="facade.filter() === CommercialActionStatus.CANCELLED"
       (click)="setFilter(CommercialActionStatus.CANCELLED)">
       Annulées
     </button>
     <button
       class="btn btn--filter"
-      [class.btn--filter-active]="activeFilter() === undefined"
+      [class.btn--filter-active]="facade.filter() === undefined"
       (click)="setFilter(undefined)">
       Toutes
     </button>
   </div>
 
-  @if (loading()) {
+  @if (facade.loading()) {
     <p class="ca-list__state">Chargement…</p>
-  } @else if (actions().length === 0) {
+  } @else if (facade.actions().length === 0) {
     <p class="ca-list__state">Aucune action.</p>
   } @else {
     <div class="ca-list__grid">
-      @for (action of actions(); track action.publicId) {
+      @for (action of facade.actions(); track action.publicId) {
         <app-commercial-action-card
           [action]="action"
           (completed)="onComplete($event)"
           (cancelled)="onCancel($event)"
+          (edited)="facade.load()"
         />
       }
     </div>

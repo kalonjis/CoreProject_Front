@@ -1,0 +1,37 @@
+@switch (action.type) {
+  @case (CommercialActionType.TASK) {
+    <app-complete-task-form
+      [action]="action"
+      (confirmed)="confirmed.emit($event)"
+      (cancelled)="cancelled.emit()"
+    />
+  }
+  @case (CommercialActionType.CALL) {
+    <app-complete-call-form
+      [action]="action"
+      (confirmed)="confirmed.emit($event)"
+      (cancelled)="cancelled.emit()"
+    />
+  }
+  @case (CommercialActionType.EMAIL) {
+    <app-complete-email-form
+      [action]="action"
+      (confirmed)="confirmed.emit($event)"
+      (cancelled)="cancelled.emit()"
+    />
+  }
+  @case (CommercialActionType.MEETING) {
+    <app-complete-meeting-form
+      [action]="action"
+      (confirmed)="confirmed.emit($event)"
+      (cancelled)="cancelled.emit()"
+    />
+  }
+  @case (CommercialActionType.DEMO) {
+    <app-complete-demo-form
+      [action]="action"
+      (confirmed)="confirmed.emit($event)"
+      (cancelled)="cancelled.emit()"
+    />
+  }
+}

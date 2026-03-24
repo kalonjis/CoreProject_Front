@@ -4,10 +4,11 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { LeadApiService } from '../../services/lead-api.service';
-import { LeadType, LEAD_TYPE_LABELS, SubmitLeadRequest } from '../../models/lead.model';
+import { Civility, CIVILITY_LABELS, LeadSource, LeadType, LEAD_TYPE_LABELS, SubmitLeadRequest } from '../../models/lead.model';
 import { FeedbackService } from '../../../../shared/feedback/tools/feedback.service';
 
 @Component({
@@ -18,9 +19,13 @@ import { FeedbackService } from '../../../../shared/feedback/tools/feedback.serv
 })
 export class ContactPageComponent {
 
-  private readonly fb = inject(FormBuilder);
-  private readonly leadApi = inject(LeadApiService);
+  private readonly fb       = inject(FormBuilder);
+  private readonly leadApi  = inject(LeadApiService);
   private readonly feedback = inject(FeedbackService);
+  private readonly router   = inject(Router);
+  private readonly route    = inject(ActivatedRoute);
+
+  private readonly detectedSource: LeadSource = this.resolveLeadSource();
 
   // State
   isSubmitting = signal(false);
@@ -30,14 +35,20 @@ export class ContactPageComponent {
   readonly leadTypes = Object.values(LeadType);
   readonly leadTypeLabels = LEAD_TYPE_LABELS;
 
+  readonly civilities = Object.values(Civility);
+  readonly civilityLabels = CIVILITY_LABELS;
+
   // Form
   contactForm: FormGroup = this.fb.group({
-    name: ['', [Validators.maxLength(100)]],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
-    subject: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(255)]],
-    message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
-    leadType: [LeadType.GENERAL, [Validators.required]],
-    confirmEmail: ['']
+    civility:         [null],
+    firstName:        ['', [Validators.maxLength(100)]],
+    lastName:         ['', [Validators.maxLength(100)]],
+    phone:            ['', [Validators.maxLength(20)]],
+    organisationName: ['', [Validators.maxLength(200)]],
+    email:            ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
+    message:          ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
+    leadType:         [LeadType.GENERAL, [Validators.required]],
+    confirmEmail:     ['']
   });
 
   onSubmit(): void {
@@ -57,13 +68,19 @@ export class ContactPageComponent {
     this.formError.set(null);
     this.isSubmitting.set(true);
 
+    const trim = (key: string) => this.contactForm.get(key)?.value?.trim() || undefined;
+
     const request: SubmitLeadRequest = {
-      email: this.contactForm.get('email')?.value.trim().toLowerCase(),
-      name: this.contactForm.get('name')?.value?.trim() || undefined,
-      subject: this.contactForm.get('subject')?.value.trim(),
-      message: this.contactForm.get('message')?.value.trim(),
-      leadType: this.contactForm.get('leadType')?.value,
-      website: this.contactForm.get('confirmEmail')?.value || undefined // Honeypot mapped to backend field
+      email:            this.contactForm.get('email')?.value.trim().toLowerCase(),
+      civility:         this.contactForm.get('civility')?.value || undefined,
+      firstName:        trim('firstName'),
+      lastName:         trim('lastName'),
+      phone:            trim('phone'),
+      organisationName: trim('organisationName'),
+      message:          this.contactForm.get('message')?.value.trim(),
+      leadType:         this.contactForm.get('leadType')?.value,
+      leadSource:       this.detectedSource,
+      website:          this.contactForm.get('confirmEmail')?.value || undefined
     };
 
     this.leadApi.submit(request)
@@ -74,7 +91,7 @@ export class ContactPageComponent {
             ? `Message envoyé ! Référence : ${response.referenceId}`
             : 'Message envoyé avec succès !';
           this.feedback.showSuccess(msg, undefined, 8000);
-          this.contactForm.reset({ leadType: LeadType.GENERAL });
+          this.router.navigate(['/']);
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 429) {
@@ -93,5 +110,30 @@ export class ContactPageComponent {
   // Helper for template
   get f() {
     return this.contactForm.controls;
+  }
+
+  private resolveLeadSource(): LeadSource {
+    const params = this.route.snapshot.queryParamMap;
+    const medium = params.get('utm_medium')?.toLowerCase() ?? '';
+    const source = params.get('utm_source')?.toLowerCase() ?? '';
+
+    // utm_medium est le signal le plus fiable
+    if (medium === 'cpc' || medium === 'paid' || medium === 'paidsocial') return LeadSource.PAID_CAMPAIGN;
+    if (medium === 'organic')                                              return LeadSource.ORGANIC_SEARCH;
+    if (medium === 'social' || medium === 'social-media')                 return LeadSource.SOCIAL_MEDIA;
+    if (medium === 'email')                                               return LeadSource.EMAIL;
+    if (medium === 'referral')                                            return LeadSource.REFERRAL;
+    if (medium === 'event')                                               return LeadSource.EVENT;
+
+    // Fallback sur utm_source si pas de medium reconnu
+    const socialNetworks = ['linkedin', 'facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'pinterest'];
+    const searchEngines  = ['google', 'bing', 'yahoo', 'duckduckgo'];
+    const emailTools     = ['newsletter', 'mailchimp', 'brevo', 'sendinblue'];
+
+    if (socialNetworks.some(n => source.includes(n))) return LeadSource.SOCIAL_MEDIA;
+    if (searchEngines.some(n => source.includes(n)))  return LeadSource.ORGANIC_SEARCH;
+    if (emailTools.some(n => source.includes(n)))     return LeadSource.EMAIL;
+
+    return LeadSource.CONTACT_FORM;
   }
 }

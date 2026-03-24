@@ -54,4 +54,42 @@
     gap: 0.75rem;
     flex-wrap: wrap;
   }
+
+  &__activities {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 1rem 1.25rem;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: $font-weight-bold;
+    color: $dark-color;
+    margin: 0;
+  }
+
+  &__state {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    padding: 0.5rem 0;
+    margin: 0;
+  }
 }

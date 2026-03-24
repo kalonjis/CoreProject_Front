@@ -1,0 +1,138 @@
+<div class="ca-detail">
+
+  <div class="ca-detail__breadcrumb">
+    <a routerLink="/crm/commercial-actions">Actions commerciales</a>
+    <span> / </span>
+    <span>{{ action()?.title ?? '…' }}</span>
+  </div>
+
+  @if (loading()) {
+    <p class="ca-detail__info">Chargement…</p>
+  } @else if (action(); as a) {
+
+    <div class="ca-detail__header">
+      <h2 class="ca-detail__title">{{ a.title }}</h2>
+      <div class="ca-detail__badges">
+        <span class="ca-detail__type-badge">{{ TYPE_LABELS[a.type] }}</span>
+        <app-commercial-action-priority-badge [priority]="a.priority" />
+        <app-commercial-action-status-badge   [status]="a.status" />
+        @if (a.isOverdue) {
+          <span class="ca-detail__overdue">En retard</span>
+        }
+      </div>
+    </div>
+
+    <div class="ca-detail__layout">
+
+      <!-- ─── Main ──────────────────────────────────────────────────────────── -->
+      <div class="ca-detail__main">
+
+        @if (a.description) {
+          <p class="ca-detail__description">{{ a.description }}</p>
+        }
+
+        <div class="ca-detail__section">
+          <h3 class="ca-detail__section-title">Informations</h3>
+          <dl class="ca-detail__grid">
+
+            <dt>Assigné à</dt>
+            <dd>{{ a.assignedToUsername }}</dd>
+
+            @if (a.dueDate) {
+              <dt>{{ requiresCalendarSlot(a.type) ? 'Date RDV' : 'Échéance' }}</dt>
+              <dd>{{ a.dueDate | date:(requiresCalendarSlot(a.type) ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy') }}</dd>
+            }
+
+            @if (requiresCalendarSlot(a.type) && a.durationMinutes) {
+              <dt>Durée</dt>
+              <dd>{{ a.durationMinutes }} min</dd>
+            }
+
+            @if (requiresCalendarSlot(a.type) && a.location) {
+              <dt>Lieu</dt>
+              <dd>{{ a.location }}</dd>
+            }
+
+            @if (a.reminderAt) {
+              <dt>Rappel</dt>
+              <dd>{{ a.reminderAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+            }
+
+            @if (a.completedAt) {
+              <dt>Terminée le</dt>
+              <dd>{{ a.completedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+            }
+
+            <dt>Créée le</dt>
+            <dd>{{ a.createdAt | date:'dd/MM/yyyy' }}</dd>
+
+          </dl>
+        </div>
+
+        @if (a.contactPublicId || a.dealPublicId || a.leadPublicId) {
+          <div class="ca-detail__section">
+            <h3 class="ca-detail__section-title">Contexte</h3>
+            <div class="ca-detail__context">
+              @if (a.contactPublicId) {
+                <a [routerLink]="['/crm/contacts', a.contactPublicId]" class="ca-detail__context-link">
+                  → Contact
+                </a>
+              }
+              @if (a.dealPublicId) {
+                <a [routerLink]="['/crm/deals', a.dealPublicId]" class="ca-detail__context-link">
+                  → Deal
+                </a>
+              }
+              @if (a.leadPublicId) {
+                <a [routerLink]="['/crm/leads', a.leadPublicId]" class="ca-detail__context-link">
+                  → Lead
+                </a>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <!-- ─── Sidebar ───────────────────────────────────────────────────────── -->
+      <aside class="ca-detail__sidebar">
+        @if (a.status === CommercialActionStatus.PENDING) {
+          <button class="btn btn--secondary" (click)="showCompleteModal.set(true)">Terminer</button>
+        }
+        <button class="btn btn--ghost" (click)="showEditModal.set(true)">Modifier</button>
+        @if (a.status === CommercialActionStatus.PENDING) {
+          <button class="btn btn--danger" (click)="onCancel()">Annuler l'action</button>
+        }
+      </aside>
+
+    </div>
+
+  }
+
+</div>
+
+<!-- ─── Edit modal ──────────────────────────────────────────────────────────── -->
+@if (showEditModal() && action(); as a) {
+  <div class="crm-modal-overlay" (click).self="showEditModal.set(false)">
+    <div class="crm-modal">
+      <app-commercial-action-form
+        [existingAction]="a"
+        (updated)="onEdited()"
+        (cancelled)="showEditModal.set(false)"
+      />
+    </div>
+  </div>
+}
+
+<!-- ─── Complete modal ──────────────────────────────────────────────────────── -->
+@if (showCompleteModal() && action(); as a) {
+  <div class="crm-modal-overlay" (click).self="showCompleteModal.set(false)">
+    <div class="crm-modal">
+      <app-commercial-action-complete-form
+        [action]="a"
+        (confirmed)="onConfirmed($event)"
+        (cancelled)="showCompleteModal.set(false)"
+      />
+    </div>
+  </div>
+}

@@ -1,0 +1,79 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Nouveau lead</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      <div class="action-panel">
+        <div class="action-panel__grid">
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="email" placeholder="prospect@exemple.com" />
+          </div>
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Sujet *</label>
+            <input type="text" [(ngModel)]="subject" placeholder="Ex : Demande de devis nettoyage" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Type *</label>
+            <select [(ngModel)]="leadType">
+              @for (t of leadTypes; track t) {
+                <option [value]="t">{{ leadTypeLabels[t] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="action-panel__row">
+            <label>Civilité</label>
+            <select [(ngModel)]="civility">
+              <option [ngValue]="null">—</option>
+              @for (c of civilities; track c) {
+                <option [ngValue]="c">{{ civilityLabels[c] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="action-panel__row">
+            <label>Prénom</label>
+            <input type="text" [(ngModel)]="firstName" placeholder="Prénom" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="lastName" placeholder="Nom" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="phone" placeholder="+32 470 00 00 00" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Entreprise</label>
+            <input type="text" [(ngModel)]="organisationName" placeholder="Nom de l'entreprise" />
+          </div>
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Notes / Message</label>
+            <textarea [(ngModel)]="message" rows="3" placeholder="Contexte de la prise de contact…"></textarea>
+          </div>
+
+        </div>
+
+        <div class="action-panel__footer">
+          <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !isValid">
+            Créer le lead
+          </button>
+          <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

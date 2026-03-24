@@ -21,6 +21,12 @@
     color: $dark-color;
   }
 
+  &__hint {
+    margin: 0;
+    font-size: 0.85rem;
+    color: $gray-dark;
+  }
+
   &__error {
     margin: 0;
     font-size: 0.875rem;
@@ -49,6 +55,18 @@
       color: $gray-dark;
     }
 
+    select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      font-family: inherit;
+      background: #fff;
+      cursor: pointer;
+
+      &:focus { outline: none; border-color: $primary-color; }
+    }
+
     input, textarea {
       padding: 0.5rem 0.75rem;
       border: 1px solid $border-color;
@@ -65,6 +83,129 @@
     display: flex;
     gap: 0.75rem;
   }
+}
+
+// ─── CRM Modal ───────────────────────────────────────────────────────────────
+
+.crm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: 1rem;
+  animation: crm-fade-in 0.2s ease-out;
+}
+
+.crm-modal {
+  background: #fff;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-lg;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: crm-slide-up 0.25s ease-out;
+
+  &--wide { max-width: 680px; }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: $dark-color;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: $gray-dark;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: $border-radius-sm;
+    line-height: 1;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $gray-light;
+      color: $dark-color;
+    }
+  }
+
+  &__step-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background: $gray-light;
+    border-bottom: 1px solid $border-color;
+    font-size: 0.8rem;
+  }
+
+  &__step {
+    color: $gray-dark;
+    font-weight: 500;
+
+    &--active {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+
+  &__step-sep { color: $gray-dark; }
+
+  &__body {
+    padding: 1.5rem;
+    flex: 1;
+
+    // Strip action-panel card styles when nested inside modal body
+    .action-panel {
+      background: none;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  &__footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.625rem;
+    background: $gray-light;
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  }
+}
+
+@keyframes crm-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes crm-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 // ─── Buttons (partagés dans tout le CRM) ─────────────────────────────────────
@@ -84,4 +225,5 @@
   &--secondary { background: $gray-medium;    color: $text-color; border-color: $border-color;   &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } }
   &--danger    { background: $danger-color;   color: #fff;        border-color: $danger-color;   &:hover:not(:disabled) { background: darken($danger-color, 8%); } }
   &--ghost     { background: transparent;     color: $gray-dark;  border-color: $border-color;   &:hover:not(:disabled) { color: $text-color; } }
+  &--sm        { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
 }

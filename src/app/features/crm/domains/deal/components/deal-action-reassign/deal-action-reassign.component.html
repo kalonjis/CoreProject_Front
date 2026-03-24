@@ -1,15 +1,22 @@
 <div class="action-panel">
   <h3 class="action-panel__title">Réassigner</h3>
 
-  <div class="action-panel__grid">
-    <div class="action-panel__row action-panel__row--full">
-      <label>Public ID du commercial</label>
-      <input type="text" [(ngModel)]="assignedToPublicId" placeholder="uuid commercial (vide = désassigner)" />
-    </div>
+  <div class="action-panel__row">
+    <label for="deal-commercial-select">Commercial</label>
+    @if (commercials().length === 0) {
+      <p class="action-panel__hint">Chargement…</p>
+    } @else {
+      <select id="deal-commercial-select" [(ngModel)]="selectedPublicId">
+        <option value="" disabled>— Sélectionner un commercial —</option>
+        @for (c of commercials(); track c.publicId) {
+          <option [value]="c.publicId">{{ displayName(c) }}</option>
+        }
+      </select>
+    }
   </div>
 
   <div class="action-panel__footer">
-    <button class="btn btn--primary" (click)="submit()" [disabled]="loading()">
+    <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !selectedPublicId">
       Réassigner
     </button>
     <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>

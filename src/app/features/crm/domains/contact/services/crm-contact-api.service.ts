@@ -13,6 +13,7 @@ import {
   MergeContactRequest
 } from '../models/contact.model';
 import { Page } from '../../../shared/models/page.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CrmContactApiService {
@@ -63,5 +64,18 @@ export class CrmContactApiService {
 
   merge(body: MergeContactRequest): Observable<ContactDetail> {
     return this.http.post<ContactDetail>(`${this.base}/merge`, body);
+  }
+
+  getFromLead(leadPublicId: string): Observable<ContactDetail> {
+    return this.http.get<ContactDetail>(`${this.base}/from-lead/${leadPublicId}`);
+  }
+
+  findByOrganisation(organisationPublicId: string): Observable<ContactSummary[]> {
+    const params = new HttpParams()
+      .set('organisationPublicId', organisationPublicId)
+      .set('page', 0)
+      .set('size', 100)
+      .set('sort', 'lastName,asc');
+    return this.http.get<Page<ContactSummary>>(this.base, { params }).pipe(map(p => p.content));
   }
 }

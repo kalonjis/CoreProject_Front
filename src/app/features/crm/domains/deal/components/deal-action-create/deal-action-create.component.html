@@ -1,0 +1,95 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Créer un deal</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      @if (pipelinesLoading()) {
+        <p class="action-panel__hint">Chargement…</p>
+      } @else {
+        <div class="action-panel">
+          <div class="action-panel__grid">
+
+            <div class="action-panel__row action-panel__row--full">
+              <label>Titre du deal *</label>
+              <input type="text" [(ngModel)]="dealTitle" placeholder="Ex : Contrat maintenance ACME" />
+            </div>
+
+            @if (showContactPicker) {
+              <div class="action-panel__row action-panel__row--full">
+                <label>Contact *</label>
+                @if (orgContacts().length > 0) {
+                  <select [(ngModel)]="selectedContactPublicId">
+                    <option value="">— Choisir un contact —</option>
+                    @for (c of orgContacts(); track c.publicId) {
+                      <option [value]="c.publicId">{{ c.firstName }} {{ c.lastName }}</option>
+                    }
+                  </select>
+                } @else {
+                  <p class="action-panel__hint">Aucun contact rattaché à cette organisation. Créez-en un d'abord.</p>
+                }
+              </div>
+            }
+
+            <div class="action-panel__row">
+              <label>Pipeline *</label>
+              <select
+                [ngModel]="selectedPipelineId()"
+                (ngModelChange)="onPipelineChange($event)"
+              >
+                @for (p of pipelines(); track p.publicId) {
+                  <option [value]="p.publicId">{{ p.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="action-panel__row">
+              <label>Étape *</label>
+              <select [(ngModel)]="dealStagePublicId">
+                @for (s of availableStages(); track s.publicId) {
+                  <option [value]="s.publicId">{{ s.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="action-panel__row action-panel__row--full">
+              <label>Commercial *</label>
+              <select [(ngModel)]="dealAssigneePublicId">
+                <option value="">— Choisir —</option>
+                @for (c of commercials(); track c.publicId) {
+                  <option [value]="c.publicId">{{ commercialDisplayName(c) }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="action-panel__row">
+              <label>Montant (€)</label>
+              <input type="number" [(ngModel)]="dealAmount" placeholder="0" min="0" />
+            </div>
+
+            <div class="action-panel__row">
+              <label>Date de clôture</label>
+              <input type="date" [(ngModel)]="dealExpectedClose" />
+            </div>
+
+          </div>
+
+          <div class="action-panel__footer">
+            <button
+              class="btn btn--primary"
+              (click)="submit()"
+              [disabled]="loading() || !isValid"
+            >
+              Créer le deal
+            </button>
+            <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

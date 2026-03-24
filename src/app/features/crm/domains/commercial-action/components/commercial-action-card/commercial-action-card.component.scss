@@ -44,6 +44,9 @@
     font-size: 0.875rem;
     color: $dark-color;
     margin: 0;
+    text-decoration: none;
+    display: block;
+    &:hover { color: $primary-color; }
   }
 
   &__description {
@@ -56,6 +59,15 @@
     font-size: 0.8rem;
     color: #6b7280;
     margin: 0;
+  }
+
+  &__location {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__actions {

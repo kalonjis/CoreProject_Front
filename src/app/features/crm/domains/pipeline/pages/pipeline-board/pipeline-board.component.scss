@@ -25,6 +25,20 @@
     margin: 0;
   }
 
+  &__pipeline-select {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: $text-color;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 0.25rem 0.6rem;
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:focus { outline: none; border-color: $primary-color; }
+  }
+
   &__name {
     font-size: 1rem;
     color: $gray-dark;

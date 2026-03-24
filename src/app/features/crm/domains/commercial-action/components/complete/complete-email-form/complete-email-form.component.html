@@ -1,0 +1,41 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Terminer l'email</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="crm-modal__body">
+
+        <div class="complete-context">
+          <p class="complete-context__label">Email à clôturer</p>
+          <p class="complete-context__title">{{ action.title }}</p>
+        </div>
+
+        <div class="action-panel__row" style="margin-top: 1.25rem;">
+          <label>Objet *</label>
+          <input type="text"
+            [ngModel]="emailSubject()" (ngModelChange)="emailSubject.set($event)"
+            name="emailSubject" required />
+        </div>
+
+        <div class="action-panel__row" style="margin-top: 1rem;">
+          <label>Extrait du contenu</label>
+          <textarea
+            [ngModel]="bodySnippet()" (ngModelChange)="bodySnippet.set($event)"
+            name="bodySnippet" rows="4"
+            placeholder="Résumé court du message envoyé…"></textarea>
+        </div>
+
+      </div>
+
+      <div class="crm-modal__footer">
+        <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+        <button type="submit" class="btn btn--primary" [disabled]="!isValid">Terminer l'email</button>
+      </div>
+    </form>
+
+  </div>
+</div>

@@ -13,6 +13,10 @@
       <span class="lead-info-card__value">{{ lead.assignedToUsername ?? '—' }}</span>
     </div>
     <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Source</span>
+      <span class="lead-info-card__value">{{ lead.leadSource ? leadSourceLabels[lead.leadSource] : '—' }}</span>
+    </div>
+    <div class="lead-info-card__field">
       <span class="lead-info-card__label">Soumis le</span>
       <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy HH:mm' }}</span>
     </div>
@@ -28,10 +32,31 @@
     </div>
   </div>
 
-  <div class="lead-info-card__subject">
-    <span class="lead-info-card__label">Sujet</span>
-    <p class="lead-info-card__value">{{ lead.subject }}</p>
-  </div>
+  @if (lead.civility || lead.firstName || lead.lastName || lead.phone || lead.organisationName) {
+    <div class="lead-info-card__row">
+      @if (lead.civility || lead.firstName || lead.lastName) {
+        <div class="lead-info-card__field">
+          <span class="lead-info-card__label">Nom</span>
+          <span class="lead-info-card__value">
+            @if (lead.civility) { {{ civilityLabels[lead.civility] }} }
+            {{ lead.firstName }} {{ lead.lastName }}
+          </span>
+        </div>
+      }
+      @if (lead.phone) {
+        <div class="lead-info-card__field">
+          <span class="lead-info-card__label">Téléphone</span>
+          <span class="lead-info-card__value">{{ lead.phone }}</span>
+        </div>
+      }
+      @if (lead.organisationName) {
+        <div class="lead-info-card__field">
+          <span class="lead-info-card__label">Entreprise</span>
+          <span class="lead-info-card__value">{{ lead.organisationName }}</span>
+        </div>
+      }
+    </div>
+  }
 
   @if (lead.rejectionReason) {
     <div class="lead-info-card__rejection">
