@@ -2,12 +2,21 @@
   <h3 class="action-panel__title">Assigner le contact</h3>
 
   <div class="action-panel__row">
-    <label>Public ID du commercial <small>(laisser vide pour désassigner)</small></label>
-    <input type="text" [(ngModel)]="commercialPublicId" placeholder="uuid du commercial" />
+    <label for="contact-commercial-select">Commercial</label>
+    @if (commercials().length === 0) {
+      <p class="action-panel__hint">Chargement…</p>
+    } @else {
+      <select id="contact-commercial-select" [(ngModel)]="selectedPublicId">
+        <option value="" disabled>— Sélectionner un commercial —</option>
+        @for (c of commercials(); track c.publicId) {
+          <option [value]="c.publicId">{{ displayName(c) }}</option>
+        }
+      </select>
+    }
   </div>
 
   <div class="action-panel__footer">
-    <button class="btn btn--primary" (click)="submit()" [disabled]="loading()">Confirmer</button>
+    <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !selectedPublicId">Confirmer</button>
     <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
   </div>
 </div>

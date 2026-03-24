@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   CommercialActionResponse,
   CommercialActionStatus,
+  CompleteCommercialActionRequest,
   CreateCommercialActionRequest,
   UpdateCommercialActionRequest,
   ReassignCommercialActionRequest
@@ -33,6 +34,10 @@ export class CrmCommercialActionApiService {
     return this.http.get<CommercialActionResponse[]>(`${this.base}/contact/${contactPublicId}`);
   }
 
+  getByLead(leadPublicId: string): Observable<CommercialActionResponse[]> {
+    return this.http.get<CommercialActionResponse[]>(`${this.base}/lead/${leadPublicId}`);
+  }
+
   create(body: CreateCommercialActionRequest): Observable<CommercialActionResponse> {
     return this.http.post<CommercialActionResponse>(this.base, body);
   }
@@ -41,8 +46,8 @@ export class CrmCommercialActionApiService {
     return this.http.patch<CommercialActionResponse>(`${this.base}/${publicId}`, body);
   }
 
-  complete(publicId: string): Observable<CommercialActionResponse> {
-    return this.http.patch<CommercialActionResponse>(`${this.base}/${publicId}/complete`, {});
+  complete(publicId: string, body?: CompleteCommercialActionRequest): Observable<CommercialActionResponse> {
+    return this.http.patch<CommercialActionResponse>(`${this.base}/${publicId}/complete`, body ?? {});
   }
 
   cancel(publicId: string): Observable<CommercialActionResponse> {

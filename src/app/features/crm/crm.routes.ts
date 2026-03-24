@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/auth/guards/auth.guard';
+import { adminGuard } from '../../core/auth/guards/admin.guard';
 
 export const CRM_ROUTES: Routes = [
   {
@@ -136,16 +137,6 @@ export const CRM_ROUTES: Routes = [
       },
 
       // -----------------------------------------------------------------------
-      // INTERACTIONS
-      // -----------------------------------------------------------------------
-      {
-        path: 'interactions',
-        loadComponent: () => import('./domains/interaction/pages/interaction-list/interaction-list.component')
-          .then(m => m.InteractionListComponent),
-        title: 'CRM — Interactions'
-      },
-
-      // -----------------------------------------------------------------------
       // COMMERCIAL ACTIONS
       // -----------------------------------------------------------------------
       {
@@ -153,6 +144,12 @@ export const CRM_ROUTES: Routes = [
         loadComponent: () => import('./domains/commercial-action/pages/commercial-action-list/commercial-action-list.component')
           .then(m => m.CommercialActionListComponent),
         title: 'CRM — Actions commerciales'
+      },
+      {
+        path: 'commercial-actions/:publicId',
+        loadComponent: () => import('./domains/commercial-action/pages/commercial-action-detail/commercial-action-detail.component')
+          .then(m => m.CommercialActionDetailComponent),
+        title: 'CRM — Action commerciale'
       },
 
       // -----------------------------------------------------------------------
@@ -175,6 +172,17 @@ export const CRM_ROUTES: Routes = [
         loadComponent: () => import('./domains/support-ticket/pages/support-ticket-detail/support-ticket-detail.component')
           .then(m => m.SupportTicketDetailComponent),
         title: 'CRM — Ticket'
+      },
+
+      // -----------------------------------------------------------------------
+      // SETTINGS (admin only)
+      // -----------------------------------------------------------------------
+      {
+        path: 'settings/pipelines',
+        canActivate: [() => adminGuard()],
+        loadComponent: () => import('./domains/pipeline/pages/pipeline-settings/pipeline-settings.component')
+          .then(m => m.PipelineSettingsComponent),
+        title: 'CRM — Paramètres Pipelines'
       },
 
       // -----------------------------------------------------------------------

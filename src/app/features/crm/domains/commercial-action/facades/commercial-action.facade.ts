@@ -1,0 +1,53 @@
+import { Injectable, inject, signal } from '@angular/core';
+import { CrmCommercialActionApiService } from '../services/crm-commercial-action-api.service';
+import { FeedbackService }               from '../../../../../shared/feedback/tools/feedback.service';
+import {
+  CommercialActionResponse,
+  CommercialActionStatus,
+  CompleteCommercialActionRequest
+} from '../models/commercial-action.model';
+
+@Injectable({ providedIn: 'root' })
+export class CommercialActionFacade {
+
+  private readonly api      = inject(CrmCommercialActionApiService);
+  private readonly feedback = inject(FeedbackService);
+
+  private readonly _actions = signal<CommercialActionResponse[]>([]);
+  private readonly _loading = signal(false);
+  private readonly _filter  = signal<CommercialActionStatus | undefined>(CommercialActionStatus.PENDING);
+
+  readonly actions = this._actions.asReadonly();
+  readonly loading = this._loading.asReadonly();
+  readonly filter  = this._filter.asReadonly();
+
+  load(): void {
+    this._loading.set(true);
+    this.api.getMyActions(this._filter()).subscribe({
+      next:  items => { this._actions.set(items); this._loading.set(false); },
+      error: ()    => { this._loading.set(false); this.feedback.showError('Chargement des actions impossible.'); }
+    });
+  }
+
+  setFilter(status: CommercialActionStatus | undefined): void {
+    this._filter.set(status);
+    this.load();
+  }
+
+  complete(publicId: string, details?: CompleteCommercialActionRequest): void {
+    this.api.complete(publicId, details).subscribe({
+      next: () => {
+        this._actions.update(list => list.filter(a => a.publicId !== publicId));
+        this.feedback.showSuccess('Action terminée.');
+      },
+      error: () => this.feedback.showError('Impossible de terminer l\'action.')
+    });
+  }
+
+  cancel(publicId: string): void {
+    this.api.cancel(publicId).subscribe({
+      next:  () => this._actions.update(list => list.filter(a => a.publicId !== publicId)),
+      error: () => this.feedback.showError('Impossible d\'annuler l\'action.')
+    });
+  }
+}

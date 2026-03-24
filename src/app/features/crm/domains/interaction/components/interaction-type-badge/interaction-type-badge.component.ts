@@ -25,7 +25,9 @@ import { InteractionType, INTERACTION_TYPE_LABELS } from '../../models/interacti
       &--meeting     { background: #d1fae5; color: #065f46; }
       &--note        { background: #fef9c3; color: #854d0e; }
       &--visit       { background: #ffedd5; color: #9a3412; }
-      &--action_done { background: #f0fdf4; color: #15803d; }
+      &--demo         { background: #fdf4ff; color: #7e22ce; }
+      &--action_done  { background: #f0fdf4; color: #15803d; }
+      &--contact_form { background: #f1f5f9; color: #475569; }
     }
   `]
 })
@@ -40,7 +42,9 @@ export class InteractionTypeBadgeComponent {
       [InteractionType.MEETING]:     '🤝',
       [InteractionType.NOTE]:        '📝',
       [InteractionType.VISIT]:       '🚗',
-      [InteractionType.ACTION_DONE]: '✅'
+      [InteractionType.DEMO]:        '🎯',
+      [InteractionType.ACTION_DONE]:  '✅',
+      [InteractionType.CONTACT_FORM]: '📋'
     };
     return icons[this.type];
   }

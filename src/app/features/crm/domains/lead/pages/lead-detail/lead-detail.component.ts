@@ -1,80 +1,94 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
-import { CrmLeadApiService } from '../../services/crm-lead-api.service';
-import { LeadDetail, LeadStatus } from '../../models/lead.model';
-import { LeadInfoCardComponent } from '../../components/lead-info-card/lead-info-card.component';
-import { LeadActionAssignComponent } from '../../components/lead-action-assign/lead-action-assign.component';
-import { LeadActionRejectComponent } from '../../components/lead-action-reject/lead-action-reject.component';
-import { LeadActionConvertComponent } from '../../components/lead-action-convert/lead-action-convert.component';
+import { LeadFacade }        from '../../facades/lead.facade';
+import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
+import { AuthStore }         from '../../../../../../core/auth/state/auth.store';
+import { LeadStatus }        from '../../models/lead.model';
+import { LeadInfoCardComponent }         from '../../components/lead-info-card/lead-info-card.component';
+import { LeadActionAssignComponent }     from '../../components/lead-action-assign/lead-action-assign.component';
+import { LeadActionEnrichComponent }     from '../../components/lead-action-enrich/lead-action-enrich.component';
+import { LeadActionRejectComponent }     from '../../components/lead-action-reject/lead-action-reject.component';
+import { LeadActionConvertComponent }    from '../../components/lead-action-convert/lead-action-convert.component';
+import { InteractionTimelineComponent }  from '../../../interaction/components/interaction-timeline/interaction-timeline.component';
+import { InteractionLogFormComponent }   from '../../../interaction/components/interaction-log-form/interaction-log-form.component';
+import { CommercialActionCardComponent, CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
+import { CommercialActionFormComponent } from '../../../commercial-action/components/commercial-action-form/commercial-action-form.component';
 
-type ActiveAction = 'assign' | 'convert' | 'reject' | null;
+type ActiveAction = 'enrich' | 'assign' | 'convert' | 'reject' | 'log-interaction' | 'create-action' | null;
 
 @Component({
   selector: 'app-lead-detail',
-  imports: [LeadInfoCardComponent, LeadActionAssignComponent, LeadActionRejectComponent, LeadActionConvertComponent],
+  providers: [LeadFacade, InteractionFacade],
+  imports: [
+    LeadInfoCardComponent,
+    LeadActionEnrichComponent,
+    LeadActionAssignComponent,
+    LeadActionRejectComponent,
+    LeadActionConvertComponent,
+    InteractionTimelineComponent,
+    InteractionLogFormComponent,
+    CommercialActionCardComponent,
+    CommercialActionFormComponent
+  ],
   templateUrl: './lead-detail.component.html',
   styleUrl: './lead-detail.component.scss'
 })
 export class LeadDetailComponent implements OnInit {
 
-  private readonly api      = inject(CrmLeadApiService);
-  private readonly route    = inject(ActivatedRoute);
-  private readonly router   = inject(Router);
-  private readonly feedback = inject(FeedbackService);
+  readonly facade            = inject(LeadFacade);
+  readonly interactionFacade = inject(InteractionFacade);
 
-  readonly lead          = signal<LeadDetail | null>(null);
-  readonly loading       = signal(false);
-  readonly actionLoading = signal(false);
-  readonly error         = signal<string | null>(null);
-  readonly activeAction  = signal<ActiveAction>(null);
+  private readonly route     = inject(ActivatedRoute);
+  private readonly router    = inject(Router);
+  private readonly authStore = inject(AuthStore);
 
-  readonly isTerminal = computed(() => {
-    const s = this.lead()?.status;
-    return s === LeadStatus.CONVERTED || s === LeadStatus.REJECTED;
+  readonly activeAction = signal<ActiveAction>(null);
+  readonly LeadStatus   = LeadStatus;
+
+  readonly canMarkInReview = computed(() => {
+    const lead = this.facade.lead();
+    if (!lead || lead.status !== LeadStatus.NEW) return false;
+    if (this.authStore.isAdmin()) return true;
+    return lead.assignedToPublicId === this.authStore.user()?.publicId;
   });
 
-  readonly canConvert = computed(() => this.lead()?.status === LeadStatus.IN_REVIEW);
-
-  readonly LeadStatus = LeadStatus;
+  private publicId = '';
 
   ngOnInit(): void {
-    const publicId = this.route.snapshot.paramMap.get('publicId')!;
-    this.loading.set(true);
-    this.api.getByPublicId(publicId).subscribe({
-      next: lead => { this.lead.set(lead); this.loading.set(false); },
-      error: ()   => { this.error.set('Lead introuvable.'); this.loading.set(false); }
-    });
-  }
-
-  back(): void {
-    this.router.navigate(['/crm/leads']);
+    this.publicId = this.route.snapshot.paramMap.get('publicId')!;
+    this.facade.loadDetail(this.publicId);
   }
 
   toggleAction(action: ActiveAction): void {
     this.activeAction.set(this.activeAction() === action ? null : action);
   }
 
-  markInReview(): void {
-    const lead = this.lead();
-    if (!lead) return;
-    this.actionLoading.set(true);
-    this.api.markInReview(lead.publicId).subscribe({
-      next: updated => {
-        this.lead.set(updated);
-        this.actionLoading.set(false);
-        this.feedback.showSuccess('Lead passé en revue.');
-      },
-      error: () => {
-        this.actionLoading.set(false);
-        this.feedback.showError('Impossible de mettre le lead en revue.');
-      }
-    });
+  onActionDone(): void {
+    this.activeAction.set(null);
+    this.facade.loadDetail(this.publicId);
   }
 
-  onActionDone(): void {
-    const publicId = this.lead()!.publicId;
+  onInteractionLogged(): void {
     this.activeAction.set(null);
-    this.api.getByPublicId(publicId).subscribe(updated => this.lead.set(updated));
+    this.interactionFacade.refresh();
   }
+
+  onInteractionDelete(interactionPublicId: string): void {
+    this.interactionFacade.deleteInteraction(interactionPublicId);
+  }
+
+  onActionComplete(event: CompleteEvent): void {
+    this.facade.completeAction(event.publicId, event.details);
+  }
+
+  onActionCancel(publicId: string): void {
+    this.facade.cancelAction(publicId);
+  }
+
+  onActionCreated(): void {
+    this.activeAction.set(null);
+    this.facade.actionCreated(this.publicId);
+  }
+
+  back(): void { this.router.navigate(['/crm/leads']); }
 }

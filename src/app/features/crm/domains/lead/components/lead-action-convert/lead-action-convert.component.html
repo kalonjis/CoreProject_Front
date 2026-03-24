@@ -1,33 +1,146 @@
-<div class="action-panel">
-  <h3 class="action-panel__title">Convertir en contact</h3>
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
 
-  <div class="action-panel__grid">
-    <div class="action-panel__row">
-      <label>Prénom *</label>
-      <input type="text" [(ngModel)]="form.firstName" placeholder="Prénom" />
+    <!-- ─── Header ──────────────────────────────────────────────────────── -->
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">
+        @if (step() === 'convert') { Convertir en contact }
+        @else { Créer un deal associé }
+      </h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
     </div>
-    <div class="action-panel__row">
-      <label>Nom *</label>
-      <input type="text" [(ngModel)]="form.lastName" placeholder="Nom" />
-    </div>
-    <div class="action-panel__row">
-      <label>Poste</label>
-      <input type="text" [(ngModel)]="form.jobTitle" placeholder="Directeur commercial…" />
-    </div>
-    <div class="action-panel__row">
-      <label>Téléphone</label>
-      <input type="text" [(ngModel)]="form.phone" placeholder="+33 6 …" />
-    </div>
-    <div class="action-panel__row action-panel__row--full">
-      <label>Organisation (public ID, optionnel)</label>
-      <input type="text" [(ngModel)]="form.organisationPublicId" placeholder="uuid organisation" />
-    </div>
-  </div>
 
-  <div class="action-panel__footer">
-    <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !isValid">
-      Convertir
-    </button>
-    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+    <!-- ─── Step bar ─────────────────────────────────────────────────────── -->
+    <div class="crm-modal__step-bar">
+      <span class="crm-modal__step" [class.crm-modal__step--active]="step() === 'convert'">
+        1. Contact
+      </span>
+      <span class="crm-modal__step-sep">›</span>
+      <span class="crm-modal__step" [class.crm-modal__step--active]="step() === 'deal'">
+        2. Deal (optionnel)
+      </span>
+    </div>
+
+    <!-- ─── Body ─────────────────────────────────────────────────────────── -->
+    <div class="crm-modal__body">
+
+      @if (step() === 'convert') {
+
+        <!-- Step 1 : Conversion ─────────────────────────────────────────── -->
+        <div class="action-panel">
+          <div class="action-panel__grid">
+            <div class="action-panel__row">
+              <label>Prénom *</label>
+              <input type="text" [(ngModel)]="form.firstName" placeholder="Prénom" />
+            </div>
+            <div class="action-panel__row">
+              <label>Nom *</label>
+              <input type="text" [(ngModel)]="form.lastName" placeholder="Nom" />
+            </div>
+            <div class="action-panel__row action-panel__row--full">
+              <label>Email *</label>
+              <input type="email" [(ngModel)]="form.email" placeholder="email@exemple.com" />
+            </div>
+            <div class="action-panel__row">
+              <label>Poste</label>
+              <input type="text" [(ngModel)]="form.jobTitle" placeholder="Directeur commercial…" />
+            </div>
+            <div class="action-panel__row">
+              <label>Téléphone</label>
+              <input type="text" [(ngModel)]="form.phone" placeholder="+32 470 00 00 00" />
+            </div>
+            <div class="action-panel__row action-panel__row--full">
+              <label>Entreprise (optionnel)</label>
+              <input type="text" [(ngModel)]="form.organisationName" placeholder="Nom de l'entreprise" />
+            </div>
+          </div>
+
+          <div class="action-panel__footer">
+            <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !isConvertValid">
+              Convertir →
+            </button>
+            <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+          </div>
+        </div>
+
+      } @else {
+
+        <!-- Step 2 : Deal ───────────────────────────────────────────────── -->
+        <p class="action-panel__hint" style="margin-bottom:1rem">
+          Contact créé :
+          <strong>{{ convertedContact()?.firstName }} {{ convertedContact()?.lastName }}</strong>
+          — vous pouvez créer un deal maintenant ou passer cette étape.
+        </p>
+
+        @if (pipelinesLoading()) {
+          <p class="action-panel__hint">Chargement des pipelines…</p>
+        } @else {
+          <div class="action-panel">
+            <div class="action-panel__grid">
+
+              <div class="action-panel__row action-panel__row--full">
+                <label>Titre du deal *</label>
+                <input type="text" [(ngModel)]="dealTitle" placeholder="Ex : Contrat maintenance ACME" />
+              </div>
+
+              <div class="action-panel__row">
+                <label>Pipeline *</label>
+                <select
+                  [ngModel]="selectedPipelineId()"
+                  (ngModelChange)="onPipelineChange($event)"
+                >
+                  @for (p of pipelines(); track p.publicId) {
+                    <option [value]="p.publicId">{{ p.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="action-panel__row">
+                <label>Étape *</label>
+                <select [(ngModel)]="dealStagePublicId">
+                  @for (s of availableStages(); track s.publicId) {
+                    <option [value]="s.publicId">{{ s.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="action-panel__row action-panel__row--full">
+                <label>Commercial *</label>
+                <select [(ngModel)]="dealAssigneePublicId">
+                  <option value="">— Choisir —</option>
+                  @for (c of commercials(); track c.publicId) {
+                    <option [value]="c.publicId">{{ commercialDisplayName(c) }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="action-panel__row">
+                <label>Montant (€)</label>
+                <input type="number" [(ngModel)]="dealAmount" placeholder="0" min="0" />
+              </div>
+
+              <div class="action-panel__row">
+                <label>Date de clôture</label>
+                <input type="date" [(ngModel)]="dealExpectedClose" />
+              </div>
+
+            </div>
+
+            <div class="action-panel__footer">
+              <button
+                class="btn btn--primary"
+                (click)="createDeal()"
+                [disabled]="loading() || !isDealValid"
+              >
+                Créer le deal
+              </button>
+              <button class="btn btn--ghost" type="button" (click)="skipDeal()">Passer cette étape</button>
+            </div>
+          </div>
+        }
+
+      }
+
+    </div>
   </div>
 </div>

@@ -1,0 +1,182 @@
+@import 'variables';
+
+.ca-detail {
+
+  &__breadcrumb {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin-bottom: 1.25rem;
+    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+
+  &__header {
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $dark-color;
+    margin: 0 0 0.625rem;
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__type-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: $border-radius;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  &__overdue {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: $border-radius;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__description {
+    color: $text-color;
+    line-height: 1.6;
+    margin: 0;
+    padding: 1rem;
+    background: $body-bg;
+    border-radius: $border-radius;
+    border: 1px solid $border-color;
+  }
+
+  &__section {
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+  }
+
+  &__section-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.875rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0.375rem 1rem;
+    margin: 0;
+
+    dt {
+      font-size: 0.8125rem;
+      color: $gray-dark;
+      font-weight: 500;
+    }
+
+    dd {
+      font-size: 0.875rem;
+      color: $dark-color;
+      margin: 0;
+    }
+  }
+
+  &__context {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__context-link {
+    font-size: 0.875rem;
+    color: $primary-color;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__info  { color: $gray-dark; font-style: italic; }
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+
+.btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: $transition-fast;
+
+  &--secondary {
+    background: $primary-color;
+    color: #fff;
+    border-color: $primary-color;
+    &:hover { opacity: 0.88; }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $text-color;
+    border-color: $border-color;
+    &:hover { background: $body-bg; }
+  }
+
+  &--danger {
+    background: transparent;
+    color: $danger-color;
+    border-color: $danger-color;
+    &:hover { background: rgba($danger-color, 0.06); }
+  }
+}
+
+// ─── Modals ───────────────────────────────────────────────────────────────────
+
+.crm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.crm-modal {
+  background: #fff;
+  border-radius: $border-radius;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { CrmSupportTicketApiService } from '../../services/crm-support-ticket-api.service';
+import { CrmUserApiService } from '../../../../shared/services/crm-user-api.service';
 import {
   SupportTicketDetail,
   SupportTicketStatus,
@@ -11,6 +12,8 @@ import {
 } from '../../models/support-ticket.model';
 import { SupportTicketStatusBadgeComponent } from '../../components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
+import { AuthFacade } from '../../../../../../core/auth/services/auth.facade';
+import { CommercialSummary, commercialDisplayName } from '../../../../shared/models/commercial.model';
 
 type ActivePanel = 'status' | 'assign' | 'edit' | null;
 
@@ -22,10 +25,12 @@ type ActivePanel = 'status' | 'assign' | 'edit' | null;
 })
 export class SupportTicketDetailComponent implements OnInit {
 
-  private readonly route    = inject(ActivatedRoute);
-  private readonly router   = inject(Router);
-  private readonly api      = inject(CrmSupportTicketApiService);
-  private readonly feedback = inject(FeedbackService);
+  private readonly route      = inject(ActivatedRoute);
+  private readonly router     = inject(Router);
+  private readonly api        = inject(CrmSupportTicketApiService);
+  private readonly userApi    = inject(CrmUserApiService);
+  private readonly feedback   = inject(FeedbackService);
+  private readonly authFacade = inject(AuthFacade);
 
   readonly ticket       = signal<SupportTicketDetail | null>(null);
   readonly loading      = signal(false);
@@ -39,7 +44,10 @@ export class SupportTicketDetailComponent implements OnInit {
   newStatus: SupportTicketStatus | '' = '';
 
   // ─── Assign panel ─────────────────────────────────────────────────────────
+  commercials      = signal<CommercialSummary[]>([]);
   assigneePublicId = '';
+
+  readonly displayName = commercialDisplayName;
 
   // ─── Edit panel ───────────────────────────────────────────────────────────
   editSubject     = '';
@@ -80,8 +88,20 @@ export class SupportTicketDetailComponent implements OnInit {
       this.editSubject     = t.subject;
       this.editDescription = t.description ?? '';
     }
-    if (panel === 'assign' && t) {
-      this.assigneePublicId = t.assignedToPublicId ?? '';
+    if (panel === 'assign') {
+      this.assigneePublicId = t?.assignedToPublicId ?? '';
+      if (this.authFacade.isAdmin()) {
+        this.userApi.getCommercials().subscribe({
+          next: list => this.commercials.set(list),
+          error: ()  => this.feedback.showError('Impossible de charger la liste des commerciaux.')
+        });
+      } else {
+        const me = this.authFacade.user();
+        if (me) {
+          this.commercials.set([{ publicId: me.publicId, firstName: me.firstname, lastName: me.lastname, username: me.username }]);
+          this.assigneePublicId = me.publicId;
+        }
+      }
     }
     if (panel === 'status') {
       this.newStatus = '';
@@ -99,9 +119,10 @@ export class SupportTicketDetailComponent implements OnInit {
   }
 
   submitAssign(): void {
+    if (!this.assigneePublicId) return;
     this.saving.set(true);
     this.api.assign(this.publicId, {
-      assignedToPublicId: this.assigneePublicId.trim() || null
+      assignedToPublicId: this.assigneePublicId
     }).subscribe({
       next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
       error: () => { this.saving.set(false); this.feedback.showError('Erreur lors de l\'assignation.'); }

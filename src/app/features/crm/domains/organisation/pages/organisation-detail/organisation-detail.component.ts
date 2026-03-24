@@ -4,12 +4,21 @@ import { CrmOrganisationApiService } from '../../services/crm-organisation-api.s
 import { OrganisationDetail } from '../../models/organisation.model';
 import { OrganisationInfoCardComponent } from '../../components/organisation-info-card/organisation-info-card.component';
 import { OrganisationActionMergeComponent } from '../../components/organisation-action-merge/organisation-action-merge.component';
+import { ContactActionCreateComponent } from '../../../contact/components/contact-action-create/contact-action-create.component';
+import { DealActionCreateComponent } from '../../../deal/components/deal-action-create/deal-action-create.component';
+import { ContactDetail } from '../../../contact/models/contact.model';
 
 type ActionPanel = 'merge' | null;
 
 @Component({
   selector: 'app-organisation-detail',
-  imports: [RouterLink, OrganisationInfoCardComponent, OrganisationActionMergeComponent],
+  imports: [
+    RouterLink,
+    OrganisationInfoCardComponent,
+    OrganisationActionMergeComponent,
+    ContactActionCreateComponent,
+    DealActionCreateComponent
+  ],
   templateUrl: './organisation-detail.component.html',
   styleUrl: './organisation-detail.component.scss'
 })
@@ -19,10 +28,12 @@ export class OrganisationDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly api    = inject(CrmOrganisationApiService);
 
-  readonly organisation = signal<OrganisationDetail | null>(null);
-  readonly loading      = signal(false);
-  readonly error        = signal<string | null>(null);
-  readonly activeAction = signal<ActionPanel>(null);
+  readonly organisation   = signal<OrganisationDetail | null>(null);
+  readonly loading        = signal(false);
+  readonly error          = signal<string | null>(null);
+  readonly activeAction   = signal<ActionPanel>(null);
+  readonly showCreateContact = signal(false);
+  readonly showCreateDeal    = signal(false);
 
   private publicId = '';
 
@@ -48,6 +59,15 @@ export class OrganisationDetailComponent implements OnInit {
   onMerged(survivingId: string): void {
     this.activeAction.set(null);
     this.router.navigate(['/crm/organisations', survivingId]);
+  }
+
+  onContactCreated(contact: ContactDetail): void {
+    this.showCreateContact.set(false);
+    this.router.navigate(['/crm/contacts', contact.publicId]);
+  }
+
+  onDealCreated(): void {
+    this.showCreateDeal.set(false);
   }
 
   goEdit(): void { this.router.navigate(['/crm/organisations', this.publicId, 'edit']); }

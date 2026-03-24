@@ -1,0 +1,73 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Enrichir le lead</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      <div class="action-panel">
+        <div class="action-panel__grid">
+          <div class="action-panel__row">
+            <label for="enrich-civility">Civilité</label>
+            <select id="enrich-civility" name="civility" [(ngModel)]="civility">
+              <option [ngValue]="null">—</option>
+              @for (c of civilities; track c) {
+                <option [ngValue]="c">{{ civilityLabels[c] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-firstname">Prénom</label>
+            <input id="enrich-firstname" type="text" [(ngModel)]="firstName" placeholder="Prénom" maxlength="100" />
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-lastname">Nom</label>
+            <input id="enrich-lastname" type="text" [(ngModel)]="lastName" placeholder="Nom de famille" maxlength="100" />
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-phone">Téléphone</label>
+            <input id="enrich-phone" type="tel" [(ngModel)]="phone" placeholder="+32 470 00 00 00" maxlength="20" />
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-org">Entreprise</label>
+            <input id="enrich-org" type="text" [(ngModel)]="organisationName" placeholder="Nom de l'entreprise" maxlength="200" />
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-type">Type de demande</label>
+            <select id="enrich-type" name="leadType" [(ngModel)]="leadType">
+              <option [ngValue]="null">—</option>
+              @for (type of leadTypes; track type) {
+                <option [ngValue]="type">{{ leadTypeLabels[type] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="action-panel__row">
+            <label for="enrich-source">Source</label>
+            <select id="enrich-source" name="leadSource" [(ngModel)]="leadSource">
+              <option [ngValue]="null">—</option>
+              @for (src of leadSources; track src) {
+                <option [ngValue]="src">{{ leadSourceLabels[src] }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="action-panel__footer">
+          <button class="btn btn--primary" (click)="submit()" [disabled]="loading()">
+            Enregistrer
+          </button>
+          <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -2,7 +2,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {Observable, tap, catchError, throwError, finalize, switchMap, of} from 'rxjs';
+import {Observable, tap, catchError, throwError, finalize, switchMap, of, EMPTY} from 'rxjs';
 
 import { AuthStore } from '../state/auth.store';
 import { AuthApiService } from './auth-api.service';
@@ -353,7 +353,16 @@ export class AuthFacade {
         this.syncService.broadcastLogin();
         this.syncService.startListening();
       }),
-      tap(() => this.navigateAfterLogin(returnUrl))
+      tap(() => this.navigateAfterLogin(returnUrl)),
+      catchError(err => {
+        if (this.isMustChangePasswordError(err)) {
+          this.router.navigate(['/password/change'], { queryParams: { forced: 'true', returnUrl } });
+          this.authStore.setLoading(false);
+          return EMPTY;
+        }
+        this.authStore.setLoading(false);
+        return EMPTY;
+      })
     ).subscribe();
   }
 
@@ -361,9 +370,23 @@ export class AuthFacade {
    * Handle login errors consistently.
    */
   private handleLoginError(err: any): Observable<never> {
+    if (this.isMustChangePasswordError(err)) {
+      this.router.navigate(['/password/change'], { queryParams: { forced: 'true' } });
+      this.authStore.setLoading(false);
+      return EMPTY as unknown as Observable<never>;
+    }
     const message = err.error?.message || err.error?.error || 'Login failed';
     this.authStore.setError(message);
     this.authStore.setLoading(false);
     return throwError(() => err);
+  }
+
+  /**
+   * Detect a 403 PasswordChangeRequiredException from the backend.
+   * This is thrown when getSession() is called and mustChangePassword=true.
+   */
+  private isMustChangePasswordError(err: any): boolean {
+    return err?.status === 403 &&
+      (err.error?.message as string)?.toLowerCase().includes('password change required');
   }
 }

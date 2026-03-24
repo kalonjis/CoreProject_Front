@@ -2,14 +2,12 @@
   <div class="deal-detail__breadcrumb">
     <a routerLink="/crm/deals">Deals</a>
     <span> / </span>
-    <span>{{ deal()?.title ?? '…' }}</span>
+    <span>{{ facade.deal()?.title ?? '…' }}</span>
   </div>
 
-  @if (loading()) {
+  @if (facade.detailLoading()) {
     <p class="deal-detail__info">Chargement…</p>
-  } @else if (error()) {
-    <p class="deal-detail__error">{{ error() }}</p>
-  } @else if (deal(); as d) {
+  } @else if (facade.deal(); as d) {
     <div class="deal-detail__layout">
 
       <div class="deal-detail__main">
@@ -32,8 +30,8 @@
           }
 
           <app-interaction-timeline
-            [interactions]="interactions()"
-            [loading]="timelineLoading()"
+            [entries]="interactionFacade.entries()"
+            [loading]="interactionFacade.loading()"
             (deleteRequested)="onInteractionDelete($event)"
           />
         </div>
@@ -88,18 +86,17 @@
           @if (showActionForm()) {
             <app-commercial-action-form
               [dealPublicId]="d.publicId"
-              [currentUserPublicId]="currentUserPublicId"
               (created)="onActionCreated()"
               (cancelled)="showActionForm.set(false)"
             />
           }
 
-          @if (actionsLoading()) {
+          @if (facade.actionsLoading()) {
             <p class="deal-detail__actions-state">Chargement…</p>
-          } @else if (commercialActions().length === 0) {
+          } @else if (facade.actions().length === 0) {
             <p class="deal-detail__actions-state">Aucune action.</p>
           } @else {
-            @for (action of commercialActions(); track action.publicId) {
+            @for (action of facade.actions(); track action.publicId) {
               <app-commercial-action-card
                 [action]="action"
                 (completed)="onActionComplete($event)"

@@ -1,21 +1,25 @@
 <div class="timeline">
   @if (loading) {
     <p class="timeline__state">Chargement…</p>
-  } @else if (interactions.length === 0) {
-    <p class="timeline__state">Aucune interaction enregistrée.</p>
+  } @else if (entries.length === 0) {
+    <p class="timeline__state">Aucune activité enregistrée.</p>
   } @else {
     <ul class="timeline__list">
-      @for (item of interactions; track item.publicId) {
-        <li class="timeline__item">
+      @for (item of entries; track item.publicId) {
+        <li class="timeline__item" [class.timeline__item--action]="item.sourceType === 'COMMERCIAL_ACTION'">
           <div class="timeline__marker"></div>
           <div class="timeline__content">
+
             <div class="timeline__header">
-              <app-interaction-type-badge [type]="item.type" />
+              <app-interaction-type-badge [type]="toDisplayType(item)" />
               @if (item.outcome) {
                 <app-interaction-outcome-badge [outcome]="item.outcome" />
               }
+              @if (item.sourceType === 'COMMERCIAL_ACTION' && item.priority === 'HIGH') {
+                <span class="timeline__priority-badge">Urgent</span>
+              }
               <span class="timeline__date">{{ item.occurredAt | date:'dd/MM/yyyy HH:mm' }}</span>
-              <span class="timeline__author">{{ item.performedByUsername }}</span>
+              <span class="timeline__author">{{ item.performedByUsername ?? 'Visiteur' }}</span>
             </div>
 
             <p class="timeline__subject">{{ item.subject }}</p>
@@ -26,6 +30,10 @@
 
             @if (item.durationMinutes) {
               <span class="timeline__meta">Durée : {{ item.durationMinutes }} min</span>
+            }
+
+            @if (item.location) {
+              <span class="timeline__meta">📍 {{ item.location }}</span>
             }
 
             @if (item.callLog) {
@@ -47,12 +55,15 @@
               </div>
             }
 
-            <button
-              class="timeline__delete"
-              title="Supprimer"
-              (click)="deleteRequested.emit(item.publicId)">
-              ✕
-            </button>
+            @if (isDeletable(item)) {
+              <button
+                class="timeline__delete"
+                title="Supprimer"
+                (click)="deleteRequested.emit(item.publicId)">
+                ✕
+              </button>
+            }
+
           </div>
         </li>
       }

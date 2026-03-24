@@ -6,7 +6,9 @@ export enum InteractionType {
   MEETING     = 'MEETING',
   NOTE        = 'NOTE',
   VISIT       = 'VISIT',
-  ACTION_DONE = 'ACTION_DONE'
+  DEMO          = 'DEMO',
+  ACTION_DONE   = 'ACTION_DONE',
+  CONTACT_FORM  = 'CONTACT_FORM'
 }
 
 export enum InteractionDirection {
@@ -35,7 +37,9 @@ export const INTERACTION_TYPE_LABELS: Record<InteractionType, string> = {
   [InteractionType.MEETING]:     'Réunion',
   [InteractionType.NOTE]:        'Note',
   [InteractionType.VISIT]:       'Visite',
-  [InteractionType.ACTION_DONE]: 'Action réalisée'
+  [InteractionType.DEMO]:        'Démo',
+  [InteractionType.ACTION_DONE]:  'Action réalisée',
+  [InteractionType.CONTACT_FORM]: 'Formulaire de contact'
 };
 
 export const INTERACTION_OUTCOME_LABELS: Record<InteractionOutcome, string> = {
@@ -81,8 +85,8 @@ export interface InteractionResponse {
   occurredAt:           string;
   dealPublicId:         string | null;
   contactPublicId:      string | null;
-  performedByPublicId:  string;
-  performedByUsername:  string;
+  performedByPublicId:  string | null;
+  performedByUsername:  string | null;
   callLog:              CallLogResponse | null;
   emailLog:             EmailLogResponse | null;
   createdAt:            string;
@@ -114,6 +118,7 @@ export interface LogInteractionRequest {
   occurredAt:        string;    // ISO-8601 Instant
   dealPublicId?:     string;
   contactPublicId?:  string;
+  leadPublicId?:     string;
   callLog?:          CallLogRequest;
   emailLog?:         EmailLogRequest;
 }

@@ -20,23 +20,53 @@
         <input type="text" id="confirmEmail" formControlName="confirmEmail" tabindex="-1" autocomplete="new-password">
       </div>
 
-      <!-- Name -->
-      <div class="form-group">
-        <label for="name">Nom <span class="optional">(optionnel)</span></label>
-        <input
-          type="text"
-          id="name"
-          formControlName="name"
-          placeholder="Votre nom"
-          autocomplete="name"
-        >
-        @if (f['name'].invalid && f['name'].touched) {
-          <div class="validation-error">
-            @if (f['name'].errors?.['maxlength']) {
-              Le nom ne peut pas dépasser 100 caractères
+      <!-- Civility / First name / Last name -->
+      <div class="form-row form-row--identity">
+        <div class="form-group">
+          <label for="civility">Civilité</label>
+          <select id="civility" formControlName="civility" autocomplete="honorific-prefix">
+            <option [ngValue]="null">—</option>
+            @for (c of civilities; track c) {
+              <option [value]="c">{{ civilityLabels[c] }}</option>
             }
-          </div>
-        }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="firstName">Prénom <span class="optional">(optionnel)</span></label>
+          <input type="text" id="firstName" formControlName="firstName"
+            placeholder="Votre prénom" autocomplete="given-name">
+          @if (f['firstName'].invalid && f['firstName'].touched) {
+            <div class="validation-error">Le prénom ne peut pas dépasser 100 caractères</div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="lastName">Nom <span class="optional">(optionnel)</span></label>
+          <input type="text" id="lastName" formControlName="lastName"
+            placeholder="Votre nom de famille" autocomplete="family-name">
+          @if (f['lastName'].invalid && f['lastName'].touched) {
+            <div class="validation-error">Le nom ne peut pas dépasser 100 caractères</div>
+          }
+        </div>
+      </div>
+
+      <!-- Phone / Organisation -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Téléphone <span class="optional">(optionnel)</span></label>
+          <input type="tel" id="phone" formControlName="phone"
+            placeholder="+32 470 00 00 00" autocomplete="tel">
+          @if (f['phone'].invalid && f['phone'].touched) {
+            <div class="validation-error">Le téléphone ne peut pas dépasser 20 caractères</div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="organisationName">Entreprise <span class="optional">(optionnel)</span></label>
+          <input type="text" id="organisationName" formControlName="organisationName"
+            placeholder="Votre entreprise" autocomplete="organization">
+          @if (f['organisationName'].invalid && f['organisationName'].touched) {
+            <div class="validation-error">Le nom ne peut pas dépasser 200 caractères</div>
+          }
+        </div>
       </div>
 
       <!-- Email -->
@@ -70,28 +100,6 @@
             <option [value]="type">{{ leadTypeLabels[type] }}</option>
           }
         </select>
-      </div>
-
-      <!-- Subject -->
-      <div class="form-group">
-        <label for="subject">Sujet <span class="required">*</span></label>
-        <input
-          type="text"
-          id="subject"
-          formControlName="subject"
-          placeholder="Sujet de votre message"
-        >
-        @if (f['subject'].invalid && f['subject'].touched) {
-          <div class="validation-error">
-            @if (f['subject'].errors?.['required']) {
-              Le sujet est requis
-            } @else if (f['subject'].errors?.['minlength']) {
-              Le sujet doit contenir au moins 5 caractères
-            } @else if (f['subject'].errors?.['maxlength']) {
-              Le sujet ne peut pas dépasser 255 caractères
-            }
-          </div>
-        }
       </div>
 
       <!-- Message -->

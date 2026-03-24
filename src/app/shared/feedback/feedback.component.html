@@ -1,6 +1,8 @@
 <!-- src/app/shared/feedback/feedback.component.html -->
 @if (visible) {
   <div class="feedback" [ngClass]="feedbackClass">
+    <button class="feedback-close" (click)="visible = false" aria-label="Fermer">×</button>
+
     <div class="feedback-content">
       <div class="feedback-icon">
         <span>{{ icon }}</span>

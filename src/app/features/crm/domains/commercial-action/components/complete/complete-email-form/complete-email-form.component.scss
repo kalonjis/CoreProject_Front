@@ -1,0 +1,24 @@
+@import '../../../../../shared/styles/action-panel';
+
+.complete-context {
+  background: $gray-light;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 0.875rem 1rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.3rem;
+  }
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $dark-color;
+    margin: 0;
+  }
+}

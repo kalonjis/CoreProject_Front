@@ -1,0 +1,25 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Terminer la tâche</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      <div class="complete-context">
+        <p class="complete-context__label">Tâche à terminer</p>
+        <p class="complete-context__title">{{ action.title }}</p>
+        @if (action.description) {
+          <p class="complete-context__desc">{{ action.description }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="crm-modal__footer">
+      <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+      <button type="button" class="btn btn--primary" (click)="submit()">Marquer comme terminée</button>
+    </div>
+
+  </div>
+</div>

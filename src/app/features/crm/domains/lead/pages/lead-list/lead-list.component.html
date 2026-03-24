@@ -8,7 +8,10 @@
         <span class="lead-list__count">{{ totalElements() }} résultat(s)</span>
       }
     </div>
-    <button class="btn btn--secondary" (click)="goPipeline()">Vue Pipeline →</button>
+    <div class="lead-list__header-actions">
+      <button class="btn btn--primary" (click)="showCreate.set(true)">+ Nouveau lead</button>
+      <button class="btn btn--secondary" (click)="goPipeline()">Vue Pipeline →</button>
+    </div>
   </div>
 
   <!-- ─── Filters ────────────────────────────────────────────────────────── -->
@@ -34,6 +37,18 @@
         <option [value]="t">{{ typeLabels[t] }}</option>
       }
     </select>
+
+    <select class="lead-list__select" [(ngModel)]="selectedSource" (change)="onFilterChange()">
+      <option value="">Toutes les sources</option>
+      @for (s of sources; track s) {
+        <option [value]="s">{{ sourceLabels[s] }}</option>
+      }
+    </select>
+
+    <label class="lead-list__checkbox-label">
+      <input type="checkbox" [(ngModel)]="activeOnly" (change)="onFilterChange()" />
+      Actifs seulement
+    </label>
 
     <label class="lead-list__checkbox-label">
       <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="onFilterChange()" />
@@ -114,3 +129,10 @@
   }
 
 </div>
+
+@if (showCreate()) {
+  <app-lead-action-create
+    (created)="onLeadCreated($event)"
+    (cancelled)="showCreate.set(false)"
+  />
+}

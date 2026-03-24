@@ -2,7 +2,15 @@
   <div class="board__header">
     <div class="board__title-area">
       <h1 class="board__title">Pipeline</h1>
-      @if (pipeline(); as p) {
+      @if (allPipelines().length > 1) {
+        <select class="board__pipeline-select"
+                [value]="pipeline()?.publicId ?? ''"
+                (change)="selectPipeline($any($event.target).value)">
+          @for (p of allPipelines(); track p.publicId) {
+            <option [value]="p.publicId">{{ p.name }}</option>
+          }
+        </select>
+      } @else if (pipeline(); as p) {
         <span class="board__name">{{ p.name }}</span>
       }
     </div>

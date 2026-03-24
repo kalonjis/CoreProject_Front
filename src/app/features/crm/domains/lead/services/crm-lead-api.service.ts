@@ -5,9 +5,11 @@ import {
   LeadDetail,
   LeadFilter,
   LeadSummary,
+  EnrichLeadRequest,
   AssignLeadRequest,
   ConvertLeadRequest,
-  RejectLeadRequest
+  RejectLeadRequest,
+  CreateLeadRequest
 } from '../models/lead.model';
 import { Page } from '../../../shared/models/page.model';
 
@@ -27,6 +29,7 @@ export class CrmLeadApiService {
     if (filter.leadType)           params = params.set('leadType', filter.leadType);
     if (filter.assignedToPublicId) params = params.set('assignedToPublicId', filter.assignedToPublicId);
     if (filter.unassignedOnly)     params = params.set('unassignedOnly', 'true');
+    if (filter.activeOnly)         params = params.set('activeOnly', 'true');
     if (filter.keyword?.trim())    params = params.set('keyword', filter.keyword.trim());
     if (filter.submittedFrom)      params = params.set('submittedFrom', filter.submittedFrom);
     if (filter.submittedTo)        params = params.set('submittedTo', filter.submittedTo);
@@ -38,12 +41,20 @@ export class CrmLeadApiService {
     return this.http.get<LeadDetail>(`${this.base}/${publicId}`);
   }
 
+  enrich(publicId: string, body: EnrichLeadRequest): Observable<LeadDetail> {
+    return this.http.patch<LeadDetail>(`${this.base}/${publicId}/enrich`, body);
+  }
+
   assign(publicId: string, body: AssignLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/assign`, body);
   }
 
   markInReview(publicId: string): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/review`, {});
+  }
+
+  create(body: CreateLeadRequest): Observable<LeadDetail> {
+    return this.http.post<LeadDetail>(this.base, body);
   }
 
   convert(publicId: string, body: ConvertLeadRequest): Observable<LeadDetail> {

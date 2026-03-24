@@ -1,28 +1,4 @@
-<div class="interaction-list">
-  <div class="interaction-list__header">
-    <h1 class="interaction-list__title">Interactions</h1>
-    <button class="btn btn--primary" (click)="showForm.set(!showForm())">
-      {{ showForm() ? 'Annuler' : '+ Log rapide' }}
-    </button>
-  </div>
-
-  @if (showForm()) {
-    <div class="interaction-list__form-panel">
-      <h3 class="interaction-list__form-title">Nouvelle interaction</h3>
-      <p class="interaction-list__form-hint">
-        Sélectionnez un deal ou un contact lors du log depuis leur page de détail pour lier l'interaction.
-      </p>
-      <app-interaction-log-form
-        (logged)="onLogged()"
-        (cancelled)="showForm.set(false)"
-      />
-    </div>
-  }
-
-  <div class="interaction-list__info">
-    <p>
-      Les timelines d'interactions sont consultables depuis la page de chaque
-      <strong>Deal</strong> ou <strong>Contact</strong>.
-    </p>
-  </div>
-</div>
+<app-interaction-timeline
+  [entries]="facade.entries()"
+  [loading]="facade.loading()"
+/>

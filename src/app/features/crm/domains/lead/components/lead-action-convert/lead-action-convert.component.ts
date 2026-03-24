@@ -1,8 +1,18 @@
-import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';
+import { CrmContactApiService } from '../../../contact/services/crm-contact-api.service';
+import { CrmDealApiService } from '../../../deal/services/crm-deal-api.service';
+import { CrmPipelineApiService } from '../../../pipeline/services/crm-pipeline-api.service';
+import { CrmUserApiService } from '../../../../shared/services/crm-user-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
-import { ConvertLeadRequest } from '../../models/lead.model';
+import { ConvertLeadRequest, LeadDetail } from '../../models/lead.model';
+import { ContactDetail } from '../../../contact/models/contact.model';
+import { CreateDealRequest } from '../../../deal/models/deal.model';
+import { Pipeline, PipelineStep } from '../../../pipeline/models/pipeline.model';
+import { CommercialSummary, commercialDisplayName } from '../../../../shared/models/commercial.model';
+
+type Step = 'convert' | 'deal';
 
 @Component({
   selector: 'app-lead-action-convert',
@@ -10,47 +20,187 @@ import { ConvertLeadRequest } from '../../models/lead.model';
   templateUrl: './lead-action-convert.component.html',
   styleUrl: './lead-action-convert.component.scss'
 })
-export class LeadActionConvertComponent {
+export class LeadActionConvertComponent implements OnInit {
   @Input({ required: true }) publicId!: string;
-  @Output() converted = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  @Input() lead: LeadDetail | null = null;
+  @Output() converted  = new EventEmitter<void>();
+  @Output() cancelled  = new EventEmitter<void>();
 
-  private readonly api      = inject(CrmLeadApiService);
-  private readonly feedback = inject(FeedbackService);
+  private readonly leadApi     = inject(CrmLeadApiService);
+  private readonly contactApi  = inject(CrmContactApiService);
+  private readonly dealApi     = inject(CrmDealApiService);
+  private readonly pipelineApi = inject(CrmPipelineApiService);
+  private readonly userApi     = inject(CrmUserApiService);
+  private readonly feedback    = inject(FeedbackService);
 
-  form: ConvertLeadRequest = {
+  readonly step             = signal<Step>('convert');
+  readonly loading          = signal(false);
+  readonly convertedContact = signal<ContactDetail | null>(null);
+  readonly pipelines        = signal<Pipeline[]>([]);
+  readonly commercials      = signal<CommercialSummary[]>([]);
+  readonly pipelinesLoading = signal(false);
+  readonly selectedPipelineId = signal('');
+
+  readonly availableStages = computed<PipelineStep[]>(() => {
+    const pipeline = this.pipelines().find(p => p.publicId === this.selectedPipelineId());
+    return pipeline?.steps
+      .filter(s => !s.isWon && !s.isLost)
+      .sort((a, b) => a.position - b.position) ?? [];
+  });
+
+  // ── Step 1: convert form ──────────────────────────────────────────────────
+
+  form: ConvertLeadRequest & { email: string } = {
     firstName: '',
     lastName: '',
+    email: '',
     jobTitle: '',
     phone: '',
-    organisationPublicId: ''
+    organisationName: ''
   };
 
-  readonly loading = signal(false);
+  // ── Step 2: deal form ─────────────────────────────────────────────────────
 
-  get isValid(): boolean {
-    return this.form.firstName.trim().length > 0 && this.form.lastName.trim().length > 0;
+  dealTitle           = '';
+  dealStagePublicId   = '';
+  dealAssigneePublicId = '';
+  dealAmount: number | undefined = undefined;
+  dealCurrency        = 'EUR';
+  dealExpectedClose   = '';
+
+  readonly commercialDisplayName = commercialDisplayName;
+
+  ngOnInit(): void {
+    if (this.lead) {
+      this.form.firstName        = this.lead.firstName        ?? '';
+      this.form.lastName         = this.lead.lastName         ?? '';
+      this.form.email            = this.lead.email            ?? '';
+      this.form.phone            = this.lead.phone            ?? '';
+      this.form.organisationName = this.lead.organisationName ?? '';
+      this.dealTitle             = this.lead.subject          ?? '';
+      this.dealAssigneePublicId  = this.lead.assignedToPublicId ?? '';
+    }
   }
 
+  get isConvertValid(): boolean {
+    return this.form.firstName.trim().length > 0
+      && this.form.lastName.trim().length > 0
+      && this.form.email.trim().length > 0;
+  }
+
+  get isDealValid(): boolean {
+    return this.dealTitle.trim().length > 0
+      && this.selectedPipelineId().length > 0
+      && this.dealStagePublicId.length > 0
+      && this.dealAssigneePublicId.length > 0;
+  }
+
+  // ── Step 1 ────────────────────────────────────────────────────────────────
+
   submit(): void {
-    if (!this.isValid) return;
+    if (!this.isConvertValid) return;
 
     const body: ConvertLeadRequest = { firstName: this.form.firstName, lastName: this.form.lastName };
-    if (this.form.jobTitle?.trim())             body.jobTitle             = this.form.jobTitle;
-    if (this.form.phone?.trim())                body.phone                = this.form.phone;
-    if (this.form.organisationPublicId?.trim()) body.organisationPublicId = this.form.organisationPublicId;
+    if (this.form.email?.trim() && this.form.email.trim() !== this.lead?.email) body.email = this.form.email;
+    if (this.form.jobTitle?.trim())         body.jobTitle         = this.form.jobTitle;
+    if (this.form.phone?.trim())            body.phone            = this.form.phone;
+    if (this.form.organisationName?.trim()) body.organisationName = this.form.organisationName;
 
     this.loading.set(true);
-    this.api.convert(this.publicId, body).subscribe({
+    this.leadApi.convert(this.publicId, body).subscribe({
       next: () => {
         this.loading.set(false);
         this.feedback.showSuccess('Lead converti en contact.');
-        this.converted.emit();
+        this.loadContactAndGoToDeal();
       },
       error: () => {
         this.loading.set(false);
         this.feedback.showError('Impossible de convertir le lead.');
       }
     });
+  }
+
+  private loadContactAndGoToDeal(): void {
+    this.contactApi.getFromLead(this.publicId).subscribe({
+      next: contact => {
+        this.convertedContact.set(contact);
+        if (contact.organisationPublicId) {
+          // keep org context for deal
+        }
+        this.loadDealDependencies();
+        this.step.set('deal');
+      },
+      error: () => {
+        // Contact lookup failed — skip deal step
+        this.converted.emit();
+      }
+    });
+  }
+
+  private loadDealDependencies(): void {
+    this.pipelinesLoading.set(true);
+
+    this.pipelineApi.findAll().subscribe({
+      next: pipelines => {
+        this.pipelines.set(pipelines);
+        const defaultPipeline = pipelines.find(p => p.isDefault) ?? pipelines[0];
+        if (defaultPipeline) {
+          this.selectedPipelineId.set(defaultPipeline.publicId);
+          const firstStep = defaultPipeline.steps
+            .filter(s => !s.isWon && !s.isLost)
+            .sort((a, b) => a.position - b.position)[0];
+          if (firstStep) this.dealStagePublicId = firstStep.publicId;
+        }
+        this.pipelinesLoading.set(false);
+      },
+      error: () => this.pipelinesLoading.set(false)
+    });
+
+    this.userApi.getCommercials().subscribe({
+      next: list => this.commercials.set(list)
+    });
+  }
+
+  onPipelineChange(pipelinePublicId: string): void {
+    this.selectedPipelineId.set(pipelinePublicId);
+    const firstStep = this.availableStages()[0];
+    this.dealStagePublicId = firstStep?.publicId ?? '';
+  }
+
+  // ── Step 2 ────────────────────────────────────────────────────────────────
+
+  createDeal(): void {
+    if (!this.isDealValid) return;
+    const contact = this.convertedContact();
+    if (!contact) return;
+
+    const body: CreateDealRequest = {
+      title:              this.dealTitle.trim(),
+      pipelinePublicId:   this.selectedPipelineId(),
+      stagePublicId:      this.dealStagePublicId,
+      contactPublicId:    contact.publicId,
+      assignedToPublicId: this.dealAssigneePublicId,
+      currency:           this.dealCurrency || 'EUR'
+    };
+    if (this.dealAmount != null)      body.amount           = this.dealAmount;
+    if (contact.organisationPublicId) body.organisationPublicId = contact.organisationPublicId;
+    if (this.dealExpectedClose)       body.expectedCloseDate = this.dealExpectedClose;
+
+    this.loading.set(true);
+    this.dealApi.create(body).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.feedback.showSuccess('Deal créé avec succès.');
+        this.converted.emit();
+      },
+      error: () => {
+        this.loading.set(false);
+        this.feedback.showError('Impossible de créer le deal.');
+      }
+    });
+  }
+
+  skipDeal(): void {
+    this.converted.emit();
   }
 }

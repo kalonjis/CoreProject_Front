@@ -1,46 +1,116 @@
-<form class="ca-form" (ngSubmit)="submit()">
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal" (click)="$event.stopPropagation()">
 
-  <div class="ca-form__field">
-    <label>Titre *</label>
-    <input type="text" [(ngModel)]="title" name="title" placeholder="Ex: Rappeler M. Martin" required />
-  </div>
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">{{ isEditMode ? "Modifier l'action" : 'Créer une action commerciale' }}</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
 
-  <div class="ca-form__field">
-    <label>Description</label>
-    <textarea [(ngModel)]="description" name="description" rows="2" placeholder="Contexte ou instructions…"></textarea>
-  </div>
+    <div class="crm-modal__body">
+      <form class="ca-form" (ngSubmit)="submit()">
 
-  <div class="ca-form__row">
-    <div class="ca-form__field">
-      <label>Priorité</label>
-      <select [(ngModel)]="priority" name="priority">
-        @for (p of priorities; track p) {
-          <option [value]="p">{{ priorityLabel(p) }}</option>
+        <div class="ca-form__field">
+          <label>Titre *</label>
+          <input type="text" [(ngModel)]="title" name="title" placeholder="Ex: Rappeler M. Martin" required />
+        </div>
+
+        <div class="ca-form__field">
+          <label>Description</label>
+          <textarea [(ngModel)]="description" name="description" rows="2" placeholder="Contexte ou instructions…"></textarea>
+        </div>
+
+        <div class="ca-form__row">
+          <div class="ca-form__field">
+            <label>Type</label>
+            <select [(ngModel)]="type" name="type">
+              @for (t of types; track t) {
+                <option [value]="t">{{ typeLabel(t) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="ca-form__field">
+            <label>Priorité</label>
+            <select [(ngModel)]="priority" name="priority">
+              @for (p of priorities; track p) {
+                <option [value]="p">{{ priorityLabel(p) }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="ca-form__row">
+          <div class="ca-form__field">
+            <label>{{ showCalendarFields ? 'Date / heure du RDV' : 'Échéance' }}</label>
+            <input type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
+          </div>
+
+          <div class="ca-form__field">
+            <label>Rappel</label>
+            <input type="datetime-local" [(ngModel)]="reminderAt" name="reminderAt" />
+          </div>
+        </div>
+
+        <div class="ca-form__field">
+          <label>Lieu</label>
+          <input type="text" [(ngModel)]="location" name="location" placeholder="Ex: Teams, Salle A, https://meet.google.com/…" />
+        </div>
+
+        @if (showCalendarFields) {
+
+          <div class="ca-form__field ca-form__field--address-picker">
+            <label>Adresse physique</label>
+            @if (selectedAddressText) {
+              <div class="ca-form__address-selected">
+                <span>{{ selectedAddressText }}</span>
+                <button type="button" class="ca-form__address-clear" (click)="clearAddress()">✕</button>
+              </div>
+            } @else {
+              <div class="ca-form__address-search">
+                <input type="text"
+                       [(ngModel)]="addressQuery"
+                       name="addressQuery"
+                       placeholder="Rechercher une adresse existante…"
+                       (input)="onAddressInput()"
+                       (blur)="onAddressBlur()"
+                       autocomplete="off" />
+                @if (addressSuggestions.length > 0) {
+                  <ul class="ca-form__address-suggestions">
+                    @for (s of addressSuggestions; track s.publicId) {
+                      <li (mousedown)="selectAddress(s)">{{ s.displayText }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="ca-form__field ca-form__field--inline">
+            <label>Durée (min)</label>
+            <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="15" max="480" step="15" />
+          </div>
+
         }
-      </select>
+
+        <div class="ca-form__field">
+          <label>Responsable</label>
+          <select [(ngModel)]="assignedToPublicId" name="assignedToPublicId" required>
+            <option value="" disabled>Sélectionner un commercial</option>
+            @for (c of commercials(); track c.publicId) {
+              <option [value]="c.publicId">{{ displayName(c) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ca-form__actions">
+          <button type="submit" class="btn btn--primary" [disabled]="saving() || !title.trim()">
+            {{ saving() ? (isEditMode ? 'Enregistrement…' : 'Création…') : (isEditMode ? 'Enregistrer' : "Créer l'action") }}
+          </button>
+          <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+        </div>
+
+      </form>
     </div>
 
-    <div class="ca-form__field">
-      <label>Échéance</label>
-      <input type="date" [(ngModel)]="dueDate" name="dueDate" />
-    </div>
   </div>
-
-  <div class="ca-form__field">
-    <label>Responsable (publicId)</label>
-    <input
-      type="text"
-      [(ngModel)]="assignedToPublicId"
-      name="assignedToPublicId"
-      [placeholder]="currentUserPublicId ? 'Moi par défaut' : 'publicId du commercial'"
-    />
-  </div>
-
-  <div class="ca-form__actions">
-    <button type="submit" class="btn btn--primary" [disabled]="saving() || !title.trim()">
-      {{ saving() ? 'Création…' : 'Créer l\'action' }}
-    </button>
-    <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
-  </div>
-
-</form>
+</div>

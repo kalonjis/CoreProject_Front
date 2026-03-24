@@ -1,0 +1,82 @@
+@import '../../../../../shared/styles/action-panel';
+
+.call-status-pills {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.call-pill {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  border: 2px solid $border-color;
+  border-radius: $border-radius;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $gray-dark;
+  text-align: center;
+  line-height: 1.4;
+  transition: $transition-fast;
+
+  &:hover:not(.call-pill--active) {
+    border-color: darken($border-color, 12%);
+    color: $text-color;
+  }
+
+  &--answered.call-pill--active {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #065f46;
+    font-weight: 600;
+  }
+
+  &--voicemail.call-pill--active {
+    background: #fef9c3;
+    border-color: #f59e0b;
+    color: #78350f;
+    font-weight: 600;
+  }
+
+  &--no-answer.call-pill--active {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+    font-weight: 600;
+  }
+
+  &__icon {
+    display: block;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.complete-context {
+  background: $gray-light;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 0.875rem 1rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.3rem;
+  }
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $dark-color;
+    margin: 0;
+  }
+}
+
+.field-hint {
+  font-size: 0.75rem;
+  color: $gray-dark;
+  margin-top: 0.25rem;
+}

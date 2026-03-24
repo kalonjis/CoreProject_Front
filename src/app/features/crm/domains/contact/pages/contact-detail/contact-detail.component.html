@@ -1,9 +1,8 @@
 <div class="contact-detail">
 
-  @if (loading()) { <p class="contact-detail__loading">Chargement…</p> }
-  @if (error())   { <p class="contact-detail__error">{{ error() }}</p> }
+  @if (facade.detailLoading()) { <p class="contact-detail__loading">Chargement…</p> }
 
-  @if (contact(); as c) {
+  @if (facade.contact(); as c) {
 
     <div class="contact-detail__header">
       <button class="contact-detail__back" (click)="back()">← Retour</button>
@@ -33,8 +32,8 @@
       }
 
       <app-interaction-timeline
-        [interactions]="interactions()"
-        [loading]="timelineLoading()"
+        [entries]="interactionFacade.entries()"
+        [loading]="interactionFacade.loading()"
         (deleteRequested)="onInteractionDelete($event)"
       />
     </div>
@@ -50,18 +49,17 @@
       @if (showActionForm()) {
         <app-commercial-action-form
           [contactPublicId]="c.publicId"
-          [currentUserPublicId]="currentUserPublicId"
           (created)="onActionCreated()"
           (cancelled)="showActionForm.set(false)"
         />
       }
 
-      @if (actionsLoading()) {
+      @if (facade.actionsLoading()) {
         <p class="contact-detail__actions-state">Chargement…</p>
-      } @else if (commercialActions().length === 0) {
+      } @else if (facade.actions().length === 0) {
         <p class="contact-detail__actions-state">Aucune action.</p>
       } @else {
-        @for (action of commercialActions(); track action.publicId) {
+        @for (action of facade.actions(); track action.publicId) {
           <app-commercial-action-card
             [action]="action"
             (completed)="onActionComplete($event)"
@@ -72,11 +70,22 @@
     </div>
 
     <div class="contact-detail__action-bar">
+      <button class="btn btn--primary" (click)="showDealCreate.set(true)">+ Créer un deal</button>
       <button class="btn btn--secondary" (click)="toggleAction('status')">Changer statut</button>
       <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
       <button class="btn btn--secondary" (click)="toggleAction('link-org')">Organisation</button>
       <button class="btn btn--secondary" (click)="toggleAction('merge')">Fusionner</button>
     </div>
+
+    @if (showDealCreate()) {
+      <app-deal-action-create
+        [contactPublicId]="c.publicId"
+        [organisationPublicId]="c.organisationPublicId"
+        [assignedToPublicId]="c.assignedToPublicId ?? ''"
+        (created)="onDealCreated()"
+        (cancelled)="showDealCreate.set(false)"
+      />
+    }
 
     @switch (activeAction()) {
       @case ('status') {

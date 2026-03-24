@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { LeadDetail, LEAD_TYPE_LABELS } from '../../models/lead.model';
+import { CIVILITY_LABELS, LeadDetail, LEAD_SOURCE_LABELS, LEAD_TYPE_LABELS } from '../../models/lead.model';
 import { LeadStatusBadgeComponent } from '../lead-status-badge/lead-status-badge.component';
 import { LeadTypeBadgeComponent } from '../lead-type-badge/lead-type-badge.component';
 
@@ -12,4 +12,7 @@ import { LeadTypeBadgeComponent } from '../lead-type-badge/lead-type-badge.compo
 })
 export class LeadInfoCardComponent {
   @Input({ required: true }) lead!: LeadDetail;
+
+  readonly civilityLabels   = CIVILITY_LABELS;
+  readonly leadSourceLabels = LEAD_SOURCE_LABELS;
 }
