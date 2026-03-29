@@ -6,13 +6,14 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
 import { Pipeline, PipelineStep } from '../../models/pipeline.model';
 
 interface StepForm {
-  name:    string;
-  color:   string;
-  isWon:   boolean;
-  isLost:  boolean;
+  name:            string;
+  color:           string;
+  isWon:           boolean;
+  isLost:          boolean;
+  winProbability:  number;
 }
 
-const emptyStepForm = (): StepForm => ({ name: '', color: '#6366f1', isWon: false, isLost: false });
+const emptyStepForm = (): StepForm => ({ name: '', color: '#6366f1', isWon: false, isLost: false, winProbability: 50 });
 
 @Component({
   selector: 'app-pipeline-settings',
@@ -178,11 +179,12 @@ export class PipelineSettingsComponent implements OnInit {
     if (!this.newStep.name.trim()) return;
     this.saving.set(true);
     this.api.addStep(pipelinePublicId, {
-      name:     this.newStep.name.trim(),
-      color:    this.newStep.color || undefined,
-      position: this._nextPosition,
-      isWon:    this.newStep.isWon,
-      isLost:   this.newStep.isLost
+      name:            this.newStep.name.trim(),
+      color:           this.newStep.color || undefined,
+      position:        this._nextPosition,
+      isWon:           this.newStep.isWon,
+      isLost:          this.newStep.isLost,
+      winProbability:  this.newStep.isWon ? 100 : this.newStep.isLost ? 0 : this.newStep.winProbability
     }).subscribe({
       next: () => {
         this.reloadPipeline(pipelinePublicId);
@@ -199,7 +201,7 @@ export class PipelineSettingsComponent implements OnInit {
   startEditStep(step: PipelineStep): void {
     this.editingStepId = step.publicId;
     this.addingStepFor = '';
-    this.editStep = { name: step.name, color: step.color ?? '#6366f1', isWon: step.isWon, isLost: step.isLost };
+    this.editStep = { name: step.name, color: step.color ?? '#6366f1', isWon: step.isWon, isLost: step.isLost, winProbability: step.winProbability };
   }
 
   cancelEditStep(): void {
@@ -210,10 +212,9 @@ export class PipelineSettingsComponent implements OnInit {
     if (!this.editStep.name.trim()) return;
     this.saving.set(true);
     this.api.updateStep(pipelinePublicId, stepPublicId, {
-      name:  this.editStep.name.trim(),
-      color: this.editStep.color || undefined,
-      isWon: this.editStep.isWon,
-      isLost: this.editStep.isLost
+      name:           this.editStep.name.trim(),
+      color:          this.editStep.color || undefined,
+      winProbability: this.editStep.winProbability
     }).subscribe({
       next: () => {
         this.reloadPipeline(pipelinePublicId);

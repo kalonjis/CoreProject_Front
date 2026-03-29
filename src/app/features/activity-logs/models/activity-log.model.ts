@@ -16,6 +16,7 @@ export interface ActivityLog {
   successful: boolean;
   failureReason: string | null;
   actionDetails: string | null;
+  actorUsername: string | null;   // null for system or public (unauthenticated) events
   actorDeviceId: string | null;
   targetDeviceId: string | null;
   ipAddress: string | null;

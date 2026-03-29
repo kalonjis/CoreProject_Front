@@ -22,6 +22,9 @@
         <th>Date</th>
         <th>Catégorie</th>
         <th>Action</th>
+        @if (showActor) {
+          <th>Utilisateur</th>
+        }
         <th>Statut</th>
         <th>IP</th>
         <th>Localisation</th>
@@ -47,6 +50,10 @@
                 <span class="action-details">{{ log.actionDetails }}</span>
               }
             </td>
+
+            @if (showActor) {
+              <td class="col-actor">{{ log.actorUsername ?? '—' }}</td>
+            }
 
             <td class="col-status">
               @if (log.successful) {

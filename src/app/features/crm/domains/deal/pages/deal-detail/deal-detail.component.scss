@@ -30,6 +30,41 @@
   &__info  { color: $gray-dark; font-style: italic; }
   &__error { color: $danger-color; }
 
+  // ─── Tabs ───────────────────────────────────────────────────────────────────
+
+  &__tabs {
+    display: flex;
+    border-bottom: 2px solid $border-color;
+    margin-top: 1.5rem;
+  }
+
+  &__tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-dark;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover { color: $primary-color; }
+
+    &--active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+    }
+  }
+
+  &__tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding-top: 1.25rem;
+  }
+
   &__timeline {
     margin-top: 1.5rem;
     border-top: 1px solid $border-color;
@@ -48,6 +83,23 @@
     font-weight: 600;
     margin: 0;
     color: $dark-color;
+  }
+
+  &__tags-section {
+    border-top: 1px solid $border-color;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__tags-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   &__actions-section {

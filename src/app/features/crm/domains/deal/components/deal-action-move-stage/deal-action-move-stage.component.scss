@@ -1,1 +1,71 @@
 @import '../../../../shared/styles/action-panel';
+@import '../../../../../../../style/variables';
+
+.lost-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: $z-index-modal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lost-modal {
+  background: #fff;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-lg;
+  padding: $spacer-4;
+  width: 100%;
+  max-width: 480px;
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: $font-weight-bold;
+    color: $danger-color;
+    margin: 0 0 $spacer-1;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    margin: 0 0 $spacer-3;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacer-1;
+    margin-bottom: $spacer-3;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: $font-weight-bold;
+    color: $text-color;
+  }
+
+  &__textarea {
+    width: 100%;
+    resize: vertical;
+    padding: $spacer-2;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-family: $font-family-base;
+    font-size: 0.875rem;
+    line-height: $line-height-base;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $danger-color;
+      box-shadow: 0 0 0 2px rgba($danger-color, 0.15);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    gap: $spacer-2;
+    justify-content: flex-end;
+  }
+}

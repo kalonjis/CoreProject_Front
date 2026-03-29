@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Pipeline,
+  PipelineStats,
   CreatePipelineRequest,
   UpdatePipelineRequest,
   CreatePipelineStepRequest,
@@ -28,6 +29,10 @@ export class CrmPipelineApiService {
 
   getByPublicId(publicId: string): Observable<Pipeline> {
     return this.http.get<Pipeline>(`${this.base}/${publicId}`);
+  }
+
+  getStats(publicId: string): Observable<PipelineStats> {
+    return this.http.get<PipelineStats>(`${this.base}/${publicId}/stats`);
   }
 
   // ─── Pipeline CRUD ───────────────────────────────────────────────────────

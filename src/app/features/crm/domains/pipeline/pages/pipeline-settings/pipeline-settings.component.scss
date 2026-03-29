@@ -106,6 +106,11 @@
       background: #fee2e2;
       color: #b91c1c;
     }
+
+    &--prob {
+      background: #ede9fe;
+      color: #5b21b6;
+    }
   }
 
   // ─── Steps section ─────────────────────────────────────────────────────────
@@ -190,6 +195,37 @@
   &__step-flags {
     display: flex;
     gap: 1.5rem;
+  }
+
+  &__prob-row {
+    margin-top: 0.25rem;
+  }
+
+  &__prob-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: $primary-color;
+      cursor: pointer;
+    }
+  }
+
+  &__prob-input {
+    width: 60px;
+    text-align: center;
+    padding: 0.25rem 0.4rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+  }
+
+  &__prob-unit {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $gray-dark;
   }
 
   // ─── Misc ──────────────────────────────────────────────────────────────────

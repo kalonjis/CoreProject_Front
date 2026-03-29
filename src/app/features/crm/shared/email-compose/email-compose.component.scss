@@ -1,0 +1,15 @@
+.email-compose {
+  &__input {
+    width: 100%;
+  }
+
+  &__body-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  app-rich-text-editor {
+    width: 100%;
+  }
+}

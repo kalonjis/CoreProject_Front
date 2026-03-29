@@ -18,6 +18,12 @@
         <option [value]="s">{{ sizeLabels[s] }}</option>
       }
     </select>
+    <select [(ngModel)]="selectedTagPublicId" (ngModelChange)="onFilterChange()">
+      <option value="">Tous les tags</option>
+      @for (tag of allTags(); track tag.publicId) {
+        <option [value]="tag.publicId">{{ tag.name }}</option>
+      }
+    </select>
   </div>
 
   @if (loading()) {

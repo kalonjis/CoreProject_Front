@@ -122,6 +122,16 @@
                     Étape "Perdu"
                   </label>
                 </div>
+                @if (!newStep.isWon && !newStep.isLost) {
+                  <div class="action-panel__row ps__prob-row">
+                    <label>Probabilité de gain</label>
+                    <div class="ps__prob-field">
+                      <input type="range" min="0" max="100" step="5" [(ngModel)]="newStep.winProbability" />
+                      <input type="number" min="0" max="100" [(ngModel)]="newStep.winProbability" class="ps__prob-input" />
+                      <span class="ps__prob-unit">%</span>
+                    </div>
+                  </div>
+                }
                 <div class="action-panel__footer">
                   <button class="btn btn--primary btn--sm" (click)="submitAddStep(p.publicId)" [disabled]="saving() || !newStep.name.trim()">Ajouter</button>
                   <button class="btn btn--ghost btn--sm" (click)="cancelAddStep()">Annuler</button>
@@ -150,14 +160,24 @@
                     </div>
                     <div class="ps__step-flags">
                       <label class="ps__checkbox">
-                        <input type="checkbox" [(ngModel)]="editStep.isWon" (change)="editStep.isWon && (editStep.isLost = false)" />
+                        <input type="checkbox" [(ngModel)]="editStep.isWon" disabled />
                         Étape "Gagné"
                       </label>
                       <label class="ps__checkbox">
-                        <input type="checkbox" [(ngModel)]="editStep.isLost" (change)="editStep.isLost && (editStep.isWon = false)" />
+                        <input type="checkbox" [(ngModel)]="editStep.isLost" disabled />
                         Étape "Perdu"
                       </label>
                     </div>
+                    @if (!editStep.isWon && !editStep.isLost) {
+                      <div class="action-panel__row ps__prob-row">
+                        <label>Probabilité de gain</label>
+                        <div class="ps__prob-field">
+                          <input type="range" min="0" max="100" step="5" [(ngModel)]="editStep.winProbability" />
+                          <input type="number" min="0" max="100" [(ngModel)]="editStep.winProbability" class="ps__prob-input" />
+                          <span class="ps__prob-unit">%</span>
+                        </div>
+                      </div>
+                    }
                     <div class="action-panel__footer">
                       <button class="btn btn--primary btn--sm" (click)="submitEditStep(p.publicId, step.publicId)" [disabled]="saving() || !editStep.name.trim()">Enregistrer</button>
                       <button class="btn btn--ghost btn--sm" (click)="cancelEditStep()">Annuler</button>
@@ -170,6 +190,9 @@
                       <span class="ps__step-name">{{ step.name }}</span>
                       @if (step.isWon)  { <span class="ps__badge ps__badge--won">Gagné</span> }
                       @if (step.isLost) { <span class="ps__badge ps__badge--lost">Perdu</span> }
+                      @if (!step.isWon && !step.isLost) {
+                        <span class="ps__badge ps__badge--prob">{{ step.winProbability }}%</span>
+                      }
                     </div>
                     <div class="ps__step-actions">
                       <button class="btn btn--sm btn--ghost" (click)="moveStep(p, step, 'up')" [disabled]="first" title="Monter">↑</button>

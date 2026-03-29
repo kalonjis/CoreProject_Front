@@ -1,0 +1,10 @@
+<span class="tag-chip"
+      [class.tag-chip--navigable]="navigable"
+      [style.background-color]="tag.color"
+      [style.color]="textColor"
+      (click)="navigate()">
+  {{ tag.name }}
+  @if (removable) {
+    <button class="tag-chip__remove" (click)="$event.stopPropagation(); removed.emit(tag)" aria-label="Retirer le tag">✕</button>
+  }
+</span>

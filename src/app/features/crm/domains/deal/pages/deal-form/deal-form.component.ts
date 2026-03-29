@@ -42,7 +42,9 @@ export class DealFormComponent implements OnInit {
   };
 
   get isValid(): boolean {
-    return this.form.title.trim().length > 0
+    const base = this.form.title.trim().length > 0;
+    if (this.mode === 'edit') return base;
+    return base
         && this.form.pipelinePublicId.length > 0
         && this.form.stagePublicId.length > 0
         && this.form.contactPublicId.trim().length > 0
@@ -81,7 +83,7 @@ export class DealFormComponent implements OnInit {
         this.form.currency             = deal.currency;
         this.form.pipelinePublicId     = deal.pipelinePublicId;
         this.form.stagePublicId        = deal.stagePublicId;
-        this.form.contactPublicId      = deal.contactPublicId;
+        this.form.contactPublicId      = deal.contactPublicId ?? '';
         this.form.organisationPublicId = deal.organisationPublicId ?? '';
         this.form.assignedToPublicId   = deal.assignedToPublicId;
         this.form.expectedCloseDate    = deal.expectedCloseDate ?? '';

@@ -22,14 +22,24 @@ export class DealActionMoveStageComponent implements OnInit {
   private readonly pipelineApi = inject(CrmPipelineApiService);
   private readonly feedback    = inject(FeedbackService);
 
-  readonly loading = signal(false);
-  readonly steps   = signal<PipelineStep[]>([]);
+  readonly loading       = signal(false);
+  readonly steps         = signal<PipelineStep[]>([]);
+  readonly showLostModal = signal(false);
 
   selectedStagePublicId = '';
+  lostReason            = '';
+
+  get selectedStep(): PipelineStep | null {
+    return this.steps().find(s => s.publicId === this.selectedStagePublicId) ?? null;
+  }
 
   get isValid(): boolean {
     return this.selectedStagePublicId.trim().length > 0
         && this.selectedStagePublicId !== this.currentStagePublicId;
+  }
+
+  get lostReasonValid(): boolean {
+    return this.lostReason.trim().length > 0;
   }
 
   ngOnInit(): void {
@@ -43,8 +53,32 @@ export class DealActionMoveStageComponent implements OnInit {
 
   submit(): void {
     if (!this.isValid) return;
+    const step = this.selectedStep;
+    if (step?.isLost) {
+      this.lostReason = '';
+      this.showLostModal.set(true);
+    } else {
+      this.doMove();
+    }
+  }
+
+  confirmLost(): void {
+    if (!this.lostReasonValid) return;
+    this.showLostModal.set(false);
+    this.doMove(this.lostReason.trim());
+  }
+
+  cancelLostModal(): void {
+    this.showLostModal.set(false);
+    this.lostReason = '';
+  }
+
+  private doMove(lostReason?: string): void {
     this.loading.set(true);
-    this.dealApi.moveStage(this.publicId, { stagePublicId: this.selectedStagePublicId }).subscribe({
+    this.dealApi.moveStage(this.publicId, {
+      stagePublicId: this.selectedStagePublicId,
+      ...(lostReason ? { lostReason } : {})
+    }).subscribe({
       next: () => {
         this.feedback.showSuccess('Deal déplacé avec succès.');
         this.moved.emit();

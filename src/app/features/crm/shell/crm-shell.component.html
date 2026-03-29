@@ -1,6 +1,11 @@
 <div class="crm-shell">
   <app-crm-sidebar class="crm-shell__sidebar" />
-  <main class="crm-shell__content">
-    <router-outlet />
-  </main>
+  <div class="crm-shell__body">
+    <header class="crm-shell__topbar">
+      <app-crm-search-bar class="crm-shell__search" />
+    </header>
+    <main class="crm-shell__content">
+      <router-outlet />
+    </main>
+  </div>
 </div>

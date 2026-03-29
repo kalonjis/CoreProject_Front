@@ -1,0 +1,91 @@
+.cl-widget {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.875rem;
+  }
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    color: #111827;
+  }
+
+  &__see-all {
+    font-size: 0.8125rem;
+    color: #3b82f6;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+
+  &__state {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    font-style: italic;
+    margin: 0;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__entry {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: #f9fafb; }
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 999px;
+
+    &--contact      { background: #dbeafe; color: #1d4ed8; }
+    &--deal         { background: #d1fae5; color: #065f46; }
+    &--organisation { background: #fef3c7; color: #92400e; }
+  }
+
+  &__field {
+    font-weight: 500;
+    color: #374151;
+    white-space: nowrap;
+  }
+
+  &__arrow { color: #d1d5db; font-size: 0.75rem; }
+
+  &__new-value {
+    color: #16a34a;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    white-space: nowrap;
+  }
+}

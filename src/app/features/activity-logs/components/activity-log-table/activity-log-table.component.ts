@@ -38,11 +38,13 @@ export class ActivityLogTableComponent {
   // ===========================================================================
 
   @Input({ required: true }) logs: ActivityLog[] = [];
-  @Input() loading     = false;
-  @Input() currentPage = 0;
-  @Input() totalPages  = 0;
+  @Input() loading       = false;
+  @Input() currentPage   = 0;
+  @Input() totalPages    = 0;
   @Input() totalElements = 0;
   @Input() selectedLog: ActivityLog | null = null;
+  /** Whether to show the actor (user) column. Set to false on user-scoped views. */
+  @Input() showActor = true;
 
   // ===========================================================================
   // OUTPUTS

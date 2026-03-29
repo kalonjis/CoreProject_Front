@@ -9,6 +9,7 @@ import {
   UpdateOrganisationRequest,
   MergeOrganisationRequest
 } from '../models/organisation.model';
+import { DealSummary } from '../../deal/models/deal.model';
 import { Page } from '../../../shared/models/page.model';
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +30,7 @@ export class CrmOrganisationApiService {
     if (filter.industry?.trim()) params = params.set('industry', filter.industry.trim());
     if (filter.size)             params = params.set('size', filter.size);
     if (filter.countryCode)      params = params.set('countryCode', filter.countryCode);
+    if (filter.tagPublicId)      params = params.set('tagPublicId', filter.tagPublicId);
 
     return this.http.get<Page<OrganisationSummary>>(this.base, { params });
   }
@@ -47,5 +49,9 @@ export class CrmOrganisationApiService {
 
   merge(body: MergeOrganisationRequest): Observable<OrganisationDetail> {
     return this.http.post<OrganisationDetail>(`${this.base}/merge`, body);
+  }
+
+  getDeals(publicId: string): Observable<DealSummary[]> {
+    return this.http.get<DealSummary[]>(`${this.base}/${publicId}/deals`);
   }
 }

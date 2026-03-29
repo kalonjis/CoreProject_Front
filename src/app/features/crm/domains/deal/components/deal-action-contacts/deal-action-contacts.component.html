@@ -1,0 +1,74 @@
+<div class="action-panel">
+  <h3 class="action-panel__title">Contacts du deal</h3>
+
+  <!-- Current contacts list -->
+  @if (contacts.length > 0) {
+    <ul class="action-panel__contact-list">
+      @for (c of contacts; track c.contactPublicId) {
+        <li class="action-panel__contact-item">
+          <span class="action-panel__contact-name">
+            {{ c.contactFullName }}
+            @if (c.primary) { <span class="action-panel__primary-badge">Principal</span> }
+          </span>
+          <select
+            [value]="c.role"
+            (change)="updateRole(c.contactPublicId, $any($event.target).value)">
+            @for (r of roleOptions; track r) {
+              <option [value]="r" [selected]="r === c.role">{{ roleLabels[r] }}</option>
+            }
+          </select>
+          @if (!c.primary) {
+            <button class="btn btn--ghost btn--sm" (click)="setPrimary(c.contactPublicId)" title="Définir comme principal">★</button>
+            <button class="btn btn--danger btn--sm" (click)="removeContact(c.contactPublicId)" title="Retirer">✕</button>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="action-panel__hint">Aucun contact lié.</p>
+  }
+
+  <!-- Add contact -->
+  <div class="action-panel__section">
+    <h4 class="action-panel__subtitle">Ajouter un contact</h4>
+
+    <div class="action-panel__row">
+      <input
+        type="text"
+        [(ngModel)]="keyword"
+        placeholder="Rechercher un contact…"
+        (keyup.enter)="search()" />
+      <button class="btn btn--ghost btn--sm" (click)="search()" [disabled]="searching()">Chercher</button>
+    </div>
+
+    @if (contactResults().length > 0) {
+      <ul class="action-panel__search-results">
+        @for (r of contactResults(); track r.publicId) {
+          <li (click)="selectContact(r)" class="action-panel__search-result">
+            {{ r.firstName }} {{ r.lastName }}
+            @if (r.email) { <span class="action-panel__result-email">{{ r.email }}</span> }
+          </li>
+        }
+      </ul>
+    }
+
+    @if (selectedContactPublicId) {
+      <div class="action-panel__row">
+        <label>Rôle</label>
+        <select [(ngModel)]="selectedRole">
+          @for (r of roleOptions; track r) {
+            <option [value]="r">{{ roleLabels[r] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="action-panel__footer">
+        <button class="btn btn--primary" (click)="addContact()">Ajouter</button>
+      </div>
+    }
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Fermer</button>
+  </div>
+</div>

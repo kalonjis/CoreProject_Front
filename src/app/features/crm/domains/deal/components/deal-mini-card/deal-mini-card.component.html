@@ -1,0 +1,43 @@
+<div
+  class="deal-mini-card"
+  [class.deal-mini-card--won]="deal.status === DealStatus.WON"
+  [class.deal-mini-card--lost]="deal.status === DealStatus.LOST"
+  [class.deal-mini-card--overdue]="deal.isOverdue && deal.status === DealStatus.OPEN"
+  (click)="navigate()"
+  role="button"
+  tabindex="0"
+  (keydown.enter)="navigate()"
+>
+  <div class="deal-mini-card__top">
+    <span class="deal-mini-card__title">{{ deal.title }}</span>
+    <app-deal-status-badge [status]="deal.status" />
+  </div>
+
+  <div class="deal-mini-card__meta">
+    <span class="deal-mini-card__stage">{{ deal.stageName }}</span>
+
+    @if (deal.amount != null) {
+      <span class="deal-mini-card__sep">·</span>
+      <span class="deal-mini-card__amount">
+        {{ deal.amount | currency:deal.currency:'symbol':'1.0-2':'fr' }}
+      </span>
+    }
+
+    @if (deal.isOverdue && deal.status === DealStatus.OPEN) {
+      <span class="deal-mini-card__sep">·</span>
+      <span class="deal-mini-card__overdue">⚠ En retard</span>
+    } @else if (deal.expectedCloseDate) {
+      <span class="deal-mini-card__sep">·</span>
+      <span class="deal-mini-card__date">
+        {{ deal.expectedCloseDate | date:'dd/MM/yyyy' }}
+      </span>
+    }
+  </div>
+
+  <div class="deal-mini-card__footer">
+    <span class="deal-mini-card__assignee">
+      <span class="deal-mini-card__assignee-icon">👤</span>
+      {{ deal.assignedToUsername }}
+    </span>
+  </div>
+</div>

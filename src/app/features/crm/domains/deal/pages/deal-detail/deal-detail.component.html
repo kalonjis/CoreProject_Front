@@ -13,28 +13,52 @@
       <div class="deal-detail__main">
         <app-deal-info-card [deal]="d" />
 
-        <div class="deal-detail__timeline">
-          <div class="deal-detail__timeline-header">
-            <h3 class="deal-detail__timeline-title">Historique</h3>
-            <button class="btn btn--secondary" (click)="showLogForm.set(!showLogForm())">
-              {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
-            </button>
-          </div>
+        <!-- ─── Tabs ──────────────────────────────────────────────────────────── -->
+        <nav class="deal-detail__tabs">
+          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'activite'"      (click)="activeTab.set('activite')">Activité</button>
+          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
+        </nav>
 
-          @if (showLogForm()) {
-            <app-interaction-log-form
-              [dealPublicId]="d.publicId"
-              (logged)="onInteractionLogged()"
-              (cancelled)="showLogForm.set(false)"
+        <!-- ─── Tab: Activité ──────────────────────────────────────────────────── -->
+        @if (activeTab() === 'activite') {
+          <div class="deal-detail__tab-panel">
+            <div class="deal-detail__timeline-header">
+              <button class="btn btn--primary btn--sm"
+                      (click)="showEmailCompose.set(!showEmailCompose())"
+                      [disabled]="!facade.deal()?.contactPublicId">
+                {{ showEmailCompose() ? 'Annuler' : '✉ Email' }}
+              </button>
+              <button class="btn btn--secondary btn--sm" (click)="showLogForm.set(!showLogForm())">
+                {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
+              </button>
+            </div>
+            @if (showEmailCompose()) {
+              <app-email-compose
+                (send)="onEmailSend($event)"
+                (cancel)="showEmailCompose.set(false)"
+              />
+            }
+            @if (showLogForm()) {
+              <app-interaction-log-form
+                [dealPublicId]="d.publicId"
+                (logged)="onInteractionLogged()"
+                (cancelled)="showLogForm.set(false)"
+              />
+            }
+            <app-interaction-timeline
+              [entries]="interactionFacade.entries()"
+              [loading]="interactionFacade.loading()"
+              (deleteRequested)="onInteractionDelete($event)"
             />
-          }
+          </div>
+        }
 
-          <app-interaction-timeline
-            [entries]="interactionFacade.entries()"
-            [loading]="interactionFacade.loading()"
-            (deleteRequested)="onInteractionDelete($event)"
-          />
-        </div>
+        <!-- ─── Tab: Modifications ─────────────────────────────────────────────── -->
+        @if (activeTab() === 'modifications') {
+          <div class="deal-detail__tab-panel">
+            <app-change-log-list entityType="DEAL" [entityPublicId]="d.publicId" />
+          </div>
+        }
       </div>
 
       <aside class="deal-detail__sidebar">
@@ -53,6 +77,12 @@
             [class.btn--active]="activeAction() === 'reassign'"
             (click)="setAction('reassign')">
             Réassigner
+          </button>
+          <button
+            class="btn btn--ghost"
+            [class.btn--active]="activeAction() === 'contacts'"
+            (click)="setAction('contacts')">
+            Contacts
           </button>
         </div>
 
@@ -73,7 +103,25 @@
               (cancelled)="setAction(null)"
             />
           }
+          @case ('contacts') {
+            <app-deal-action-contacts
+              [dealPublicId]="d.publicId"
+              [contacts]="d.contacts"
+              (changed)="facade.loadDetail(d.publicId)"
+              (cancelled)="setAction(null)"
+            />
+          }
         }
+
+        <!-- ─── Tags ──────────────────────────────────────────────────────────── -->
+        <div class="deal-detail__tags-section">
+          <h4 class="deal-detail__tags-title">Tags</h4>
+          <app-tag-input
+            [entityTags]="tags()"
+            (tagAdded)="onTagAdded($event)"
+            (tagRemoved)="onTagRemoved($event)"
+          />
+        </div>
 
         <div class="deal-detail__actions-section">
           <div class="deal-detail__actions-header">
@@ -109,5 +157,6 @@
       </aside>
 
     </div>
+
   }
 </div>

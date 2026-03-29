@@ -8,4 +8,5 @@ export interface CrmStats {
   overdueActions:      number;
   ticketsOpen:         number;
   ticketsInProgress:   number;
+  forecastRevenue:     number;
 }

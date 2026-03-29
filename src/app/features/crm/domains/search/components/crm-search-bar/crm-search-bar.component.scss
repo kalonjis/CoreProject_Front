@@ -1,0 +1,140 @@
+@import 'variables';
+
+.search {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+
+  // ─── Input ─────────────────────────────────────────────────────────────────
+
+  &__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: 999px;
+    padding: 0.4rem 0.75rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus-within {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.12);
+    }
+  }
+
+  &__icon {
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    color: $gray-dark;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: $text-color;
+    background: transparent;
+    min-width: 0;
+
+    &::placeholder { color: $gray-dark; }
+  }
+
+  &__clear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: $gray-dark;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+
+    &:hover { color: $text-color; }
+  }
+
+  &__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+  }
+
+  // ─── Dropdown ──────────────────────────────────────────────────────────────
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    box-shadow: $box-shadow;
+    z-index: 1000;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  &__empty {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: $gray-dark;
+    text-align: center;
+    margin: 0;
+  }
+
+  &__group {
+    &:not(:last-child) {
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  &__group-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #fafafa;
+  }
+
+  &__item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid lighten($border-color, 3%);
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f5f3ff; }
+  }
+
+  &__item-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  &__item-sub {
+    font-size: 0.78rem;
+    color: $gray-dark;
+    margin-top: 0.1rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

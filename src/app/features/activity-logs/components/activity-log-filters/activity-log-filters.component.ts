@@ -9,6 +9,7 @@ import {
   ACTIVITY_LOG_CATEGORY_LABELS,
   TOP_LEVEL_CATEGORIES,
   ADMIN_SUB_CATEGORIES,
+  CRM_SUB_CATEGORIES,
 } from '../../models/activity-log-category.enum';
 import { ActivityLogFilter } from '../../models/activity-log.model';
 
@@ -71,12 +72,16 @@ export class ActivityLogFiltersComponent {
 
   readonly String = String; // exposed for template use
 
-  readonly topCategories    = TOP_LEVEL_CATEGORIES;
+  readonly topCategories      = TOP_LEVEL_CATEGORIES;
   readonly adminSubCategories = ADMIN_SUB_CATEGORIES;
-  readonly categoryLabels   = ACTIVITY_LOG_CATEGORY_LABELS;
+  readonly crmSubCategories   = CRM_SUB_CATEGORIES;
+  readonly categoryLabels     = ACTIVITY_LOG_CATEGORY_LABELS;
 
   /** Show admin sub-categories when ADMIN is selected */
   readonly showAdminSub = computed(() => this._category() === ActivityLogCategory.ADMIN);
+
+  /** Show CRM sub-categories when CRM is selected */
+  readonly showCrmSub = computed(() => this._category() === ActivityLogCategory.CRM);
 
   readonly category   = this._category.asReadonly();
   readonly from       = this._from.asReadonly();

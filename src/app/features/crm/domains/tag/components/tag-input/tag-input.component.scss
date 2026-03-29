@@ -1,0 +1,85 @@
+@import 'variables';
+
+.tag-input {
+  position: relative;
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background: #fff;
+    min-height: 38px;
+    cursor: text;
+    transition: border-color 0.15s;
+
+    &:focus-within {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+  }
+
+  &__field-wrap {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  &__field {
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: $text-color;
+    background: transparent;
+    width: 100%;
+
+    &::placeholder { color: $gray-dark; }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow-sm;
+    z-index: 500;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    border-bottom: 1px solid lighten($border-color, 3%);
+    font-size: 0.875rem;
+    color: $text-color;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f5f3ff; }
+
+    &--create {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+
+  &__option-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+}

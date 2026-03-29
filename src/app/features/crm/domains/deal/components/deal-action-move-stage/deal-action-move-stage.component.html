@@ -24,3 +24,36 @@
     <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
   </div>
 </div>
+
+<!-- Lost reason modal -->
+@if (showLostModal()) {
+  <div class="lost-modal-overlay" (click)="cancelLostModal()">
+    <div class="lost-modal" (click)="$event.stopPropagation()">
+      <h3 class="lost-modal__title">Confirmer la perte du deal</h3>
+      <p class="lost-modal__subtitle">
+        Étape : <strong>{{ selectedStep?.name }}</strong>
+      </p>
+
+      <div class="lost-modal__field">
+        <label class="lost-modal__label">Raison de la perte *</label>
+        <textarea
+          class="lost-modal__textarea"
+          [(ngModel)]="lostReason"
+          placeholder="Ex : Prix trop élevé, choix d'un concurrent, budget annulé…"
+          rows="4"
+          autofocus>
+        </textarea>
+      </div>
+
+      <div class="lost-modal__footer">
+        <button
+          class="btn btn--danger"
+          (click)="confirmLost()"
+          [disabled]="loading() || !lostReasonValid">
+          Confirmer la perte
+        </button>
+        <button class="btn btn--ghost" (click)="cancelLostModal()">Annuler</button>
+      </div>
+    </div>
+  </div>
+}

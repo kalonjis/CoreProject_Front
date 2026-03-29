@@ -22,10 +22,24 @@
       <dt>Étape</dt>
       <dd>{{ deal.stageName }}</dd>
     </div>
-    <div class="info-card__field">
-      <dt>Contact</dt>
+    <div class="info-card__field info-card__field--full">
+      <dt>Contacts</dt>
       <dd>
-        <a [routerLink]="['/crm/contacts', deal.contactPublicId]">{{ deal.contactFullName }}</a>
+        @if (deal.contacts.length === 0) {
+          <span class="info-card__empty">Aucun contact</span>
+        } @else {
+          <ul class="info-card__contacts">
+            @for (c of deal.contacts; track c.contactPublicId) {
+              <li class="info-card__contact">
+                <a [routerLink]="['/crm/contacts', c.contactPublicId]">{{ c.contactFullName }}</a>
+                <span class="info-card__contact-role">{{ roleLabels[c.role] }}</span>
+                @if (c.primary) {
+                  <span class="info-card__contact-primary">Principal</span>
+                }
+              </li>
+            }
+          </ul>
+        }
       </dd>
     </div>
     @if (deal.organisationName) {
@@ -52,6 +66,12 @@
       <div class="info-card__field">
         <dt>Clôturé le</dt>
         <dd>{{ deal.closedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+    }
+    @if (deal.lostReason) {
+      <div class="info-card__field info-card__field--full">
+        <dt>Raison de la perte</dt>
+        <dd class="info-card__lost-reason">{{ deal.lostReason }}</dd>
       </div>
     }
     @if (deal.notes) {

@@ -12,6 +12,7 @@ import {
   LinkContactOrganisationRequest,
   MergeContactRequest
 } from '../models/contact.model';
+import { DealSummary } from '../../deal/models/deal.model';
 import { Page } from '../../../shared/models/page.model';
 import { map } from 'rxjs/operators';
 
@@ -32,8 +33,9 @@ export class CrmContactApiService {
     if (filter.organisationPublicId)    params = params.set('organisationPublicId', filter.organisationPublicId);
     if (filter.withoutOrganisation)     params = params.set('withoutOrganisation', 'true');
     if (filter.assignedToPublicId)      params = params.set('assignedToPublicId', filter.assignedToPublicId);
-    if (filter.hasLinkedUser != null)   params = params.set('hasLinkedUser', String(filter.hasLinkedUser));
+    if (filter.hasLinkedUser != null)     params = params.set('hasLinkedUser', String(filter.hasLinkedUser));
     if (filter.convertedFromLead != null) params = params.set('convertedFromLead', String(filter.convertedFromLead));
+    if (filter.tagPublicId)               params = params.set('tagPublicId', filter.tagPublicId);
 
     return this.http.get<Page<ContactSummary>>(this.base, { params });
   }
@@ -77,5 +79,13 @@ export class CrmContactApiService {
       .set('size', 100)
       .set('sort', 'lastName,asc');
     return this.http.get<Page<ContactSummary>>(this.base, { params }).pipe(map(p => p.content));
+  }
+
+  getDeals(publicId: string): Observable<DealSummary[]> {
+    return this.http.get<DealSummary[]>(`${this.base}/${publicId}/deals`);
+  }
+
+  sendEmail(publicId: string, body: { subject: string; body: string; dealPublicId?: string }): Observable<void> {
+    return this.http.post<void>(`${this.base}/${publicId}/email`, body);
   }
 }

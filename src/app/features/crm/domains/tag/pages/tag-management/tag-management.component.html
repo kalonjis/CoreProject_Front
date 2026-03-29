@@ -1,0 +1,85 @@
+<div class="tm">
+
+  <div class="tm__header">
+    <h1 class="tm__title">Gestion des tags</h1>
+    <button class="btn btn--primary" (click)="openCreateForm()" [disabled]="showCreateForm">
+      + Nouveau tag
+    </button>
+  </div>
+
+  <!-- ─── Create form ───────────────────────────────────────────────────────── -->
+  @if (showCreateForm) {
+    <div class="action-panel tm__create-form">
+      <h3 class="action-panel__title">Nouveau tag</h3>
+      <div class="action-panel__grid">
+        <div class="action-panel__row">
+          <label for="new-name">Nom *</label>
+          <input id="new-name" type="text" [(ngModel)]="newName" placeholder="Ex: VIP" maxlength="50" />
+        </div>
+        <div class="action-panel__row">
+          <label for="new-color">Couleur</label>
+          <div class="tm__color-row">
+            <input id="new-color" type="color" [(ngModel)]="newColor" />
+            <span class="tm__color-hex">{{ newColor }}</span>
+            <app-tag-chip [tag]="{ publicId: '', name: newName || 'Aperçu', color: newColor }" />
+          </div>
+        </div>
+      </div>
+      <div class="action-panel__footer">
+        <button class="btn btn--primary" (click)="submitCreate()" [disabled]="saving() || !newName.trim()">Créer</button>
+        <button class="btn btn--ghost" (click)="cancelCreate()">Annuler</button>
+      </div>
+    </div>
+  }
+
+  <!-- ─── Tag list ──────────────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <p class="tm__state">Chargement…</p>
+  } @else if (tags().length === 0 && !showCreateForm) {
+    <p class="tm__state">Aucun tag. Créez-en un pour commencer.</p>
+  } @else {
+    <div class="tm__list">
+      @for (tag of tags(); track tag.publicId) {
+        <div class="tm__row">
+
+          @if (editingId === tag.publicId) {
+            <!-- Inline edit -->
+            <div class="tm__edit-form action-panel">
+              <div class="action-panel__grid">
+                <div class="action-panel__row">
+                  <label>Nom *</label>
+                  <input type="text" [(ngModel)]="editName" maxlength="50" />
+                </div>
+                <div class="action-panel__row">
+                  <label>Couleur</label>
+                  <div class="tm__color-row">
+                    <input type="color" [(ngModel)]="editColor" />
+                    <span class="tm__color-hex">{{ editColor }}</span>
+                    <app-tag-chip [tag]="{ publicId: tag.publicId, name: editName || tag.name, color: editColor }" />
+                  </div>
+                </div>
+              </div>
+              <div class="action-panel__footer">
+                <button class="btn btn--primary btn--sm" (click)="submitEdit()" [disabled]="saving() || !editName.trim()">Enregistrer</button>
+                <button class="btn btn--ghost btn--sm" (click)="cancelEdit()">Annuler</button>
+              </div>
+            </div>
+          } @else {
+            <!-- Tag display -->
+            <div class="tm__tag-info">
+              <app-tag-chip [tag]="tag" [navigable]="true" />
+            </div>
+            <div class="tm__tag-actions">
+              <button class="btn btn--sm btn--secondary" (click)="startEdit(tag)">Modifier</button>
+              @if (isAdmin()) {
+                <button class="btn btn--sm btn--danger" (click)="deleteTag(tag)">Supprimer</button>
+              }
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

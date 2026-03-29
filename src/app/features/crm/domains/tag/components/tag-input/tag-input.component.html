@@ -1,0 +1,40 @@
+<div class="tag-input">
+
+  <!-- Tags appliqués -->
+  <div class="tag-input__chips">
+    @for (tag of entityTags; track tag.publicId) {
+      <app-tag-chip [tag]="tag" [removable]="true" [navigable]="true" (removed)="remove($event)" />
+    }
+
+    <!-- Champ de saisie -->
+    <div class="tag-input__field-wrap">
+      <input
+        class="tag-input__field"
+        type="text"
+        placeholder="Ajouter un tag…"
+        autocomplete="off"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+        (focus)="open.set(true)"
+      />
+    </div>
+  </div>
+
+  <!-- Dropdown suggestions -->
+  @if (open() && (suggestions().length > 0 || canCreate)) {
+    <div class="tag-input__dropdown">
+      @for (tag of suggestions(); track tag.publicId) {
+        <button class="tag-input__option" (click)="select(tag)">
+          <span class="tag-input__option-dot" [style.background]="tag.color"></span>
+          {{ tag.name }}
+        </button>
+      }
+      @if (canCreate) {
+        <button class="tag-input__option tag-input__option--create" (click)="createAndAdd()">
+          + Créer "{{ query().trim() }}"
+        </button>
+      }
+    </div>
+  }
+
+</div>

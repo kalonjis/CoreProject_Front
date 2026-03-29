@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { DealDetail } from '../../models/deal.model';
+import { DealDetail, CONTACT_ROLE_LABELS, ContactRole } from '../../models/deal.model';
 import { DealStatusBadgeComponent } from '../deal-status-badge/deal-status-badge.component';
 
 @Component({
@@ -12,4 +12,7 @@ import { DealStatusBadgeComponent } from '../deal-status-badge/deal-status-badge
 })
 export class DealInfoCardComponent {
   @Input({ required: true }) deal!: DealDetail;
+
+  readonly roleLabels = CONTACT_ROLE_LABELS;
+  readonly roleKeys   = Object.values(ContactRole);
 }

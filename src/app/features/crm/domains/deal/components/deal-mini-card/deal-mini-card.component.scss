@@ -1,0 +1,124 @@
+@import 'variables';
+
+.deal-mini-card {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-left: 4px solid $primary-color;
+  border-radius: $border-radius;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  outline: none;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: $box-shadow-sm;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+  }
+
+  // ─── Status variants ────────────────────────────────────────────────────────
+
+  &--won {
+    border-left-color: #2e7d32;
+
+    &:hover { border-color: #2e7d32; }
+  }
+
+  &--lost {
+    border-left-color: #c62828;
+    opacity: 0.85;
+
+    &:hover { border-color: #c62828; opacity: 1; }
+  }
+
+  &--overdue {
+    border-left-color: #e65100;
+
+    &:hover { border-color: #e65100; }
+  }
+
+  // ─── Inner layout ────────────────────────────────────────────────────────────
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $dark-color;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: $gray-dark;
+  }
+
+  &__stage {
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  &__sep {
+    color: $border-color;
+    user-select: none;
+  }
+
+  &__amount {
+    font-weight: 600;
+    color: $dark-color;
+  }
+
+  &__overdue {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #e65100;
+    background: rgba(230, 81, 0, 0.08);
+    padding: 0.1em 0.45em;
+    border-radius: 999px;
+  }
+
+  &__date {
+    color: $gray-dark;
+    font-size: 0.78rem;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    margin-top: 0.125rem;
+  }
+
+  &__assignee {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: $gray-dark;
+  }
+
+  &__assignee-icon {
+    font-size: 0.7rem;
+    line-height: 1;
+  }
+}

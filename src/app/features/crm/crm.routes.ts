@@ -19,6 +19,12 @@ export const CRM_ROUTES: Routes = [
           .then(m => m.CrmDashboardComponent),
         title: 'CRM — Dashboard'
       },
+      {
+        path: 'today',
+        loadComponent: () => import('./domains/today/pages/crm-today/crm-today.component')
+          .then(m => m.CrmTodayComponent),
+        title: 'CRM — Aujourd\'hui'
+      },
 
       // -----------------------------------------------------------------------
       // LEADS
@@ -130,6 +136,12 @@ export const CRM_ROUTES: Routes = [
       // PIPELINE
       // -----------------------------------------------------------------------
       {
+        path: 'pipeline/stats',
+        loadComponent: () => import('./domains/pipeline/pages/pipeline-stats/pipeline-stats.component')
+          .then(m => m.PipelineStatsComponent),
+        title: 'CRM — Statistiques pipeline'
+      },
+      {
         path: 'pipeline',
         loadComponent: () => import('./domains/pipeline/pages/pipeline-board/pipeline-board.component')
           .then(m => m.PipelineBoardComponent),
@@ -183,6 +195,28 @@ export const CRM_ROUTES: Routes = [
         loadComponent: () => import('./domains/pipeline/pages/pipeline-settings/pipeline-settings.component')
           .then(m => m.PipelineSettingsComponent),
         title: 'CRM — Paramètres Pipelines'
+      },
+      {
+        path: 'settings/tags',
+        loadComponent: () => import('./domains/tag/pages/tag-management/tag-management.component')
+          .then(m => m.TagManagementComponent),
+        title: 'CRM — Gestion des tags'
+      },
+      {
+        path: 'tags/:publicId',
+        loadComponent: () => import('./domains/tag/pages/tag-detail/tag-detail.component')
+          .then(m => m.TagDetailComponent),
+        title: 'CRM — Tag'
+      },
+
+      // -----------------------------------------------------------------------
+      // CHANGE LOG
+      // -----------------------------------------------------------------------
+      {
+        path: 'changelog',
+        loadComponent: () => import('./domains/crm-change-log/pages/change-log-global/change-log-global.component')
+          .then(m => m.ChangeLogGlobalComponent),
+        title: 'CRM — Historique des modifications'
       },
 
       // -----------------------------------------------------------------------

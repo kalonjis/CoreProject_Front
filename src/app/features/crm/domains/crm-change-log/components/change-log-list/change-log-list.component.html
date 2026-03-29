@@ -1,0 +1,46 @@
+<div class="change-log">
+
+  @if (facade.loading()) {
+    <p class="change-log__state">Chargement…</p>
+  } @else if (facade.entries().length === 0) {
+    <p class="change-log__state change-log__state--empty">Aucune modification enregistrée.</p>
+  } @else {
+    <ul class="change-log__list">
+      @for (entry of facade.entries(); track entry.publicId) {
+        <li class="change-log__entry">
+          <div class="change-log__entry-field">{{ fieldLabel(entry.fieldName) }}</div>
+          <div class="change-log__entry-values">
+            <span class="change-log__old-value">{{ entry.oldValue ?? '—' }}</span>
+            <span class="change-log__arrow">→</span>
+            <span class="change-log__new-value">{{ entry.newValue ?? '—' }}</span>
+          </div>
+          <div class="change-log__entry-meta">
+            @if (entry.changedBy) { <span class="change-log__actor">{{ entry.changedBy }}</span> }
+            <span class="change-log__date">{{ entry.changedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+
+    @if (facade.totalPages() > 1) {
+      <div class="change-log__pagination">
+        <button
+          class="btn btn--secondary btn--sm"
+          [disabled]="facade.currentPage() === 0"
+          (click)="facade.prevPage()">
+          ‹ Précédent
+        </button>
+        <span class="change-log__page-info">
+          {{ facade.currentPage() + 1 }} / {{ facade.totalPages() }}
+        </span>
+        <button
+          class="btn btn--secondary btn--sm"
+          [disabled]="facade.currentPage() === facade.totalPages() - 1"
+          (click)="facade.nextPage()">
+          Suivant ›
+        </button>
+      </div>
+    }
+  }
+
+</div>

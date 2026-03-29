@@ -75,12 +75,27 @@
         <div class="dash__kpi-arrow">→</div>
       </div>
 
+      <div class="dash__kpi dash__kpi--secondary" (click)="navigate('pipeline')">
+        <div class="dash__kpi-body">
+          <div class="dash__kpi-label">Prévision pondérée</div>
+          <div class="dash__kpi-value">{{ s.forecastRevenue | number:'1.0-0':'fr' }} <span class="dash__kpi-unit">EUR</span></div>
+          <div class="dash__kpi-sub">Basé sur la probabilité par étape</div>
+        </div>
+        <div class="dash__kpi-arrow">→</div>
+      </div>
+
+    </div>
+
+    <!-- CHANGE LOG WIDGET -->
+    <div class="dash__section">
+      <app-change-log-widget />
     </div>
 
     <!-- QUICK LINKS -->
     <div class="dash__section">
       <h2 class="dash__section-title">Accès rapides</h2>
       <div class="dash__links">
+        <button class="dash__link dash__link--today" (click)="navigate('today')">Aujourd'hui</button>
         <button class="dash__link" (click)="navigate('leads')">Leads</button>
         <button class="dash__link" (click)="navigate('contacts')">Contacts</button>
         <button class="dash__link" (click)="navigate('organisations')">Organisations</button>

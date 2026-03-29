@@ -1,10 +1,11 @@
 export interface PipelineStep {
-  publicId: string;
-  name:     string;
-  color:    string | null;
-  position: number;
-  isWon:    boolean;
-  isLost:   boolean;
+  publicId:       string;
+  name:           string;
+  color:          string | null;
+  position:       number;
+  isWon:          boolean;
+  isLost:         boolean;
+  winProbability: number;
 }
 
 export interface Pipeline {
@@ -16,6 +17,28 @@ export interface Pipeline {
   steps:        PipelineStep[];
   createdAt:    string;
   updatedAt:    string;
+}
+
+// ─── Stats models ────────────────────────────────────────────────────────────
+
+export interface PipelineStageStats {
+  stagePublicId:  string;
+  stageName:      string;
+  position:       number;
+  isWon:          boolean;
+  isLost:         boolean;
+  dealsCurrently: number;
+  dealsEntered:   number;
+  conversionRate: number | null;
+  avgDaysInStage: number | null;
+}
+
+export interface PipelineStats {
+  pipelinePublicId: string;
+  pipelineName:     string;
+  stages:           PipelineStageStats[];
+  winRate:          number | null;
+  avgDealCycleDays: number | null;
 }
 
 // ─── Request models ──────────────────────────────────────────────────────────
@@ -33,19 +56,18 @@ export interface UpdatePipelineRequest {
 }
 
 export interface CreatePipelineStepRequest {
-  name:     string;
-  color?:   string;
-  position: number;
-  isWon?:   boolean;
-  isLost?:  boolean;
+  name:            string;
+  color?:          string;
+  position:        number;
+  isWon?:          boolean;
+  isLost?:         boolean;
+  winProbability?: number;
 }
 
 export interface UpdatePipelineStepRequest {
-  name?:     string;
-  color?:    string;
-  position?: number;
-  isWon?:    boolean;
-  isLost?:   boolean;
+  name?:           string;
+  color?:          string;
+  winProbability?: number;
 }
 
 export interface ReorderPipelineStepsRequest {

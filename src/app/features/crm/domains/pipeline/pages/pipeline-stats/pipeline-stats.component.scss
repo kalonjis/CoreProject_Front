@@ -1,0 +1,171 @@
+.stats-page {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__title-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__pipeline-name {
+    font-size: 1rem;
+    color: var(--color-text-muted, #6c757d);
+  }
+
+  &__pipeline-select {
+    font-size: 0.95rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--color-border, #dee2e6);
+    border-radius: 6px;
+    background: var(--color-surface, #fff);
+  }
+
+  &__info,
+  &__error {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-text-muted, #6c757d);
+  }
+
+  &__error { color: var(--color-danger, #dc3545); }
+}
+
+// KPI grid (reuse dashboard pattern)
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.kpi-card {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #dee2e6);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text, #212529);
+    line-height: 1.1;
+
+    &--accent { color: var(--color-primary, #0d6efd); }
+  }
+
+  &__sub {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #6c757d);
+  }
+}
+
+// Funnel table
+.funnel {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #dee2e6);
+  border-radius: 10px;
+  overflow: hidden;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    margin: 0;
+    border-bottom: 1px solid var(--color-border, #dee2e6);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  &__th {
+    padding: 0.75rem 1.5rem;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--color-surface-alt, #f8f9fa);
+    border-bottom: 1px solid var(--color-border, #dee2e6);
+
+    &--name { text-align: left; }
+  }
+
+  &__row {
+    border-bottom: 1px solid var(--color-border, #dee2e6);
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: var(--color-surface-alt, #f8f9fa); }
+
+    &--won { background: #f0fdf4; }
+    &--lost { background: #fff5f5; }
+  }
+
+  &__td {
+    padding: 0.9rem 1.5rem;
+    text-align: right;
+    font-size: 0.9rem;
+
+    &--name { text-align: left; }
+    &--num  { font-variant-numeric: tabular-nums; }
+  }
+
+  &__stage-name {
+    font-weight: 500;
+  }
+
+  &__badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &--won  { background: #d1fae5; color: #065f46; }
+    &--lost { background: #fee2e2; color: #991b1b; }
+  }
+
+  &__rate {
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+
+    &--high { color: #065f46; background: #d1fae5; }
+    &--mid  { color: #92400e; background: #fef3c7; }
+    &--low  { color: #991b1b; background: #fee2e2; }
+    &--na   { color: var(--color-text-muted, #6c757d); }
+  }
+}

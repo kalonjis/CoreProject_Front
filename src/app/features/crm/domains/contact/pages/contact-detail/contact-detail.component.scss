@@ -41,7 +41,44 @@
 
   &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
 
+  &__header-actions { display: flex; align-items: center; gap: 0.5rem; }
+
   &__action-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+  // ─── Tabs ───────────────────────────────────────────────────────────────────
+
+  &__tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid $border-color;
+  }
+
+  &__tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-dark;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover { color: $primary-color; }
+
+    &--active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+    }
+  }
+
+  &__tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding-top: 1.25rem;
+  }
 
   &__timeline {
     border-top: 1px solid $border-color;
@@ -88,5 +125,61 @@
     color: $gray-dark;
     font-style: italic;
     margin: 0;
+  }
+
+  // ─── Tags section ───────────────────────────────────────────────────────────
+
+  &__tags-section {
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  // ─── Deals section ──────────────────────────────────────────────────────────
+
+  &__deals-section {
+    border-top: 1px solid $border-color;
+    padding-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: $dark-color;
+    flex: 1;
+  }
+
+  &__section-count {
+    font-size: 0.8rem;
+    color: $gray-dark;
+    background: $gray-medium;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  &__section-state {
+    font-size: 0.8125rem;
+    color: $gray-dark;
+    font-style: italic;
+    margin: 0;
+  }
+
+  &__deals-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
   }
 }

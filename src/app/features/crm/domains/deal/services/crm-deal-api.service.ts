@@ -5,10 +5,13 @@ import {
   DealDetail,
   DealSummary,
   DealFilter,
+  DealContactRoleResponse,
   CreateDealRequest,
   UpdateDealRequest,
   MoveDealStageRequest,
-  ReassignDealRequest
+  ReassignDealRequest,
+  AddDealContactRoleRequest,
+  UpdateDealContactRoleRequest
 } from '../models/deal.model';
 import { Page } from '../../../shared/models/page.model';
 
@@ -36,6 +39,7 @@ export class CrmDealApiService {
     if (filter.amountMax != null)       params = params.set('amountMax', filter.amountMax);
     if (filter.expectedCloseFrom)       params = params.set('expectedCloseFrom', filter.expectedCloseFrom);
     if (filter.expectedCloseTo)         params = params.set('expectedCloseTo', filter.expectedCloseTo);
+    if (filter.tagPublicId)             params = params.set('tagPublicId', filter.tagPublicId);
 
     return this.http.get<Page<DealSummary>>(this.base, { params });
   }
@@ -58,5 +62,23 @@ export class CrmDealApiService {
 
   reassign(publicId: string, body: ReassignDealRequest): Observable<DealDetail> {
     return this.http.patch<DealDetail>(`${this.base}/${publicId}/assign`, body);
+  }
+
+  // ─── Contact role endpoints ────────────────────────────────────────────────
+
+  addContact(publicId: string, body: AddDealContactRoleRequest): Observable<DealContactRoleResponse> {
+    return this.http.post<DealContactRoleResponse>(`${this.base}/${publicId}/contacts`, body);
+  }
+
+  removeContact(publicId: string, contactPublicId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${publicId}/contacts/${contactPublicId}`);
+  }
+
+  updateContactRole(publicId: string, contactPublicId: string, body: UpdateDealContactRoleRequest): Observable<DealContactRoleResponse> {
+    return this.http.patch<DealContactRoleResponse>(`${this.base}/${publicId}/contacts/${contactPublicId}/role`, body);
+  }
+
+  setPrimaryContact(publicId: string, contactPublicId: string): Observable<DealContactRoleResponse> {
+    return this.http.patch<DealContactRoleResponse>(`${this.base}/${publicId}/contacts/${contactPublicId}/primary`, {});
   }
 }

@@ -1,0 +1,53 @@
+<div class="cl-global">
+
+  <div class="cl-global__header">
+    <h1 class="cl-global__title">Historique des modifications</h1>
+    @if (!loading() && totalElements() > 0) {
+      <span class="cl-global__count">{{ totalElements() }} entrée{{ totalElements() > 1 ? 's' : '' }}</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="cl-global__state">Chargement…</p>
+  } @else if (entries().length === 0) {
+    <p class="cl-global__state">Aucune modification enregistrée.</p>
+  } @else {
+    <table class="cl-global__table">
+      <thead>
+        <tr>
+          <th>Entité</th>
+          <th>Champ</th>
+          <th>Avant</th>
+          <th>Après</th>
+          <th>Par</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of entries(); track entry.publicId) {
+          <tr class="cl-global__row" (click)="navigateTo(entry)">
+            <td>
+              <span class="cl-global__badge cl-global__badge--{{ entry.entityType | lowercase }}">
+                {{ entry.entityType === 'CONTACT' ? 'Contact' : entry.entityType === 'ORGANISATION' ? 'Organisation' : 'Deal' }}
+              </span>
+            </td>
+            <td class="cl-global__field">{{ fieldLabel(entry.fieldName) }}</td>
+            <td class="cl-global__old">{{ entry.oldValue ?? '—' }}</td>
+            <td class="cl-global__new">{{ entry.newValue ?? '—' }}</td>
+            <td class="cl-global__actor">{{ entry.changedBy ?? '—' }}</td>
+            <td class="cl-global__date">{{ entry.changedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="cl-global__pagination">
+        <button class="btn btn--secondary btn--sm" [disabled]="currentPage() === 0" (click)="prevPage()">‹ Précédent</button>
+        <span class="cl-global__page-info">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
+        <button class="btn btn--secondary btn--sm" [disabled]="currentPage() === totalPages() - 1" (click)="nextPage()">Suivant ›</button>
+      </div>
+    }
+  }
+
+</div>

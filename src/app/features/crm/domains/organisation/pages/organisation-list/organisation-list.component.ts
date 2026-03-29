@@ -10,6 +10,8 @@ import {
 } from '../../models/organisation.model';
 import { OrganisationSizeBadgeComponent } from '../../components/organisation-size-badge/organisation-size-badge.component';
 import { CrmEmptyStateComponent } from '../../../../shared/empty-state/crm-empty-state.component';
+import { CrmTagApiService } from '../../../tag/services/crm-tag-api.service';
+import { Tag } from '../../../tag/models/tag.model';
 
 @Component({
   selector: 'app-organisation-list',
@@ -21,6 +23,7 @@ export class OrganisationListComponent implements OnInit {
 
   private readonly api    = inject(CrmOrganisationApiService);
   private readonly router = inject(Router);
+  private readonly tagApi = inject(CrmTagApiService);
 
   readonly organisations  = signal<OrganisationSummary[]>([]);
   readonly totalPages     = signal(0);
@@ -28,24 +31,31 @@ export class OrganisationListComponent implements OnInit {
   readonly loading        = signal(false);
   readonly error          = signal<string | null>(null);
 
+  readonly allTags = signal<Tag[]>([]);
+
   currentPage = 0;
   readonly pageSize = 20;
 
-  keyword      = '';
-  selectedSize : OrganisationSize | '' = '';
+  keyword             = '';
+  selectedSize        : OrganisationSize | '' = '';
+  selectedTagPublicId = '';
 
   readonly sizes       = Object.values(OrganisationSize);
   readonly sizeLabels  = ORGANISATION_SIZE_LABELS;
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.tagApi.findAll().subscribe(tags => this.allTags.set(tags));
+    this.load();
+  }
 
   load(): void {
     this.loading.set(true);
     this.error.set(null);
 
     const f: OrganisationFilter = {};
-    if (this.keyword.trim())  f.keyword = this.keyword;
-    if (this.selectedSize)    f.size    = this.selectedSize;
+    if (this.keyword.trim())       f.keyword      = this.keyword;
+    if (this.selectedSize)         f.size         = this.selectedSize;
+    if (this.selectedTagPublicId)  f.tagPublicId  = this.selectedTagPublicId;
 
     this.api.findAll(f, this.currentPage).subscribe({
       next: page => {
