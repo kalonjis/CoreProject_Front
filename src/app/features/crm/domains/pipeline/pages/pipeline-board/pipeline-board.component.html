@@ -14,7 +14,10 @@
         <span class="board__name">{{ p.name }}</span>
       }
     </div>
-    <button class="btn btn--primary" (click)="goDeals()">Vue liste →</button>
+    <div class="board__actions">
+      <button class="btn btn--ghost" (click)="goStats()">Statistiques →</button>
+      <button class="btn btn--primary" (click)="goDeals()">Vue liste →</button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -27,7 +30,12 @@
         <div class="board__column" [class.board__column--won]="step.isWon" [class.board__column--lost]="step.isLost">
           <div class="board__col-header" [style.border-top-color]="step.color ?? '#dee2e6'">
             <span class="board__col-name">{{ step.name }}</span>
-            <span class="board__col-count">{{ getStepDeals(step).length }}</span>
+            <div class="board__col-header-right">
+              @if (!step.isWon && !step.isLost) {
+                <span class="board__col-prob">{{ step.winProbability }}%</span>
+              }
+              <span class="board__col-count">{{ getStepDeals(step).length }}</span>
+            </div>
           </div>
 
           @if (totalAmount(step) > 0) {
@@ -49,7 +57,7 @@
                    [cdkDragDisabled]="!isDealDraggable(deal)"
                    (click)="viewDeal(deal.publicId)">
                 <div class="board__card-title">{{ deal.title }}</div>
-                <div class="board__card-meta">{{ deal.contactFullName }}</div>
+                <div class="board__card-meta">{{ deal.contactFullName ?? '—' }}</div>
                 @if (deal.amount != null) {
                   <div class="board__card-amount">{{ deal.amount | number:'1.0-0':'fr' }} {{ deal.currency }}</div>
                 }
@@ -67,3 +75,35 @@
     </div>
   }
 </div>
+
+<!-- Lost reason modal -->
+@if (showLostModal()) {
+  <div class="lost-modal-overlay" (click)="cancelLostModal()">
+    <div class="lost-modal" (click)="$event.stopPropagation()">
+      <h3 class="lost-modal__title">Confirmer la perte du deal</h3>
+      <p class="lost-modal__subtitle">
+        Deal : <strong>{{ pendingLostMove()?.deal?.title }}</strong>
+      </p>
+
+      <div class="lost-modal__field">
+        <label class="lost-modal__label">Raison de la perte *</label>
+        <textarea
+          class="lost-modal__textarea"
+          [(ngModel)]="lostReason"
+          placeholder="Ex : Prix trop élevé, choix d'un concurrent, budget annulé…"
+          rows="4">
+        </textarea>
+      </div>
+
+      <div class="lost-modal__footer">
+        <button
+          class="btn btn--danger"
+          (click)="confirmLost()"
+          [disabled]="!lostReasonValid">
+          Confirmer la perte
+        </button>
+        <button class="btn btn--ghost" (click)="cancelLostModal()">Annuler</button>
+      </div>
+    </div>
+  </div>
+}

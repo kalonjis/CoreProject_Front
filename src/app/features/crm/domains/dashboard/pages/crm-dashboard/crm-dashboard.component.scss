@@ -187,5 +187,17 @@
       border-color: $primary-color;
       color: #fff;
     }
+
+    &--today {
+      background: $primary-color;
+      border-color: $primary-color;
+      color: #fff;
+      font-weight: 600;
+
+      &:hover {
+        background: darken($primary-color, 8%);
+        border-color: darken($primary-color, 8%);
+      }
+    }
   }
 }

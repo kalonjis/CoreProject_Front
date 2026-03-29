@@ -1,3 +1,5 @@
+import { Tag } from '../../tag/models/tag.model';
+
 export enum DealStatus {
   OPEN = 'OPEN',
   WON  = 'WON',
@@ -10,7 +12,33 @@ export const DEAL_STATUS_LABELS: Record<DealStatus, string> = {
   [DealStatus.LOST]: 'Perdu'
 };
 
+export enum ContactRole {
+  DECISION_MAKER = 'DECISION_MAKER',
+  INFLUENCER     = 'INFLUENCER',
+  SIGNER         = 'SIGNER',
+  TECHNICAL      = 'TECHNICAL',
+  USER           = 'USER',
+  OTHER          = 'OTHER'
+}
+
+export const CONTACT_ROLE_LABELS: Record<ContactRole, string> = {
+  [ContactRole.DECISION_MAKER]: 'Décisionnaire',
+  [ContactRole.INFLUENCER]:     'Influenceur',
+  [ContactRole.SIGNER]:         'Signataire',
+  [ContactRole.TECHNICAL]:      'Technique',
+  [ContactRole.USER]:           'Utilisateur',
+  [ContactRole.OTHER]:          'Autre'
+};
+
 // ─── Response models ────────────────────────────────────────────────────────
+
+export interface DealContactRoleResponse {
+  contactPublicId:  string;
+  contactFullName:  string;
+  contactEmail:     string | null;
+  role:             ContactRole;
+  primary:          boolean;
+}
 
 export interface DealSummary {
   publicId:           string;
@@ -20,8 +48,8 @@ export interface DealSummary {
   status:             DealStatus;
   stagePublicId:      string;
   stageName:          string;
-  contactPublicId:    string;
-  contactFullName:    string;
+  contactPublicId:    string | null;
+  contactFullName:    string | null;
   assignedToPublicId: string;
   assignedToUsername: string;
   isOverdue:          boolean;
@@ -41,13 +69,16 @@ export interface DealDetail {
   stagePublicId:        string;
   stageName:            string;
   isOverdue:            boolean;
-  contactPublicId:      string;
-  contactFullName:      string;
+  contactPublicId:      string | null;
+  contactFullName:      string | null;
+  contacts:             DealContactRoleResponse[];
   organisationPublicId: string | null;
   organisationName:     string | null;
   assignedToPublicId:   string;
   assignedToUsername:   string;
   notes:                string | null;
+  lostReason:           string | null;
+  tags:                 Tag[];
   createdAt:            string;
   updatedAt:            string;
 }
@@ -67,6 +98,7 @@ export interface DealFilter {
   amountMax?:           number;
   expectedCloseFrom?:   string;
   expectedCloseTo?:     string;
+  tagPublicId?:         string;
 }
 
 export interface CreateDealRequest {
@@ -92,8 +124,18 @@ export interface UpdateDealRequest {
 
 export interface MoveDealStageRequest {
   stagePublicId: string;
+  lostReason?:   string;
 }
 
 export interface ReassignDealRequest {
   assignedToPublicId: string | null;
+}
+
+export interface AddDealContactRoleRequest {
+  contactPublicId: string;
+  role?:           ContactRole;
+}
+
+export interface UpdateDealContactRoleRequest {
+  role: ContactRole;
 }

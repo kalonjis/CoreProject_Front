@@ -12,10 +12,83 @@
   } @else if (organisation(); as org) {
     <div class="org-detail__layout">
 
+      <!-- ─── Main content ────────────────────────────────────────────────── -->
       <div class="org-detail__main">
-        <app-organisation-info-card [organisation]="org" />
+
+        <!-- ─── Tabs ───────────────────────────────────────────────────────── -->
+        <nav class="org-detail__tabs">
+          <button
+            class="org-detail__tab"
+            [class.org-detail__tab--active]="activeTab() === 'infos'"
+            (click)="activeTab.set('infos')">
+            Informations
+          </button>
+          <button
+            class="org-detail__tab"
+            [class.org-detail__tab--active]="activeTab() === 'modifications'"
+            (click)="activeTab.set('modifications')">
+            Modifications
+          </button>
+        </nav>
+
+        @if (activeTab() === 'infos') {
+          <div class="org-detail__tab-panel">
+            <app-organisation-info-card [organisation]="org" />
+
+            <!-- ─── Tags section ─────────────────────────────────────────────── -->
+            <div class="org-detail__tags">
+              <h3 class="org-detail__section-title">Tags</h3>
+              <app-tag-input
+                [entityTags]="tags()"
+                (tagAdded)="onTagAdded($event)"
+                (tagRemoved)="onTagRemoved($event)"
+              />
+            </div>
+
+            <!-- ─── Deals section ────────────────────────────────────────────── -->
+            <div class="org-detail__deals">
+              <div class="org-detail__deals-header">
+                <h3 class="org-detail__deals-title">Deals</h3>
+                @if (!dealsLoading()) {
+                  <span class="org-detail__deals-count">
+                    {{ deals().length }} deal{{ deals().length !== 1 ? 's' : '' }}
+                  </span>
+                }
+                <button class="org-detail__btn org-detail__btn--outline" (click)="showCreateDeal.set(true)">
+                  + Nouveau deal
+                </button>
+              </div>
+
+              @if (dealsLoading()) {
+                <p class="org-detail__state">Chargement…</p>
+              } @else if (deals().length === 0) {
+                <app-crm-empty-state
+                  icon="💼"
+                  title="Aucun deal"
+                  subtitle="Aucun deal lié à cette organisation pour l'instant."
+                  ctaLabel="+ Créer un deal"
+                  (ctaClick)="showCreateDeal.set(true)"
+                />
+              } @else {
+                <div class="org-detail__deals-grid">
+                  @for (deal of deals(); track deal.publicId) {
+                    <app-deal-mini-card [deal]="deal" />
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (activeTab() === 'modifications') {
+          <div class="org-detail__tab-panel">
+            <app-change-log-list entityType="ORGANISATION" [entityPublicId]="org.publicId" />
+          </div>
+        }
+
       </div>
 
+      <!-- ─── Sidebar ────────────────────────────────────────────────────── -->
       <aside class="org-detail__sidebar">
         <div class="org-detail__actions">
           <button class="btn btn--primary" (click)="showCreateContact.set(true)">+ Contact</button>

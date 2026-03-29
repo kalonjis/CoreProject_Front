@@ -1,0 +1,240 @@
+@import 'variables';
+
+.today {
+  padding: 1.5rem;
+  max-width: 860px;
+
+  &__header {
+    margin-bottom: 1.75rem;
+  }
+
+  &__title {
+    margin: 0 0 0.2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $dark-color;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: $gray-dark;
+    text-transform: capitalize;
+  }
+
+  &__loading {
+    color: $gray-dark;
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  // ─── All-clear ─────────────────────────────────────────────────────────────
+
+  &__all-clear {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: $border-radius-lg;
+    margin-bottom: 1.5rem;
+  }
+
+  &__all-clear-icon {
+    font-size: 2.5rem;
+    color: #16a34a;
+    margin-bottom: 0.75rem;
+  }
+
+  &__all-clear-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #15803d;
+  }
+
+  &__all-clear-sub {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #166534;
+  }
+
+  // ─── Sections ──────────────────────────────────────────────────────────────
+
+  &__section {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+
+    &--danger  { border-left: 4px solid #ef4444; }
+    &--warning { border-left: 4px solid #f97316; }
+    &--primary { border-left: 4px solid $primary-color; }
+    &--info    { border-left: 4px solid #3b82f6; }
+    &--neutral { border-left: 4px solid $gray-dark; }
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid $border-color;
+    background: #fafafa;
+  }
+
+  &__section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $dark-color;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__section-icon {
+    font-size: 1rem;
+  }
+
+  // ─── Badges ────────────────────────────────────────────────────────────────
+
+  &__badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+
+    &--danger  { background: #fee2e2; color: #b91c1c; }
+    &--warning { background: #ffedd5; color: #c2410c; }
+    &--primary { background: #ede9fe; color: #5b21b6; }
+    &--info    { background: #dbeafe; color: #1d4ed8; }
+    &--neutral { background: $gray-medium; color: $gray-dark; }
+  }
+
+  // ─── Cards ─────────────────────────────────────────────────────────────────
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.25rem;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-bottom: 1px solid $border-color;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+
+    &--danger  { &:hover { background: #fff5f5; } }
+    &--warning { &:hover { background: #fff8f1; } }
+  }
+
+  &__card-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__card-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  &__card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 340px;
+  }
+
+  &__card-sub {
+    font-size: 0.78rem;
+    color: $gray-dark;
+    white-space: nowrap;
+  }
+
+  &__card-date {
+    font-size: 0.78rem;
+    color: $gray-dark;
+    white-space: nowrap;
+
+    &--overdue {
+      color: #dc2626;
+      font-weight: 600;
+    }
+  }
+
+  &__card-amount {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $dark-color;
+    white-space: nowrap;
+  }
+
+  &__card-arrow {
+    font-size: 0.875rem;
+    color: $gray-dark;
+  }
+
+  // ─── Type badges (action types) ────────────────────────────────────────────
+
+  &__type-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &--task    { background: #f1f5f9; color: #475569; }
+    &--call    { background: #dbeafe; color: #1d4ed8; }
+    &--email   { background: #fce7f3; color: #9d174d; }
+    &--meeting { background: #d1fae5; color: #065f46; }
+    &--demo    { background: #ede9fe; color: #5b21b6; }
+  }
+
+  // ─── Priority ──────────────────────────────────────────────────────────────
+
+  &__priority {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    white-space: nowrap;
+
+    &--low    { background: #f1f5f9; color: #64748b; }
+    &--medium { background: #fef9c3; color: #854d0e; }
+    &--high   { background: #fee2e2; color: #991b1b; }
+  }
+
+  // ─── Ticket status ─────────────────────────────────────────────────────────
+
+  &__status-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    white-space: nowrap;
+
+    &--open        { background: #dbeafe; color: #1d4ed8; }
+    &--in_progress { background: #fef9c3; color: #854d0e; }
+    &--resolved    { background: #d1fae5; color: #065f46; }
+    &--closed      { background: $gray-medium; color: $gray-dark; }
+  }
+}

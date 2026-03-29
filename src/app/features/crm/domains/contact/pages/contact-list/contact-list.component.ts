@@ -6,6 +6,8 @@ import { InteractionFacade } from '../../../interaction/facades/interaction.faca
 import { ContactFilter, ContactStatus, CONTACT_STATUS_LABELS } from '../../models/contact.model';
 import { ContactStatusBadgeComponent } from '../../components/contact-status-badge/contact-status-badge.component';
 import { CrmEmptyStateComponent }      from '../../../../shared/empty-state/crm-empty-state.component';
+import { CrmTagApiService } from '../../../tag/services/crm-tag-api.service';
+import { Tag } from '../../../tag/models/tag.model';
 
 @Component({
   selector: 'app-contact-list',
@@ -16,29 +18,36 @@ import { CrmEmptyStateComponent }      from '../../../../shared/empty-state/crm-
 })
 export class ContactListComponent implements OnInit {
 
-  readonly facade = inject(ContactFacade);
-  private readonly router = inject(Router);
+  readonly facade  = inject(ContactFacade);
+  private readonly router  = inject(Router);
+  private readonly tagApi  = inject(CrmTagApiService);
 
   readonly loading       = this.facade.listLoading;
   readonly error         = signal<string | null>(null);
   readonly contacts      = this.facade.contacts;
   readonly totalElements = this.facade.totalElements;
   readonly totalPages    = this.facade.totalPages;
+  readonly allTags       = signal<Tag[]>([]);
 
   readonly statuses     = Object.values(ContactStatus);
   readonly statusLabels = CONTACT_STATUS_LABELS;
 
-  currentPage    = 0;
-  readonly pageSize = 20;
-  keyword        = '';
+  currentPage         = 0;
+  readonly pageSize   = 20;
+  keyword             = '';
   selectedStatus: ContactStatus | '' = '';
+  selectedTagPublicId = '';
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.tagApi.findAll().subscribe(tags => this.allTags.set(tags));
+    this.load();
+  }
 
   load(): void {
     const f: ContactFilter = {};
-    if (this.keyword.trim()) f.keyword = this.keyword;
-    if (this.selectedStatus) f.status  = this.selectedStatus;
+    if (this.keyword.trim())       f.keyword      = this.keyword;
+    if (this.selectedStatus)       f.status        = this.selectedStatus;
+    if (this.selectedTagPublicId)  f.tagPublicId   = this.selectedTagPublicId;
     this.facade.loadList(f, this.currentPage, this.pageSize);
   }
 

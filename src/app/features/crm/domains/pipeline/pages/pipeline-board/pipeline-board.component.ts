@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CdkDragDrop, CdkDropList, CdkDrag, CdkDropListGroup, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 import { CrmPipelineApiService } from '../../services/crm-pipeline-api.service';
@@ -9,9 +10,14 @@ import { DealStatus, DealSummary } from '../../../deal/models/deal.model';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 
+interface PendingLostMove {
+  deal: DealSummary;
+  targetStep: PipelineStep;
+}
+
 @Component({
   selector: 'app-pipeline-board',
-  imports: [DecimalPipe, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragPlaceholder],
+  imports: [DecimalPipe, FormsModule, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragPlaceholder],
   templateUrl: './pipeline-board.component.html',
   styleUrl: './pipeline-board.component.scss'
 })
@@ -28,6 +34,15 @@ export class PipelineBoardComponent implements OnInit {
   readonly deals        = signal<DealSummary[]>([]);
   readonly loading      = signal(false);
   readonly error        = signal<string | null>(null);
+
+  // Lost reason modal state
+  readonly showLostModal   = signal(false);
+  readonly pendingLostMove = signal<PendingLostMove | null>(null);
+  lostReason = '';
+
+  get lostReasonValid(): boolean {
+    return this.lostReason.trim().length > 0;
+  }
 
   readonly dealsByStage = computed(() => {
     const map = new Map<string, DealSummary[]>();
@@ -92,33 +107,38 @@ export class PipelineBoardComponent implements OnInit {
     const deal: DealSummary = event.item.data;
     if (deal.stagePublicId === targetStep.publicId) return;
 
-    // Confirmation obligatoire avant de clore un deal
-    if (targetStep.isWon || targetStep.isLost) {
-      const label  = targetStep.isWon ? 'Gagné' : 'Perdu';
-      const type   = targetStep.isWon ? 'info' : 'danger';
+    // WON → simple confirm dialog
+    if (targetStep.isWon) {
       const confirmed = await this.confirm.confirm({
-        title:             `Marquer comme ${label}`,
-        message:           `Voulez-vous clore le deal "${deal.title}" comme ${label} ? Cette action est irréversible.`,
-        confirmButtonText: `Oui, marquer ${label}`,
+        title:             'Marquer comme Gagné',
+        message:           `Voulez-vous clore le deal "${deal.title}" comme Gagné ? Cette action est irréversible.`,
+        confirmButtonText: 'Oui, marquer Gagné',
         cancelButtonText:  'Annuler',
-        type
+        type:              'info'
       }).then(() => true).catch(() => false);
 
       if (!confirmed) return;
 
-      // Pas d'optimistic update pour une action irréversible
       this.dealApi.moveStage(deal.publicId, { stagePublicId: targetStep.publicId }).subscribe({
         next: () => {
           this.deals.update(list =>
             list.map(d => d.publicId === deal.publicId
-              ? { ...d, stagePublicId: targetStep.publicId, stageName: targetStep.name, status: targetStep.isWon ? DealStatus.WON : DealStatus.LOST }
+              ? { ...d, stagePublicId: targetStep.publicId, stageName: targetStep.name, status: DealStatus.WON }
               : d
             )
           );
-          this.feedback.showSuccess(`Deal "${deal.title}" marqué comme ${label}.`);
+          this.feedback.showSuccess(`Deal "${deal.title}" marqué comme Gagné.`);
         },
-        error: () => this.feedback.showError(`Impossible de clore le deal.`)
+        error: () => this.feedback.showError('Impossible de clore le deal.')
       });
+      return;
+    }
+
+    // LOST → modal avec raison obligatoire
+    if (targetStep.isLost) {
+      this.lostReason = '';
+      this.pendingLostMove.set({ deal, targetStep });
+      this.showLostModal.set(true);
       return;
     }
 
@@ -146,6 +166,42 @@ export class PipelineBoardComponent implements OnInit {
     });
   }
 
+  confirmLost(): void {
+    if (!this.lostReasonValid) return;
+    const pending = this.pendingLostMove();
+    if (!pending) return;
+
+    this.showLostModal.set(false);
+
+    this.dealApi.moveStage(pending.deal.publicId, {
+      stagePublicId: pending.targetStep.publicId,
+      lostReason: this.lostReason.trim()
+    }).subscribe({
+      next: () => {
+        this.deals.update(list =>
+          list.map(d => d.publicId === pending.deal.publicId
+            ? { ...d, stagePublicId: pending.targetStep.publicId, stageName: pending.targetStep.name, status: DealStatus.LOST }
+            : d
+          )
+        );
+        this.feedback.showSuccess(`Deal "${pending.deal.title}" marqué comme Perdu.`);
+        this.pendingLostMove.set(null);
+        this.lostReason = '';
+      },
+      error: () => {
+        this.feedback.showError('Impossible de clore le deal.');
+        this.pendingLostMove.set(null);
+      }
+    });
+  }
+
+  cancelLostModal(): void {
+    this.showLostModal.set(false);
+    this.pendingLostMove.set(null);
+    this.lostReason = '';
+  }
+
   viewDeal(publicId: string): void { this.router.navigate(['/crm/deals', publicId]); }
-  goDeals(): void { this.router.navigate(['/crm/deals']); }
+  goDeals(): void  { this.router.navigate(['/crm/deals']); }
+  goStats(): void  { this.router.navigate(['/crm/pipeline/stats']); }
 }

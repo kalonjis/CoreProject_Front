@@ -1,0 +1,26 @@
+<div class="cl-widget">
+  <div class="cl-widget__header">
+    <h3 class="cl-widget__title">Dernières modifications</h3>
+    <a class="cl-widget__see-all" routerLink="/crm/changelog">Tout voir →</a>
+  </div>
+
+  @if (loading) {
+    <p class="cl-widget__state">Chargement…</p>
+  } @else if (entries.length === 0) {
+    <p class="cl-widget__state">Aucune modification enregistrée.</p>
+  } @else {
+    <ul class="cl-widget__list">
+      @for (entry of entries; track entry.publicId) {
+        <li class="cl-widget__entry" (click)="navigateTo(entry)">
+          <span class="cl-widget__badge cl-widget__badge--{{ entry.entityType | lowercase }}">
+            {{ entry.entityType === 'CONTACT' ? 'Contact' : entry.entityType === 'ORGANISATION' ? 'Organisation' : 'Deal' }}
+          </span>
+          <span class="cl-widget__field">{{ fieldLabel(entry.fieldName) }}</span>
+          <span class="cl-widget__arrow">→</span>
+          <span class="cl-widget__new-value">{{ entry.newValue ?? '—' }}</span>
+          <span class="cl-widget__meta">{{ entry.changedAt | date:'dd/MM HH:mm' }}</span>
+        </li>
+      }
+    </ul>
+  }
+</div>

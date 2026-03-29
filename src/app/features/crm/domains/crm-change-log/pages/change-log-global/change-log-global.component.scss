@@ -1,0 +1,85 @@
+@import 'variables';
+
+.cl-global {
+  max-width: 1000px;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: $font-weight-bold;
+    margin: 0;
+    color: $dark-color;
+  }
+
+  &__count {
+    font-size: 0.8125rem;
+    color: $gray-dark;
+  }
+
+  &__state {
+    font-size: 0.875rem;
+    color: $gray-dark;
+    font-style: italic;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: $gray-dark;
+      border-bottom: 2px solid $border-color;
+    }
+  }
+
+  &__row {
+    cursor: pointer;
+    transition: background 0.12s;
+
+    td { padding: 0.625rem 0.75rem; border-bottom: 1px solid $border-color; }
+    &:hover td { background: #f9fafb; }
+  }
+
+  &__badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+
+    &--contact      { background: #dbeafe; color: #1d4ed8; }
+    &--deal         { background: #d1fae5; color: #065f46; }
+    &--organisation { background: #fef3c7; color: #92400e; }
+  }
+
+  &__field  { font-weight: 500; color: $dark-color; }
+  &__old    { color: #ef4444; text-decoration: line-through; }
+  &__new    { color: #16a34a; }
+  &__actor  { color: $gray-dark; }
+  &__date   { color: #9ca3af; white-space: nowrap; }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  &__page-info {
+    font-size: 0.8125rem;
+    color: $gray-dark;
+  }
+}

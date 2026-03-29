@@ -5,7 +5,8 @@ import { FeedbackService }               from '../../../../../shared/feedback/to
 import { InteractionFacade }             from '../../interaction/facades/interaction.facade';
 import {
   DealDetail, DealSummary, DealFilter,
-  UpdateDealRequest, MoveDealStageRequest, ReassignDealRequest
+  UpdateDealRequest, MoveDealStageRequest, ReassignDealRequest,
+  AddDealContactRoleRequest, UpdateDealContactRoleRequest, ContactRole
 } from '../models/deal.model';
 import { CommercialActionResponse, CompleteCommercialActionRequest } from '../../commercial-action/models/commercial-action.model';
 import { Page } from '../../../shared/models/page.model';
@@ -122,5 +123,41 @@ export class DealFacade {
 
   actionCreated(dealPublicId: string): void {
     this.loadActions(dealPublicId);
+  }
+
+  // ─── Contact role operations ───────────────────────────────────────────────
+
+  addContact(dealPublicId: string, body: AddDealContactRoleRequest): void {
+    this.api.addContact(dealPublicId, body).subscribe({
+      next: () => { this.loadDetail(dealPublicId); this.feedback.showSuccess('Contact ajouté au deal.'); },
+      error: () => this.feedback.showError('Impossible d\'ajouter le contact.')
+    });
+  }
+
+  removeContact(dealPublicId: string, contactPublicId: string): void {
+    this.api.removeContact(dealPublicId, contactPublicId).subscribe({
+      next: () => { this.loadDetail(dealPublicId); this.feedback.showSuccess('Contact retiré du deal.'); },
+      error: () => this.feedback.showError('Impossible de retirer le contact.')
+    });
+  }
+
+  updateContactRole(dealPublicId: string, contactPublicId: string, role: ContactRole): void {
+    this.api.updateContactRole(dealPublicId, contactPublicId, { role }).subscribe({
+      next: roleResp => {
+        this._deal.update(d => d ? {
+          ...d,
+          contacts: d.contacts.map(c => c.contactPublicId === contactPublicId ? roleResp : c)
+        } : d);
+        this.feedback.showSuccess('Rôle mis à jour.');
+      },
+      error: () => this.feedback.showError('Impossible de mettre à jour le rôle.')
+    });
+  }
+
+  setPrimaryContact(dealPublicId: string, contactPublicId: string): void {
+    this.api.setPrimaryContact(dealPublicId, contactPublicId).subscribe({
+      next: () => { this.loadDetail(dealPublicId); this.feedback.showSuccess('Contact principal mis à jour.'); },
+      error: () => this.feedback.showError('Impossible de définir le contact principal.')
+    });
   }
 }

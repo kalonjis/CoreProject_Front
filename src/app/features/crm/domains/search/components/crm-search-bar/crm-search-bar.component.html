@@ -1,0 +1,49 @@
+<div class="search">
+
+  <div class="search__input-wrap">
+    <span class="search__icon">🔍</span>
+    <input
+      #searchInput
+      class="search__input"
+      type="text"
+      placeholder="Rechercher contacts, deals, leads…"
+      autocomplete="off"
+      [value]="query()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="results().length > 0 && open.set(true)"
+    />
+    @if (loading()) {
+      <span class="search__spinner"></span>
+    } @else if (query().length > 0) {
+      <button class="search__clear" (click)="close()">✕</button>
+    }
+  </div>
+
+  @if (open() && (results().length > 0 || query().length >= 2)) {
+    <div class="search__dropdown">
+
+      @if (results().length === 0 && !loading()) {
+        <p class="search__empty">Aucun résultat pour "{{ query() }}"</p>
+      }
+
+      @for (entry of groupedEntries(); track entry[0]) {
+        <div class="search__group">
+          <div class="search__group-label">
+            <span>{{ TYPE_ICONS[entry[0]] }}</span>
+            {{ TYPE_LABELS[entry[0]] }}s
+          </div>
+          @for (result of entry[1]; track result.publicId) {
+            <button class="search__item" (click)="navigate(result)">
+              <div class="search__item-label">{{ result.label }}</div>
+              @if (result.subtitle) {
+                <div class="search__item-sub">{{ result.subtitle }}</div>
+              }
+            </button>
+          }
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

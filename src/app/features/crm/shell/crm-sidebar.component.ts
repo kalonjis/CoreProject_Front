@@ -10,7 +10,7 @@ interface CrmNavItem {
   label: string;
   icon: string;
   route: string;
-  badgeKey?: 'leads' | 'actions';
+  badgeKey?: 'leads' | 'actions' | 'today';
 }
 
 @Component({
@@ -29,6 +29,7 @@ export class CrmSidebarComponent implements OnInit {
   readonly collapsed    = signal(localStorage.getItem(STORAGE_KEY) === 'true');
   readonly leadsBadge   = signal(0);
   readonly actionsBadge = signal(0);
+  readonly todayBadge   = signal(0);
 
   toggle(): void {
     const next = !this.collapsed();
@@ -38,6 +39,7 @@ export class CrmSidebarComponent implements OnInit {
 
   readonly navItems: CrmNavItem[] = [
     { label: 'Dashboard',            icon: '🏠', route: '/crm/dashboard' },
+    { label: "Aujourd'hui",          icon: '📌', route: '/crm/today',                 badgeKey: 'today' },
     { label: 'Leads',                icon: '📥', route: '/crm/leads',               badgeKey: 'leads' },
     { label: 'Contacts',             icon: '👤', route: '/crm/contacts' },
     { label: 'Organisations',        icon: '🏢', route: '/crm/organisations' },
@@ -45,6 +47,7 @@ export class CrmSidebarComponent implements OnInit {
     { label: 'Pipeline',             icon: '📊', route: '/crm/pipeline' },
 { label: 'Actions commerciales', icon: '✅', route: '/crm/commercial-actions',   badgeKey: 'actions' },
     { label: 'Support',              icon: '🎫', route: '/crm/support-tickets' },
+    { label: 'Modifications',        icon: '📝', route: '/crm/changelog' },
   ];
 
   ngOnInit(): void {
@@ -52,6 +55,7 @@ export class CrmSidebarComponent implements OnInit {
       next: s => {
         this.leadsBadge.set(s.leadsNew + s.leadsInReview);
         this.actionsBadge.set(s.overdueActions);
+        this.todayBadge.set(s.overdueActions);
       }
     });
   }
@@ -59,6 +63,7 @@ export class CrmSidebarComponent implements OnInit {
   getBadge(item: CrmNavItem): number {
     if (item.badgeKey === 'leads')   return this.leadsBadge();
     if (item.badgeKey === 'actions') return this.actionsBadge();
+    if (item.badgeKey === 'today')   return this.todayBadge();
     return 0;
   }
 }

@@ -1,0 +1,93 @@
+.rte {
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 6px;
+  background: var(--color-surface, #fff);
+  display: flex;
+  flex-direction: column;
+
+  &:focus-within {
+    border-color: var(--color-primary, #6366f1);
+  }
+
+  // ── Toolbar ───────────────────────────────────────────────────────────────
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    background: var(--color-surface-alt, #f9fafb);
+    border-radius: 6px 6px 0 0;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text-muted, #6b7280);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: var(--color-border, #e5e7eb);
+      color: var(--color-text, #1a1a2e);
+    }
+
+    &--active {
+      background: var(--color-primary-light, #ede9fe);
+      color: var(--color-primary, #6366f1);
+    }
+  }
+
+  &__separator {
+    width: 1px;
+    height: 18px;
+    background: var(--color-border, #e5e7eb);
+    margin: 0 4px;
+  }
+
+  // ── Editor area ───────────────────────────────────────────────────────────
+
+  &__editor {
+    min-height: 160px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--color-text, #1a1a2e);
+    cursor: text;
+
+    // TipTap injects .ProseMirror dynamically — ::ng-deep needed to pierce
+    // Angular's emulated view encapsulation for runtime DOM nodes.
+    ::ng-deep .ProseMirror {
+      outline: none;
+      min-height: 140px;
+
+      // Placeholder rendered via data-placeholder injected by TipTap's extension
+      &.is-editor-empty::before {
+        content: attr(data-placeholder);
+        color: var(--color-text-muted, #9ca3af);
+        pointer-events: none;
+        float: left;
+        height: 0;
+      }
+
+      p            { margin: 0 0 12px; }
+      p:last-child { margin-bottom: 0; }
+
+      ul, ol  { margin: 0 0 12px; padding-left: 1.5em; }
+      li      { margin-bottom: 4px; }
+
+      strong  { font-weight: 700; }
+      em      { font-style: italic; }
+      a       { color: var(--color-primary, #6366f1); text-decoration: underline; cursor: pointer; }
+    }
+  }
+}

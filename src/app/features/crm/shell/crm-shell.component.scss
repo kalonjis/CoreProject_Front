@@ -7,7 +7,29 @@
 
   &__sidebar {
     // La sidebar gère elle-même sa largeur et son z-index
-    // Le contenu ne se décale pas lors du hover (overlay)
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__topbar {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1.5rem;
+    background: #fff;
+    border-bottom: 1px solid $border-color;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  &__search {
+    width: 100%;
+    max-width: 420px;
   }
 
   &__content {
@@ -15,6 +37,5 @@
     overflow-y: auto;
     padding: 1.5rem;
     background-color: $body-bg;
-    min-width: 0; // évite que le contenu déborde
   }
 }

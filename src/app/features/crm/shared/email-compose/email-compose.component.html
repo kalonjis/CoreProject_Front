@@ -1,0 +1,36 @@
+<div class="email-compose action-panel">
+  <h3 class="action-panel__title">Envoyer un email</h3>
+
+  <div class="action-panel__grid">
+    <div class="action-panel__row">
+      <label for="ec-subject">Sujet *</label>
+      <input
+        id="ec-subject"
+        type="text"
+        [(ngModel)]="subject"
+        placeholder="Objet de votre email"
+        maxlength="200"
+        class="email-compose__input"
+      />
+    </div>
+
+    <div class="action-panel__row email-compose__body-row">
+      <label>Message *</label>
+      <app-rich-text-editor
+        [(ngModel)]="body"
+        placeholder="Rédigez votre message…"
+      />
+    </div>
+  </div>
+
+  <div class="action-panel__footer">
+    <button
+      class="btn btn--primary"
+      (click)="onSend()"
+      [disabled]="!canSend || sending()"
+    >
+      {{ sending() ? 'Envoi…' : 'Envoyer' }}
+    </button>
+    <button class="btn btn--ghost" (click)="cancel.emit()">Annuler</button>
+  </div>
+</div>

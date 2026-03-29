@@ -21,6 +21,7 @@
         [totalPages]="facade.totalPages()"
         [totalElements]="facade.totalElements()"
         [selectedLog]="facade.selected()"
+        [showActor]="false"
         (logSelected)="facade.selectLog($event)"
         (pageChange)="facade.goToPage($event)" />
 

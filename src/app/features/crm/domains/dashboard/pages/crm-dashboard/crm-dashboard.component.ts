@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { CrmDashboardApiService } from '../../services/crm-dashboard-api.service';
-import { CrmStats } from '../../models/crm-stats.model';
+import { CrmDashboardApiService }  from '../../services/crm-dashboard-api.service';
+import { CrmStats }                from '../../models/crm-stats.model';
+import { ChangeLogWidgetComponent } from '../../../crm-change-log/components/change-log-widget/change-log-widget.component';
 
 @Component({
   selector: 'app-crm-dashboard',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, ChangeLogWidgetComponent],
   templateUrl: './crm-dashboard.component.html',
   styleUrl: './crm-dashboard.component.scss'
 })

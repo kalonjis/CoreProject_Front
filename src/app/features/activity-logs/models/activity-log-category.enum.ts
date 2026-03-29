@@ -4,6 +4,9 @@
  * Admin sub-categories (ADMIN_USER, ADMIN_ROLE...) are all children of the
  * parent ADMIN. Filtering by ADMIN on the back-end uses LIKE 'ADMIN%' and
  * covers all sub-categories automatically.
+ *
+ * CRM sub-categories (CRM_CONTACT, CRM_DEAL...) are all children of the
+ * parent CRM. Filtering by CRM on the back-end uses LIKE 'CRM%'.
  */
 export enum ActivityLogCategory {
   // ── Flat categories ──────────────────────────────────────────────────────
@@ -22,6 +25,15 @@ export enum ActivityLogCategory {
   ADMIN_SECURITY = 'ADMIN_SECURITY',
   ADMIN_AUDIT    = 'ADMIN_AUDIT',
   ADMIN_SYSTEM   = 'ADMIN_SYSTEM',
+
+  // ── CRM parent (matches all CRM_* sub-categories) ───────────────────────
+  CRM     = 'CRM',
+
+  // ── CRM sub-categories (for granular filtering) ──────────────────────────
+  CRM_CONTACT      = 'CRM_CONTACT',
+  CRM_DEAL         = 'CRM_DEAL',
+  CRM_LEAD         = 'CRM_LEAD',
+  CRM_ORGANISATION = 'CRM_ORGANISATION',
 }
 
 /**
@@ -39,6 +51,11 @@ export const ACTIVITY_LOG_CATEGORY_LABELS: Record<ActivityLogCategory, string> =
   [ActivityLogCategory.ADMIN_SECURITY]: 'Admin — Security',
   [ActivityLogCategory.ADMIN_AUDIT]:    'Admin — Audit',
   [ActivityLogCategory.ADMIN_SYSTEM]:   'Admin — System',
+  [ActivityLogCategory.CRM]:            'CRM',
+  [ActivityLogCategory.CRM_CONTACT]:    'CRM — Contacts',
+  [ActivityLogCategory.CRM_DEAL]:       'CRM — Deals',
+  [ActivityLogCategory.CRM_LEAD]:       'CRM — Leads',
+  [ActivityLogCategory.CRM_ORGANISATION]: 'CRM — Organisations',
 };
 
 /**
@@ -57,11 +74,16 @@ export const ACTIVITY_LOG_CATEGORY_COLORS: Record<ActivityLogCategory, string> =
   [ActivityLogCategory.ADMIN_SECURITY]: 'red',
   [ActivityLogCategory.ADMIN_AUDIT]:    'gray',
   [ActivityLogCategory.ADMIN_SYSTEM]:   'gray',
+  [ActivityLogCategory.CRM]:            'teal',
+  [ActivityLogCategory.CRM_CONTACT]:    'teal',
+  [ActivityLogCategory.CRM_DEAL]:       'teal',
+  [ActivityLogCategory.CRM_LEAD]:       'teal',
+  [ActivityLogCategory.CRM_ORGANISATION]: 'teal',
 };
 
 /**
  * Top-level categories shown in the admin filter chips.
- * Sub-categories are shown as a secondary filter once ADMIN is selected.
+ * Sub-categories are shown as a secondary filter once ADMIN or CRM is selected.
  */
 export const TOP_LEVEL_CATEGORIES: ActivityLogCategory[] = [
   ActivityLogCategory.AUTH,
@@ -70,6 +92,7 @@ export const TOP_LEVEL_CATEGORIES: ActivityLogCategory[] = [
   ActivityLogCategory.DEVICE,
   ActivityLogCategory.PASSWORD,
   ActivityLogCategory.ADMIN,
+  ActivityLogCategory.CRM,
 ];
 
 /**
@@ -81,4 +104,14 @@ export const ADMIN_SUB_CATEGORIES: ActivityLogCategory[] = [
   ActivityLogCategory.ADMIN_SECURITY,
   ActivityLogCategory.ADMIN_AUDIT,
   ActivityLogCategory.ADMIN_SYSTEM,
+];
+
+/**
+ * CRM sub-categories — shown when CRM is selected as top-level filter.
+ */
+export const CRM_SUB_CATEGORIES: ActivityLogCategory[] = [
+  ActivityLogCategory.CRM_CONTACT,
+  ActivityLogCategory.CRM_DEAL,
+  ActivityLogCategory.CRM_LEAD,
+  ActivityLogCategory.CRM_ORGANISATION,
 ];

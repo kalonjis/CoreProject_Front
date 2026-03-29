@@ -1,0 +1,141 @@
+<div class="tag-detail">
+
+  <div class="tag-detail__breadcrumb">
+    <a routerLink="/crm/settings/tags">Tags</a>
+    <span> / </span>
+    @if (tag()) {
+      <app-tag-chip [tag]="tag()!" />
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="tag-detail__state">Chargement…</p>
+  } @else if (error()) {
+    <p class="tag-detail__error">{{ error() }}</p>
+  } @else {
+
+    <div class="tag-detail__header">
+      <app-tag-chip [tag]="tag()!" />
+      <span class="tag-detail__total">
+        {{ contacts().length + deals().length + organisations().length }} élément(s)
+      </span>
+    </div>
+
+    <div class="tag-detail__sections">
+
+      <!-- ─── Contacts ──────────────────────────────────────────────────────── -->
+      <section class="tag-detail__section">
+        <h2 class="tag-detail__section-title">
+          👥 Contacts
+          <span class="tag-detail__count">{{ contacts().length }}</span>
+        </h2>
+        @if (contacts().length === 0) {
+          <p class="tag-detail__empty">Aucun contact avec ce tag.</p>
+        } @else {
+          <table class="tag-detail__table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Poste</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of contacts(); track c.publicId) {
+                <tr class="tag-detail__row" (click)="viewContact(c.publicId)">
+                  <td class="tag-detail__name">{{ c.firstName }} {{ c.lastName }}</td>
+                  <td>{{ c.email }}</td>
+                  <td>{{ c.jobTitle ?? '—' }}</td>
+                  <td><app-contact-status-badge [status]="c.status" /></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <!-- ─── Deals ─────────────────────────────────────────────────────────── -->
+      <section class="tag-detail__section">
+        <h2 class="tag-detail__section-title">
+          💼 Deals
+          <span class="tag-detail__count">{{ deals().length }}</span>
+        </h2>
+        @if (deals().length === 0) {
+          <p class="tag-detail__empty">Aucun deal avec ce tag.</p>
+        } @else {
+          <table class="tag-detail__table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Statut</th>
+                <th>Montant</th>
+                <th>Étape</th>
+                <th>Clôture prévue</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of deals(); track d.publicId) {
+                <tr class="tag-detail__row" [class.tag-detail__row--overdue]="d.isOverdue" (click)="viewDeal(d.publicId)">
+                  <td class="tag-detail__name">{{ d.title }}</td>
+                  <td><app-deal-status-badge [status]="d.status" /></td>
+                  <td>
+                    @if (d.amount != null) {
+                      {{ d.amount | currency:d.currency:'symbol':'1.0-2':'fr' }}
+                    } @else {
+                      <span>—</span>
+                    }
+                  </td>
+                  <td>{{ d.stageName }}</td>
+                  <td [class.tag-detail__overdue-date]="d.isOverdue">
+                    {{ d.expectedCloseDate ? (d.expectedCloseDate | date:'dd/MM/yyyy') : '—' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <!-- ─── Organisations ─────────────────────────────────────────────────── -->
+      <section class="tag-detail__section">
+        <h2 class="tag-detail__section-title">
+          🏢 Organisations
+          <span class="tag-detail__count">{{ organisations().length }}</span>
+        </h2>
+        @if (organisations().length === 0) {
+          <p class="tag-detail__empty">Aucune organisation avec ce tag.</p>
+        } @else {
+          <table class="tag-detail__table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Secteur</th>
+                <th>Taille</th>
+                <th>Téléphone</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (org of organisations(); track org.publicId) {
+                <tr class="tag-detail__row" (click)="viewOrganisation(org.publicId)">
+                  <td class="tag-detail__name">{{ org.name }}</td>
+                  <td>{{ org.industry ?? '—' }}</td>
+                  <td>
+                    @if (org.size) {
+                      <app-organisation-size-badge [size]="org.size" />
+                    } @else {
+                      <span>—</span>
+                    }
+                  </td>
+                  <td>{{ org.phone ?? '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+    </div>
+  }
+
+</div>

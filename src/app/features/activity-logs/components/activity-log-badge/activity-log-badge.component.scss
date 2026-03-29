@@ -46,4 +46,9 @@
     background-color: color-mix(in srgb, #6b7280 15%, transparent);
     color: #374151;
   }
+
+  &--teal {
+    background-color: color-mix(in srgb, #14b8a6 15%, transparent);
+    color: #0f766e;
+  }
 }

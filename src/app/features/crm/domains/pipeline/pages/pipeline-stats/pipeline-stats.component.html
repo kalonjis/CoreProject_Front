@@ -1,0 +1,119 @@
+<div class="stats-page">
+
+  <!-- Header -->
+  <div class="stats-page__header">
+    <div class="stats-page__title-area">
+      <h1 class="stats-page__title">Statistiques pipeline</h1>
+      @if (allPipelines().length > 1) {
+        <select class="stats-page__pipeline-select"
+                [value]="stats()?.pipelinePublicId ?? ''"
+                (change)="selectPipeline($any($event.target).value)">
+          @for (p of allPipelines(); track p.publicId) {
+            <option [value]="p.publicId">{{ p.name }}</option>
+          }
+        </select>
+      } @else if (stats(); as s) {
+        <span class="stats-page__pipeline-name">{{ s.pipelineName }}</span>
+      }
+    </div>
+    <button class="btn btn--ghost" (click)="goBoard()">← Vue board</button>
+  </div>
+
+  @if (loading()) {
+    <p class="stats-page__info">Chargement…</p>
+  } @else if (error()) {
+    <p class="stats-page__error">{{ error() }}</p>
+  } @else if (stats(); as s) {
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card">
+        <span class="kpi-card__label">Taux de conversion global</span>
+        <span class="kpi-card__value kpi-card__value--accent">
+          @if (s.winRate !== null) {
+            {{ s.winRate | number: '1.0-1' }}&thinsp;%
+          } @else {
+            —
+          }
+        </span>
+        <span class="kpi-card__sub">deals gagnés / deals clôturés</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-card__label">Durée moyenne du cycle</span>
+        <span class="kpi-card__value">
+          @if (s.avgDealCycleDays !== null) {
+            {{ s.avgDealCycleDays | number: '1.0-0' }}&thinsp;j
+          } @else {
+            —
+          }
+        </span>
+        <span class="kpi-card__sub">création → clôture (deals gagnés)</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-card__label">Entrées en haut du funnel</span>
+        <span class="kpi-card__value">{{ topOfFunnel() }}</span>
+        <span class="kpi-card__sub">deals ayant atteint la 1ʳᵉ étape</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-card__label">Deals en cours</span>
+        <span class="kpi-card__value">{{ totalDealsCurrently() }}</span>
+        <span class="kpi-card__sub">tous stages actifs confondus</span>
+      </div>
+
+    </div>
+
+    <!-- Funnel table -->
+    <div class="funnel">
+      <h2 class="funnel__title">Détail par étape</h2>
+      <table class="funnel__table">
+        <thead>
+          <tr>
+            <th class="funnel__th funnel__th--name">Étape</th>
+            <th class="funnel__th">En cours</th>
+            <th class="funnel__th">Total entrés</th>
+            <th class="funnel__th">Taux de passage</th>
+            <th class="funnel__th">Durée moy.</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (stage of s.stages; track stage.stagePublicId) {
+            <tr class="funnel__row"
+                [class.funnel__row--won]="stage.isWon"
+                [class.funnel__row--lost]="stage.isLost">
+              <td class="funnel__td funnel__td--name">
+                <span class="funnel__stage-name">{{ stage.stageName }}</span>
+                @if (stage.isWon) { <span class="funnel__badge funnel__badge--won">Gagné</span> }
+                @if (stage.isLost) { <span class="funnel__badge funnel__badge--lost">Perdu</span> }
+              </td>
+              <td class="funnel__td funnel__td--num">{{ stage.dealsCurrently }}</td>
+              <td class="funnel__td funnel__td--num">{{ stage.dealsEntered }}</td>
+              <td class="funnel__td funnel__td--num">
+                @if (stage.conversionRate !== null) {
+                  <span class="funnel__rate" [class.funnel__rate--low]="stage.conversionRate < 30"
+                                             [class.funnel__rate--mid]="stage.conversionRate >= 30 && stage.conversionRate < 60"
+                                             [class.funnel__rate--high]="stage.conversionRate >= 60">
+                    {{ stage.conversionRate | number: '1.0-1' }}&thinsp;%
+                  </span>
+                } @else {
+                  <span class="funnel__rate funnel__rate--na">—</span>
+                }
+              </td>
+              <td class="funnel__td funnel__td--num">
+                @if (stage.avgDaysInStage !== null) {
+                  {{ stage.avgDaysInStage | number: '1.0-1' }}&thinsp;j
+                } @else {
+                  —
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  }
+</div>

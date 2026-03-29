@@ -22,6 +22,12 @@
       <input type="checkbox" [(ngModel)]="overdueOnly" (ngModelChange)="onFilterChange()" />
       En retard uniquement
     </label>
+    <select [(ngModel)]="selectedTagPublicId" (ngModelChange)="onFilterChange()">
+      <option value="">Tous les tags</option>
+      @for (tag of allTags(); track tag.publicId) {
+        <option [value]="tag.publicId">{{ tag.name }}</option>
+      }
+    </select>
   </div>
 
   @if (loading()) {
@@ -63,7 +69,7 @@
               }
             </td>
             <td>{{ deal.stageName }}</td>
-            <td>{{ deal.contactFullName }}</td>
+            <td>{{ deal.contactFullName ?? '—' }}</td>
             <td>{{ deal.assignedToUsername }}</td>
             <td [class.deal-list__overdue-date]="deal.isOverdue">
               {{ deal.expectedCloseDate ? (deal.expectedCloseDate | date:'dd/MM/yyyy') : '—' }}

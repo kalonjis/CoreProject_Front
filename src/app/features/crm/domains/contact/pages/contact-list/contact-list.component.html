@@ -20,6 +20,12 @@
         <option [value]="s">{{ statusLabels[s] }}</option>
       }
     </select>
+    <select class="contact-list__select" [(ngModel)]="selectedTagPublicId" (change)="onFilterChange()">
+      <option value="">Tous les tags</option>
+      @for (tag of allTags(); track tag.publicId) {
+        <option [value]="tag.publicId">{{ tag.name }}</option>
+      }
+    </select>
   </div>
 
   @if (error()) { <div class="contact-list__error">{{ error() }}</div> }

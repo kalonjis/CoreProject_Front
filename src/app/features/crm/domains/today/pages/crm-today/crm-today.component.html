@@ -1,0 +1,188 @@
+<div class="today">
+
+  <div class="today__header">
+    <div>
+      <h1 class="today__title">Aujourd'hui</h1>
+      <p class="today__subtitle">{{ today | date:'EEEE d MMMM yyyy':'':'fr' }}</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="today__loading">Chargement…</div>
+  } @else if (summary(); as s) {
+
+    @if (totalItems() === 0) {
+      <div class="today__all-clear">
+        <div class="today__all-clear-icon">✓</div>
+        <p class="today__all-clear-title">Tout est à jour !</p>
+        <p class="today__all-clear-sub">Aucune action en retard, aucun deal urgent, aucun ticket ouvert.</p>
+      </div>
+    }
+
+    <!-- ── Actions en retard ─────────────────────────────────────────────── -->
+    @if (s.overdueActions.length > 0) {
+      <section class="today__section today__section--danger">
+        <div class="today__section-header">
+          <div class="today__section-title">
+            <span class="today__section-icon">⚠</span>
+            Actions en retard
+          </div>
+          <span class="today__badge today__badge--danger">{{ s.overdueActions.length }}</span>
+        </div>
+        <div class="today__list">
+          @for (action of s.overdueActions; track action.publicId) {
+            <div class="today__card today__card--danger" (click)="goAction(action)">
+              <div class="today__card-left">
+                <span class="today__type-badge today__type-badge--{{ action.type.toLowerCase() }}">
+                  {{ ACTION_TYPE_LABELS[action.type] }}
+                </span>
+                <span class="today__card-title">{{ action.title }}</span>
+              </div>
+              <div class="today__card-right">
+                <span class="today__priority today__priority--{{ action.priority.toLowerCase() }}">
+                  {{ ACTION_PRIORITY_LABELS[action.priority] }}
+                </span>
+                <span class="today__card-date today__card-date--overdue">
+                  {{ action.dueDate | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="today__card-arrow">→</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ── Actions du jour ──────────────────────────────────────────────── -->
+    @if (s.todayActions.length > 0) {
+      <section class="today__section today__section--primary">
+        <div class="today__section-header">
+          <div class="today__section-title">
+            <span class="today__section-icon">📋</span>
+            À faire aujourd'hui
+          </div>
+          <span class="today__badge today__badge--primary">{{ s.todayActions.length }}</span>
+        </div>
+        <div class="today__list">
+          @for (action of s.todayActions; track action.publicId) {
+            <div class="today__card" (click)="goAction(action)">
+              <div class="today__card-left">
+                <span class="today__type-badge today__type-badge--{{ action.type.toLowerCase() }}">
+                  {{ ACTION_TYPE_LABELS[action.type] }}
+                </span>
+                <span class="today__card-title">{{ action.title }}</span>
+                @if (action.dealPublicId) {
+                  <span class="today__card-sub">Deal lié</span>
+                }
+              </div>
+              <div class="today__card-right">
+                <span class="today__priority today__priority--{{ action.priority.toLowerCase() }}">
+                  {{ ACTION_PRIORITY_LABELS[action.priority] }}
+                </span>
+                <span class="today__card-date">{{ action.dueDate | date:'HH:mm' }}</span>
+                <span class="today__card-arrow">→</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ── Deals en retard ──────────────────────────────────────────────── -->
+    @if (s.dealsOverdue.length > 0) {
+      <section class="today__section today__section--warning">
+        <div class="today__section-header">
+          <div class="today__section-title">
+            <span class="today__section-icon">🔴</span>
+            Deals en retard
+          </div>
+          <span class="today__badge today__badge--warning">{{ s.dealsOverdue.length }}</span>
+        </div>
+        <div class="today__list">
+          @for (deal of s.dealsOverdue; track deal.publicId) {
+            <div class="today__card today__card--warning" (click)="goDeal(deal)">
+              <div class="today__card-left">
+                <span class="today__card-title">{{ deal.title }}</span>
+                @if (deal.contactFullName) {
+                  <span class="today__card-sub">{{ deal.contactFullName }}</span>
+                }
+              </div>
+              <div class="today__card-right">
+                @if (deal.amount != null) {
+                  <span class="today__card-amount">{{ deal.amount | number:'1.0-0':'fr' }} {{ deal.currency }}</span>
+                }
+                <span class="today__card-date today__card-date--overdue">
+                  {{ deal.expectedCloseDate | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="today__card-arrow">→</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ── Deals à relancer cette semaine ───────────────────────────────── -->
+    @if (s.dealsClosingSoon.length > 0) {
+      <section class="today__section today__section--info">
+        <div class="today__section-header">
+          <div class="today__section-title">
+            <span class="today__section-icon">📅</span>
+            Deals à conclure cette semaine
+          </div>
+          <span class="today__badge today__badge--info">{{ s.dealsClosingSoon.length }}</span>
+        </div>
+        <div class="today__list">
+          @for (deal of s.dealsClosingSoon; track deal.publicId) {
+            <div class="today__card" (click)="goDeal(deal)">
+              <div class="today__card-left">
+                <span class="today__card-title">{{ deal.title }}</span>
+                @if (deal.contactFullName) {
+                  <span class="today__card-sub">{{ deal.contactFullName }}</span>
+                }
+              </div>
+              <div class="today__card-right">
+                @if (deal.amount != null) {
+                  <span class="today__card-amount">{{ deal.amount | number:'1.0-0':'fr' }} {{ deal.currency }}</span>
+                }
+                <span class="today__card-date">{{ deal.expectedCloseDate | date:'dd/MM/yyyy' }}</span>
+                <span class="today__card-arrow">→</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ── Tickets ouverts ──────────────────────────────────────────────── -->
+    @if (s.openTickets.length > 0) {
+      <section class="today__section today__section--neutral">
+        <div class="today__section-header">
+          <div class="today__section-title">
+            <span class="today__section-icon">✉</span>
+            Tickets à traiter
+          </div>
+          <span class="today__badge today__badge--neutral">{{ s.openTickets.length }}</span>
+        </div>
+        <div class="today__list">
+          @for (ticket of s.openTickets; track ticket.publicId) {
+            <div class="today__card" (click)="goTicket(ticket)">
+              <div class="today__card-left">
+                <span class="today__card-title">{{ ticket.subject }}</span>
+                <span class="today__card-sub">{{ ticket.contactFullName }}</span>
+              </div>
+              <div class="today__card-right">
+                <span class="today__status-badge today__status-badge--{{ ticket.status.toLowerCase() }}">
+                  {{ TICKET_STATUS_LABELS[ticket.status] }}
+                </span>
+                <span class="today__card-date">{{ ticket.createdAt | date:'dd/MM' }}</span>
+                <span class="today__card-arrow">→</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+  }
+</div>

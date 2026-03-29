@@ -1,3 +1,5 @@
+import { Tag } from '../../tag/models/tag.model';
+
 export enum OrganisationSize {
   MICRO      = 'MICRO',
   SMALL      = 'SMALL',
@@ -34,6 +36,7 @@ export interface OrganisationDetail {
   phone:            string | null;
   addressPublicId:  string | null;
   notes:            string | null;
+  tags:             Tag[];
   createdAt:        string;
   updatedAt:        string;
 }
@@ -41,10 +44,11 @@ export interface OrganisationDetail {
 // ─── Request models ─────────────────────────────────────────────────────────
 
 export interface OrganisationFilter {
-  keyword?:     string;
-  industry?:    string;
-  size?:        OrganisationSize;
-  countryCode?: string;
+  keyword?:      string;
+  industry?:     string;
+  size?:         OrganisationSize;
+  countryCode?:  string;
+  tagPublicId?:  string;
 }
 
 export interface CreateOrganisationRequest {

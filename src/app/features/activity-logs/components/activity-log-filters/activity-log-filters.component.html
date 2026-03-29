@@ -32,6 +32,23 @@
     </div>
   }
 
+  <!-- CRM sub-categories (visible only when CRM selected) -->
+  @if (showCrmSub()) {
+    <div class="filter-row filter-row--sub">
+      <span class="filter-label">Sous-type</span>
+      <div class="chips">
+        @for (sub of crmSubCategories; track sub) {
+          <button
+            class="chip chip--sm"
+            [class.chip--active]="category() === sub"
+            (click)="selectCategory(sub)">
+            {{ categoryLabels[sub] }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Date range + status -->
   <div class="filter-row">
     <span class="filter-label">Période</span>

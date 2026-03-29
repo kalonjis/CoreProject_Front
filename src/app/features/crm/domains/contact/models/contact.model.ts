@@ -1,3 +1,5 @@
+import { Tag } from '../../tag/models/tag.model';
+
 export enum ContactStatus {
   NEW      = 'NEW',
   ENGAGED  = 'ENGAGED',
@@ -54,6 +56,7 @@ export interface ContactDetail {
   hasLinkedUser: boolean;
   linkedUserPublicId: string | null;
   notes: string | null;
+  tags: Tag[];
   createdAt: string;
   updatedAt: string;
 }
@@ -68,6 +71,7 @@ export interface ContactFilter {
   assignedToPublicId?: string;
   hasLinkedUser?: boolean;
   convertedFromLead?: boolean;
+  tagPublicId?: string;
 }
 
 export interface CreateContactRequest {
