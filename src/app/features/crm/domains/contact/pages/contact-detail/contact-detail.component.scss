@@ -182,4 +182,38 @@
     flex-direction: column;
     gap: 0.625rem;
   }
+
+  &__tickets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid $gray-medium;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: $gray-light; }
+  }
+
+  &__ticket-subject {
+    flex: 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__ticket-date {
+    font-size: 0.75rem;
+    color: $gray-dark;
+    white-space: nowrap;
+  }
 }

@@ -1,0 +1,40 @@
+<div class="picker">
+  @if (selectedLabel) {
+    <div class="picker__selected">
+      <span class="picker__selected-label">{{ selectedLabel }}</span>
+      <button type="button" class="picker__clear" (click)="clear()" title="Effacer">✕</button>
+    </div>
+  } @else {
+    <div class="picker__search">
+      <input
+        type="text"
+        [(ngModel)]="query"
+        [placeholder]="placeholder"
+        (input)="onInput()"
+        (blur)="onBlur()"
+        autocomplete="off"
+      />
+      @if (searching()) {
+        <span class="picker__spinner">…</span>
+      }
+    </div>
+
+    @if (results().length > 0) {
+      <ul class="picker__results">
+        @for (o of results(); track o.publicId) {
+          <li class="picker__result" (mousedown)="select(o)">
+            <span class="picker__result-name">{{ o.name }}</span>
+            <app-organisation-status-badge [status]="o.status" />
+            @if (o.industry) {
+              <span class="picker__result-secondary">{{ o.industry }}</span>
+            }
+          </li>
+        }
+      </ul>
+    } @else if (query.trim().length >= 2 && !searching()) {
+      <ul class="picker__results">
+        <li class="picker__no-results">Aucune organisation trouvée</li>
+      </ul>
+    }
+  }
+</div>

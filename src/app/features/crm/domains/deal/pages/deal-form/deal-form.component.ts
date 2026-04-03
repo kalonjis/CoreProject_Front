@@ -6,10 +6,13 @@ import { CrmPipelineApiService } from '../../../pipeline/services/crm-pipeline-a
 import { Pipeline, PipelineStep } from '../../../pipeline/models/pipeline.model';
 import { DealDetail } from '../../models/deal.model';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
+import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/pickers/contact-picker/contact-picker.component';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
+import { CommercialPickerComponent } from '../../../../shared/pickers/commercial-picker/commercial-picker.component';
 
 @Component({
   selector: 'app-deal-form',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ContactPickerComponent, OrganisationPickerComponent, CommercialPickerComponent],
   templateUrl: './deal-form.component.html',
   styleUrl: './deal-form.component.scss'
 })
@@ -47,8 +50,8 @@ export class DealFormComponent implements OnInit {
     return base
         && this.form.pipelinePublicId.length > 0
         && this.form.stagePublicId.length > 0
-        && this.form.contactPublicId.trim().length > 0
-        && this.form.assignedToPublicId.trim().length > 0;
+        && this.form.contactPublicId.length > 0
+        && this.form.assignedToPublicId.length > 0;
   }
 
   ngOnInit(): void {
@@ -72,6 +75,18 @@ export class DealFormComponent implements OnInit {
     const p = this.pipelines().find(p => p.publicId === this.form.pipelinePublicId);
     this.steps.set(p?.steps ?? []);
     this.form.stagePublicId = this.steps()[0]?.publicId ?? '';
+  }
+
+  onContactSelected(v: ContactPickerValue | null): void {
+    this.form.contactPublicId = v?.publicId ?? '';
+  }
+
+  onOrgSelected(v: OrganisationPickerValue | null): void {
+    this.form.organisationPublicId = v?.publicId ?? '';
+  }
+
+  onCommercialSelected(publicId: string | null): void {
+    this.form.assignedToPublicId = publicId ?? '';
   }
 
   private loadExisting(): void {
@@ -107,9 +122,9 @@ export class DealFormComponent implements OnInit {
         currency:             this.form.currency || undefined,
         pipelinePublicId:     this.form.pipelinePublicId,
         stagePublicId:        this.form.stagePublicId,
-        contactPublicId:      this.form.contactPublicId.trim(),
-        organisationPublicId: this.form.organisationPublicId.trim() || undefined,
-        assignedToPublicId:   this.form.assignedToPublicId.trim(),
+        contactPublicId:      this.form.contactPublicId,
+        organisationPublicId: this.form.organisationPublicId || undefined,
+        assignedToPublicId:   this.form.assignedToPublicId,
         expectedCloseDate:    this.form.expectedCloseDate || undefined,
         notes:                this.form.notes.trim() || undefined
       }).subscribe({

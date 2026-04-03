@@ -1,6 +1,7 @@
 <div class="info-card">
   <div class="info-card__header">
     <h2 class="info-card__name">{{ organisation.name }}</h2>
+    <app-organisation-status-badge [status]="organisation.status" />
     @if (organisation.size) {
       <app-organisation-size-badge [size]="organisation.size" />
     }

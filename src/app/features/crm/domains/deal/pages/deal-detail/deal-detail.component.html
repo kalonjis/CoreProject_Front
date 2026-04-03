@@ -16,6 +16,18 @@
         <!-- ─── Tabs ──────────────────────────────────────────────────────────── -->
         <nav class="deal-detail__tabs">
           <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'activite'"      (click)="activeTab.set('activite')">Activité</button>
+          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'contacts'"      (click)="activeTab.set('contacts')">
+            Contacts
+            @if (d.contacts.length > 0) {
+              <span class="deal-detail__tab-count">{{ d.contacts.length }}</span>
+            }
+          </button>
+          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'tickets'"       (click)="activeTab.set('tickets')">
+            Tickets
+            @if (tickets().length > 0) {
+              <span class="deal-detail__tab-count">{{ tickets().length }}</span>
+            }
+          </button>
           <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
         </nav>
 
@@ -50,6 +62,79 @@
               [loading]="interactionFacade.loading()"
               (deleteRequested)="onInteractionDelete($event)"
             />
+          </div>
+        }
+
+        <!-- ─── Tab: Contacts ─────────────────────────────────────────────────── -->
+        @if (activeTab() === 'contacts') {
+          <div class="deal-detail__tab-panel">
+            <div class="deal-detail__contacts-header">
+              <h3 class="deal-detail__section-title">Contacts impliqués</h3>
+              <button class="btn btn--ghost btn--sm"
+                      [class.btn--active]="activeAction() === 'contacts'"
+                      (click)="setAction('contacts')">
+                Gérer
+              </button>
+            </div>
+
+            @if (d.contacts.length === 0) {
+              <p class="deal-detail__empty">Aucun contact lié à ce deal.</p>
+            } @else {
+              <table class="deal-detail__contacts-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                    <th>Email</th>
+                    <th>Principal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (c of d.contacts; track c.contactPublicId) {
+                    <tr class="deal-detail__contact-row" [routerLink]="['/crm/contacts', c.contactPublicId]">
+                      <td>{{ c.contactFullName }}</td>
+                      <td>{{ roleLabels[c.role] }}</td>
+                      <td>{{ c.contactEmail ?? '—' }}</td>
+                      <td>{{ c.primary ? '★' : '' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+
+        <!-- ─── Tab: Tickets ───────────────────────────────────────────────────── -->
+        @if (activeTab() === 'tickets') {
+          <div class="deal-detail__tab-panel">
+            <h3 class="deal-detail__section-title">Tickets de support</h3>
+
+            @if (ticketsLoading()) {
+              <p class="deal-detail__empty">Chargement…</p>
+            } @else if (tickets().length === 0) {
+              <p class="deal-detail__empty">Aucun ticket lié à ce deal.</p>
+            } @else {
+              <table class="deal-detail__contacts-table">
+                <thead>
+                  <tr>
+                    <th>Sujet</th>
+                    <th>Contact</th>
+                    <th>Statut</th>
+                    <th>Créé le</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ticket of tickets(); track ticket.publicId) {
+                    <tr class="deal-detail__contact-row" [routerLink]="['/crm/support-tickets', ticket.publicId]">
+                      <td>{{ ticket.subject }}</td>
+                      <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
+                      <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
+                      <td>{{ ticket.createdAt | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
           </div>
         }
 

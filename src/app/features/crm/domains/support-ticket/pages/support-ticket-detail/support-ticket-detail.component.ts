@@ -7,11 +7,13 @@ import { CrmUserApiService } from '../../../../shared/services/crm-user-api.serv
 import {
   SupportTicketDetail,
   SupportTicketStatus,
+  SupportTicketSource,
   SUPPORT_TICKET_STATUS_LABELS,
   SUPPORT_TICKET_TRANSITIONS
 } from '../../models/support-ticket.model';
 import { SupportTicketStatusBadgeComponent } from '../../components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
+import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { AuthFacade } from '../../../../../../core/auth/services/auth.facade';
 import { CommercialSummary, commercialDisplayName } from '../../../../shared/models/commercial.model';
 
@@ -30,6 +32,7 @@ export class SupportTicketDetailComponent implements OnInit {
   private readonly api        = inject(CrmSupportTicketApiService);
   private readonly userApi    = inject(CrmUserApiService);
   private readonly feedback   = inject(FeedbackService);
+  private readonly confirm    = inject(ConfirmDialogService);
   private readonly authFacade = inject(AuthFacade);
 
   readonly ticket       = signal<SupportTicketDetail | null>(null);
@@ -62,7 +65,12 @@ export class SupportTicketDetailComponent implements OnInit {
     return this.ticket()?.status === SupportTicketStatus.CLOSED;
   }
 
-  readonly statusLabels = SUPPORT_TICKET_STATUS_LABELS;
+  get isAdmin(): boolean {
+    return this.authFacade.isAdmin();
+  }
+
+  readonly statusLabels       = SUPPORT_TICKET_STATUS_LABELS;
+  readonly SupportTicketSource = SupportTicketSource;
 
   ngOnInit(): void {
     this.publicId = this.route.snapshot.paramMap.get('publicId') ?? '';
@@ -119,14 +127,31 @@ export class SupportTicketDetailComponent implements OnInit {
   }
 
   submitAssign(): void {
-    if (!this.assigneePublicId) return;
     this.saving.set(true);
     this.api.assign(this.publicId, {
-      assignedToPublicId: this.assigneePublicId
+      assignedToPublicId: this.assigneePublicId || null
     }).subscribe({
       next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
       error: () => { this.saving.set(false); this.feedback.showError('Erreur lors de l\'assignation.'); }
     });
+  }
+
+  async deleteTicket(): Promise<void> {
+    await this.confirm.confirm({
+      title: 'Supprimer ce ticket',
+      message: 'Cette action est irréversible. Le ticket sera définitivement supprimé.',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+      type: 'danger'
+    }).then(() => {
+      this.api.delete(this.publicId).subscribe({
+        next: () => {
+          this.feedback.showSuccess('Ticket supprimé.');
+          this.router.navigate(['/crm/support-tickets']);
+        },
+        error: () => this.feedback.showError('Impossible de supprimer ce ticket.')
+      });
+    }).catch(() => {});
   }
 
   submitEdit(): void {

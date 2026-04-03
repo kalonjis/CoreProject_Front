@@ -42,6 +42,10 @@
   &--identity {
     grid-template-columns: 100px 1fr 1fr;
 
+    &.support-mode {
+      grid-template-columns: 1fr 1fr;
+    }
+
     @media (max-width: 480px) {
       grid-template-columns: 1fr 1fr;
 
@@ -131,6 +135,52 @@
   margin-bottom: 1rem;
   font-size: 0.875rem;
 }
+
+.motif-selector {
+  margin-bottom: 1.75rem;
+
+  .motif-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .motif-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.875rem 1rem;
+    border: 2px solid variables.$border-color;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: variables.$dark-color;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    input[type="radio"] {
+      width: auto;
+      accent-color: variables.$primary-color;
+    }
+
+    .motif-icon {
+      font-size: 1.1rem;
+    }
+
+    &.active {
+      border-color: variables.$primary-color;
+      background-color: rgba(variables.$primary-color, 0.05);
+    }
+
+    &:hover:not(.active) {
+      border-color: color.adjust(variables.$border-color, $lightness: -10%);
+    }
+  }
+}
+
 
 .honeypot {
   position: absolute;

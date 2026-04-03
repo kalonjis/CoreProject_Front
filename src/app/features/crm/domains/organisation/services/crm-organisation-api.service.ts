@@ -7,8 +7,10 @@ import {
   OrganisationFilter,
   CreateOrganisationRequest,
   UpdateOrganisationRequest,
+  UpdateOrganisationStatusRequest,
   MergeOrganisationRequest
 } from '../models/organisation.model';
+import { ContactSummary } from '../../contact/models/contact.model';
 import { DealSummary } from '../../deal/models/deal.model';
 import { Page } from '../../../shared/models/page.model';
 
@@ -29,6 +31,7 @@ export class CrmOrganisationApiService {
     if (filter.keyword?.trim())  params = params.set('keyword', filter.keyword.trim());
     if (filter.industry?.trim()) params = params.set('industry', filter.industry.trim());
     if (filter.size)             params = params.set('size', filter.size);
+    if (filter.status)           params = params.set('status', filter.status);
     if (filter.countryCode)      params = params.set('countryCode', filter.countryCode);
     if (filter.tagPublicId)      params = params.set('tagPublicId', filter.tagPublicId);
 
@@ -47,8 +50,16 @@ export class CrmOrganisationApiService {
     return this.http.patch<OrganisationDetail>(`${this.base}/${publicId}`, body);
   }
 
+  updateStatus(publicId: string, body: UpdateOrganisationStatusRequest): Observable<OrganisationDetail> {
+    return this.http.patch<OrganisationDetail>(`${this.base}/${publicId}/status`, body);
+  }
+
   merge(body: MergeOrganisationRequest): Observable<OrganisationDetail> {
     return this.http.post<OrganisationDetail>(`${this.base}/merge`, body);
+  }
+
+  getContacts(publicId: string): Observable<ContactSummary[]> {
+    return this.http.get<ContactSummary[]>(`${this.base}/${publicId}/contacts`);
   }
 
   getDeals(publicId: string): Observable<DealSummary[]> {

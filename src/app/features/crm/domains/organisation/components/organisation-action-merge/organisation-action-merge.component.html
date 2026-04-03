@@ -3,8 +3,11 @@
 
   <div class="action-panel__grid">
     <div class="action-panel__row action-panel__row--full">
-      <label>Public ID de l'organisation source *</label>
-      <input type="text" [(ngModel)]="sourcePublicId" placeholder="uuid organisation à absorber" />
+      <label>Organisation source *</label>
+      <app-organisation-picker
+        placeholder="Rechercher l'organisation à absorber…"
+        (selected)="onOrgSelected($event)"
+      />
       <small>L'organisation source sera supprimée ; ses contacts seront transférés ici.</small>
     </div>
   </div>

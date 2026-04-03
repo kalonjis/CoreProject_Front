@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { SupportTicketStatus, SUPPORT_TICKET_STATUS_LABELS } from '../../models/support-ticket.model';
 
 @Component({
+  standalone: true,
   selector: 'app-support-ticket-status-badge',
   template: `
-    <span class="ticket-status ticket-status--{{ status.toLowerCase().replace('_', '-') }}">
+    <span class="ticket-status ticket-status--{{ status.toLowerCase().replaceAll('_', '-') }}">
       {{ label }}
     </span>
   `,

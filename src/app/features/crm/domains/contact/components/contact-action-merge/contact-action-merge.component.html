@@ -3,12 +3,15 @@
   <p class="action-panel__hint">Le contact source sera absorbé par celui-ci (cible). Toutes ses données seront transférées.</p>
 
   <div class="action-panel__row">
-    <label>Public ID du contact source (à supprimer)</label>
-    <input type="text" [(ngModel)]="sourcePublicId" placeholder="uuid du contact source" />
+    <label>Contact source (à supprimer)</label>
+    <app-contact-picker
+      placeholder="Rechercher le contact à absorber…"
+      (selected)="onContactSelected($event)"
+    />
   </div>
 
   <div class="action-panel__footer">
-    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !sourcePublicId.trim()">
+    <button class="btn btn--danger" (click)="submit()" [disabled]="loading() || !sourcePublicId">
       Fusionner
     </button>
     <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>

@@ -15,6 +15,9 @@
       <div class="ticket-detail__main">
         <div class="ticket-detail__meta">
           <app-support-ticket-status-badge [status]="t.status" />
+          @if (t.source === SupportTicketSource.PUBLIC_FORM) {
+            <span class="ticket-detail__source-badge">Formulaire public</span>
+          }
           <span class="ticket-detail__date">Créé le {{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
           @if (t.updatedAt !== t.createdAt) {
             <span class="ticket-detail__date">· Modifié {{ t.updatedAt | date:'dd/MM/yy HH:mm' }}</span>
@@ -30,9 +33,23 @@
         }
 
         <dl class="ticket-detail__info">
-          <dt>Contact</dt>
+          <dt>Soumis par</dt>
           <dd>
-            <a [routerLink]="['/crm/contacts', t.contactPublicId]">{{ t.contactFullName }}</a>
+            @if (t.contactPublicId) {
+              <a [routerLink]="['/crm/contacts', t.contactPublicId]">{{ t.contactFullName }}</a>
+            } @else if (t.reporterName || t.reporterEmail) {
+              <span class="ticket-detail__reporter">
+                {{ t.reporterName ?? t.reporterEmail }}
+                @if (t.reporterEmail) {
+                  <a [href]="'mailto:' + t.reporterEmail" class="ticket-detail__reporter-email">
+                    {{ t.reporterEmail }}
+                  </a>
+                }
+              </span>
+              <span class="ticket-detail__reporter-badge">Formulaire public</span>
+            } @else {
+              <span>—</span>
+            }
           </dd>
           <dt>Assigné à</dt>
           <dd>{{ t.assignedToUsername ?? '—' }}</dd>
@@ -62,6 +79,12 @@
             </button>
           </div>
         }
+
+        <div class="ticket-detail__danger-zone">
+          <button class="btn btn--danger" (click)="deleteTicket()">
+            Supprimer
+          </button>
+        </div>
 
         @switch (activePanel()) {
 
@@ -95,14 +118,18 @@
                 <p>Chargement…</p>
               } @else {
                 <select [(ngModel)]="assigneePublicId">
-                  <option value="" disabled>— Sélectionner un commercial —</option>
+                  @if (isAdmin) {
+                    <option value="">— Non assigné —</option>
+                  } @else {
+                    <option value="" disabled>— Sélectionner un commercial —</option>
+                  }
                   @for (c of commercials(); track c.publicId) {
                     <option [value]="c.publicId">{{ displayName(c) }}</option>
                   }
                 </select>
               }
               <div class="ticket-detail__panel-footer">
-                <button class="btn btn--primary" [disabled]="saving() || !assigneePublicId" (click)="submitAssign()">
+                <button class="btn btn--primary" [disabled]="saving()" (click)="submitAssign()">
                   {{ saving() ? '…' : 'Assigner' }}
                 </button>
                 <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>

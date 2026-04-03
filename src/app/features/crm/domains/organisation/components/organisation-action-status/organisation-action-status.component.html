@@ -1,0 +1,20 @@
+<div class="action-panel">
+  <h3 class="action-panel__title">Changer le statut</h3>
+
+  <div class="action-panel__row">
+    <label>Nouveau statut</label>
+    <select [(ngModel)]="selectedStatus">
+      <option value="">— Choisir —</option>
+      @for (s of availableStatuses; track s) {
+        <option [value]="s">{{ statusLabels[s] }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="action-panel__footer">
+    <button class="btn btn--primary" (click)="submit()" [disabled]="loading() || !selectedStatus">
+      Confirmer
+    </button>
+    <button class="btn btn--ghost" (click)="cancelled.emit()">Annuler</button>
+  </div>
+</div>

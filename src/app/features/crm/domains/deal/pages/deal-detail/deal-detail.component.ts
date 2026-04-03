@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal, effect } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DealFacade }         from '../../facades/deal.facade';
 import { InteractionFacade }  from '../../../interaction/facades/interaction.facade';
@@ -16,15 +17,21 @@ import { TagInputComponent }              from '../../../tag/components/tag-inpu
 import { EmailComposeComponent, EmailComposeSubmit } from '../../../../shared/email-compose/email-compose.component';
 import { ChangeLogListComponent }         from '../../../crm-change-log/components/change-log-list/change-log-list.component';
 import { CrmContactApiService }           from '../../../contact/services/crm-contact-api.service';
+import { CrmSupportTicketApiService }     from '../../../support-ticket/services/crm-support-ticket-api.service';
+import { SupportTicketSummary }           from '../../../support-ticket/models/support-ticket.model';
+import { SupportTicketStatusBadgeComponent } from '../../../support-ticket/components/support-ticket-status-badge/support-ticket-status-badge.component';
+import { CONTACT_ROLE_LABELS }            from '../../models/deal.model';
 import { Tag }                            from '../../../tag/models/tag.model';
+import { DealDetail }                     from '../../models/deal.model';
 
 type ActionPanel = 'move' | 'reassign' | 'contacts' | null;
-type DealTab     = 'activite' | 'modifications';
+type DealTab     = 'activite' | 'contacts' | 'tickets' | 'modifications';
 
 @Component({
   selector: 'app-deal-detail',
   providers: [DealFacade, InteractionFacade],
   imports: [
+    DatePipe,
     RouterLink,
     DealInfoCardComponent,
     DealActionMoveStageComponent,
@@ -36,6 +43,7 @@ type DealTab     = 'activite' | 'modifications';
     CommercialActionFormComponent,
     TagInputComponent,
     EmailComposeComponent,
+    SupportTicketStatusBadgeComponent,
     ChangeLogListComponent
   ],
   templateUrl: './deal-detail.component.html',
@@ -51,20 +59,27 @@ export class DealDetailComponent implements OnInit {
   private readonly authStore  = inject(AuthStore);
   private readonly tagApi     = inject(CrmTagApiService);
   private readonly contactApi = inject(CrmContactApiService);
+  private readonly ticketApi  = inject(CrmSupportTicketApiService);
 
-  readonly activeTab       = signal<DealTab>('activite');
-  readonly activeAction    = signal<ActionPanel>(null);
-  readonly showLogForm     = signal(false);
-  readonly showActionForm  = signal(false);
+  readonly activeTab        = signal<DealTab>('activite');
+  readonly activeAction     = signal<ActionPanel>(null);
+  readonly showLogForm      = signal(false);
+  readonly showActionForm   = signal(false);
   readonly showEmailCompose = signal(false);
-  readonly tags            = signal<Tag[]>([]);
+  readonly tags             = signal<Tag[]>([]);
+  readonly tickets          = signal<SupportTicketSummary[]>([]);
+  readonly ticketsLoading   = signal(false);
+  readonly roleLabels       = CONTACT_ROLE_LABELS;
 
   private publicId = '';
 
   constructor() {
     effect(() => {
       const deal = this.facade.deal();
-      if (deal) this.tags.set(deal.tags ?? []);
+      if (deal) {
+        this.tags.set(deal.tags ?? []);
+        this.loadTickets(deal);
+      }
     });
   }
 
@@ -73,6 +88,20 @@ export class DealDetailComponent implements OnInit {
   ngOnInit(): void {
     this.publicId = this.route.snapshot.paramMap.get('publicId') ?? '';
     this.facade.loadDetail(this.publicId);
+  }
+
+  private loadTickets(deal: DealDetail): void {
+    this.ticketsLoading.set(true);
+    const filter = deal.organisationPublicId
+      ? { organisationPublicId: deal.organisationPublicId }
+      : deal.contactPublicId
+        ? { contactPublicId: deal.contactPublicId }
+        : {};
+
+    this.ticketApi.findAll(filter, 0, 50).subscribe({
+      next: page => { this.tickets.set(page.content); this.ticketsLoading.set(false); },
+      error: ()  => this.ticketsLoading.set(false)
+    });
   }
 
   setAction(action: ActionPanel): void {

@@ -39,6 +39,17 @@
     color: $gray-dark;
   }
 
+  &__source-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: #ede9fe;
+    color: #6d28d9;
+    white-space: nowrap;
+  }
+
   &__subject {
     font-size: 1.5rem;
     font-weight: 700;
@@ -142,4 +153,48 @@
   }
 
   textarea { resize: vertical; }
+
+  &__reporter {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__reporter-email {
+    font-size: 0.8125rem;
+    color: $primary-color;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+
+  &__reporter-badge {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 500;
+  }
+
+  &__danger-zone {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid $border-color;
+
+    .btn--danger {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: white;
+      background-color: $danger-color;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      &:hover { opacity: 0.85; }
+    }
+  }
 }

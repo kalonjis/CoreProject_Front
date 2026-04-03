@@ -42,6 +42,7 @@
       <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'activite'"     (click)="activeTab.set('activite')">Activité</button>
       <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'actions'"      (click)="activeTab.set('actions')">Actions</button>
       <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'deals'"        (click)="activeTab.set('deals')">Deals</button>
+      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'tickets'"       (click)="activeTab.set('tickets')">Tickets</button>
       <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
     </nav>
 
@@ -124,6 +125,41 @@
           <div class="contact-detail__deals-grid">
             @for (deal of deals(); track deal.publicId) {
               <app-deal-mini-card [deal]="deal" />
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ─── Tab: Tickets ───────────────────────────────────────────────────────── -->
+    @if (activeTab() === 'tickets') {
+      <div class="contact-detail__tab-panel">
+        <div class="contact-detail__section-header">
+          @if (!ticketsLoading()) {
+            <span class="contact-detail__section-count">
+              {{ tickets().length }} ticket{{ tickets().length !== 1 ? 's' : '' }}
+            </span>
+          }
+          <button class="btn btn--secondary btn--sm" (click)="newTicket()">+ Nouveau ticket</button>
+        </div>
+        @if (ticketsLoading()) {
+          <p class="contact-detail__section-state">Chargement…</p>
+        } @else if (tickets().length === 0) {
+          <app-crm-empty-state
+            icon="🎫"
+            title="Aucun ticket"
+            subtitle="Ce contact n'a aucun ticket de support pour l'instant."
+            ctaLabel="+ Nouveau ticket"
+            (ctaClick)="newTicket()"
+          />
+        } @else {
+          <div class="contact-detail__tickets-list">
+            @for (ticket of tickets(); track ticket.publicId) {
+              <div class="contact-detail__ticket-row" (click)="goToTicket(ticket.publicId)">
+                <app-support-ticket-status-badge [status]="ticket.status" />
+                <span class="contact-detail__ticket-subject">{{ ticket.subject }}</span>
+                <span class="contact-detail__ticket-date">{{ ticket.createdAt | date:'dd/MM/yyyy' }}</span>
+              </div>
             }
           </div>
         }

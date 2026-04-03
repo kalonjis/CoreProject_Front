@@ -6,16 +6,22 @@ import { CrmSupportTicketApiService } from '../../services/crm-support-ticket-ap
 import {
   SupportTicketSummary,
   SupportTicketStatus,
+  SupportTicketSource,
   SupportTicketFilter,
-  SUPPORT_TICKET_STATUS_LABELS
+  SUPPORT_TICKET_STATUS_LABELS,
+  SUPPORT_TICKET_SOURCE_LABELS
 } from '../../models/support-ticket.model';
 import { SupportTicketStatusBadgeComponent } from '../../components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { Page } from '../../../../shared/models/page.model';
 import { CrmEmptyStateComponent } from '../../../../shared/empty-state/crm-empty-state.component';
+import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/pickers/contact-picker/contact-picker.component';
+import { CommercialPickerComponent } from '../../../../shared/pickers/commercial-picker/commercial-picker.component';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 
 @Component({
   selector: 'app-support-ticket-list',
-  imports: [FormsModule, DatePipe, SupportTicketStatusBadgeComponent, CrmEmptyStateComponent],
+  imports: [FormsModule, DatePipe, SupportTicketStatusBadgeComponent, CrmEmptyStateComponent,
+            ContactPickerComponent, CommercialPickerComponent, OrganisationPickerComponent],
   templateUrl: './support-ticket-list.component.html',
   styleUrl: './support-ticket-list.component.scss'
 })
@@ -28,24 +34,35 @@ export class SupportTicketListComponent implements OnInit {
   readonly loading = signal(false);
 
   // Filters
-  keyword       = '';
+  keyword                 = '';
   statusFilter: SupportTicketStatus | '' = '';
-  unassignedOnly = false;
+  sourceFilter: SupportTicketSource | '' = '';
+  unassignedOnly          = false;
+  contactPublicId         = '';
+  assignedToPublicId      = '';
+  organisationPublicId    = '';
 
   currentPage = 0;
   readonly pageSize = 15;
 
-  readonly statuses     = Object.values(SupportTicketStatus);
-  readonly statusLabels = SUPPORT_TICKET_STATUS_LABELS;
+  readonly statuses      = Object.values(SupportTicketStatus);
+  readonly statusLabels  = SUPPORT_TICKET_STATUS_LABELS;
+  readonly sources       = Object.values(SupportTicketSource);
+  readonly sourceLabels  = SUPPORT_TICKET_SOURCE_LABELS;
+  readonly SupportTicketSource = SupportTicketSource;
 
   ngOnInit(): void { this.load(); }
 
   load(): void {
     this.loading.set(true);
     const filter: SupportTicketFilter = {
-      ...(this.keyword.trim()  && { keyword: this.keyword.trim() }),
-      ...(this.statusFilter    && { status: this.statusFilter as SupportTicketStatus }),
-      ...(this.unassignedOnly  && { unassignedOnly: true }),
+      ...(this.keyword.trim()          && { keyword:               this.keyword.trim() }),
+      ...(this.statusFilter            && { status:                this.statusFilter as SupportTicketStatus }),
+      ...(this.sourceFilter            && { source:                this.sourceFilter as SupportTicketSource }),
+      ...(this.unassignedOnly          && { unassignedOnly:        true }),
+      ...(this.contactPublicId         && { contactPublicId:       this.contactPublicId }),
+      ...(this.assignedToPublicId      && { assignedToPublicId:    this.assignedToPublicId }),
+      ...(this.organisationPublicId    && { organisationPublicId:  this.organisationPublicId }),
     };
     this.api.findAll(filter, this.currentPage, this.pageSize).subscribe({
       next: p => { this.page.set(p); this.loading.set(false); },
@@ -54,6 +71,28 @@ export class SupportTicketListComponent implements OnInit {
   }
 
   search(): void { this.currentPage = 0; this.load(); }
+
+  onContactSelected(v: ContactPickerValue | null): void {
+    this.contactPublicId = v?.publicId ?? '';
+    this.search();
+  }
+
+  onAssigneeSelected(publicId: string | null): void {
+    this.assignedToPublicId = publicId ?? '';
+    this.search();
+  }
+
+  onOrganisationSelected(v: OrganisationPickerValue | null): void {
+    this.organisationPublicId = v?.publicId ?? '';
+    this.search();
+  }
+
+  onUnassignedOnlyChange(): void {
+    if (this.unassignedOnly) {
+      this.assignedToPublicId = '';
+    }
+    this.search();
+  }
 
   goTo(p: number): void { this.currentPage = p; this.load(); }
 

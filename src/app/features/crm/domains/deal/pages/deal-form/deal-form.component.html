@@ -51,18 +51,18 @@
         </div>
 
         <div class="deal-form__row">
-          <label>Contact (public ID) *</label>
-          <input type="text" [(ngModel)]="form.contactPublicId" name="contactPublicId" placeholder="uuid contact" />
+          <label>Contact *</label>
+          <app-contact-picker (selected)="onContactSelected($event)" />
         </div>
 
         <div class="deal-form__row">
-          <label>Organisation (public ID)</label>
-          <input type="text" [(ngModel)]="form.organisationPublicId" name="organisationPublicId" placeholder="uuid organisation (optionnel)" />
+          <label>Organisation</label>
+          <app-organisation-picker (selected)="onOrgSelected($event)" />
         </div>
 
         <div class="deal-form__row deal-form__row--full">
-          <label>Responsable (public ID) *</label>
-          <input type="text" [(ngModel)]="form.assignedToPublicId" name="assignedToPublicId" placeholder="uuid commercial" />
+          <label>Responsable *</label>
+          <app-commercial-picker [required]="true" (selected)="onCommercialSelected($event)" />
         </div>
       }
 

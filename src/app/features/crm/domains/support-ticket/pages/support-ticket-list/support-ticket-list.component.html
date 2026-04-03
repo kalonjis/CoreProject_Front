@@ -19,11 +19,43 @@
         <option [value]="s">{{ statusLabels[s] }}</option>
       }
     </select>
+    <select [(ngModel)]="sourceFilter" (change)="search()">
+      <option value="">Toutes les sources</option>
+      @for (src of sources; track src) {
+        <option [value]="src">{{ sourceLabels[src] }}</option>
+      }
+    </select>
     <label class="ticket-list__checkbox">
-      <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="search()" />
+      <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="onUnassignedOnlyChange()" />
       Non assignés
     </label>
     <button class="btn btn--secondary" (click)="search()">Filtrer</button>
+  </div>
+
+  <div class="ticket-list__filters ticket-list__filters--secondary">
+    <div class="ticket-list__filter-group">
+      <label class="ticket-list__filter-label">Contact</label>
+      <app-contact-picker
+        placeholder="Filtrer par contact…"
+        (selected)="onContactSelected($event)"
+      />
+    </div>
+    <div class="ticket-list__filter-group">
+      <label class="ticket-list__filter-label">Organisation</label>
+      <app-organisation-picker
+        placeholder="Filtrer par organisation…"
+        (selected)="onOrganisationSelected($event)"
+      />
+    </div>
+    <div class="ticket-list__filter-group">
+      <label class="ticket-list__filter-label">Assigné à</label>
+      <app-commercial-picker
+        [nullable]="true"
+        [prefilledPublicId]="assignedToPublicId"
+        [attr.disabled]="unassignedOnly || null"
+        (selected)="onAssigneeSelected($event)"
+      />
+    </div>
   </div>
 
   @if (loading()) {
@@ -50,8 +82,13 @@
       <tbody>
         @for (ticket of p.content; track ticket.publicId) {
           <tr class="ticket-list__row" (click)="openDetail(ticket.publicId)">
-            <td class="ticket-list__subject">{{ ticket.subject }}</td>
-            <td>{{ ticket.contactFullName }}</td>
+            <td class="ticket-list__subject">
+              {{ ticket.subject }}
+              @if (ticket.source === SupportTicketSource.PUBLIC_FORM) {
+                <span class="ticket-list__source-chip">Public</span>
+              }
+            </td>
+            <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
             <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
             <td>{{ ticket.assignedToUsername ?? '—' }}</td>
             <td>{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>

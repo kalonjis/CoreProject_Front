@@ -91,9 +91,37 @@
     font-weight: 500;
     color: $dark-color;
     max-width: 320px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  }
+
+  &__source-chip {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: #ede9fe;
+    color: #6d28d9;
+    vertical-align: middle;
     white-space: nowrap;
+  }
+
+  &__filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__filters--secondary {
+    align-items: flex-end;
   }
 
   &__state {

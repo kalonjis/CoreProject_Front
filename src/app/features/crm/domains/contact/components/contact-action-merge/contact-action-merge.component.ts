@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CrmContactApiService } from '../../services/crm-contact-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/pickers/contact-picker/contact-picker.component';
 
 @Component({
   selector: 'app-contact-action-merge',
-  imports: [FormsModule],
+  imports: [ContactPickerComponent],
   templateUrl: './contact-action-merge.component.html',
   styleUrl: './contact-action-merge.component.scss'
 })
@@ -22,6 +22,10 @@ export class ContactActionMergeComponent {
 
   sourcePublicId = '';
   readonly loading = signal(false);
+
+  onContactSelected(v: ContactPickerValue | null): void {
+    this.sourcePublicId = v?.publicId ?? '';
+  }
 
   async submit(): Promise<void> {
     if (!this.sourcePublicId.trim()) return;

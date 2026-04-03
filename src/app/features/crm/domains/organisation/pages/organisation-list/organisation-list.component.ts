@@ -6,16 +6,19 @@ import {
   OrganisationSummary,
   OrganisationFilter,
   OrganisationSize,
-  ORGANISATION_SIZE_LABELS
+  ORGANISATION_SIZE_LABELS,
+  OrganisationStatus,
+  ORGANISATION_STATUS_LABELS
 } from '../../models/organisation.model';
 import { OrganisationSizeBadgeComponent } from '../../components/organisation-size-badge/organisation-size-badge.component';
+import { OrganisationStatusBadgeComponent } from '../../components/organisation-status-badge/organisation-status-badge.component';
 import { CrmEmptyStateComponent } from '../../../../shared/empty-state/crm-empty-state.component';
 import { CrmTagApiService } from '../../../tag/services/crm-tag-api.service';
 import { Tag } from '../../../tag/models/tag.model';
 
 @Component({
   selector: 'app-organisation-list',
-  imports: [FormsModule, OrganisationSizeBadgeComponent, CrmEmptyStateComponent],
+  imports: [FormsModule, OrganisationSizeBadgeComponent, OrganisationStatusBadgeComponent, CrmEmptyStateComponent],
   templateUrl: './organisation-list.component.html',
   styleUrl: './organisation-list.component.scss'
 })
@@ -36,12 +39,15 @@ export class OrganisationListComponent implements OnInit {
   currentPage = 0;
   readonly pageSize = 20;
 
-  keyword             = '';
-  selectedSize        : OrganisationSize | '' = '';
-  selectedTagPublicId = '';
+  keyword               = '';
+  selectedSize          : OrganisationSize | ''   = '';
+  selectedStatus        : OrganisationStatus | '' = '';
+  selectedTagPublicId   = '';
 
-  readonly sizes       = Object.values(OrganisationSize);
-  readonly sizeLabels  = ORGANISATION_SIZE_LABELS;
+  readonly sizes         = Object.values(OrganisationSize);
+  readonly sizeLabels    = ORGANISATION_SIZE_LABELS;
+  readonly statuses      = Object.values(OrganisationStatus);
+  readonly statusLabels  = ORGANISATION_STATUS_LABELS;
 
   ngOnInit(): void {
     this.tagApi.findAll().subscribe(tags => this.allTags.set(tags));
@@ -55,6 +61,7 @@ export class OrganisationListComponent implements OnInit {
     const f: OrganisationFilter = {};
     if (this.keyword.trim())       f.keyword      = this.keyword;
     if (this.selectedSize)         f.size         = this.selectedSize;
+    if (this.selectedStatus)       f.status       = this.selectedStatus;
     if (this.selectedTagPublicId)  f.tagPublicId  = this.selectedTagPublicId;
 
     this.api.findAll(f, this.currentPage).subscribe({

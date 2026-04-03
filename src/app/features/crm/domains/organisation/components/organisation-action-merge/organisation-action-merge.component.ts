@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CrmOrganisationApiService } from '../../services/crm-organisation-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 
 @Component({
   selector: 'app-organisation-action-merge',
-  imports: [FormsModule],
+  imports: [OrganisationPickerComponent],
   templateUrl: './organisation-action-merge.component.html',
   styleUrl: './organisation-action-merge.component.scss'
 })
@@ -22,6 +22,10 @@ export class OrganisationActionMergeComponent {
   readonly loading = signal(false);
 
   sourcePublicId = '';
+
+  onOrgSelected(v: OrganisationPickerValue | null): void {
+    this.sourcePublicId = v?.publicId ?? '';
+  }
 
   get isValid(): boolean {
     return this.sourcePublicId.trim().length > 0 && this.sourcePublicId.trim() !== this.publicId;

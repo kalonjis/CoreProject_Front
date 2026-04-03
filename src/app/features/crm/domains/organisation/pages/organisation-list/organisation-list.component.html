@@ -12,6 +12,12 @@
       (ngModelChange)="onKeywordChange()"
       class="org-list__search"
     />
+    <select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+      <option value="">Tous les statuts</option>
+      @for (st of statuses; track st) {
+        <option [value]="st">{{ statusLabels[st] }}</option>
+      }
+    </select>
     <select [(ngModel)]="selectedSize" (ngModelChange)="onFilterChange()">
       <option value="">Toutes les tailles</option>
       @for (s of sizes; track s) {
@@ -44,6 +50,7 @@
       <thead>
         <tr>
           <th>Nom</th>
+          <th>Statut</th>
           <th>Secteur</th>
           <th>Taille</th>
           <th>Téléphone</th>
@@ -54,6 +61,7 @@
         @for (org of organisations(); track org.publicId) {
           <tr class="org-list__row" (click)="viewDetail(org.publicId)">
             <td class="org-list__name">{{ org.name }}</td>
+            <td><app-organisation-status-badge [status]="org.status" /></td>
             <td>{{ org.industry ?? '—' }}</td>
             <td>
               @if (org.size) {

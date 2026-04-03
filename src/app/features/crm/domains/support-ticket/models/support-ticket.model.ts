@@ -7,6 +7,11 @@ export enum SupportTicketStatus {
   CLOSED      = 'CLOSED'
 }
 
+export enum SupportTicketSource {
+  INTERNAL    = 'INTERNAL',
+  PUBLIC_FORM = 'PUBLIC_FORM'
+}
+
 // ─── Labels ─────────────────────────────────────────────────────────────────
 
 export const SUPPORT_TICKET_STATUS_LABELS: Record<SupportTicketStatus, string> = {
@@ -14,6 +19,11 @@ export const SUPPORT_TICKET_STATUS_LABELS: Record<SupportTicketStatus, string> =
   [SupportTicketStatus.IN_PROGRESS]: 'En cours',
   [SupportTicketStatus.RESOLVED]:    'Résolu',
   [SupportTicketStatus.CLOSED]:      'Clôturé'
+};
+
+export const SUPPORT_TICKET_SOURCE_LABELS: Record<SupportTicketSource, string> = {
+  [SupportTicketSource.INTERNAL]:    'Interne',
+  [SupportTicketSource.PUBLIC_FORM]: 'Formulaire public'
 };
 
 /** Transitions autorisées depuis chaque statut */
@@ -30,10 +40,13 @@ export interface SupportTicketSummary {
   publicId:             string;
   subject:              string;
   status:               SupportTicketStatus;
-  contactPublicId:      string;
-  contactFullName:      string;
+  contactPublicId:      string | null;
+  contactFullName:      string | null;
+  reporterName:         string | null;
+  reporterEmail:        string | null;
   assignedToPublicId:   string | null;
   assignedToUsername:   string | null;
+  source:               SupportTicketSource;
   createdAt:            string;
 }
 
@@ -42,10 +55,13 @@ export interface SupportTicketDetail {
   subject:              string;
   description:          string | null;
   status:               SupportTicketStatus;
-  contactPublicId:      string;
-  contactFullName:      string;
+  contactPublicId:      string | null;
+  contactFullName:      string | null;
+  reporterName:         string | null;
+  reporterEmail:        string | null;
   assignedToPublicId:   string | null;
   assignedToUsername:   string | null;
+  source:               SupportTicketSource;
   createdAt:            string;
   updatedAt:            string;
 }
@@ -73,9 +89,11 @@ export interface AssignSupportTicketRequest {
 }
 
 export interface SupportTicketFilter {
-  keyword?:          string;
-  status?:           SupportTicketStatus;
-  contactPublicId?:  string;
-  assignedToPublicId?: string;
-  unassignedOnly?:   boolean;
+  keyword?:              string;
+  status?:               SupportTicketStatus;
+  source?:               SupportTicketSource;
+  contactPublicId?:      string;
+  assignedToPublicId?:   string;
+  unassignedOnly?:       boolean;
+  organisationPublicId?: string;
 }

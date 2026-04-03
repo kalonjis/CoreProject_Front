@@ -1,0 +1,14 @@
+<select
+  [(ngModel)]="selectedPublicId"
+  (ngModelChange)="onChange()"
+  [required]="required"
+>
+  @if (nullable) {
+    <option value="">— Non assigné —</option>
+  } @else {
+    <option value="" disabled>— Sélectionner un commercial —</option>
+  }
+  @for (c of commercials(); track c.publicId) {
+    <option [value]="c.publicId">{{ displayName(c) }}</option>
+  }
+</select>

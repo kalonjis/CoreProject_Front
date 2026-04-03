@@ -25,6 +25,24 @@
           </button>
           <button
             class="org-detail__tab"
+            [class.org-detail__tab--active]="activeTab() === 'contacts'"
+            (click)="activeTab.set('contacts')">
+            Contacts
+            @if (contacts().length > 0) {
+              <span class="org-detail__tab-count">{{ contacts().length }}</span>
+            }
+          </button>
+          <button
+            class="org-detail__tab"
+            [class.org-detail__tab--active]="activeTab() === 'tickets'"
+            (click)="activeTab.set('tickets')">
+            Tickets
+            @if (tickets().length > 0) {
+              <span class="org-detail__tab-count">{{ tickets().length }}</span>
+            }
+          </button>
+          <button
+            class="org-detail__tab"
             [class.org-detail__tab--active]="activeTab() === 'modifications'"
             (click)="activeTab.set('modifications')">
             Modifications
@@ -80,6 +98,87 @@
           </div>
         }
 
+        @if (activeTab() === 'contacts') {
+          <div class="org-detail__tab-panel">
+            <div class="org-detail__contacts-header">
+              <h3 class="org-detail__section-title">Contacts</h3>
+              <button class="org-detail__btn org-detail__btn--outline" (click)="showCreateContact.set(true)">
+                + Nouveau contact
+              </button>
+            </div>
+
+            @if (contactsLoading()) {
+              <p class="org-detail__state">Chargement…</p>
+            } @else if (contacts().length === 0) {
+              <app-crm-empty-state
+                icon="👤"
+                title="Aucun contact"
+                subtitle="Aucun contact lié à cette organisation pour l'instant."
+                ctaLabel="+ Ajouter un contact"
+                (ctaClick)="showCreateContact.set(true)"
+              />
+            } @else {
+              <table class="org-detail__contacts-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Poste</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (contact of contacts(); track contact.publicId) {
+                    <tr class="org-detail__contact-row" [routerLink]="['/crm/contacts', contact.publicId]">
+                      <td>{{ contact.firstName }} {{ contact.lastName }}</td>
+                      <td>{{ contact.email }}</td>
+                      <td>{{ contact.jobTitle ?? '—' }}</td>
+                      <td><app-contact-status-badge [status]="contact.status" /></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+
+        @if (activeTab() === 'tickets') {
+          <div class="org-detail__tab-panel">
+            <h3 class="org-detail__section-title">Tickets de support</h3>
+
+            @if (ticketsLoading()) {
+              <p class="org-detail__state">Chargement…</p>
+            } @else if (tickets().length === 0) {
+              <app-crm-empty-state
+                icon="🎫"
+                title="Aucun ticket"
+                subtitle="Aucun ticket de support lié aux contacts de cette organisation."
+              />
+            } @else {
+              <table class="org-detail__contacts-table">
+                <thead>
+                  <tr>
+                    <th>Sujet</th>
+                    <th>Contact</th>
+                    <th>Statut</th>
+                    <th>Créé le</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ticket of tickets(); track ticket.publicId) {
+                    <tr class="org-detail__contact-row" [routerLink]="['/crm/support-tickets', ticket.publicId]">
+                      <td>{{ ticket.subject }}</td>
+                      <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
+                      <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
+                      <td>{{ ticket.createdAt | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+
         @if (activeTab() === 'modifications') {
           <div class="org-detail__tab-panel">
             <app-change-log-list entityType="ORGANISATION" [entityPublicId]="org.publicId" />
@@ -96,6 +195,12 @@
           <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
           <button
             class="btn btn--ghost"
+            [class.btn--active]="activeAction() === 'status'"
+            (click)="setAction('status')">
+            Changer statut
+          </button>
+          <button
+            class="btn btn--ghost"
             [class.btn--active]="activeAction() === 'merge'"
             (click)="setAction('merge')">
             Fusionner
@@ -103,6 +208,14 @@
         </div>
 
         @switch (activeAction()) {
+          @case ('status') {
+            <app-organisation-action-status
+              [publicId]="org.publicId"
+              [currentStatus]="org.status"
+              (statusChanged)="onStatusChanged()"
+              (cancelled)="setAction(null)"
+            />
+          }
           @case ('merge') {
             <app-organisation-action-merge
               [publicId]="org.publicId"

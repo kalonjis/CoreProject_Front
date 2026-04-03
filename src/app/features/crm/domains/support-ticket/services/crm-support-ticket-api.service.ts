@@ -21,14 +21,16 @@ export class CrmSupportTicketApiService {
   findAll(filter: SupportTicketFilter, page: number, size: number): Observable<Page<SupportTicketSummary>> {
     let params = new HttpParams()
       .set('page', page)
-      .set('pageSize', size)
+      .set('size', size)
       .set('sort', 'createdAt,desc');
 
-    if (filter.keyword?.trim())       params = params.set('keyword', filter.keyword.trim());
-    if (filter.status)                params = params.set('status', filter.status);
-    if (filter.contactPublicId)       params = params.set('contactPublicId', filter.contactPublicId);
-    if (filter.assignedToPublicId)    params = params.set('assignedToPublicId', filter.assignedToPublicId);
-    if (filter.unassignedOnly)        params = params.set('unassignedOnly', 'true');
+    if (filter.keyword?.trim())          params = params.set('keyword', filter.keyword.trim());
+    if (filter.status)                   params = params.set('status', filter.status);
+    if (filter.source)                   params = params.set('source', filter.source);
+    if (filter.contactPublicId)          params = params.set('contactPublicId', filter.contactPublicId);
+    if (filter.assignedToPublicId)       params = params.set('assignedToPublicId', filter.assignedToPublicId);
+    if (filter.unassignedOnly)           params = params.set('unassignedOnly', 'true');
+    if (filter.organisationPublicId)     params = params.set('organisationPublicId', filter.organisationPublicId);
 
     return this.http.get<Page<SupportTicketSummary>>(this.base, { params });
   }
@@ -51,5 +53,9 @@ export class CrmSupportTicketApiService {
 
   assign(publicId: string, body: AssignSupportTicketRequest): Observable<SupportTicketDetail> {
     return this.http.patch<SupportTicketDetail>(`${this.base}/${publicId}/assign`, body);
+  }
+
+  delete(publicId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${publicId}`);
   }
 }

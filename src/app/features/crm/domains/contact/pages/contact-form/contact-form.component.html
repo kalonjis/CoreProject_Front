@@ -32,8 +32,8 @@
         </div>
         @if (mode() === 'create') {
           <div class="contact-form__field">
-            <label>Organisation (public ID)</label>
-            <input type="text" [(ngModel)]="form.organisationPublicId" placeholder="uuid organisation" />
+            <label>Organisation</label>
+            <app-organisation-picker (selected)="onOrgSelected($event)" />
           </div>
         }
         <div class="contact-form__field contact-form__field--full">

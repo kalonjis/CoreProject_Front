@@ -2,8 +2,13 @@
 
 <div class="contact-container">
   <div class="contact-card">
+
     <h1>Contactez-nous</h1>
-    <p class="subtitle">Une question ? N'hésitez pas à nous écrire.</p>
+    <p class="subtitle">
+      {{ isSupportMode()
+        ? 'Décrivez votre problème et notre équipe vous répondra dans les plus brefs délais.'
+        : 'Une question ? N\'hésitez pas à nous écrire.' }}
+    </p>
 
     <!-- Form error -->
     @if (formError()) {
@@ -14,112 +19,158 @@
 
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
 
-      <!-- Honeypot (hidden) - uses fake field name to avoid browser autocomplete -->
+      <!-- Honeypot (hidden) -->
       <div class="honeypot" aria-hidden="true">
         <label for="confirmEmail">Confirm Email</label>
         <input type="text" id="confirmEmail" formControlName="confirmEmail" tabindex="-1" autocomplete="new-password">
       </div>
 
-      <!-- Civility / First name / Last name -->
-      <div class="form-row form-row--identity">
-        <div class="form-group">
-          <label for="civility">Civilité</label>
-          <select id="civility" formControlName="civility" autocomplete="honorific-prefix">
-            <option [ngValue]="null">—</option>
-            @for (c of civilities; track c) {
-              <option [value]="c">{{ civilityLabels[c] }}</option>
-            }
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="firstName">Prénom <span class="optional">(optionnel)</span></label>
-          <input type="text" id="firstName" formControlName="firstName"
-            placeholder="Votre prénom" autocomplete="given-name">
-          @if (f['firstName'].invalid && f['firstName'].touched) {
-            <div class="validation-error">Le prénom ne peut pas dépasser 100 caractères</div>
-          }
-        </div>
-        <div class="form-group">
-          <label for="lastName">Nom <span class="optional">(optionnel)</span></label>
-          <input type="text" id="lastName" formControlName="lastName"
-            placeholder="Votre nom de famille" autocomplete="family-name">
-          @if (f['lastName'].invalid && f['lastName'].touched) {
-            <div class="validation-error">Le nom ne peut pas dépasser 100 caractères</div>
-          }
+      <!-- Motif selector -->
+      <div class="form-group motif-selector">
+        <label>Votre demande concerne <span class="required">*</span></label>
+        <div class="motif-options">
+          <label class="motif-option" [class.active]="!isSupportMode()">
+            <input type="radio" formControlName="motif" value="CONTACT">
+            <span class="motif-icon">✉️</span>
+            <span>Question, devis, partenariat…</span>
+          </label>
+          <label class="motif-option" [class.active]="isSupportMode()">
+            <input type="radio" formControlName="motif" value="SUPPORT">
+            <span class="motif-icon">🛠️</span>
+            <span>Problème ou incident</span>
+          </label>
         </div>
       </div>
 
-      <!-- Phone / Organisation -->
-      <div class="form-row">
+      <!-- Civility / First name / Last name -->
+      <div class="form-row form-row--identity" [class.support-mode]="isSupportMode()">
+
+        @if (!isSupportMode()) {
+          <div class="form-group">
+            <label for="civility">Civilité</label>
+            <select id="civility" formControlName="civility" autocomplete="honorific-prefix">
+              <option [ngValue]="null">—</option>
+              @for (c of civilities; track c) {
+                <option [value]="c">{{ civilityLabels[c] }}</option>
+              }
+            </select>
+          </div>
+        }
+
         <div class="form-group">
-          <label for="phone">Téléphone <span class="optional">(optionnel)</span></label>
-          <input type="tel" id="phone" formControlName="phone"
-            placeholder="+32 470 00 00 00" autocomplete="tel">
-          @if (f['phone'].invalid && f['phone'].touched) {
-            <div class="validation-error">Le téléphone ne peut pas dépasser 20 caractères</div>
+          <label for="firstName">
+            Prénom
+            @if (isSupportMode()) { <span class="required">*</span> }
+            @else { <span class="optional">(optionnel)</span> }
+          </label>
+          <input type="text" id="firstName" formControlName="firstName"
+            placeholder="Votre prénom" autocomplete="given-name">
+          @if (f['firstName'].invalid && f['firstName'].touched) {
+            <div class="validation-error">
+              @if (f['firstName'].errors?.['required']) { Le prénom est requis }
+              @else { Le prénom ne peut pas dépasser {{ isSupportMode() ? 50 : 100 }} caractères }
+            </div>
           }
         </div>
+
         <div class="form-group">
-          <label for="organisationName">Entreprise <span class="optional">(optionnel)</span></label>
-          <input type="text" id="organisationName" formControlName="organisationName"
-            placeholder="Votre entreprise" autocomplete="organization">
-          @if (f['organisationName'].invalid && f['organisationName'].touched) {
-            <div class="validation-error">Le nom ne peut pas dépasser 200 caractères</div>
+          <label for="lastName">
+            Nom
+            @if (isSupportMode()) { <span class="required">*</span> }
+            @else { <span class="optional">(optionnel)</span> }
+          </label>
+          <input type="text" id="lastName" formControlName="lastName"
+            placeholder="Votre nom de famille" autocomplete="family-name">
+          @if (f['lastName'].invalid && f['lastName'].touched) {
+            <div class="validation-error">
+              @if (f['lastName'].errors?.['required']) { Le nom est requis }
+              @else { Le nom ne peut pas dépasser {{ isSupportMode() ? 50 : 100 }} caractères }
+            </div>
           }
         </div>
+
       </div>
+
+      <!-- Phone / Organisation (contact mode only) -->
+      @if (!isSupportMode()) {
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Téléphone <span class="optional">(optionnel)</span></label>
+            <input type="tel" id="phone" formControlName="phone"
+              placeholder="+32 470 00 00 00" autocomplete="tel">
+            @if (f['phone'].invalid && f['phone'].touched) {
+              <div class="validation-error">Le téléphone ne peut pas dépasser 20 caractères</div>
+            }
+          </div>
+          <div class="form-group">
+            <label for="organisationName">Entreprise <span class="optional">(optionnel)</span></label>
+            <input type="text" id="organisationName" formControlName="organisationName"
+              placeholder="Votre entreprise" autocomplete="organization">
+            @if (f['organisationName'].invalid && f['organisationName'].touched) {
+              <div class="validation-error">Le nom ne peut pas dépasser 200 caractères</div>
+            }
+          </div>
+        </div>
+      }
 
       <!-- Email -->
       <div class="form-group">
         <label for="email">Email <span class="required">*</span></label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          placeholder="votre@email.com"
-          autocomplete="email"
-        >
+        <input type="email" id="email" formControlName="email"
+          placeholder="votre@email.com" autocomplete="email">
         @if (f['email'].invalid && f['email'].touched) {
           <div class="validation-error">
-            @if (f['email'].errors?.['required']) {
-              L'adresse email est requise
-            } @else if (f['email'].errors?.['email']) {
-              Veuillez entrer une adresse email valide
-            } @else if (f['email'].errors?.['maxlength']) {
-              L'email ne peut pas dépasser 254 caractères
-            }
+            @if (f['email'].errors?.['required']) { L'adresse email est requise }
+            @else if (f['email'].errors?.['email']) { Veuillez entrer une adresse email valide }
+            @else if (f['email'].errors?.['maxlength']) { L'email ne peut pas dépasser 254 caractères }
           </div>
         }
       </div>
 
-      <!-- Lead Type -->
-      <div class="form-group">
-        <label for="leadType">Type de demande <span class="required">*</span></label>
-        <select id="leadType" formControlName="leadType">
-          @for (type of leadTypes; track type) {
-            <option [value]="type">{{ leadTypeLabels[type] }}</option>
+      <!-- Support: subject field -->
+      @if (isSupportMode()) {
+        <div class="form-group">
+          <label for="subject">Sujet <span class="required">*</span></label>
+          <input type="text" id="subject" formControlName="subject"
+            placeholder="Décrivez brièvement votre problème">
+          @if (f['subject'].invalid && f['subject'].touched) {
+            <div class="validation-error">
+              @if (f['subject'].errors?.['required']) { Le sujet est requis }
+              @else { Le sujet ne peut pas dépasser 255 caractères }
+            </div>
           }
-        </select>
-      </div>
+        </div>
+      }
 
-      <!-- Message -->
+      <!-- Contact: lead type -->
+      @if (!isSupportMode()) {
+        <div class="form-group">
+          <label for="leadType">Type de demande <span class="required">*</span></label>
+          <select id="leadType" formControlName="leadType">
+            @for (type of leadTypes; track type) {
+              <option [value]="type">{{ leadTypeLabels[type] }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <!-- Message / Description -->
       <div class="form-group">
-        <label for="message">Message <span class="required">*</span></label>
-        <textarea
-          id="message"
-          formControlName="message"
-          rows="6"
-          placeholder="Votre message..."
-        ></textarea>
+        <label for="message">
+          {{ isSupportMode() ? 'Description' : 'Message' }}
+          @if (!isSupportMode()) { <span class="required">*</span> }
+          @else { <span class="optional">(optionnel)</span> }
+        </label>
+        <textarea id="message" formControlName="message" rows="6"
+          [placeholder]="isSupportMode()
+            ? 'Décrivez votre problème en détail (étapes pour reproduire, message d\'erreur...)'
+            : 'Votre message...'">
+        </textarea>
         @if (f['message'].invalid && f['message'].touched) {
           <div class="validation-error">
-            @if (f['message'].errors?.['required']) {
-              Le message est requis
-            } @else if (f['message'].errors?.['minlength']) {
-              Le message doit contenir au moins 10 caractères
-            } @else if (f['message'].errors?.['maxlength']) {
-              Le message ne peut pas dépasser 5000 caractères
-            }
+            @if (f['message'].errors?.['required']) { Le message est requis }
+            @else if (f['message'].errors?.['minlength']) { Le message doit contenir au moins 10 caractères }
+            @else if (f['message'].errors?.['maxlength']) { Le message ne peut pas dépasser 5000 caractères }
           </div>
         }
         <div class="char-count">
@@ -129,15 +180,11 @@
 
       <!-- Submit -->
       <div class="form-actions">
-        <button
-          type="submit"
-          class="btn-primary"
-          [disabled]="isSubmitting()"
-        >
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           @if (isSubmitting()) {
             <span>Envoi en cours...</span>
           } @else {
-            <span>Envoyer</span>
+            <span>{{ isSupportMode() ? 'Envoyer ma demande' : 'Envoyer' }}</span>
           }
         </button>
       </div>

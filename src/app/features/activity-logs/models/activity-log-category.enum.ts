@@ -34,6 +34,7 @@ export enum ActivityLogCategory {
   CRM_DEAL         = 'CRM_DEAL',
   CRM_LEAD         = 'CRM_LEAD',
   CRM_ORGANISATION = 'CRM_ORGANISATION',
+  CRM_SUPPORT      = 'CRM_SUPPORT',
 }
 
 /**
@@ -56,6 +57,7 @@ export const ACTIVITY_LOG_CATEGORY_LABELS: Record<ActivityLogCategory, string> =
   [ActivityLogCategory.CRM_DEAL]:       'CRM — Deals',
   [ActivityLogCategory.CRM_LEAD]:       'CRM — Leads',
   [ActivityLogCategory.CRM_ORGANISATION]: 'CRM — Organisations',
+  [ActivityLogCategory.CRM_SUPPORT]:      'CRM — Support',
 };
 
 /**
@@ -79,6 +81,7 @@ export const ACTIVITY_LOG_CATEGORY_COLORS: Record<ActivityLogCategory, string> =
   [ActivityLogCategory.CRM_DEAL]:       'teal',
   [ActivityLogCategory.CRM_LEAD]:       'teal',
   [ActivityLogCategory.CRM_ORGANISATION]: 'teal',
+  [ActivityLogCategory.CRM_SUPPORT]:      'teal',
 };
 
 /**
@@ -114,4 +117,5 @@ export const CRM_SUB_CATEGORIES: ActivityLogCategory[] = [
   ActivityLogCategory.CRM_DEAL,
   ActivityLogCategory.CRM_LEAD,
   ActivityLogCategory.CRM_ORGANISATION,
+  ActivityLogCategory.CRM_SUPPORT,
 ];

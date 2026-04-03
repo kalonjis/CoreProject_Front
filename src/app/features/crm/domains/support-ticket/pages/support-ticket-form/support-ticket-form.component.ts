@@ -1,37 +1,69 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CrmSupportTicketApiService } from '../../services/crm-support-ticket-api.service';
+import { CrmContactApiService } from '../../../contact/services/crm-contact-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
+import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/pickers/contact-picker/contact-picker.component';
+import { CommercialPickerComponent } from '../../../../shared/pickers/commercial-picker/commercial-picker.component';
 
 @Component({
   selector: 'app-support-ticket-form',
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule, RouterLink, ContactPickerComponent, CommercialPickerComponent],
   templateUrl: './support-ticket-form.component.html',
   styleUrl: './support-ticket-form.component.scss'
 })
-export class SupportTicketFormComponent {
+export class SupportTicketFormComponent implements OnInit {
 
-  private readonly api      = inject(CrmSupportTicketApiService);
-  private readonly router   = inject(Router);
-  private readonly feedback = inject(FeedbackService);
+  private readonly api        = inject(CrmSupportTicketApiService);
+  private readonly contactApi = inject(CrmContactApiService);
+  private readonly router     = inject(Router);
+  private readonly route      = inject(ActivatedRoute);
+  private readonly feedback   = inject(FeedbackService);
 
   readonly saving = signal(false);
 
   subject             = '';
   description         = '';
-  submittedByPublicId = '';   // publicId d'un Contact
-  assignedToPublicId  = '';   // publicId d'un User (optionnel)
+  submittedByPublicId = '';
+  assignedToPublicId  = '';
+
+  prefilledContactLabel = '';
+
+  ngOnInit(): void {
+    const contactPublicId = this.route.snapshot.queryParamMap.get('contactPublicId');
+    if (contactPublicId) {
+      this.contactApi.getByPublicId(contactPublicId).subscribe({
+        next: c => {
+          this.submittedByPublicId  = c.publicId;
+          this.prefilledContactLabel = [c.firstName, c.lastName].filter(Boolean).join(' ');
+        },
+        error: () => {}
+      });
+    }
+  }
+
+  onContactSelected(v: ContactPickerValue | null): void {
+    this.submittedByPublicId = v?.publicId ?? '';
+  }
+
+  onCommercialSelected(publicId: string | null): void {
+    this.assignedToPublicId = publicId ?? '';
+  }
+
+  get isValid(): boolean {
+    return this.subject.trim().length > 0 && this.submittedByPublicId.length > 0;
+  }
 
   submit(): void {
-    if (!this.subject.trim() || !this.submittedByPublicId.trim()) return;
+    if (!this.isValid) return;
 
     this.saving.set(true);
     this.api.create({
       subject:             this.subject.trim(),
-      submittedByPublicId: this.submittedByPublicId.trim(),
-      ...(this.description.trim()        && { description: this.description.trim() }),
-      ...(this.assignedToPublicId.trim() && { assignedToPublicId: this.assignedToPublicId.trim() }),
+      submittedByPublicId: this.submittedByPublicId,
+      ...(this.description.trim()       && { description:        this.description.trim() }),
+      ...(this.assignedToPublicId       && { assignedToPublicId: this.assignedToPublicId }),
     }).subscribe({
       next: ticket => {
         this.saving.set(false);

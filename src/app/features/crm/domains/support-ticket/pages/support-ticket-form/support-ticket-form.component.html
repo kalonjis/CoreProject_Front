@@ -21,23 +21,18 @@
     </div>
 
     <div class="ticket-form__field">
-      <label>Contact (publicId) *</label>
-      <input
-        type="text"
-        [(ngModel)]="submittedByPublicId"
-        name="submittedByPublicId"
-        placeholder="publicId du contact concerné"
-        required
+      <label>Contact *</label>
+      <app-contact-picker
+        [prefilledLabel]="prefilledContactLabel"
+        (selected)="onContactSelected($event)"
       />
     </div>
 
     <div class="ticket-form__field">
-      <label>Assigner à (publicId)</label>
-      <input
-        type="text"
-        [(ngModel)]="assignedToPublicId"
-        name="assignedToPublicId"
-        placeholder="Laisser vide pour non assigné"
+      <label>Assigner à</label>
+      <app-commercial-picker
+        [nullable]="true"
+        (selected)="onCommercialSelected($event)"
       />
     </div>
 
@@ -45,7 +40,7 @@
       <button
         type="submit"
         class="btn btn--primary"
-        [disabled]="saving() || !subject.trim() || !submittedByPublicId.trim()">
+        [disabled]="saving() || !isValid">
         {{ saving() ? 'Création…' : 'Créer le ticket' }}
       </button>
       <a routerLink="/crm/support-tickets" class="btn btn--ghost">Annuler</a>

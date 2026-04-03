@@ -4,10 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CrmContactApiService } from '../../services/crm-contact-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { CreateContactRequest, UpdateContactRequest, ContactDetail } from '../../models/contact.model';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 
 @Component({
   selector: 'app-contact-form',
-  imports: [FormsModule],
+  imports: [FormsModule, OrganisationPickerComponent],
   templateUrl: './contact-form.component.html',
   styleUrl: './contact-form.component.scss'
 })
@@ -58,6 +59,10 @@ export class ContactFormComponent implements OnInit {
       organisationPublicId: c.organisationPublicId ?? '',
       notes:                c.notes ?? ''
     };
+  }
+
+  onOrgSelected(v: OrganisationPickerValue | null): void {
+    this.form.organisationPublicId = v?.publicId ?? '';
   }
 
   get isValid(): boolean {

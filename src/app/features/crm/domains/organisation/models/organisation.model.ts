@@ -1,5 +1,15 @@
 import { Tag } from '../../tag/models/tag.model';
 
+export enum OrganisationStatus {
+  PROSPECT = 'PROSPECT',
+  CLIENT   = 'CLIENT'
+}
+
+export const ORGANISATION_STATUS_LABELS: Record<OrganisationStatus, string> = {
+  [OrganisationStatus.PROSPECT]: 'Prospect',
+  [OrganisationStatus.CLIENT]:   'Client'
+};
+
 export enum OrganisationSize {
   MICRO      = 'MICRO',
   SMALL      = 'SMALL',
@@ -21,6 +31,7 @@ export const ORGANISATION_SIZE_LABELS: Record<OrganisationSize, string> = {
 export interface OrganisationSummary {
   publicId:  string;
   name:      string;
+  status:    OrganisationStatus;
   industry:  string | null;
   size:      OrganisationSize | null;
   website:   string | null;
@@ -30,6 +41,7 @@ export interface OrganisationSummary {
 export interface OrganisationDetail {
   publicId:         string;
   name:             string;
+  status:           OrganisationStatus;
   industry:         string | null;
   size:             OrganisationSize | null;
   website:          string | null;
@@ -47,6 +59,7 @@ export interface OrganisationFilter {
   keyword?:      string;
   industry?:     string;
   size?:         OrganisationSize;
+  status?:       OrganisationStatus;
   countryCode?:  string;
   tagPublicId?:  string;
 }
@@ -74,4 +87,8 @@ export interface UpdateOrganisationRequest {
 export interface MergeOrganisationRequest {
   sourcePublicId: string;
   targetPublicId: string;
+}
+
+export interface UpdateOrganisationStatusRequest {
+  status: OrganisationStatus;
 }

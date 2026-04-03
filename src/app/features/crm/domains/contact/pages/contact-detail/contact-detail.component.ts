@@ -1,10 +1,12 @@
 import { Component, OnInit, inject, signal, effect } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ContactFacade }    from '../../facades/contact.facade';
 import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
 import { AuthStore }        from '../../../../../../core/auth/state/auth.store';
 import { CrmContactApiService }            from '../../services/crm-contact-api.service';
 import { CrmTagApiService }                from '../../../tag/services/crm-tag-api.service';
+import { CrmSupportTicketApiService }      from '../../../support-ticket/services/crm-support-ticket-api.service';
 import { ContactInfoCardComponent }        from '../../components/contact-info-card/contact-info-card.component';
 import { ContactActionAssignComponent }    from '../../components/contact-action-assign/contact-action-assign.component';
 import { ContactActionStatusComponent }    from '../../components/contact-action-status/contact-action-status.component';
@@ -20,11 +22,13 @@ import { CrmEmptyStateComponent }          from '../../../../shared/empty-state/
 import { TagInputComponent }               from '../../../tag/components/tag-input/tag-input.component';
 import { EmailComposeComponent, EmailComposeSubmit } from '../../../../shared/email-compose/email-compose.component';
 import { ChangeLogListComponent }          from '../../../crm-change-log/components/change-log-list/change-log-list.component';
+import { SupportTicketStatusBadgeComponent } from '../../../support-ticket/components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { DealSummary }                     from '../../../deal/models/deal.model';
 import { Tag }                             from '../../../tag/models/tag.model';
+import { SupportTicketSummary }            from '../../../support-ticket/models/support-ticket.model';
 
 type ActiveAction = 'assign' | 'status' | 'link-org' | 'merge' | null;
-type ContactTab   = 'activite' | 'actions' | 'deals' | 'modifications';
+type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modifications';
 
 @Component({
   selector: 'app-contact-detail',
@@ -44,7 +48,9 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'modifications';
     CrmEmptyStateComponent,
     TagInputComponent,
     EmailComposeComponent,
-    ChangeLogListComponent
+    ChangeLogListComponent,
+    SupportTicketStatusBadgeComponent,
+    DatePipe
   ],
   templateUrl: './contact-detail.component.html',
   styleUrl: './contact-detail.component.scss'
@@ -59,6 +65,7 @@ export class ContactDetailComponent implements OnInit {
   private readonly authStore   = inject(AuthStore);
   private readonly contactApi  = inject(CrmContactApiService);
   private readonly tagApi      = inject(CrmTagApiService);
+  private readonly ticketApi   = inject(CrmSupportTicketApiService);
 
   readonly activeTab       = signal<ContactTab>('activite');
   readonly activeAction    = signal<ActiveAction>(null);
@@ -67,9 +74,11 @@ export class ContactDetailComponent implements OnInit {
   readonly showDealCreate  = signal(false);
   readonly showEmailCompose = signal(false);
 
-  readonly deals        = signal<DealSummary[]>([]);
-  readonly dealsLoading = signal(false);
-  readonly tags         = signal<Tag[]>([]);
+  readonly deals          = signal<DealSummary[]>([]);
+  readonly dealsLoading   = signal(false);
+  readonly tickets        = signal<SupportTicketSummary[]>([]);
+  readonly ticketsLoading = signal(false);
+  readonly tags           = signal<Tag[]>([]);
 
   private publicId = '';
 
@@ -86,6 +95,7 @@ export class ContactDetailComponent implements OnInit {
     this.publicId = this.route.snapshot.paramMap.get('publicId')!;
     this.facade.loadDetail(this.publicId);
     this.loadDeals();
+    this.loadTickets();
   }
 
   private loadDeals(): void {
@@ -93,6 +103,14 @@ export class ContactDetailComponent implements OnInit {
     this.contactApi.getDeals(this.publicId).subscribe({
       next: d  => { this.deals.set(d); this.dealsLoading.set(false); },
       error: () => this.dealsLoading.set(false)
+    });
+  }
+
+  private loadTickets(): void {
+    this.ticketsLoading.set(true);
+    this.ticketApi.findAll({ contactPublicId: this.publicId }, 0, 50).subscribe({
+      next: p  => { this.tickets.set(p.content); this.ticketsLoading.set(false); },
+      error: () => this.ticketsLoading.set(false)
     });
   }
 
@@ -154,6 +172,8 @@ export class ContactDetailComponent implements OnInit {
     });
   }
 
-  goEdit(): void { this.router.navigate(['/crm/contacts', this.publicId, 'edit']); }
-  back(): void   { this.router.navigate(['/crm/contacts']); }
+  goEdit(): void        { this.router.navigate(['/crm/contacts', this.publicId, 'edit']); }
+  back(): void          { this.router.navigate(['/crm/contacts']); }
+  newTicket(): void     { this.router.navigate(['/crm/support-tickets/new'], { queryParams: { contactPublicId: this.publicId } }); }
+  goToTicket(id: string): void { this.router.navigate(['/crm/support-tickets', id]); }
 }

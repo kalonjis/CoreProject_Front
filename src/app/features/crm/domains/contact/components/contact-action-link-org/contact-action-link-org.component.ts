@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CrmContactApiService } from '../../services/crm-contact-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 
 @Component({
   selector: 'app-contact-action-link-org',
-  imports: [FormsModule],
+  imports: [OrganisationPickerComponent],
   templateUrl: './contact-action-link-org.component.html',
   styleUrl: './contact-action-link-org.component.scss'
 })
@@ -22,6 +22,10 @@ export class ContactActionLinkOrgComponent {
 
   organisationPublicId = '';
   readonly loading = signal(false);
+
+  onOrgSelected(v: OrganisationPickerValue | null): void {
+    this.organisationPublicId = v?.publicId ?? '';
+  }
 
   async unlink(): Promise<void> {
     try {
