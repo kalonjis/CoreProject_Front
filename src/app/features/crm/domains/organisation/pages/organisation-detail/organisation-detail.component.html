@@ -53,16 +53,6 @@
           <div class="org-detail__tab-panel">
             <app-organisation-info-card [organisation]="org" />
 
-            <!-- ─── Tags section ─────────────────────────────────────────────── -->
-            <div class="org-detail__tags">
-              <h3 class="org-detail__section-title">Tags</h3>
-              <app-tag-input
-                [entityTags]="tags()"
-                (tagAdded)="onTagAdded($event)"
-                (tagRemoved)="onTagRemoved($event)"
-              />
-            </div>
-
             <!-- ─── Deals section ────────────────────────────────────────────── -->
             <div class="org-detail__deals">
               <div class="org-detail__deals-header">
@@ -190,21 +180,32 @@
       <!-- ─── Sidebar ────────────────────────────────────────────────────── -->
       <aside class="org-detail__sidebar">
         <div class="org-detail__actions">
-          <button class="btn btn--primary" (click)="showCreateContact.set(true)">+ Contact</button>
-          <button class="btn btn--primary" (click)="showCreateDeal.set(true)">+ Deal</button>
-          <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
+          <button class="btn btn--primary btn--sm" (click)="showCreateContact.set(true)">+ Contact</button>
+          <button class="btn btn--primary btn--sm" (click)="showCreateDeal.set(true)">+ Deal</button>
+          <div class="org-detail__actions__divider"></div>
+          <button class="btn btn--ghost btn--sm" (click)="goEdit()">Modifier</button>
           <button
-            class="btn btn--ghost"
+            class="btn btn--ghost btn--sm"
             [class.btn--active]="activeAction() === 'status'"
             (click)="setAction('status')">
             Changer statut
           </button>
           <button
-            class="btn btn--ghost"
+            class="btn btn--danger-outline btn--sm"
             [class.btn--active]="activeAction() === 'merge'"
             (click)="setAction('merge')">
             Fusionner
           </button>
+        </div>
+
+        <!-- ─── Tags ──────────────────────────────────────────────────────── -->
+        <div class="org-detail__sidebar-tags">
+          <span class="org-detail__sidebar-tags-title">Tags</span>
+          <app-tag-input
+            [entityTags]="tags()"
+            (tagAdded)="onTagAdded($event)"
+            (tagRemoved)="onTagRemoved($event)"
+          />
         </div>
 
         @switch (activeAction()) {

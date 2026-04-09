@@ -28,8 +28,17 @@
     <div class="board__columns" cdkDropListGroup>
       @for (step of p.steps; track step.publicId) {
         <div class="board__column" [class.board__column--won]="step.isWon" [class.board__column--lost]="step.isLost">
+
+          <!-- ─── Column header ─────────────────────────────────────── -->
           <div class="board__col-header" [style.border-top-color]="step.color ?? '#dee2e6'">
-            <span class="board__col-name">{{ step.name }}</span>
+            <div class="board__col-header-left">
+              @if (totalAmount(step) > 0) {
+                <div class="board__col-total">{{ totalAmount(step) | number:'1.0-0':'fr' }} EUR</div>
+              } @else {
+                <div class="board__col-total board__col-total--empty">—</div>
+              }
+              <div class="board__col-name">{{ step.name }}</div>
+            </div>
             <div class="board__col-header-right">
               @if (!step.isWon && !step.isLost) {
                 <span class="board__col-prob">{{ step.winProbability }}%</span>
@@ -38,12 +47,7 @@
             </div>
           </div>
 
-          @if (totalAmount(step) > 0) {
-            <div class="board__col-amount">
-              {{ totalAmount(step) | number:'1.0-0':'fr' }} EUR
-            </div>
-          }
-
+          <!-- ─── Cards ────────────────────────────────────────────── -->
           <div class="board__cards"
                cdkDropList
                [cdkDropListData]="getStepDeals(step)"
@@ -58,12 +62,16 @@
                    (click)="viewDeal(deal.publicId)">
                 <div class="board__card-title">{{ deal.title }}</div>
                 <div class="board__card-meta">{{ deal.contactFullName ?? '—' }}</div>
-                @if (deal.amount != null) {
-                  <div class="board__card-amount">{{ deal.amount | number:'1.0-0':'fr' }} {{ deal.currency }}</div>
-                }
-                @if (deal.isOverdue) {
-                  <span class="board__card-overdue">En retard</span>
-                }
+                <div class="board__card-footer">
+                  @if (deal.isOverdue) {
+                    <span class="board__card-overdue">⚠️ En retard</span>
+                  } @else {
+                    <span></span>
+                  }
+                  @if (deal.amount != null) {
+                    <div class="board__card-amount">{{ deal.amount | number:'1.0-0':'fr' }} {{ deal.currency }}</div>
+                  }
+                </div>
                 <div *cdkDragPlaceholder class="board__card-placeholder"></div>
               </div>
             } @empty {

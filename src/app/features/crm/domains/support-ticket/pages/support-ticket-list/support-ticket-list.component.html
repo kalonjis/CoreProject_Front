@@ -1,10 +1,19 @@
 <div class="ticket-list">
 
+  <!-- ─── Header ─────────────────────────────────────────────────────────── -->
   <div class="ticket-list__header">
-    <h1 class="ticket-list__title">Support</h1>
-    <button class="btn btn--primary" (click)="newTicket()">+ Nouveau ticket</button>
+    <div class="ticket-list__title-area">
+      <h1 class="ticket-list__title">Support</h1>
+      @if (!loading() && page()) {
+        <span class="ticket-list__count">{{ page()!.totalElements }}</span>
+      }
+    </div>
+    <div class="ticket-list__header-actions">
+      <button class="btn btn--primary" (click)="newTicket()">+ Nouveau ticket</button>
+    </div>
   </div>
 
+  <!-- ─── Filters (row 1) ───────────────────────────────────────────────── -->
   <div class="ticket-list__filters">
     <input
       class="ticket-list__search"
@@ -29,37 +38,47 @@
       <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="onUnassignedOnlyChange()" />
       Non assignés
     </label>
-    <button class="btn btn--secondary" (click)="search()">Filtrer</button>
+    <button
+      class="btn btn--ghost btn--sm ticket-list__advanced-toggle"
+      [class.ticket-list__advanced-toggle--active]="showAdvancedFilters"
+      (click)="showAdvancedFilters = !showAdvancedFilters"
+    >
+      Filtres avancés {{ showAdvancedFilters ? '▲' : '▼' }}
+    </button>
   </div>
 
-  <div class="ticket-list__filters ticket-list__filters--secondary">
-    <div class="ticket-list__filter-group">
-      <label class="ticket-list__filter-label">Contact</label>
-      <app-contact-picker
-        placeholder="Filtrer par contact…"
-        (selected)="onContactSelected($event)"
-      />
+  <!-- ─── Advanced filters (collapsible) ───────────────────────────────── -->
+  @if (showAdvancedFilters) {
+    <div class="ticket-list__filters ticket-list__filters--pickers">
+      <div class="ticket-list__filter-group">
+        <span class="ticket-list__filter-label">Contact</span>
+        <app-contact-picker
+          placeholder="Filtrer par contact…"
+          (selected)="onContactSelected($event)"
+        />
+      </div>
+      <div class="ticket-list__filter-group">
+        <span class="ticket-list__filter-label">Organisation</span>
+        <app-organisation-picker
+          placeholder="Filtrer par organisation…"
+          (selected)="onOrganisationSelected($event)"
+        />
+      </div>
+      <div class="ticket-list__filter-group">
+        <span class="ticket-list__filter-label">Assigné à</span>
+        <app-commercial-picker
+          [nullable]="true"
+          [prefilledPublicId]="assignedToPublicId"
+          [attr.disabled]="unassignedOnly || null"
+          (selected)="onAssigneeSelected($event)"
+        />
+      </div>
     </div>
-    <div class="ticket-list__filter-group">
-      <label class="ticket-list__filter-label">Organisation</label>
-      <app-organisation-picker
-        placeholder="Filtrer par organisation…"
-        (selected)="onOrganisationSelected($event)"
-      />
-    </div>
-    <div class="ticket-list__filter-group">
-      <label class="ticket-list__filter-label">Assigné à</label>
-      <app-commercial-picker
-        [nullable]="true"
-        [prefilledPublicId]="assignedToPublicId"
-        [attr.disabled]="unassignedOnly || null"
-        (selected)="onAssigneeSelected($event)"
-      />
-    </div>
-  </div>
+  }
 
+  <!-- ─── Table ─────────────────────────────────────────────────────────── -->
   @if (loading()) {
-    <p class="ticket-list__state">Chargement…</p>
+    <div class="ticket-list__loading">Chargement…</div>
   } @else if (page() && page()!.content.length === 0) {
     <app-crm-empty-state
       icon="🎫"
@@ -69,42 +88,53 @@
       (ctaClick)="newTicket()"
     />
   } @else if (page(); as p) {
-    <table class="ticket-list__table">
-      <thead>
-        <tr>
-          <th>Sujet</th>
-          <th>Contact</th>
-          <th>Statut</th>
-          <th>Assigné à</th>
-          <th>Créé le</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (ticket of p.content; track ticket.publicId) {
-          <tr class="ticket-list__row" (click)="openDetail(ticket.publicId)">
-            <td class="ticket-list__subject">
-              {{ ticket.subject }}
-              @if (ticket.source === SupportTicketSource.PUBLIC_FORM) {
-                <span class="ticket-list__source-chip">Public</span>
-              }
-            </td>
-            <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
-            <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
-            <td>{{ ticket.assignedToUsername ?? '—' }}</td>
-            <td>{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+    <div class="ticket-list__table-wrapper">
+      <table class="ticket-list__table">
+        <thead>
+          <tr>
+            <th>Sujet</th>
+            <th>Contact</th>
+            <th>Statut</th>
+            <th>Assigné à</th>
+            <th class="ticket-list__date-col">Créé le</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (ticket of p.content; track ticket.publicId) {
+            <tr class="ticket-list__row" (click)="openDetail(ticket.publicId)">
+              <td class="ticket-list__subject">
+                {{ ticket.subject }}
+                @if (ticket.source === SupportTicketSource.PUBLIC_FORM) {
+                  <span class="ticket-list__source-chip">Public</span>
+                }
+              </td>
+              <td class="ticket-list__secondary">{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
+              <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
+              <td>
+                @if (ticket.assignedToUsername) {
+                  <div class="ticket-list__assignee">
+                    <span class="ticket-list__avatar">{{ initials(ticket.assignedToUsername) }}</span>
+                    <span class="ticket-list__secondary">{{ ticket.assignedToUsername }}</span>
+                  </div>
+                } @else {
+                  <span class="ticket-list__secondary">—</span>
+                }
+              </td>
+              <td class="ticket-list__secondary ticket-list__date-col">{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     @if (p.totalPages > 1) {
       <div class="ticket-list__pagination">
-        <button class="btn btn--ghost btn--sm" [disabled]="currentPage === 0" (click)="goTo(currentPage - 1)">
-          ← Préc.
+        <button class="ticket-list__page-btn" [disabled]="currentPage === 0" (click)="goTo(currentPage - 1)">
+          ‹ Précédent
         </button>
-        <span>{{ currentPage + 1 }} / {{ p.totalPages }}</span>
-        <button class="btn btn--ghost btn--sm" [disabled]="currentPage >= p.totalPages - 1" (click)="goTo(currentPage + 1)">
-          Suiv. →
+        <span class="ticket-list__page-info">{{ currentPage + 1 }} / {{ p.totalPages }}</span>
+        <button class="ticket-list__page-btn" [disabled]="currentPage >= p.totalPages - 1" (click)="goTo(currentPage + 1)">
+          Suivant ›
         </button>
       </div>
     }

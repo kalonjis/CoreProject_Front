@@ -100,6 +100,7 @@ export interface LeadDetail {
   convertedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  existingContactPublicId: string | null;
 }
 
 // ─── Request models ────────────────────────────────────────────────────────────

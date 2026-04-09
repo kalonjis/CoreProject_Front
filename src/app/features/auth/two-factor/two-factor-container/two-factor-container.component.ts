@@ -2,7 +2,7 @@
 
 import { Component, inject, signal, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { AuthFacade } from '../../../../core/auth/services/auth.facade';
 import {
@@ -36,7 +36,6 @@ import {HttpErrorResponse} from '@angular/common/http';
     selector: 'app-two-factor-container',
     imports: [
         CommonModule,
-        RouterLink,
         MethodSelectorComponent,
         VerifyCodeComponent
     ],

@@ -16,123 +16,147 @@
       </div>
     </div>
 
-    <app-lead-info-card [lead]="l" />
+    <div class="lead-detail__body">
 
-    @if (!facade.isTerminal()) {
-      <div class="lead-detail__action-bar">
-        <button class="btn btn--secondary" (click)="toggleAction('enrich')">Enrichir</button>
-        <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
+      <!-- ─── Main (gauche) ──────────────────────────────────────────────── -->
+      <div class="lead-detail__main">
 
-        @if (canMarkInReview()) {
-          <button class="btn btn--secondary" (click)="facade.markInReview()" [disabled]="facade.actionLoading()">
-            Mettre en revue
-          </button>
-        }
-
-        @if (facade.canConvert()) {
-          <button class="btn btn--primary" (click)="toggleAction('convert')">
-            Convertir en contact
-          </button>
-        }
-
-        <button class="btn btn--danger" (click)="toggleAction('reject')">Rejeter</button>
-      </div>
-
-      @switch (activeAction()) {
-        @case ('enrich') {
-          <app-lead-action-enrich
-            [publicId]="l.publicId"
-            [lead]="l"
-            (enriched)="onActionDone()"
-            (cancelled)="toggleAction(null)"
-          />
-        }
-        @case ('assign') {
-          <app-lead-action-assign
-            [publicId]="l.publicId"
-            (assigned)="onActionDone()"
-            (cancelled)="toggleAction(null)"
-          />
-        }
-        @case ('convert') {
-          <app-lead-action-convert
-            [publicId]="l.publicId"
-            [lead]="l"
-            (converted)="onActionDone()"
-            (cancelled)="toggleAction(null)"
-          />
-        }
-        @case ('reject') {
-          <app-lead-action-reject
-            [publicId]="l.publicId"
-            (rejected)="onActionDone()"
-            (cancelled)="toggleAction(null)"
-          />
-        }
-      }
-    }
-
-    <div class="lead-detail__activities">
-
-      <section class="lead-detail__section">
-        <div class="lead-detail__section-header">
-          <h2 class="lead-detail__section-title">Interactions</h2>
-          @if (!facade.isTerminal()) {
-            <button class="btn btn--sm btn--secondary" (click)="toggleAction('log-interaction')">
-              + Enregistrer
-            </button>
+        @if (!facade.isTerminal()) {
+          @switch (activeAction()) {
+            @case ('enrich') {
+              <app-lead-action-enrich
+                [publicId]="l.publicId"
+                [lead]="l"
+                (enriched)="onActionDone()"
+                (cancelled)="toggleAction(null)"
+              />
+            }
+            @case ('assign') {
+              <app-lead-action-assign
+                [publicId]="l.publicId"
+                (assigned)="onActionDone()"
+                (cancelled)="toggleAction(null)"
+              />
+            }
+            @case ('convert') {
+              <app-lead-action-convert
+                [publicId]="l.publicId"
+                [lead]="l"
+                (converted)="onActionDone()"
+                (cancelled)="toggleAction(null)"
+              />
+            }
+            @case ('reject') {
+              <app-lead-action-reject
+                [publicId]="l.publicId"
+                (rejected)="onActionDone()"
+                (cancelled)="toggleAction(null)"
+              />
+            }
           }
-        </div>
-
-        @if (activeAction() === 'log-interaction') {
-          <app-interaction-log-form
-            [leadPublicId]="l.publicId"
-            (logged)="onInteractionLogged()"
-            (cancelled)="toggleAction(null)"
-          />
         }
 
-        <app-interaction-timeline
-          [entries]="interactionFacade.entries()"
-          [loading]="interactionFacade.loading()"
-          (deleteRequested)="onInteractionDelete($event)"
-        />
-      </section>
+        <section class="lead-detail__section">
+          <div class="lead-detail__section-header">
+            <h2 class="lead-detail__section-title">Interactions</h2>
+            @if (!facade.isTerminal()) {
+              <button class="btn btn--sm btn--secondary" (click)="toggleAction('log-interaction')">
+                + Enregistrer
+              </button>
+            }
+          </div>
 
-      <section class="lead-detail__section">
-        <div class="lead-detail__section-header">
-          <h2 class="lead-detail__section-title">Actions commerciales</h2>
-          @if (!facade.isTerminal()) {
-            <button class="btn btn--sm btn--secondary" (click)="toggleAction('create-action')">
-              + Créer
-            </button>
-          }
-        </div>
-
-        @if (activeAction() === 'create-action') {
-          <app-commercial-action-form
-            [leadPublicId]="l.publicId"
-            (created)="onActionCreated()"
-            (cancelled)="toggleAction(null)"
-          />
-        }
-
-        @if (facade.actionsLoading()) {
-          <p class="lead-detail__state">Chargement…</p>
-        } @else if (facade.actions().length === 0) {
-          <p class="lead-detail__state">Aucune action enregistrée.</p>
-        } @else {
-          @for (action of facade.actions(); track action.publicId) {
-            <app-commercial-action-card
-              [action]="action"
-              (completed)="onActionComplete($event)"
-              (cancelled)="onActionCancel(action.publicId)"
-              (edited)="facade.actionCreated(l.publicId)"
+          @if (activeAction() === 'log-interaction') {
+            <app-interaction-log-form
+              [leadPublicId]="l.publicId"
+              (logged)="onInteractionLogged()"
+              (cancelled)="toggleAction(null)"
             />
           }
+
+          <app-interaction-timeline
+            [entries]="interactionFacade.entries()"
+            [loading]="interactionFacade.loading()"
+            (deleteRequested)="onInteractionDelete($event)"
+          />
+        </section>
+
+        <section class="lead-detail__section">
+          <div class="lead-detail__section-header">
+            <h2 class="lead-detail__section-title">Actions commerciales</h2>
+            @if (!facade.isTerminal()) {
+              <button class="btn btn--sm btn--secondary" (click)="toggleAction('create-action')">
+                + Créer
+              </button>
+            }
+          </div>
+
+          @if (activeAction() === 'create-action') {
+            <app-commercial-action-form
+              [leadPublicId]="l.publicId"
+              (created)="onActionCreated()"
+              (cancelled)="toggleAction(null)"
+            />
+          }
+
+          @if (facade.actionsLoading()) {
+            <p class="lead-detail__state">Chargement…</p>
+          } @else if (facade.actions().length === 0) {
+            <p class="lead-detail__state">Aucune action enregistrée.</p>
+          } @else {
+            @for (action of facade.actions(); track action.publicId) {
+              <app-commercial-action-card
+                [action]="action"
+                (completed)="onActionComplete($event)"
+                (cancelled)="onActionCancel(action.publicId)"
+                (edited)="facade.actionCreated(l.publicId)"
+              />
+            }
+          }
+        </section>
+
+      </div>
+
+      <!-- ─── Sidebar (droite) ───────────────────────────────────────────── -->
+      <aside class="lead-detail__sidebar">
+        @if (l.existingContactPublicId) {
+          <div class="lead-detail__contact-banner">
+            <span class="lead-detail__contact-banner-icon">👤</span>
+            <div>
+              <p class="lead-detail__contact-banner-label">Contact existant</p>
+              <a class="lead-detail__contact-banner-link"
+                 [routerLink]="['/crm/contacts', l.existingContactPublicId]">
+                Voir le contact →
+              </a>
+            </div>
+          </div>
         }
-      </section>
+
+        <app-lead-info-card [lead]="l" />
+
+        @if (!facade.isTerminal()) {
+          <div class="lead-detail__action-bar">
+            <button class="btn btn--secondary" (click)="toggleAction('enrich')">Enrichir</button>
+            <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
+
+            @if (canMarkInReview()) {
+              <button class="btn btn--secondary" (click)="facade.markInReview()" [disabled]="facade.actionLoading()">
+                Mettre en revue
+              </button>
+            }
+
+            @if (facade.canConvert()) {
+              <button class="btn btn--primary" (click)="toggleAction('convert')">
+                Convertir en contact
+              </button>
+            }
+
+            <button class="btn btn--danger-outline" (click)="toggleAction('reject')">Rejeter</button>
+          </div>
+        }
+      </aside>
 
     </div>
+
   }
 </div>

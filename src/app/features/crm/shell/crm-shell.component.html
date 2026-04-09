@@ -1,11 +1,10 @@
 <div class="crm-shell">
-  <app-crm-sidebar class="crm-shell__sidebar" />
-  <div class="crm-shell__body">
-    <header class="crm-shell__topbar">
-      <app-crm-search-bar class="crm-shell__search" />
-    </header>
-    <main class="crm-shell__content">
-      <router-outlet />
-    </main>
-  </div>
+  <app-crm-sidebar class="crm-shell__sidebar" (searchRequested)="showSearch.set(true)" />
+  <main class="crm-shell__content">
+    <router-outlet />
+  </main>
 </div>
+
+@if (showSearch()) {
+  <app-crm-search-modal (closed)="showSearch.set(false)" />
+}

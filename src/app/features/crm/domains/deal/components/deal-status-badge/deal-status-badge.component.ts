@@ -11,15 +11,17 @@ import { DealStatus, DEAL_STATUS_LABELS } from '../../models/deal.model';
   styles: [`
     .deal-badge {
       display: inline-block;
-      padding: 0.2em 0.6em;
-      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       white-space: nowrap;
     }
-    .deal-badge--open { background: #e3f2fd; color: #1565c0; }
-    .deal-badge--won  { background: #e8f5e9; color: #2e7d32; }
-    .deal-badge--lost { background: #fce4ec; color: #880e4f; }
+    .deal-badge--open { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .deal-badge--won  { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .deal-badge--lost { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
   `]
 })
 export class DealStatusBadgeComponent {

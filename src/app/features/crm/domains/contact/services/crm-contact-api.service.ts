@@ -22,11 +22,17 @@ export class CrmContactApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/contacts';
 
-  findAll(filter: ContactFilter, page: number, size: number): Observable<Page<ContactSummary>> {
+  findAll(
+    filter: ContactFilter,
+    page: number,
+    size: number,
+    sort = 'lastName',
+    direction: 'asc' | 'desc' = 'asc'
+  ): Observable<Page<ContactSummary>> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size)
-      .set('sort', 'lastName,asc');
+      .set('sort', `${sort},${direction}`);
 
     if (filter.keyword?.trim())         params = params.set('keyword', filter.keyword.trim());
     if (filter.status)                  params = params.set('status', filter.status);

@@ -42,6 +42,8 @@ export class SupportTicketListComponent implements OnInit {
   assignedToPublicId      = '';
   organisationPublicId    = '';
 
+  showAdvancedFilters = false;
+
   currentPage = 0;
   readonly pageSize = 15;
 
@@ -101,4 +103,8 @@ export class SupportTicketListComponent implements OnInit {
   }
 
   newTicket(): void { this.router.navigate(['/crm/support-tickets/new']); }
+
+  initials(name: string): string {
+    return name.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
 }

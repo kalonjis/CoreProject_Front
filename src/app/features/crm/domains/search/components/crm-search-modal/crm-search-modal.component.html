@@ -1,0 +1,66 @@
+<div class="search-modal-overlay" (click)="closed.emit()">
+  <div class="search-modal" (click)="$event.stopPropagation()">
+
+    <!-- ─── Input ─────────────────────────────────────────────────────────── -->
+    <div class="search-modal__input-wrap">
+      <span class="search-modal__icon">🔍</span>
+      <input
+        #searchInput
+        class="search-modal__input"
+        type="text"
+        placeholder="Rechercher contacts, deals, leads, organisations…"
+        autocomplete="off"
+        [value]="query()"
+        (input)="onInput($any($event.target).value)"
+      />
+      @if (loading()) {
+        <span class="search-modal__spinner"></span>
+      } @else if (query().length > 0) {
+        <button class="search-modal__clear" type="button" (click)="onInput('')">✕</button>
+      } @else {
+        <kbd class="search-modal__kbd">Esc</kbd>
+      }
+    </div>
+
+    <!-- ─── Results ───────────────────────────────────────────────────────── -->
+    <div class="search-modal__body">
+      @if (query().length < 2) {
+        <p class="search-modal__hint">Commencez à taper pour rechercher…</p>
+      } @else if (!loading() && results().length === 0) {
+        <p class="search-modal__hint">Aucun résultat pour "{{ query() }}"</p>
+      } @else {
+        @for (entry of groupedEntries(); track entry[0]) {
+          <div class="search-modal__group">
+            <div class="search-modal__group-label">
+              <span>{{ TYPE_ICONS[entry[0]] }}</span>
+              {{ TYPE_LABELS[entry[0]] }}s
+            </div>
+            @for (result of entry[1]; track result.publicId) {
+              <button
+                class="search-modal__item"
+                [class.search-modal__item--focused]="isFocused(result)"
+                type="button"
+                (click)="navigate(result)"
+              >
+                <span class="search-modal__item-label">{{ result.label }}</span>
+                @if (result.subtitle) {
+                  <span class="search-modal__item-sub">{{ result.subtitle }}</span>
+                }
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ─── Footer hints ──────────────────────────────────────────────────── -->
+    @if (results().length > 0) {
+      <div class="search-modal__footer">
+        <span><kbd>↑↓</kbd> Naviguer</span>
+        <span><kbd>↵</kbd> Ouvrir</span>
+        <span><kbd>Esc</kbd> Fermer</span>
+      </div>
+    }
+
+  </div>
+</div>

@@ -40,6 +40,11 @@ export class AppComponent {
     }
   });
 
+  // Prevent body-level scroll in CRM (single scrollable zone = crm-shell__content)
+  crmOverflowEffect = effect(() => {
+    document.body.style.overflowY = this.isInCrm() ? 'hidden' : '';
+  });
+
   // Notification SSE - réactif aux changements d'auth
   notificationEffect = effect(() => {
     const isAuth = this.authFacade.isAuthenticated();

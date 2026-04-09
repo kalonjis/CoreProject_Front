@@ -15,47 +15,50 @@
   }
 
   &__name {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: $font-weight-bold;
+    color: #1e293b;
     margin: 0;
+    line-height: 1.2;
   }
 
   &__fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1.5rem;
+    gap: 1rem 2rem;
     margin: 0;
   }
 
   &__field {
     dt {
-      font-size: 0.75rem;
-      font-weight: $font-weight-bold;
-      color: $gray-dark;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #9ca3af;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.07em;
       margin-bottom: 0.2rem;
     }
     dd {
       margin: 0;
-      font-size: 0.9rem;
-      color: $text-color;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #1e293b;
       word-break: break-word;
     }
     a {
       color: $primary-color;
       text-decoration: none;
+      font-weight: 500;
       &:hover { text-decoration: underline; }
     }
 
-    &--full {
-      grid-column: 1 / -1;
-    }
+    &--full { grid-column: 1 / -1; }
   }
 
   &__notes {
     white-space: pre-wrap;
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: #475569;
+    font-weight: 400;
   }
 }

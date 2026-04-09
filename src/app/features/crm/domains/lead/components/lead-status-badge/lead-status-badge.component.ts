@@ -12,17 +12,17 @@ import { LeadStatus, LEAD_STATUS_LABELS } from '../../models/lead.model';
     .lead-status-badge {
       display: inline-block;
       padding: 0.2rem 0.6rem;
-      border-radius: 999px;
+      border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       white-space: nowrap;
 
-      &--new        { background: #dbeafe; color: #1d4ed8; }
-      &--in_review  { background: #fef9c3; color: #92400e; }
-      &--converted  { background: #dcfce7; color: #166534; }
-      &--rejected   { background: #fee2e2; color: #991b1b; }
+      &--new        { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+      &--in_review  { background: #fef9c3; color: #92400e; border: 1px solid #fef08a; }
+      &--converted  { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+      &--rejected   { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     }
   `]
 })

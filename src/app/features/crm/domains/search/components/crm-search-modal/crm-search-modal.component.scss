@@ -1,0 +1,194 @@
+@import 'variables';
+
+.search-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+
+.search-modal {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+
+  // ─── Input ──────────────────────────────────────────────────────────────────
+
+  &__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $border-color;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: $gray-dark;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: $text-color;
+    background: transparent;
+    min-width: 0;
+
+    &::placeholder { color: #94a3b8; }
+  }
+
+  &__clear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: $gray-dark;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    line-height: 1;
+    flex-shrink: 0;
+    &:hover { background: $gray-medium; color: $text-color; }
+  }
+
+  &__kbd {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.4rem;
+    background: $gray-medium;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: $gray-dark;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+  }
+
+  // ─── Body ───────────────────────────────────────────────────────────────────
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__hint {
+    padding: 2rem 1.25rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-align: center;
+    margin: 0;
+  }
+
+  // ─── Groups ─────────────────────────────────────────────────────────────────
+
+  &__group {
+    &:not(:last-child) {
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  &__group-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.25rem 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    background: #fafafa;
+    border-bottom: 1px solid $border-color;
+    position: sticky;
+    top: 0;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: left;
+    padding: 0.7rem 1.25rem;
+    background: none;
+    border: none;
+    border-bottom: 1px solid lighten($border-color, 3%);
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover      { background: #f5f3ff; }
+
+    &--focused { background: #ede9fe; }
+  }
+
+  &__item-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  &__item-sub {
+    font-size: 0.78rem;
+    color: $gray-dark;
+    margin-top: 0.15rem;
+  }
+
+  // ─── Footer ─────────────────────────────────────────────────────────────────
+
+  &__footer {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.6rem 1.25rem;
+    border-top: 1px solid $border-color;
+    background: #fafafa;
+    flex-shrink: 0;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    kbd {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1rem 0.35rem;
+      background: #fff;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: $gray-dark;
+      font-family: inherit;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

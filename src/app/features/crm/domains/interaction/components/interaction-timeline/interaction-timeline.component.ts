@@ -18,8 +18,22 @@ export class InteractionTimelineComponent {
 
   readonly toDisplayType = toDisplayType;
 
+  private readonly expandedIds = new Set<string>();
+
   isDeletable(entry: TimelineEntryResponse): boolean {
     return entry.sourceType === 'INTERACTION'
         && entry.interactionType !== InteractionType.CONTACT_FORM;
+  }
+
+  toggleExpand(publicId: string): void {
+    if (this.expandedIds.has(publicId)) {
+      this.expandedIds.delete(publicId);
+    } else {
+      this.expandedIds.add(publicId);
+    }
+  }
+
+  isExpanded(publicId: string): boolean {
+    return this.expandedIds.has(publicId);
   }
 }

@@ -1,0 +1,61 @@
+<div class="crm-modal-overlay" (click)="cancelled.emit()">
+  <div class="crm-modal crm-modal--wide" (click)="$event.stopPropagation()">
+
+    <div class="crm-modal__header">
+      <h3 class="crm-modal__title">Nouvelle organisation</h3>
+      <button class="crm-modal__close" type="button" (click)="cancelled.emit()">✕</button>
+    </div>
+
+    <div class="crm-modal__body">
+      <div class="action-panel">
+        <div class="action-panel__grid">
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Nom *</label>
+            <input type="text" [(ngModel)]="name" placeholder="Acme Corp" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Secteur</label>
+            <input type="text" [(ngModel)]="industry" placeholder="SaaS, Finance…" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Taille</label>
+            <select [(ngModel)]="size">
+              <option value="">— Non renseigné —</option>
+              @for (s of sizes; track s) {
+                <option [value]="s">{{ sizeLabels[s] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="action-panel__row">
+            <label>Site web</label>
+            <input type="url" [(ngModel)]="website" placeholder="https://…" />
+          </div>
+
+          <div class="action-panel__row">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="phone" placeholder="+32 2 000 00 00" />
+          </div>
+
+          <div class="action-panel__row action-panel__row--full">
+            <label>Notes</label>
+            <textarea [(ngModel)]="notes" rows="2" placeholder="Notes internes…"></textarea>
+          </div>
+
+        </div>
+
+        <div class="action-panel__footer">
+          <button class="btn btn--primary" (click)="submit()" [disabled]="saving() || !isValid">
+            Créer l'organisation
+          </button>
+          <button class="btn btn--ghost" type="button" (click)="cancelled.emit()">Annuler</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

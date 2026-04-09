@@ -46,13 +46,16 @@ export class LeadFacade {
     const s = this._lead()?.status;
     return s === LeadStatus.CONVERTED || s === LeadStatus.REJECTED;
   });
-  readonly canConvert  = computed(() => this._lead()?.status === LeadStatus.IN_REVIEW);
+  readonly canConvert  = computed(() => {
+    const lead = this._lead();
+    return lead?.status === LeadStatus.IN_REVIEW && !lead?.existingContactPublicId;
+  });
 
   // ─── List operations ───────────────────────────────────────────────────────
 
-  loadList(filter: LeadFilter, page: number, size: number): void {
+  loadList(filter: LeadFilter, page: number, size: number, sort = 'submittedAt', direction: 'asc' | 'desc' = 'desc'): void {
     this._listLoading.set(true);
-    this.api.findAll(filter, page, size).subscribe({
+    this.api.findAll(filter, page, size, sort, direction).subscribe({
       next: (p: Page<LeadSummary>) => {
         this._leads.set(p.content);
         this._totalPages.set(p.totalPages);
@@ -99,6 +102,19 @@ export class LeadFacade {
   assign(publicId: string, body: AssignLeadRequest): void {
     this.api.assign(publicId, body).subscribe({
       next: l => { this._lead.set(l); this.feedback.showSuccess('Lead assigné.'); },
+      error: () => this.feedback.showError('Assignation impossible.')
+    });
+  }
+
+  /** Assigns a lead directly from the list view and updates the list signal in place. */
+  assignInList(leadPublicId: string, body: AssignLeadRequest, assignedUsername: string): void {
+    this.api.assign(leadPublicId, body).subscribe({
+      next: () => {
+        this._leads.update(list =>
+          list.map(l => l.publicId === leadPublicId ? { ...l, assignedTo: assignedUsername } : l)
+        );
+        this.feedback.showSuccess('Lead assigné.');
+      },
       error: () => this.feedback.showError('Assignation impossible.')
     });
   }

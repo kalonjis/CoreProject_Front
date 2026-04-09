@@ -8,7 +8,9 @@
       @for (item of entries; track item.publicId) {
         <li class="timeline__item" [class.timeline__item--action]="item.sourceType === 'COMMERCIAL_ACTION'">
           <div class="timeline__marker"></div>
-          <div class="timeline__content">
+          <div class="timeline__content" (click)="toggleExpand(item.publicId)"
+               [class.timeline__content--expanded]="isExpanded(item.publicId)"
+               [class.timeline__content--expandable]="!!item.notes">
 
             <div class="timeline__header">
               <app-interaction-type-badge [type]="toDisplayType(item)" />
@@ -25,7 +27,12 @@
             <p class="timeline__subject">{{ item.subject }}</p>
 
             @if (item.notes) {
-              <p class="timeline__notes">{{ item.notes }}</p>
+              <p class="timeline__notes" [class.timeline__notes--expanded]="isExpanded(item.publicId)">
+                {{ item.notes }}
+              </p>
+              <button class="timeline__expand-toggle" (click)="$event.stopPropagation(); toggleExpand(item.publicId)">
+                {{ isExpanded(item.publicId) ? 'Voir moins ↑' : 'Voir plus ↓' }}
+              </button>
             }
 
             @if (item.durationMinutes) {
@@ -59,7 +66,7 @@
               <button
                 class="timeline__delete"
                 title="Supprimer"
-                (click)="deleteRequested.emit(item.publicId)">
+                (click)="$event.stopPropagation(); deleteRequested.emit(item.publicId)">
                 ✕
               </button>
             }

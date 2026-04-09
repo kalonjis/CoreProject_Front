@@ -19,11 +19,8 @@ import {
 } from '../../utils';
 import {
   RelativeDatePipe,
-  DateRangePipe,
-  EventStatusPipe,
   IsRecurringPipe
 } from '../../pipes';
-import { CalendarEventCardComponent } from '../calendar-event-card/calendar-event-card.component';
 
 /**
  * Date group with events for agenda display.
@@ -54,10 +51,7 @@ interface DateGroup {
     selector: 'app-calendar-agenda-view',
     imports: [
         CommonModule,
-        CalendarEventCardComponent,
         RelativeDatePipe,
-        DateRangePipe,
-        EventStatusPipe,
         IsRecurringPipe
     ],
     templateUrl: './calendar-agenda-view.component.html',

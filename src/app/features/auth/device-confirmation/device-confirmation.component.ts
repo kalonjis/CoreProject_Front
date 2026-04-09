@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FeedbackBase} from '../../../shared/feedback/tools/feedback.base';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -20,7 +20,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   private deviceFacade = inject(DeviceFacade);
   private destroyRef = inject(DestroyRef);
 
-  isProcessing = false;
+  isProcessing = signal(false);
   token: string | null = null;
   action: 'confirm' | 'reject' | null = null;
 
@@ -28,7 +28,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
     this.route.queryParamMap.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(params => {
-      if (this.isProcessing) return;
+      if (this.isProcessing()) return;
 
       this.token = params.get('token');
       this.action = params.get('action') as 'confirm' | 'reject' | null;
@@ -43,7 +43,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   }
 
   processToken(): void {
-    this.isProcessing = true;
+    this.isProcessing.set(true);
 
     if (this.action === 'reject') {
       this.rejectDevice();
@@ -60,11 +60,11 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
 
         console.log("device confirmed: ", response?.message);
 
-        this.isProcessing = false;
+        this.isProcessing.set(false);
         this.displaySuccess(
           'Appareil confirmé avec succès ! Vous pouvez maintenant utiliser votre compte en toute sécurité.',
           'Continuer vers mon profil',
-          null
+          5000
         );
         this.buttonAction = () => {
           this.router.navigate(['/'])
@@ -82,7 +82,7 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
 
     this.deviceFacade.rejectDevice(this.token).subscribe({
       next: () => {
-        this.isProcessing = false;
+        this.isProcessing.set(false);
         this.displayWarning(
           'Vous avez rejeté cet appareil. Si vous n\'avez pas tenté de vous connecter, votre compte est sécurisé.',
           'Aller à mon profil',
@@ -100,9 +100,9 @@ export class ConfirmDeviceComponent extends FeedbackBase implements OnInit {
   }
 
   private handleError(error: HttpErrorResponse, alternateMessage: string ) {
-    this.isProcessing = false;
+    this.isProcessing.set(false);
     console.log("rejecterror :", error);
-    const errorMessage = error.error.error || alternateMessage;
+    const errorMessage = error.error?.error || alternateMessage;
     this.displayError(errorMessage, 'Retour à l\'accueil');
     this.buttonAction = () => this.router.navigate(['/']);
   }

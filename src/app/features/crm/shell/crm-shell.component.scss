@@ -9,33 +9,11 @@
     // La sidebar gère elle-même sa largeur et son z-index
   }
 
-  &__body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  &__topbar {
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid $border-color;
-    flex-shrink: 0;
-    z-index: 100;
-  }
-
-  &__search {
-    width: 100%;
-    max-width: 420px;
-  }
-
   &__content {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
-    background-color: $body-bg;
+    background-color: #f1f5f9;
+    min-width: 0;
   }
 }

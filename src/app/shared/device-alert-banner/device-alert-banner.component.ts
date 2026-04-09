@@ -58,7 +58,7 @@ export class DeviceAlertBannerComponent implements OnInit {
    */
   refreshDeviceStatus(): void {
     if (!this.authFacade.isAuthenticated()) return;
-    this.deviceFacade.reloadSession().subscribe();
+    this.deviceFacade.reloadSession().subscribe({ error: () => {} });
   }
 
   /**
