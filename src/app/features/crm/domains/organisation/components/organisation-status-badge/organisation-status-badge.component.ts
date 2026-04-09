@@ -12,14 +12,16 @@ import { OrganisationStatus, ORGANISATION_STATUS_LABELS } from '../../models/org
   styles: [`
     .org-status-badge {
       display: inline-block;
-      padding: 0.2em 0.55em;
-      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       white-space: nowrap;
     }
-    .org-status-badge--prospect { background: #fff3e0; color: #e65100; }
-    .org-status-badge--client   { background: #e8f5e9; color: #2e7d32; }
+    .org-status-badge--prospect { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+    .org-status-badge--client   { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
   `]
 })
 export class OrganisationStatusBadgeComponent {

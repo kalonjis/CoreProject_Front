@@ -19,11 +19,17 @@ export class CrmLeadApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/leads';
 
-  findAll(filter: LeadFilter, page: number, size: number): Observable<Page<LeadSummary>> {
+  findAll(
+    filter: LeadFilter,
+    page: number,
+    size: number,
+    sort = 'submittedAt',
+    direction: 'asc' | 'desc' = 'desc'
+  ): Observable<Page<LeadSummary>> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size)
-      .set('sort', 'submittedAt,desc');
+      .set('sort', `${sort},${direction}`);
 
     if (filter.status)             params = params.set('status', filter.status);
     if (filter.leadType)           params = params.set('leadType', filter.leadType);

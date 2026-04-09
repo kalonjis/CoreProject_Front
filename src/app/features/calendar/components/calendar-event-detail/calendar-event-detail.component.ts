@@ -21,8 +21,6 @@ import { CalendarExportApiService } from '../../services';
 import { getContrastColor } from '../../utils';
 import {
   EventStatusPipe,
-  EventStatusColorPipe,
-  EventRecurrencePipe,
   DateRangePipe
 } from '../../pipes';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -49,8 +47,6 @@ import {ActivatedRoute, Router} from '@angular/router';
     imports: [
         CommonModule,
         EventStatusPipe,
-        EventStatusColorPipe,
-        EventRecurrencePipe,
         DateRangePipe
     ],
     templateUrl: './calendar-event-detail.component.html',

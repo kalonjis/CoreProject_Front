@@ -2,7 +2,6 @@
 @import '../../../../shared/styles/action-panel';
 
 .lead-detail {
-  max-width: 860px;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -49,18 +48,43 @@
     color: $gray-dark;
   }
 
-  &__action-bar {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  // ─── Two-column layout ───────────────────────────────────────────────────────
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    align-items: start;
   }
 
-  &__activities {
+  &__main {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 0.5rem;
+    gap: 1.25rem;
+    min-width: 0;
   }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    position: sticky;
+    top: 1rem;
+  }
+
+  &__action-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    padding: 1rem;
+
+    .btn { width: 100%; justify-content: center; }
+  }
+
+  // ─── Sections ────────────────────────────────────────────────────────────────
 
   &__section {
     display: flex;
@@ -91,5 +115,49 @@
     color: $gray-dark;
     padding: 0.5rem 0;
     margin: 0;
+  }
+
+  // ─── Contact existant banner ─────────────────────────────────────────────────
+
+  &__contact-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: $border-radius-lg;
+
+    &-icon { font-size: 1.1rem; line-height: 1.4; flex-shrink: 0; }
+
+    &-label {
+      margin: 0 0 0.2rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e40af;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    &-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #2563eb;
+      text-decoration: none;
+
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  // ─── Responsive ──────────────────────────────────────────────────────────────
+
+  @media (max-width: 768px) {
+    &__body {
+      grid-template-columns: 1fr;
+    }
+
+    &__sidebar {
+      position: static;
+    }
   }
 }

@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { CrmContactApiService } from '../../services/crm-contact-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { ContactDetail, CreateContactRequest } from '../../models/contact.model';
+import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 
 @Component({
   selector: 'app-contact-action-create',
-  imports: [FormsModule],
+  imports: [FormsModule, OrganisationPickerComponent],
   templateUrl: './contact-action-create.component.html',
   styleUrl: './contact-action-create.component.scss'
 })
@@ -29,6 +30,11 @@ export class ContactActionCreateComponent {
   phone     = '';
   jobTitle  = '';
   notes     = '';
+  pickedOrgPublicId = '';
+
+  onOrgSelected(v: OrganisationPickerValue | null): void {
+    this.pickedOrgPublicId = v?.publicId ?? '';
+  }
 
   get isValid(): boolean {
     return this.firstName.trim().length > 0
@@ -47,7 +53,8 @@ export class ContactActionCreateComponent {
     if (this.phone.trim())    body.phone    = this.phone.trim();
     if (this.jobTitle.trim()) body.jobTitle = this.jobTitle.trim();
     if (this.notes.trim())    body.notes    = this.notes.trim();
-    if (this.organisationPublicId) body.organisationPublicId = this.organisationPublicId;
+    const orgId = this.organisationPublicId ?? this.pickedOrgPublicId;
+    if (orgId) body.organisationPublicId = orgId;
 
     this.loading.set(true);
     this.contactApi.create(body).subscribe({

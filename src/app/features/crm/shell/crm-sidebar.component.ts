@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CrmDashboardApiService } from '../domains/dashboard/services/crm-dashboard-api.service';
@@ -20,6 +20,7 @@ interface CrmNavItem {
   styleUrl: './crm-sidebar.component.scss'
 })
 export class CrmSidebarComponent implements OnInit {
+  @Output() searchRequested = new EventEmitter<void>();
 
   private readonly dashboardApi = inject(CrmDashboardApiService);
   private readonly authStore    = inject(AuthStore);

@@ -4,6 +4,7 @@
 
   @if (facade.contact(); as c) {
 
+    <!-- ─── Header ────────────────────────────────────────────────────────── -->
     <div class="contact-detail__header">
       <button class="contact-detail__back" (click)="back()">← Retour</button>
       <div class="contact-detail__identity">
@@ -18,210 +19,228 @@
       </div>
     </div>
 
-    @if (showEmailCompose()) {
-      <app-email-compose
-        (send)="onEmailSend($event)"
-        (cancel)="showEmailCompose.set(false)"
-      />
-    }
+    <!-- ─── Body (2 cols) ─────────────────────────────────────────────────── -->
+    <div class="contact-detail__body">
 
-    <app-contact-info-card [contact]="c" />
+      <!-- ─── Main (gauche) ───────────────────────────────────────────────── -->
+      <div class="contact-detail__main">
 
-    <!-- ─── Tags ──────────────────────────────────────────────────────────────── -->
-    <div class="contact-detail__tags-section">
-      <h3 class="contact-detail__section-title">Tags</h3>
-      <app-tag-input
-        [entityTags]="tags()"
-        (tagAdded)="onTagAdded($event)"
-        (tagRemoved)="onTagRemoved($event)"
-      />
-    </div>
-
-    <!-- ─── Tabs ────────────────────────────────────────────────────────────── -->
-    <nav class="contact-detail__tabs">
-      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'activite'"     (click)="activeTab.set('activite')">Activité</button>
-      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'actions'"      (click)="activeTab.set('actions')">Actions</button>
-      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'deals'"        (click)="activeTab.set('deals')">Deals</button>
-      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'tickets'"       (click)="activeTab.set('tickets')">Tickets</button>
-      <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
-    </nav>
-
-    <!-- ─── Tab: Activité ────────────────────────────────────────────────────── -->
-    @if (activeTab() === 'activite') {
-      <div class="contact-detail__tab-panel">
-        <div class="contact-detail__timeline-header">
-          <button class="btn btn--secondary btn--sm" (click)="showLogForm.set(!showLogForm())">
-            {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
-          </button>
-        </div>
-        @if (showLogForm()) {
-          <app-interaction-log-form
-            [contactPublicId]="c.publicId"
-            (logged)="onInteractionLogged()"
-            (cancelled)="showLogForm.set(false)"
+        @if (showEmailCompose()) {
+          <app-email-compose
+            (send)="onEmailSend($event)"
+            (cancel)="showEmailCompose.set(false)"
           />
         }
-        <app-interaction-timeline
-          [entries]="interactionFacade.entries()"
-          [loading]="interactionFacade.loading()"
-          (deleteRequested)="onInteractionDelete($event)"
-        />
-      </div>
-    }
 
-    <!-- ─── Tab: Actions ─────────────────────────────────────────────────────── -->
-    @if (activeTab() === 'actions') {
-      <div class="contact-detail__tab-panel">
-        <div class="contact-detail__actions-header">
-          <button class="btn btn--secondary btn--sm" (click)="showActionForm.set(!showActionForm())">
-            {{ showActionForm() ? 'Annuler' : '+ Action' }}
-          </button>
-        </div>
-        @if (showActionForm()) {
-          <app-commercial-action-form
+        @if (showDealCreate()) {
+          <app-deal-action-create
             [contactPublicId]="c.publicId"
-            (created)="onActionCreated()"
-            (cancelled)="showActionForm.set(false)"
+            [organisationPublicId]="c.organisationPublicId"
+            [assignedToPublicId]="c.assignedToPublicId ?? ''"
+            (created)="onDealCreated()"
+            (cancelled)="showDealCreate.set(false)"
           />
         }
-        @if (facade.actionsLoading()) {
-          <p class="contact-detail__actions-state">Chargement…</p>
-        } @else if (facade.actions().length === 0) {
-          <p class="contact-detail__actions-state">Aucune action.</p>
-        } @else {
-          @for (action of facade.actions(); track action.publicId) {
-            <app-commercial-action-card
-              [action]="action"
-              (completed)="onActionComplete($event)"
-              (cancelled)="onActionCancel($event)"
+
+        @switch (activeAction()) {
+          @case ('status') {
+            <app-contact-action-status
+              [publicId]="c.publicId"
+              [currentStatus]="c.status"
+              (statusChanged)="onActionDone()"
+              (cancelled)="toggleAction(null)"
+            />
+          }
+          @case ('assign') {
+            <app-contact-action-assign
+              [publicId]="c.publicId"
+              [currentAssigneePublicId]="c.assignedToPublicId"
+              (assigned)="onActionDone()"
+              (cancelled)="toggleAction(null)"
+            />
+          }
+          @case ('link-org') {
+            <app-contact-action-link-org
+              [publicId]="c.publicId"
+              [currentOrgPublicId]="c.organisationPublicId"
+              (linked)="onActionDone()"
+              (cancelled)="toggleAction(null)"
+            />
+          }
+          @case ('merge') {
+            <app-contact-action-merge
+              [publicId]="c.publicId"
+              (merged)="onActionDone()"
+              (cancelled)="toggleAction(null)"
             />
           }
         }
-      </div>
-    }
 
-    <!-- ─── Tab: Deals ───────────────────────────────────────────────────────── -->
-    @if (activeTab() === 'deals') {
-      <div class="contact-detail__tab-panel">
-        <div class="contact-detail__section-header">
-          @if (!dealsLoading()) {
-            <span class="contact-detail__section-count">
-              {{ deals().length }} deal{{ deals().length !== 1 ? 's' : '' }}
-            </span>
-          }
-          <button class="btn btn--secondary btn--sm" (click)="showDealCreate.set(true)">+ Nouveau</button>
-        </div>
-        @if (dealsLoading()) {
-          <p class="contact-detail__section-state">Chargement…</p>
-        } @else if (deals().length === 0) {
-          <app-crm-empty-state
-            icon="💼"
-            title="Aucun deal"
-            subtitle="Ce contact n'est lié à aucun deal pour l'instant."
-            ctaLabel="+ Créer un deal"
-            (ctaClick)="showDealCreate.set(true)"
-          />
-        } @else {
-          <div class="contact-detail__deals-grid">
-            @for (deal of deals(); track deal.publicId) {
-              <app-deal-mini-card [deal]="deal" />
+        <!-- ─── Tabs ─────────────────────────────────────────────────────── -->
+        <nav class="contact-detail__tabs">
+          <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'activite'"     (click)="activeTab.set('activite')">Activité</button>
+          <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'actions'"      (click)="activeTab.set('actions')">Actions</button>
+          <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'deals'"        (click)="activeTab.set('deals')">Deals</button>
+          <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'tickets'"      (click)="activeTab.set('tickets')">Tickets</button>
+          <button class="contact-detail__tab" [class.contact-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
+        </nav>
+
+        @if (activeTab() === 'activite') {
+          <div class="contact-detail__tab-panel">
+            <div class="contact-detail__timeline-header">
+              <button class="btn btn--secondary btn--sm" (click)="showLogForm.set(!showLogForm())">
+                {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
+              </button>
+            </div>
+            @if (showLogForm()) {
+              <app-interaction-log-form
+                [contactPublicId]="c.publicId"
+                (logged)="onInteractionLogged()"
+                (cancelled)="showLogForm.set(false)"
+              />
+            }
+            <app-interaction-timeline
+              [entries]="interactionFacade.entries()"
+              [loading]="interactionFacade.loading()"
+              (deleteRequested)="onInteractionDelete($event)"
+            />
+          </div>
+        }
+
+        @if (activeTab() === 'actions') {
+          <div class="contact-detail__tab-panel">
+            <div class="contact-detail__actions-header">
+              <button class="btn btn--secondary btn--sm" (click)="showActionForm.set(!showActionForm())">
+                {{ showActionForm() ? 'Annuler' : '+ Action' }}
+              </button>
+            </div>
+            @if (showActionForm()) {
+              <app-commercial-action-form
+                [contactPublicId]="c.publicId"
+                (created)="onActionCreated()"
+                (cancelled)="showActionForm.set(false)"
+              />
+            }
+            @if (facade.actionsLoading()) {
+              <p class="contact-detail__actions-state">Chargement…</p>
+            } @else if (facade.actions().length === 0) {
+              <p class="contact-detail__actions-state">Aucune action.</p>
+            } @else {
+              @for (action of facade.actions(); track action.publicId) {
+                <app-commercial-action-card
+                  [action]="action"
+                  (completed)="onActionComplete($event)"
+                  (cancelled)="onActionCancel($event)"
+                />
+              }
             }
           </div>
         }
-      </div>
-    }
 
-    <!-- ─── Tab: Tickets ───────────────────────────────────────────────────────── -->
-    @if (activeTab() === 'tickets') {
-      <div class="contact-detail__tab-panel">
-        <div class="contact-detail__section-header">
-          @if (!ticketsLoading()) {
-            <span class="contact-detail__section-count">
-              {{ tickets().length }} ticket{{ tickets().length !== 1 ? 's' : '' }}
-            </span>
-          }
-          <button class="btn btn--secondary btn--sm" (click)="newTicket()">+ Nouveau ticket</button>
-        </div>
-        @if (ticketsLoading()) {
-          <p class="contact-detail__section-state">Chargement…</p>
-        } @else if (tickets().length === 0) {
-          <app-crm-empty-state
-            icon="🎫"
-            title="Aucun ticket"
-            subtitle="Ce contact n'a aucun ticket de support pour l'instant."
-            ctaLabel="+ Nouveau ticket"
-            (ctaClick)="newTicket()"
-          />
-        } @else {
-          <div class="contact-detail__tickets-list">
-            @for (ticket of tickets(); track ticket.publicId) {
-              <div class="contact-detail__ticket-row" (click)="goToTicket(ticket.publicId)">
-                <app-support-ticket-status-badge [status]="ticket.status" />
-                <span class="contact-detail__ticket-subject">{{ ticket.subject }}</span>
-                <span class="contact-detail__ticket-date">{{ ticket.createdAt | date:'dd/MM/yyyy' }}</span>
+        @if (activeTab() === 'deals') {
+          <div class="contact-detail__tab-panel">
+            <div class="contact-detail__section-header">
+              @if (!dealsLoading()) {
+                <span class="contact-detail__section-count">
+                  {{ deals().length }} deal{{ deals().length !== 1 ? 's' : '' }}
+                </span>
+              }
+              <button class="btn btn--secondary btn--sm" (click)="showDealCreate.set(true)">+ Nouveau</button>
+            </div>
+            @if (dealsLoading()) {
+              <p class="contact-detail__section-state">Chargement…</p>
+            } @else if (deals().length === 0) {
+              <app-crm-empty-state
+                icon="💼"
+                title="Aucun deal"
+                subtitle="Ce contact n'est lié à aucun deal pour l'instant."
+                ctaLabel="+ Créer un deal"
+                (ctaClick)="showDealCreate.set(true)"
+              />
+            } @else {
+              <div class="contact-detail__deals-grid">
+                @for (deal of deals(); track deal.publicId) {
+                  <app-deal-mini-card [deal]="deal" />
+                }
               </div>
             }
           </div>
         }
-      </div>
-    }
 
-    <!-- ─── Tab: Modifications ───────────────────────────────────────────────── -->
-    @if (activeTab() === 'modifications') {
-      <div class="contact-detail__tab-panel">
-        <app-change-log-list entityType="CONTACT" [entityPublicId]="c.publicId" />
-      </div>
-    }
+        @if (activeTab() === 'tickets') {
+          <div class="contact-detail__tab-panel">
+            <div class="contact-detail__section-header">
+              @if (!ticketsLoading()) {
+                <span class="contact-detail__section-count">
+                  {{ tickets().length }} ticket{{ tickets().length !== 1 ? 's' : '' }}
+                </span>
+              }
+              <button class="btn btn--secondary btn--sm" (click)="newTicket()">+ Nouveau ticket</button>
+            </div>
+            @if (ticketsLoading()) {
+              <p class="contact-detail__section-state">Chargement…</p>
+            } @else if (tickets().length === 0) {
+              <app-crm-empty-state
+                icon="🎫"
+                title="Aucun ticket"
+                subtitle="Ce contact n'a aucun ticket de support pour l'instant."
+                ctaLabel="+ Nouveau ticket"
+                (ctaClick)="newTicket()"
+              />
+            } @else {
+              <div class="contact-detail__tickets-list">
+                @for (ticket of tickets(); track ticket.publicId) {
+                  <div class="contact-detail__ticket-row" (click)="goToTicket(ticket.publicId)">
+                    <app-support-ticket-status-badge [status]="ticket.status" />
+                    <span class="contact-detail__ticket-subject">{{ ticket.subject }}</span>
+                    <span class="contact-detail__ticket-date">{{ ticket.createdAt | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
 
-    <div class="contact-detail__action-bar">
-      <button class="btn btn--secondary" (click)="toggleAction('status')">Changer statut</button>
-      <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
-      <button class="btn btn--secondary" (click)="toggleAction('link-org')">Organisation</button>
-      <button class="btn btn--secondary" (click)="toggleAction('merge')">Fusionner</button>
+        @if (activeTab() === 'modifications') {
+          <div class="contact-detail__tab-panel">
+            <app-change-log-list entityType="CONTACT" [entityPublicId]="c.publicId" />
+          </div>
+        }
+
+      </div>
+
+      <!-- ─── Sidebar (droite) ────────────────────────────────────────────── -->
+      <aside class="contact-detail__sidebar">
+
+        <app-contact-info-card [contact]="c" />
+
+        <div class="contact-detail__tags-section">
+          <h3 class="contact-detail__sidebar-title">Tags</h3>
+          <app-tag-input
+            [entityTags]="tags()"
+            (tagAdded)="onTagAdded($event)"
+            (tagRemoved)="onTagRemoved($event)"
+          />
+        </div>
+
+        <div class="contact-detail__action-bar">
+          <button class="btn btn--sidebar-action" (click)="toggleAction('status')">
+            <span class="action-icon">◈</span> Changer statut
+          </button>
+          <button class="btn btn--sidebar-action" (click)="toggleAction('assign')">
+            <span class="action-icon">→</span> Assigner
+          </button>
+          <button class="btn btn--sidebar-action" (click)="toggleAction('link-org')">
+            <span class="action-icon">🏢</span> Organisation
+          </button>
+          <button class="btn btn--sidebar-action btn--sidebar-action--danger" (click)="toggleAction('merge')">
+            <span class="action-icon">⇄</span> Fusionner
+          </button>
+        </div>
+
+      </aside>
+
     </div>
 
-    @if (showDealCreate()) {
-      <app-deal-action-create
-        [contactPublicId]="c.publicId"
-        [organisationPublicId]="c.organisationPublicId"
-        [assignedToPublicId]="c.assignedToPublicId ?? ''"
-        (created)="onDealCreated()"
-        (cancelled)="showDealCreate.set(false)"
-      />
-    }
-
-    @switch (activeAction()) {
-      @case ('status') {
-        <app-contact-action-status
-          [publicId]="c.publicId"
-          [currentStatus]="c.status"
-          (statusChanged)="onActionDone()"
-          (cancelled)="toggleAction(null)"
-        />
-      }
-      @case ('assign') {
-        <app-contact-action-assign
-          [publicId]="c.publicId"
-          [currentAssigneePublicId]="c.assignedToPublicId"
-          (assigned)="onActionDone()"
-          (cancelled)="toggleAction(null)"
-        />
-      }
-      @case ('link-org') {
-        <app-contact-action-link-org
-          [publicId]="c.publicId"
-          [currentOrgPublicId]="c.organisationPublicId"
-          (linked)="onActionDone()"
-          (cancelled)="toggleAction(null)"
-        />
-      }
-      @case ('merge') {
-        <app-contact-action-merge
-          [publicId]="c.publicId"
-          (merged)="onActionDone()"
-          (cancelled)="toggleAction(null)"
-        />
-      }
-    }
   }
 </div>

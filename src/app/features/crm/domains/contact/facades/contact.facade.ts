@@ -43,9 +43,9 @@ export class ContactFacade {
 
   // ─── List operations ───────────────────────────────────────────────────────
 
-  loadList(filter: ContactFilter, page: number, size: number): void {
+  loadList(filter: ContactFilter, page: number, size: number, sort = 'lastName', direction: 'asc' | 'desc' = 'asc'): void {
     this._listLoading.set(true);
-    this.api.findAll(filter, page, size).subscribe({
+    this.api.findAll(filter, page, size, sort, direction).subscribe({
       next: (p: Page<ContactSummary>) => {
         this._contacts.set(p.content);
         this._totalPages.set(p.totalPages);
@@ -90,6 +90,28 @@ export class ContactFacade {
     this.api.assign(publicId, body).subscribe({
       next: c => { this._contact.set(c); this.feedback.showSuccess('Contact réassigné.'); },
       error: () => this.feedback.showError('Réassignation impossible.')
+    });
+  }
+
+  /** Updates the organisation of a contact in the list signal in place, without a full reload. */
+  updateOrgInList(contactPublicId: string, orgPublicId: string, orgName: string): void {
+    this._contacts.update(list =>
+      list.map(c => c.publicId === contactPublicId
+        ? { ...c, organisationPublicId: orgPublicId, organisationName: orgName }
+        : c)
+    );
+  }
+
+  /** Assigns a contact directly from the list view and updates the list signal in place. */
+  assignInList(contactPublicId: string, body: AssignContactRequest, assignedUsername: string): void {
+    this.api.assign(contactPublicId, body).subscribe({
+      next: () => {
+        this._contacts.update(list =>
+          list.map(c => c.publicId === contactPublicId ? { ...c, assignedTo: assignedUsername } : c)
+        );
+        this.feedback.showSuccess('Contact assigné.');
+      },
+      error: () => this.feedback.showError('Assignation impossible.')
     });
   }
 

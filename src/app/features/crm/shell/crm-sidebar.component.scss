@@ -98,6 +98,45 @@ $sidebar-transition:      0.22s ease;
     &:hover { color: #fff; }
   }
 
+  // ─── Search button ──────────────────────────────────────────────────────────
+
+  &__search-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: calc(100% - 1rem);
+    margin: 0.5rem 0.5rem 0;
+    padding: 0.5rem 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: $border-radius;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
+  }
+
+  &__search-kbd {
+    margin-left: auto;
+    padding: 0.1rem 0.35rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 4px;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+
   // ─── Nav ────────────────────────────────────────────────────────────────────
 
   &__nav {

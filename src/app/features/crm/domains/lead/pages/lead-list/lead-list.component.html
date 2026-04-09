@@ -3,14 +3,19 @@
   <!-- ─── Header ─────────────────────────────────────────────────────────── -->
   <div class="lead-list__header">
     <div class="lead-list__title-area">
-      <h1 class="lead-list__title">Leads</h1>
-      @if (!loading()) {
-        <span class="lead-list__count">{{ totalElements() }} résultat(s)</span>
-      }
+      <div>
+        <h1 class="lead-list__title">
+          Leads
+          @if (!loading()) {
+            <span class="lead-list__count">{{ totalElements() }}</span>
+          }
+        </h1>
+        <p class="lead-list__subtitle">Gérez les leads entrants de votre pipeline</p>
+      </div>
     </div>
     <div class="lead-list__header-actions">
-      <button class="btn btn--primary" (click)="showCreate.set(true)">+ Nouveau lead</button>
       <button class="btn btn--secondary" (click)="goPipeline()">Vue Pipeline →</button>
+      <button class="btn btn--primary" (click)="showCreate.set(true)">+ Nouveau lead</button>
     </div>
   </div>
 
@@ -47,12 +52,12 @@
 
     <label class="lead-list__checkbox-label">
       <input type="checkbox" [(ngModel)]="activeOnly" (change)="onFilterChange()" />
-      Actifs seulement
+      Actifs
     </label>
 
     <label class="lead-list__checkbox-label">
       <input type="checkbox" [(ngModel)]="unassignedOnly" (change)="onFilterChange()" />
-      Non assignés seulement
+      Non assignés
     </label>
   </div>
 
@@ -79,28 +84,73 @@
         <table class="lead-list__table">
           <thead>
             <tr>
-              <th>Contact</th>
+              <th class="lead-list__th--sortable" [class.lead-list__th--active]="isSorted('email')" (click)="toggleSort('email')">
+                <span>Contact</span>
+                <span class="lead-list__sort-icon" [class.lead-list__sort-icon--active]="isSorted('email')" [class.lead-list__sort-icon--asc]="isSorted('email') && sortDir() === 'asc'">↓</span>
+              </th>
               <th>Sujet</th>
-              <th>Type</th>
-              <th>Statut</th>
+              <th>Source</th>
+              <th class="lead-list__th--sortable" [class.lead-list__th--active]="isSorted('status')" (click)="toggleSort('status')">
+                <span>Statut</span>
+                <span class="lead-list__sort-icon" [class.lead-list__sort-icon--active]="isSorted('status')" [class.lead-list__sort-icon--asc]="isSorted('status') && sortDir() === 'asc'">↓</span>
+              </th>
               <th>Assigné à</th>
-              <th>Soumis le</th>
+              <th class="lead-list__th--sortable lead-list__date-col" [class.lead-list__th--active]="isSorted('submittedAt')" (click)="toggleSort('submittedAt')">
+                <span>Soumis le</span>
+                <span class="lead-list__sort-icon" [class.lead-list__sort-icon--active]="isSorted('submittedAt')" [class.lead-list__sort-icon--asc]="isSorted('submittedAt') && sortDir() === 'asc'">↓</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             @for (lead of leads(); track lead.publicId) {
               <tr class="lead-list__row" (click)="viewDetail(lead.publicId)">
                 <td class="lead-list__contact-cell">
-                  <span class="lead-list__email">{{ lead.email }}</span>
                   @if (lead.name) {
                     <span class="lead-list__name">{{ lead.name }}</span>
+                    <span class="lead-list__email">{{ lead.email }}</span>
+                  } @else {
+                    <span class="lead-list__name">{{ lead.email }}</span>
                   }
                 </td>
                 <td class="lead-list__subject">{{ lead.subject }}</td>
-                <td><app-lead-type-badge [type]="lead.leadType" /></td>
+                <td>
+                  @if (lead.leadSource) {
+                    <span class="lead-list__source-chip">{{ sourceLabels[lead.leadSource] }}</span>
+                  } @else {
+                    <span class="lead-list__secondary">—</span>
+                  }
+                </td>
                 <td><app-lead-status-badge [status]="lead.status" /></td>
-                <td>{{ lead.assignedTo ?? '—' }}</td>
-                <td>{{ lead.submittedAt | date:'dd/MM/yy HH:mm' }}</td>
+                <td class="lead-list__assign-cell">
+                  @if (lead.assignedTo) {
+                    <div class="lead-list__avatar" [title]="lead.assignedTo">
+                      {{ initials(lead.assignedTo) }}
+                    </div>
+                  } @else {
+                    <div class="lead-list__assign-wrap">
+                      <span
+                        class="lead-list__unassigned"
+                        [class.lead-list__unassigned--pulse]="isOverdue(lead.submittedAt)"
+                        (click)="openAssignPopover($event, lead.publicId)"
+                      >À assigner</span>
+
+                      @if (popoverLeadId() === lead.publicId) {
+                        <div class="lead-list__assign-popover" (click)="$event.stopPropagation()">
+                          @for (c of commercials(); track c.publicId) {
+                            <button class="lead-list__assign-option" (click)="selectCommercial($event, lead, c)">
+                              <div class="lead-list__assign-avatar">{{ commercialInitials(c) }}</div>
+                              <span>{{ commercialDisplayName(c) }}</span>
+                            </button>
+                          }
+                          @if (commercials().length === 0) {
+                            <span class="lead-list__assign-empty">Chargement…</span>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </td>
+                <td class="lead-list__date-col">{{ lead.submittedAt | date:'dd/MM/yy HH:mm' }}</td>
               </tr>
             }
           </tbody>

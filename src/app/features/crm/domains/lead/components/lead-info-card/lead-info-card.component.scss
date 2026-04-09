@@ -32,6 +32,26 @@
     font-weight: 600;
   }
 
+  &__assignee {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: $primary-color;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
   &__value {
     font-size: 0.875rem;
     color: $text-color;

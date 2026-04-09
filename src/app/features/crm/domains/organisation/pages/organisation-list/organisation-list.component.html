@@ -1,30 +1,45 @@
 <div class="org-list">
+
+  <!-- ─── Header ─────────────────────────────────────────────────────────── -->
   <div class="org-list__header">
-    <h1 class="org-list__title">Organisations</h1>
-    <button class="btn btn--primary" (click)="goCreate()">+ Nouvelle organisation</button>
+    <div class="org-list__title-area">
+      <div>
+        <h1 class="org-list__title">
+          Organisations
+          @if (!loading()) {
+            <span class="org-list__count">{{ totalElements() }}</span>
+          }
+        </h1>
+        <p class="org-list__subtitle">Gérez vos comptes et entreprises clientes</p>
+      </div>
+    </div>
+    <div class="org-list__header-actions">
+      <button class="btn btn--primary" (click)="goCreate()">+ Nouvelle organisation</button>
+    </div>
   </div>
 
+  <!-- ─── Filters ────────────────────────────────────────────────────────── -->
   <div class="org-list__filters">
     <input
+      class="org-list__search"
       type="text"
       placeholder="Rechercher…"
       [(ngModel)]="keyword"
-      (ngModelChange)="onKeywordChange()"
-      class="org-list__search"
+      (input)="onKeywordChange()"
     />
-    <select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+    <select class="org-list__select" [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
       <option value="">Tous les statuts</option>
       @for (st of statuses; track st) {
         <option [value]="st">{{ statusLabels[st] }}</option>
       }
     </select>
-    <select [(ngModel)]="selectedSize" (ngModelChange)="onFilterChange()">
+    <select class="org-list__select" [(ngModel)]="selectedSize" (ngModelChange)="onFilterChange()">
       <option value="">Toutes les tailles</option>
       @for (s of sizes; track s) {
         <option [value]="s">{{ sizeLabels[s] }}</option>
       }
     </select>
-    <select [(ngModel)]="selectedTagPublicId" (ngModelChange)="onFilterChange()">
+    <select class="org-list__select" [(ngModel)]="selectedTagPublicId" (ngModelChange)="onFilterChange()">
       <option value="">Tous les tags</option>
       @for (tag of allTags(); track tag.publicId) {
         <option [value]="tag.publicId">{{ tag.name }}</option>
@@ -33,9 +48,9 @@
   </div>
 
   @if (loading()) {
-    <p class="org-list__info">Chargement…</p>
+    <div class="org-list__loading">Chargement…</div>
   } @else if (error()) {
-    <p class="org-list__error">{{ error() }}</p>
+    <div class="org-list__error">{{ error() }}</div>
   } @else if (organisations().length === 0) {
     <app-crm-empty-state
       icon="🏢"
@@ -45,52 +60,68 @@
       (ctaClick)="goCreate()"
     />
   } @else {
-    <div class="org-list__count">{{ totalElements() }} organisation(s)</div>
-    <table class="org-list__table">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Statut</th>
-          <th>Secteur</th>
-          <th>Taille</th>
-          <th>Téléphone</th>
-          <th>Site web</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (org of organisations(); track org.publicId) {
-          <tr class="org-list__row" (click)="viewDetail(org.publicId)">
-            <td class="org-list__name">{{ org.name }}</td>
-            <td><app-organisation-status-badge [status]="org.status" /></td>
-            <td>{{ org.industry ?? '—' }}</td>
-            <td>
-              @if (org.size) {
-                <app-organisation-size-badge [size]="org.size" />
-              } @else {
-                <span>—</span>
-              }
-            </td>
-            <td>{{ org.phone ?? '—' }}</td>
-            <td>
-              @if (org.website) {
-                <a [href]="org.website" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
-                  {{ org.website }}
-                </a>
-              } @else {
-                <span>—</span>
-              }
-            </td>
+    <div class="org-list__table-wrapper">
+      <table class="org-list__table">
+        <thead>
+          <tr>
+            <th class="org-list__col-name org-list__th--sortable" [class.org-list__th--active]="isSorted('name')" (click)="toggleSort('name')">
+              <span>Nom</span>
+              <span class="org-list__sort-icon" [class.org-list__sort-icon--active]="isSorted('name')" [class.org-list__sort-icon--asc]="isSorted('name') && sortDir() === 'asc'">↓</span>
+            </th>
+            <th class="org-list__col-status org-list__th--sortable" [class.org-list__th--active]="isSorted('status')" (click)="toggleSort('status')">
+              <span>Statut</span>
+              <span class="org-list__sort-icon" [class.org-list__sort-icon--active]="isSorted('status')" [class.org-list__sort-icon--asc]="isSorted('status') && sortDir() === 'asc'">↓</span>
+            </th>
+            <th class="org-list__col-sector">Secteur</th>
+            <th class="org-list__col-size">Taille</th>
+            <th class="org-list__col-phone">Téléphone</th>
+            <th class="org-list__col-website">Site web</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (org of organisations(); track org.publicId) {
+            <tr class="org-list__row" (click)="viewDetail(org.publicId)">
+              <td class="org-list__name">{{ org.name }}</td>
+              <td><app-organisation-status-badge [status]="org.status" /></td>
+              <td class="org-list__secondary">{{ org.industry ?? '—' }}</td>
+              <td>
+                @if (org.size) {
+                  <app-organisation-size-badge [size]="org.size" />
+                } @else {
+                  <span class="org-list__secondary">—</span>
+                }
+              </td>
+              <td class="org-list__secondary">{{ org.phone ?? '—' }}</td>
+              <td>
+                @if (org.website) {
+                  <a [href]="org.website" target="_blank" rel="noopener" (click)="$event.stopPropagation()"
+                     class="org-list__link">
+                    🌐 {{ domainOf(org.website) }}
+                  </a>
+                } @else {
+                  <span class="org-list__secondary">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     @if (totalPages() > 1) {
       <div class="org-list__pagination">
-        <button [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Préc.</button>
-        <span>Page {{ currentPage + 1 }} / {{ totalPages() }}</span>
-        <button [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suiv. ›</button>
+        <button class="org-list__page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Précédent</button>
+        <span class="org-list__page-info">{{ currentPage + 1 }} / {{ totalPages() }}</span>
+        <button class="org-list__page-btn" [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suivant ›</button>
       </div>
     }
   }
+
 </div>
+
+@if (showCreate()) {
+  <app-organisation-action-create
+    (created)="onOrgCreated($event)"
+    (cancelled)="showCreate.set(false)"
+  />
+}

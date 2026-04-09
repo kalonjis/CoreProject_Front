@@ -1,9 +1,19 @@
 <div class="deal-list">
+
+  <!-- ─── Header ─────────────────────────────────────────────────────────── -->
   <div class="deal-list__header">
-    <h1 class="deal-list__title">Deals</h1>
-    <button class="btn btn--primary" (click)="goCreate()">+ Nouveau deal</button>
+    <div class="deal-list__title-area">
+      <h1 class="deal-list__title">Deals</h1>
+      @if (!loading()) {
+        <span class="deal-list__count">{{ totalElements() }}</span>
+      }
+    </div>
+    <div class="deal-list__header-actions">
+      <button class="btn btn--primary" (click)="goCreate()">+ Nouveau deal</button>
+    </div>
   </div>
 
+  <!-- ─── Filters ────────────────────────────────────────────────────────── -->
   <div class="deal-list__filters">
     <input
       type="text"
@@ -18,22 +28,22 @@
         <option [value]="s">{{ statusLabels[s] }}</option>
       }
     </select>
-    <label class="deal-list__check">
-      <input type="checkbox" [(ngModel)]="overdueOnly" (ngModelChange)="onFilterChange()" />
-      En retard uniquement
-    </label>
     <select [(ngModel)]="selectedTagPublicId" (ngModelChange)="onFilterChange()">
       <option value="">Tous les tags</option>
       @for (tag of allTags(); track tag.publicId) {
         <option [value]="tag.publicId">{{ tag.name }}</option>
       }
     </select>
+    <label class="deal-list__check">
+      <input type="checkbox" [(ngModel)]="overdueOnly" (ngModelChange)="onFilterChange()" />
+      En retard
+    </label>
   </div>
 
   @if (loading()) {
-    <p class="deal-list__info">Chargement…</p>
+    <div class="deal-list__loading">Chargement…</div>
   } @else if (error()) {
-    <p class="deal-list__error">{{ error() }}</p>
+    <div class="deal-list__error">{{ error() }}</div>
   } @else if (deals().length === 0) {
     <app-crm-empty-state
       icon="💼"
@@ -43,48 +53,49 @@
       (ctaClick)="goCreate()"
     />
   } @else {
-    <div class="deal-list__count">{{ totalElements() }} deal(s)</div>
-    <table class="deal-list__table">
-      <thead>
-        <tr>
-          <th>Titre</th>
-          <th>Statut</th>
-          <th>Montant</th>
-          <th>Étape</th>
-          <th>Contact</th>
-          <th>Responsable</th>
-          <th>Clôture prévue</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (deal of deals(); track deal.publicId) {
-          <tr class="deal-list__row" [class.deal-list__row--overdue]="deal.isOverdue" (click)="viewDetail(deal.publicId)">
-            <td class="deal-list__name">{{ deal.title }}</td>
-            <td><app-deal-status-badge [status]="deal.status" /></td>
-            <td>
-              @if (deal.amount != null) {
-                {{ deal.amount | currency:deal.currency:'symbol':'1.0-2':'fr' }}
-              } @else {
-                <span>—</span>
-              }
-            </td>
-            <td>{{ deal.stageName }}</td>
-            <td>{{ deal.contactFullName ?? '—' }}</td>
-            <td>{{ deal.assignedToUsername }}</td>
-            <td [class.deal-list__overdue-date]="deal.isOverdue">
-              {{ deal.expectedCloseDate ? (deal.expectedCloseDate | date:'dd/MM/yyyy') : '—' }}
-            </td>
+    <div class="deal-list__table-wrapper">
+      <table class="deal-list__table">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Statut</th>
+            <th>Montant</th>
+            <th>Étape</th>
+            <th>Contact</th>
+            <th>Responsable</th>
+            <th>Clôture prévue</th>
           </tr>
-        }
-      </tbody>
-    </table>
-
-    @if (totalPages() > 1) {
-      <div class="deal-list__pagination">
-        <button [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Préc.</button>
-        <span>Page {{ currentPage + 1 }} / {{ totalPages() }}</span>
-        <button [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suiv. ›</button>
-      </div>
-    }
+        </thead>
+        <tbody>
+          @for (deal of deals(); track deal.publicId) {
+            <tr class="deal-list__row" [class.deal-list__row--overdue]="deal.isOverdue" (click)="viewDetail(deal.publicId)">
+              <td class="deal-list__name">{{ deal.title }}</td>
+              <td><app-deal-status-badge [status]="deal.status" /></td>
+              <td class="deal-list__secondary">
+                @if (deal.amount != null) {
+                  {{ deal.amount | currency:deal.currency:'symbol':'1.0-2':'fr' }}
+                } @else { — }
+              </td>
+              <td class="deal-list__secondary">{{ deal.stageName }}</td>
+              <td class="deal-list__secondary">{{ deal.contactFullName ?? '—' }}</td>
+              <td class="deal-list__secondary">{{ deal.assignedToUsername }}</td>
+              <td [class.deal-list__overdue-date]="deal.isOverdue" [class.deal-list__secondary]="!deal.isOverdue">
+                {{ deal.expectedCloseDate ? (deal.expectedCloseDate | date:'dd/MM/yyyy') : '—' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
+
+  <!-- ─── Pagination ─────────────────────────────────────────────────────── -->
+  @if (totalPages() > 1) {
+    <div class="deal-list__pagination">
+      <button class="deal-list__page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹ Précédent</button>
+      <span class="deal-list__page-info">{{ currentPage + 1 }} / {{ totalPages() }}</span>
+      <button class="deal-list__page-btn" [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suivant ›</button>
+    </div>
+  }
+
 </div>

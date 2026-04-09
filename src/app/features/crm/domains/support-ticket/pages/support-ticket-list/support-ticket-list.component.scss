@@ -2,60 +2,112 @@
 @import '../../../../shared/styles/action-panel';
 
 .ticket-list {
-  padding: 1.5rem;
+
+  // ─── Header ────────────────────────────────────────────────────────────────
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-
-  &__title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: $dark-color;
-    margin: 0;
-  }
-
-  &__filters {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
     margin-bottom: 1.25rem;
   }
 
-  &__search {
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    padding: 0.45rem 0.75rem;
-    font-size: 0.875rem;
-    flex: 1;
-    min-width: 180px;
-    max-width: 300px;
-    &:focus { outline: none; border-color: $primary-color; }
+  &__title-area {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
   }
 
-  select {
+  &__header-actions { display: flex; gap: 0.75rem; }
+
+  &__title { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    background: $gray-medium;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
+  }
+
+  // ─── Filters ───────────────────────────────────────────────────────────────
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-bottom: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+
+    > input, > select { width: auto; }
+
+    &--pickers {
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.5rem 0.75rem;
     border: 1px solid $border-color;
     border-radius: $border-radius;
-    padding: 0.45rem 0.75rem;
     font-size: 0.875rem;
-    background: #fff;
-    color: $text-color;
-    cursor: pointer;
     &:focus { outline: none; border-color: $primary-color; }
   }
 
   &__checkbox {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.4rem;
     font-size: 0.875rem;
-    color: $text-color;
     cursor: pointer;
+    white-space: nowrap;
     input { cursor: pointer; }
+  }
+
+  &__advanced-toggle {
+    margin-left: auto;
+    color: $gray-dark;
+    font-size: 0.8rem;
+
+    &--active {
+      color: $primary-color;
+      border-color: $primary-color;
+    }
+  }
+
+  &__filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+    flex: 1;
+  }
+
+  &__filter-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  // ─── Table ─────────────────────────────────────────────────────────────────
+
+  &__table-wrapper {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
   }
 
   &__table {
@@ -63,80 +115,112 @@
     border-collapse: collapse;
     font-size: 0.875rem;
 
+    thead tr {
+      background: $gray-medium;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
     th {
+      padding: 0.75rem 1rem;
       text-align: left;
-      padding: 8px 12px;
       font-weight: 600;
       color: $gray-dark;
-      border-bottom: 2px solid $border-color;
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
     }
 
     td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #f3f4f6;
-      color: $text-color;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid $border-color;
+      vertical-align: middle;
     }
   }
 
   &__row {
     cursor: pointer;
-    transition: background 0.1s;
-    &:hover td { background: #f9fafb; }
+    transition: $transition-fast;
+    &:hover td { background: #f8faff; }
   }
 
   &__subject {
-    font-weight: 500;
+    font-weight: 600;
     color: $dark-color;
     max-width: 320px;
   }
 
+  &__secondary { color: $gray-dark; }
+
   &__source-chip {
     display: inline-block;
     margin-left: 6px;
-    padding: 1px 7px;
-    border-radius: 12px;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
     font-size: 0.7rem;
     font-weight: 600;
     background: #ede9fe;
     color: #6d28d9;
+    border: 1px solid #ddd6fe;
     vertical-align: middle;
     white-space: nowrap;
   }
 
-  &__filter-group {
+  &__date-col {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  // ─── Assignee avatar ───────────────────────────────────────────────────────
+
+  &__assignee {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  &__filter-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: $gray-dark;
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
 
-  &__filters--secondary {
-    align-items: flex-end;
-  }
+  // ─── States ────────────────────────────────────────────────────────────────
 
-  &__state {
-    color: $gray-dark;
-    font-style: italic;
-    font-size: 0.875rem;
-    padding: 1rem 0;
-  }
+  &__loading { text-align: center; padding: 2rem; color: $gray-dark; font-size: 0.9rem; }
+
+  // ─── Pagination ────────────────────────────────────────────────────────────
 
   &__pagination {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    color: $gray-dark;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
   }
+
+  &__page-btn {
+    padding: 0.4rem 0.875rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: $transition-fast;
+    &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  &__page-info { font-size: 0.875rem; color: $gray-dark; }
 }

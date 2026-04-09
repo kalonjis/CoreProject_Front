@@ -15,4 +15,8 @@ export class LeadInfoCardComponent {
 
   readonly civilityLabels   = CIVILITY_LABELS;
   readonly leadSourceLabels = LEAD_SOURCE_LABELS;
+
+  initials(username: string): string {
+    return username.slice(0, 2).toUpperCase();
+  }
 }

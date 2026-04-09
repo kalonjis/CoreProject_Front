@@ -20,13 +20,18 @@ export class CrmOrganisationApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/organisations';
 
-  findAll(filter: OrganisationFilter, page: number): Observable<Page<OrganisationSummary>> {
+  findAll(
+    filter: OrganisationFilter,
+    page: number,
+    sort = 'name',
+    direction: 'asc' | 'desc' = 'asc'
+  ): Observable<Page<OrganisationSummary>> {
     // Note: do NOT send 'size' as a pagination param — it conflicts with the
     // OrganisationListFilterRequest.size field (OrganisationSize enum) on the backend.
     // The backend default is 20 (matching our pageSize constant).
     let params = new HttpParams()
       .set('page', page)
-      .set('sort', 'name,asc');
+      .set('sort', `${sort},${direction}`);
 
     if (filter.keyword?.trim())  params = params.set('keyword', filter.keyword.trim());
     if (filter.industry?.trim()) params = params.set('industry', filter.industry.trim());

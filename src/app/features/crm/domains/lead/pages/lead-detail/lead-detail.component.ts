@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { LeadFacade }        from '../../facades/lead.facade';
 import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
 import { AuthStore }         from '../../../../../../core/auth/state/auth.store';
@@ -20,6 +20,7 @@ type ActiveAction = 'enrich' | 'assign' | 'convert' | 'reject' | 'log-interactio
   selector: 'app-lead-detail',
   providers: [LeadFacade, InteractionFacade],
   imports: [
+    RouterLink,
     LeadInfoCardComponent,
     LeadActionEnrichComponent,
     LeadActionAssignComponent,

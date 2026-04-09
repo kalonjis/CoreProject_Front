@@ -37,6 +37,7 @@ export interface ContactSummary {
   jobTitle: string | null;
   status: ContactStatus;
   organisationPublicId: string | null;
+  organisationName: string | null;
   assignedTo: string | null;
   hasLinkedUser: boolean;
 }

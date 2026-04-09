@@ -55,37 +55,56 @@
 
   &__column {
     flex: 0 0 240px;
-    background: $body-bg;
-    border-radius: $border-radius;
+    background: #f8fafc;
+    border-radius: $border-radius-lg;
     border: 1px solid $border-color;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 220px);
 
-    &--won { background: #f1f8e9; }
-    &--lost { background: #fce4ec; }
+    &--won  { background: #f0fdf4; border-color: #bbf7d0; }
+    &--lost { background: #fff1f2; border-color: #fecdd3; }
   }
 
   &__col-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 0.65rem 0.75rem;
-    border-top: 3px solid $border-color;
+    padding: 0.75rem 0.75rem 0.6rem;
+    border-top: 3px solid transparent;
     border-bottom: 1px solid $border-color;
     background: #fff;
-    border-radius: $border-radius $border-radius 0 0;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+  }
+
+  &__col-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__col-total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+
+    &--empty { color: #cbd5e1; font-weight: 400; }
   }
 
   &__col-name {
-    font-size: 0.875rem;
-    font-weight: $font-weight-bold;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   &__col-header-right {
     display: flex;
     align-items: center;
     gap: 0.35rem;
+    padding-top: 0.1rem;
   }
 
   &__col-count {
@@ -106,15 +125,6 @@
     border-radius: 999px;
   }
 
-  &__col-amount {
-    font-size: 0.75rem;
-    color: $gray-dark;
-    padding: 0.35rem 0.75rem;
-    border-bottom: 1px solid $border-color;
-    background: #fff;
-    font-weight: 600;
-  }
-
   &__cards {
     overflow-y: auto;
     flex: 1;
@@ -126,46 +136,57 @@
 
   &__card {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    padding: 0.65rem 0.75rem;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    padding: 0.75rem;
     cursor: pointer;
-    transition: box-shadow 0.15s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-    &:hover { box-shadow: $box-shadow-sm; }
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: grab;
+    }
 
-    &--overdue { border-left: 3px solid #e65100; }
-    &--closed  { cursor: default; opacity: 0.75; }
+    &--overdue { border-left: 3px solid #f97316; }
+    &--closed  { cursor: default; opacity: 0.65;
+      &:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: default; }
+    }
   }
 
   &__card-title {
     font-size: 0.875rem;
-    font-weight: $font-weight-bold;
+    font-weight: 600;
+    color: #1e293b;
     margin-bottom: 0.2rem;
     line-height: 1.3;
   }
 
   &__card-meta {
     font-size: 0.75rem;
-    color: $gray-dark;
+    color: #94a3b8;
+    margin-bottom: 0.1rem;
+  }
+
+  &__card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
   }
 
   &__card-amount {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: $primary-color;
-    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1e293b;
   }
 
   &__card-overdue {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    background: #fff3e0;
-    color: #e65100;
-    padding: 0.1em 0.45em;
-    border-radius: 999px;
-    margin-top: 0.3rem;
+    color: #ea580c;
   }
 
   &__card-placeholder {
@@ -190,12 +211,13 @@
 // CDK Drag-and-drop global styles
 .cdk-drag-preview {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  padding: 0.65rem 0.75rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   font-size: 0.875rem;
-  font-weight: $font-weight-bold;
+  font-weight: 600;
+  color: #1e293b;
   max-width: 240px;
   cursor: grabbing;
 }

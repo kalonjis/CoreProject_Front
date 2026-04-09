@@ -11,8 +11,9 @@ import { LeadType, LEAD_TYPE_LABELS } from '../../models/lead.model';
       border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 500;
-      background: #f1f5f9;
-      color: #475569;
+      background: #fff;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
       white-space: nowrap;
     }
   `]

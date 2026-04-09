@@ -2,7 +2,6 @@
 @import '../../../../shared/styles/action-panel';
 
 .contact-detail {
-  max-width: 860px;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -10,42 +9,132 @@
   &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
   &__error   { text-align: center; padding: 2rem; color: $danger-color; }
 
+  // ─── Header ──────────────────────────────────────────────────────────────────
+
   &__header {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid $border-color;
   }
 
   &__back {
     background: none;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    padding: 0.4rem 0.75rem;
+    border: none;
+    padding: 0.25rem 0.5rem;
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: $gray-dark;
     transition: $transition-fast;
     white-space: nowrap;
-    &:hover { border-color: $primary-color; color: $primary-color; }
+    border-radius: $border-radius;
+    &:hover { background: $gray-light; color: $primary-color; }
   }
 
-  &__identity { flex: 1; display: flex; flex-direction: column; gap: 0.15rem; }
+  &__identity { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+  &__name { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; line-height: 1.2; }
+  &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
+  &__header-actions { display: flex; align-items: center; gap: 0.5rem; }
 
-  &__name {
-    font-size: 1.25rem;
-    font-weight: $font-weight-bold;
-    color: $dark-color;
+  // ─── Two-column layout ───────────────────────────────────────────────────────
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    align-items: start;
+    max-width: 1440px;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    position: sticky;
+    top: 1rem;
+  }
+
+  // ─── Sidebar blocks ──────────────────────────────────────────────────────────
+
+  &__tags-section {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  &__sidebar-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $gray-dark;
+    font-weight: 600;
     margin: 0;
   }
 
-  &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
+  &__action-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    padding: 0.5rem;
 
-  &__header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .btn--sidebar-action {
+      width: 100%;
+      text-align: left;
+      justify-content: flex-start;
+      background: transparent;
+      border: none;
+      color: $text-color;
+      font-size: 0.875rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: $border-radius;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: $transition-fast;
 
-  &__action-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+      .action-icon {
+        font-size: 0.9rem;
+        width: 1.1rem;
+        text-align: center;
+        flex-shrink: 0;
+        color: $gray-dark;
+      }
 
-  // ─── Tabs ───────────────────────────────────────────────────────────────────
+      &:hover:not(:disabled) {
+        background: rgba($primary-color, 0.07);
+        color: $primary-color;
+
+        .action-icon { color: $primary-color; }
+      }
+
+      &--danger {
+        color: $danger-color;
+        .action-icon { color: $danger-color; }
+        &:hover:not(:disabled) {
+          background: #fee2e2;
+          color: $danger-color;
+        }
+      }
+    }
+  }
+
+  // ─── Tabs ────────────────────────────────────────────────────────────────────
 
   &__tabs {
     display: flex;
@@ -64,60 +153,23 @@
     color: $gray-dark;
     cursor: pointer;
     transition: $transition-fast;
+    white-space: nowrap;
 
     &:hover { color: $primary-color; }
-
-    &--active {
-      color: $primary-color;
-      border-bottom-color: $primary-color;
-    }
+    &--active { color: $primary-color; border-bottom-color: $primary-color; }
   }
 
   &__tab-panel {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
-    padding-top: 1.25rem;
   }
 
-  &__timeline {
-    border-top: 1px solid $border-color;
-    padding-top: 1.25rem;
-  }
-
-  &__timeline-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  &__timeline-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    color: $dark-color;
-  }
-
-  &__actions-section {
-    border-top: 1px solid $border-color;
-    padding-top: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
+  &__timeline-header,
   &__actions-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-  }
-
-  &__actions-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    color: $dark-color;
+    justify-content: flex-end;
   }
 
   &__actions-state {
@@ -127,38 +179,13 @@
     margin: 0;
   }
 
-  // ─── Tags section ───────────────────────────────────────────────────────────
-
-  &__tags-section {
-    border-top: 1px solid $border-color;
-    padding-top: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  // ─── Deals section ──────────────────────────────────────────────────────────
-
-  &__deals-section {
-    border-top: 1px solid $border-color;
-    padding-top: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.875rem;
-  }
+  // ─── Section header (deals / tickets) ────────────────────────────────────────
 
   &__section-header {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
-
-  &__section-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    color: $dark-color;
-    flex: 1;
+    justify-content: flex-end;
   }
 
   &__section-count {
@@ -168,6 +195,7 @@
     padding: 0.15em 0.55em;
     border-radius: 999px;
     font-weight: 500;
+    margin-right: auto;
   }
 
   &__section-state {
@@ -183,11 +211,9 @@
     gap: 0.625rem;
   }
 
-  &__tickets-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+  // ─── Tickets ─────────────────────────────────────────────────────────────────
+
+  &__tickets-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
   &__ticket-row {
     display: flex;
@@ -198,7 +224,6 @@
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.15s;
-
     &:hover { background: $gray-light; }
   }
 
@@ -211,9 +236,13 @@
     white-space: nowrap;
   }
 
-  &__ticket-date {
-    font-size: 0.75rem;
-    color: $gray-dark;
-    white-space: nowrap;
+  &__ticket-date { font-size: 0.75rem; color: $gray-dark; white-space: nowrap; }
+
+  // ─── Responsive ──────────────────────────────────────────────────────────────
+
+  @media (max-width: 768px) {
+    &__body { grid-template-columns: 1fr; }
+    &__sidebar { position: static; }
+    &__tabs { overflow-x: auto; }
   }
 }

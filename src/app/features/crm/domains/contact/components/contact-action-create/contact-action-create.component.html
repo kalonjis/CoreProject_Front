@@ -42,6 +42,13 @@
             <input type="text" [(ngModel)]="jobTitle" placeholder="Directeur commercial…" />
           </div>
 
+          @if (!organisationPublicId) {
+            <div class="action-panel__row action-panel__row--full">
+              <label>Organisation</label>
+              <app-organisation-picker (selected)="onOrgSelected($event)" />
+            </div>
+          }
+
           <div class="action-panel__row action-panel__row--full">
             <label>Notes</label>
             <textarea [(ngModel)]="notes" rows="2" placeholder="Contexte de la rencontre…"></textarea>

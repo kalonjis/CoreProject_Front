@@ -7,6 +7,14 @@
     </button>
   </div>
 
+  <button class="crm-sidebar__search-btn" (click)="searchRequested.emit()" [title]="collapsed() ? 'Rechercher (Ctrl+K)' : ''">
+    <span class="crm-sidebar__icon">🔍</span>
+    <span class="crm-sidebar__label">Rechercher…</span>
+    @if (!collapsed()) {
+      <kbd class="crm-sidebar__search-kbd">⌘K</kbd>
+    }
+  </button>
+
   <ul class="crm-sidebar__nav">
     @for (item of navItems; track item.route) {
       <li class="crm-sidebar__item">

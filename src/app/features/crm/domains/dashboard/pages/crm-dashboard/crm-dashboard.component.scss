@@ -1,203 +1,334 @@
 @import 'variables';
 
+$dash-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+$dash-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+
 .dash {
-  padding: 0;
+
+  // ─── Header ─────────────────────────────────────────────────────────────────
 
   &__header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
   }
 
   &__title {
-    font-size: 1.5rem;
-    font-weight: $font-weight-bold;
-    margin: 0 0 0.25rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #0f172a;
+    margin: 0 0 0.2rem;
   }
 
   &__subtitle {
-    font-size: 0.9rem;
-    color: $gray-dark;
+    font-size: 0.875rem;
+    color: #64748b;
     margin: 0;
   }
 
-  &__loading {
-    color: $gray-dark;
-    font-style: italic;
-    padding: 2rem 0;
-  }
+  &__loading { color: #64748b; font-style: italic; padding: 2rem 0; }
+  &__error   { color: $danger-color; padding: 2rem 0; }
 
-  &__error {
-    color: $danger-color;
-    padding: 2rem 0;
-  }
+  // ─── Stats Ribbon ────────────────────────────────────────────────────────────
 
-  // ─── KPI Primary Grid (4 cols) ────────────────────────────────────────────
-
-  &__kpi-grid {
+  &__ribbon {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 
     @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
     @media (max-width: 600px)  { grid-template-columns: 1fr; }
   }
 
-  // ─── KPI Secondary Grid (2 cols) ─────────────────────────────────────────
-
-  &__secondary-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-
-    @media (max-width: 600px) { grid-template-columns: 1fr; }
-  }
-
-  // ─── KPI Card ─────────────────────────────────────────────────────────────
-
-  &__kpi {
+  &__stat {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border-radius: 10px;
+    box-shadow: $dash-shadow;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
     cursor: pointer;
-    transition: box-shadow 0.15s, border-color 0.15s;
+    transition: box-shadow 0.15s, transform 0.15s;
 
     &:hover {
-      box-shadow: $box-shadow-sm;
-      border-color: darken($border-color, 10%);
-    }
-
-    &--primary {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 1.25rem;
-    }
-
-    &--secondary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.25rem;
+      box-shadow: $dash-shadow-hover;
+      transform: translateY(-1px);
     }
 
     &--alert {
-      border-color: #e65100;
-      background: #fff8f5;
-
-      &:hover { border-color: darken(#e65100, 5%); }
+      background: #fff5f5;
+      .dash__stat-value { color: #dc2626; }
     }
   }
 
-  // ─── KPI Icon ─────────────────────────────────────────────────────────────
-
-  &__kpi-icon {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: $font-weight-bold;
-    flex-shrink: 0;
-
-    &--blue   { background: #e3f2fd; color: #1565c0; }
-    &--green  { background: #e8f5e9; color: #2e7d32; }
-    &--red    { background: #fce4ec; color: #c62828; }
-    &--orange { background: #fff3e0; color: #e65100; }
-    &--gray   { background: $gray-medium; color: $gray-dark; }
+  &__stat-label {
+    font-size: 0.688rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64748b;
   }
 
-  // ─── KPI Body ─────────────────────────────────────────────────────────────
+  &__stat-value {
+    font-size: 2.125rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+    line-height: 1.1;
+  }
 
-  &__kpi-body {
-    flex: 1;
+  &__stat-unit {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #94a3b8;
+    letter-spacing: 0;
+  }
+
+  &__stat-sub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin-top: 0.1rem;
+  }
+
+  &__stat-trend {
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+
+    &--up   { color: #16a34a; }
+    &--down { color: #dc2626; }
+  }
+
+  // ─── Body 70/30 ──────────────────────────────────────────────────────────────
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
     min-width: 0;
   }
 
-  &__kpi-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: $gray-dark;
+  // ─── Secondary Metrics ───────────────────────────────────────────────────────
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+
+    @media (max-width: 800px) { grid-template-columns: 1fr; }
+  }
+
+  &__metric {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: $dash-shadow;
+    padding: 1rem 1.125rem;
+    display: grid;
+    grid-template-areas:
+      "label arrow"
+      "value arrow"
+      "sub   arrow";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.15s, transform 0.15s;
+
+    &:hover {
+      box-shadow: $dash-shadow-hover;
+      transform: translateY(-1px);
+    }
+  }
+
+  &__metric-label {
+    grid-area: label;
+    font-size: 0.688rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.2rem;
+    letter-spacing: 0.07em;
+    color: #64748b;
   }
 
-  &__kpi-value {
-    font-size: 1.5rem;
-    font-weight: $font-weight-bold;
+  &__metric-value {
+    grid-area: value;
+    font-size: 1.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0f172a;
     line-height: 1.2;
-    color: $text-color;
-    margin-bottom: 0.2rem;
   }
 
-  &__kpi-unit {
-    font-size: 0.9rem;
-    font-weight: 400;
-    color: $gray-dark;
+  &__metric-sub {
+    grid-area: sub;
+    font-size: 0.75rem;
+    color: #94a3b8;
   }
 
-  &__kpi-sub {
-    font-size: 0.78rem;
-    color: $gray-dark;
+  &__metric-arrow {
+    grid-area: arrow;
+    font-size: 1rem;
+    color: #cbd5e1;
+    align-self: center;
+    padding-left: 0.75rem;
   }
 
-  &__kpi-arrow {
-    font-size: 1.1rem;
-    color: $gray-dark;
+  // ─── Card wrapper (changelog) ────────────────────────────────────────────────
+
+  &__card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: $dash-shadow;
+    overflow: hidden;
+  }
+
+  // ─── Smart Feed ──────────────────────────────────────────────────────────────
+
+  &__feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: sticky;
+    top: 1rem;
+  }
+
+  &__feed-title {
+    font-size: 0.688rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64748b;
+    margin: 0 0 0.25rem;
+  }
+
+  &__feed-block {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: $dash-shadow;
+    border-left: 3px solid transparent;
+    overflow: hidden;
+
+    &--red   { border-left-color: #ef4444; }
+    &--blue  { border-left-color: #3b82f6; }
+    &--amber { border-left-color: #f59e0b; }
+    &--gray  { border-left-color: #cbd5e1; }
+  }
+
+  &__feed-block-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.875rem;
+    border-bottom: 1px solid #f8fafc;
+  }
+
+  &__feed-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--red   { background: #ef4444; }
+    &--blue  { background: #3b82f6; }
+    &--amber { background: #f59e0b; }
+    &--gray  { background: #94a3b8; }
+  }
+
+  &__feed-block-label {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  &__feed-link {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    color: #3b82f6;
+    cursor: pointer;
+    padding: 0;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__feed-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.55rem 0.875rem;
+    background: none;
+    border: none;
+    border-top: 1px solid #f8fafc;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:hover { background: #f8fafc; }
+  }
+
+  &__feed-item-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
   }
 
-  // ─── Quick Links ──────────────────────────────────────────────────────────
-
-  &__section {
-    margin-top: 0.5rem;
-  }
-
-  &__section-title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: $gray-dark;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.75rem;
-  }
-
-  &__links {
+  &__feed-item-body {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
+    min-width: 0;
   }
 
-  &__link {
-    padding: 0.4rem 0.9rem;
-    border: 1px solid $border-color;
-    border-radius: 999px;
-    background: #fff;
-    font-size: 0.82rem;
+  &__feed-item-label {
+    font-size: 0.8rem;
     font-weight: 500;
-    color: $text-color;
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    &:hover {
-      background: $primary-color;
-      border-color: $primary-color;
-      color: #fff;
-    }
+  &__feed-item-sub {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    &--today {
-      background: $primary-color;
-      border-color: $primary-color;
-      color: #fff;
-      font-weight: 600;
+  &__feed-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: $dash-shadow;
+    text-align: center;
 
-      &:hover {
-        background: darken($primary-color, 8%);
-        border-color: darken($primary-color, 8%);
-      }
-    }
+    span { font-size: 1.5rem; color: #22c55e; }
+    p    { font-size: 0.875rem; color: #64748b; margin: 0; }
   }
 }

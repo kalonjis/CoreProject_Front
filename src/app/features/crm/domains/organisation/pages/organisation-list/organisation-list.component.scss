@@ -8,123 +8,178 @@
     margin-bottom: 1.25rem;
   }
 
+  &__title-area { display: flex; align-items: baseline; gap: 0.75rem; }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
   &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
     font-size: 1.5rem;
     font-weight: $font-weight-bold;
+    color: $dark-color;
+    margin: 0 0 0.2rem;
+  }
+
+  &__subtitle {
+    font-size: 0.8rem;
+    color: $gray-dark;
     margin: 0;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    background: $gray-medium;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-dark;
   }
 
   &__filters {
     display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    align-items: center;
     flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+
+    > input, > select { width: auto; }
   }
 
   &__search {
     flex: 1;
-    min-width: 200px;
+    max-width: 360px;
+    height: 2.25rem;
+    padding: 0 0.75rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+    &:focus { outline: none; border-color: $primary-color; }
   }
 
-  &__count {
+  &__select {
+    min-width: 140px;
+    height: 2.25rem;
+    padding: 0 0.75rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
     font-size: 0.875rem;
-    color: $gray-dark;
-    margin-bottom: 0.5rem;
+    background: #fff;
+    cursor: pointer;
+    box-sizing: border-box;
+    &:focus { outline: none; border-color: $primary-color; }
   }
+
+  &__loading { text-align: center; padding: 2rem; color: $gray-dark; font-size: 0.9rem; }
+  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: $border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
+
+  &__table-wrapper { background: #fff; border: 1px solid $border-color; border-radius: $border-radius-lg; overflow: hidden; }
 
   &__table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.875rem;
+    table-layout: fixed;
+
+    thead tr {
+      background: $gray-medium;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
 
     th {
+      padding: 0.75rem 1rem;
       text-align: left;
-      padding: 0.6rem 0.75rem;
-      border-bottom: 2px solid $border-color;
-      font-weight: $font-weight-bold;
-      color: $gray-dark;
+      font-weight: 600;
+      color: #94a3b8;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       white-space: nowrap;
     }
 
     td {
-      padding: 0.65rem 0.75rem;
-      border-bottom: 1px solid $border-color;
+      padding: 0.6rem 1rem;
+      border-top: 1px solid $border-color;
       vertical-align: middle;
     }
+  }
 
-    a {
-      color: $primary-color;
-      text-decoration: none;
-      font-size: 0.8rem;
-      &:hover { text-decoration: underline; }
-    }
+  &__th--sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+    &:hover { color: #64748b; }
+    &.org-list__th--active { color: $primary-color; }
+  }
+
+  &__sort-icon {
+    display: inline-block;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    opacity: 0.25;
+    transition: transform 0.2s ease, opacity 0.15s, color 0.15s;
+    &--active { opacity: 0.8; color: $primary-color; }
+    &--asc    { transform: rotate(180deg); }
   }
 
   &__row {
     cursor: pointer;
-    transition: background-color 0.15s;
-    &:hover { background-color: rgba($primary-color, 0.04); }
+    transition: $transition-fast;
+    &:hover td { background: #f8faff; }
   }
 
   &__name {
-    font-weight: $font-weight-bold;
+    font-weight: 600;
+    color: $text-color;
   }
 
-  &__info {
+  &__secondary {
     color: $gray-dark;
-    font-style: italic;
-    padding: 2rem 0;
-    text-align: center;
-  }
-
-  &__error {
-    color: $danger-color;
-    padding: 2rem 0;
-    text-align: center;
-  }
-
-  &__pagination {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1.25rem;
     font-size: 0.875rem;
-
-    button {
-      padding: 0.35rem 0.75rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
-      background: #fff;
-      cursor: pointer;
-      &:disabled { opacity: 0.4; cursor: default; }
-      &:not(:disabled):hover { background: $body-bg; }
-    }
   }
-}
 
-input, select {
-  padding: 0.45rem 0.65rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  font-size: 0.875rem;
-  background: #fff;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
+  &__link {
+    color: $primary-color;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    &:hover { text-decoration: underline; }
   }
-}
 
-.btn {
-  &--primary {
+  // ─── Largeurs de colonnes ────────────────────────────────────────────────
+  &__col-name    { width: 26%; }
+  &__col-status  { width: 110px; }
+  &__col-sector  { width: 18%; }
+  &__col-size    { width: 100px; }
+  &__col-phone   { width: 130px; }
+  &__col-website { width: 14%; }
+
+  &__pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.25rem; }
+  &__page-btn { padding: 0.4rem 0.875rem; border: 1px solid $border-color; border-radius: $border-radius; background: #fff; cursor: pointer; font-size: 0.875rem; transition: $transition-fast; &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
+  &__page-info { font-size: 0.875rem; color: $gray-dark; }
+
+  .btn--primary {
     padding: 0.45rem 1rem;
     background: $primary-color;
     color: #fff;
     border: none;
     border-radius: $border-radius;
     font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    &:hover { opacity: 0.88; }
+    &:hover { background: darken($primary-color, 8%); }
   }
 }

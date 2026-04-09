@@ -223,7 +223,8 @@
 
   &--primary   { background: $primary-color;  color: #fff;        border-color: $primary-color;  &:hover:not(:disabled) { background: darken($primary-color, 8%); } }
   &--secondary { background: $gray-medium;    color: $text-color; border-color: $border-color;   &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } }
-  &--danger    { background: $danger-color;   color: #fff;        border-color: $danger-color;   &:hover:not(:disabled) { background: darken($danger-color, 8%); } }
+  &--danger         { background: $danger-color;   color: #fff;        border-color: $danger-color;   &:hover:not(:disabled) { background: darken($danger-color, 8%); } }
+  &--danger-outline { background: transparent;     color: $danger-color; border-color: $danger-color; &:hover:not(:disabled) { background: #fee2e2; } }
   &--ghost     { background: transparent;     color: $gray-dark;  border-color: $border-color;   &:hover:not(:disabled) { color: $text-color; } }
   &--sm        { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
 }
