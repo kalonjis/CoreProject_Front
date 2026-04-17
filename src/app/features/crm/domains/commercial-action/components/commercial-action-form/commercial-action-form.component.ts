@@ -25,6 +25,10 @@ import { CommercialSummary, commercialDisplayName } from '../../../../shared/mod
   templateUrl: './commercial-action-form.component.html',
   styleUrl: './commercial-action-form.component.scss'
 })
+/**
+ * Form component for creating or editing a commercial action.
+ * Supports address autocomplete, assignee selection, and calendar fields for MEETING/DEMO types.
+ */
 export class CommercialActionFormComponent implements OnInit, OnDestroy {
   @Input() dealPublicId?: string;
   @Input() contactPublicId?: string;

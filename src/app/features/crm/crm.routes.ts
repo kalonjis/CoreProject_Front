@@ -1,3 +1,10 @@
+/**
+ * Lazy-loaded route configuration for the CRM feature module.
+ *
+ * All routes are children of the {@link CrmShellComponent} which provides
+ * the sidebar layout. Protected by {@code authGuard}; admin-only routes
+ * additionally use {@code adminGuard}.
+ */
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/auth/guards/auth.guard';
 import { adminGuard } from '../../core/auth/guards/admin.guard';

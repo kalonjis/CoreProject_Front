@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .cl-global {
   max-width: 1000px;
@@ -12,19 +12,19 @@
 
   &__title {
     font-size: 1.25rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__count {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__state {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 
@@ -40,8 +40,8 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: $gray-dark;
-      border-bottom: 2px solid $border-color;
+      color: variables.$gray-dark;
+      border-bottom: 2px solid variables.$border-color;
     }
   }
 
@@ -49,7 +49,7 @@
     cursor: pointer;
     transition: background 0.12s;
 
-    td { padding: 0.625rem 0.75rem; border-bottom: 1px solid $border-color; }
+    td { padding: 0.625rem 0.75rem; border-bottom: 1px solid variables.$border-color; }
     &:hover td { background: #f9fafb; }
   }
 
@@ -64,10 +64,10 @@
     &--organisation { background: #fef3c7; color: #92400e; }
   }
 
-  &__field  { font-weight: 500; color: $dark-color; }
+  &__field  { font-weight: 500; color: variables.$dark-color; }
   &__old    { color: #ef4444; text-decoration: line-through; }
   &__new    { color: #16a34a; }
-  &__actor  { color: $gray-dark; }
+  &__actor  { color: variables.$gray-dark; }
   &__date   { color: #9ca3af; white-space: nowrap; }
 
   &__pagination {
@@ -80,6 +80,6 @@
 
   &__page-info {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }

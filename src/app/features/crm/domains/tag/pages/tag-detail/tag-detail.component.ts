@@ -29,6 +29,7 @@ import { OrganisationSizeBadgeComponent } from '../../../organisation/components
   templateUrl: './tag-detail.component.html',
   styleUrl: './tag-detail.component.scss'
 })
+/** Tag detail page listing all contacts, deals, and organisations that carry this tag. */
 export class TagDetailComponent implements OnInit {
 
   private readonly route   = inject(ActivatedRoute);

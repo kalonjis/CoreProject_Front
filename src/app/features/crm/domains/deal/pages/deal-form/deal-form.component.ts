@@ -16,6 +16,7 @@ import { CommercialPickerComponent } from '../../../../shared/pickers/commercial
   templateUrl: './deal-form.component.html',
   styleUrl: './deal-form.component.scss'
 })
+/** Routed page for creating a new deal or editing an existing one (mode driven by route data). */
 export class DealFormComponent implements OnInit {
 
   private readonly route       = inject(ActivatedRoute);

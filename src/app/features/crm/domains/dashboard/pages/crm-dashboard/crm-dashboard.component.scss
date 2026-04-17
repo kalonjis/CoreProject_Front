@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 $dash-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 $dash-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
@@ -26,7 +26,7 @@ $dash-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0
   }
 
   &__loading { color: #64748b; font-style: italic; padding: 2rem 0; }
-  &__error   { color: $danger-color; padding: 2rem 0; }
+  &__error   { color: variables.$danger-color; padding: 2rem 0; }
 
   // ─── Stats Ribbon ────────────────────────────────────────────────────────────
 
@@ -183,32 +183,60 @@ $dash-shadow-hover: 0 8px 20px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0
     padding-left: 0.75rem;
   }
 
-  // ─── Card wrapper (changelog) ────────────────────────────────────────────────
+  // ─── Card wrapper ────────────────────────────────────────────────────────────
 
   &__card {
     background: #fff;
     border-radius: 10px;
     box-shadow: $dash-shadow;
     overflow: hidden;
+
+    &--chart { overflow: visible; }
+  }
+
+  &__chart-header {
+    display:         flex;
+    align-items:     baseline;
+    gap:             0.5rem;
+    padding:         1rem 1.25rem 0.5rem;
+    border-bottom:   1px solid #f8fafc;
+  }
+
+  &__chart-title {
+    font-size:   0.875rem;
+    font-weight: 600;
+    color:       #1e293b;
+  }
+
+  &__chart-sub {
+    font-size: 0.75rem;
+    color:     #94a3b8;
+  }
+
+  &__chart-body {
+    padding: 0.5rem 0.75rem 0.75rem;
   }
 
   // ─── Smart Feed ──────────────────────────────────────────────────────────────
 
   &__feed {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    position: sticky;
-    top: 1rem;
+    display:          flex;
+    flex-direction:   column;
+    gap:              1rem;
+    position:         sticky;
+    top:              1rem;
+    background:       #f8fafc;
+    border-radius:    12px;
+    padding:          1rem;
   }
 
   &__feed-title {
-    font-size: 0.688rem;
-    font-weight: 700;
+    font-size:      0.688rem;
+    font-weight:    700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: #64748b;
-    margin: 0 0 0.25rem;
+    color:          #64748b;
+    margin:         0 0 0.125rem;
   }
 
   &__feed-block {

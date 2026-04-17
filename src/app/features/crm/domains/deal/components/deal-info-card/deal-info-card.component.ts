@@ -10,6 +10,7 @@ import { DealStatusBadgeComponent } from '../deal-status-badge/deal-status-badge
   templateUrl: './deal-info-card.component.html',
   styleUrl: './deal-info-card.component.scss'
 })
+/** Read-only card displaying a deal's core fields, pipeline position, status badge, and linked contacts with their roles. */
 export class DealInfoCardComponent {
   @Input({ required: true }) deal!: DealDetail;
 

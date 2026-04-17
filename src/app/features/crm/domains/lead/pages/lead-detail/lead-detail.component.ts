@@ -1,3 +1,10 @@
+/**
+ * Detail page for a single CRM lead.
+ *
+ * Displays full lead information and orchestrates inline action panels
+ * (enrich, assign, convert, reject, log interaction, create commercial action).
+ * Delegates all state management to {@link LeadFacade}.
+ */
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { LeadFacade }        from '../../facades/lead.facade';
@@ -5,7 +12,6 @@ import { InteractionFacade } from '../../../interaction/facades/interaction.faca
 import { AuthStore }         from '../../../../../../core/auth/state/auth.store';
 import { LeadStatus }        from '../../models/lead.model';
 import { LeadInfoCardComponent }         from '../../components/lead-info-card/lead-info-card.component';
-import { LeadActionAssignComponent }     from '../../components/lead-action-assign/lead-action-assign.component';
 import { LeadActionEnrichComponent }     from '../../components/lead-action-enrich/lead-action-enrich.component';
 import { LeadActionRejectComponent }     from '../../components/lead-action-reject/lead-action-reject.component';
 import { LeadActionConvertComponent }    from '../../components/lead-action-convert/lead-action-convert.component';
@@ -14,7 +20,7 @@ import { InteractionLogFormComponent }   from '../../../interaction/components/i
 import { CommercialActionCardComponent, CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
 import { CommercialActionFormComponent } from '../../../commercial-action/components/commercial-action-form/commercial-action-form.component';
 
-type ActiveAction = 'enrich' | 'assign' | 'convert' | 'reject' | 'log-interaction' | 'create-action' | null;
+type ActiveAction = 'enrich' | 'convert' | 'reject' | 'log-interaction' | 'create-action' | null;
 
 @Component({
   selector: 'app-lead-detail',
@@ -23,7 +29,6 @@ type ActiveAction = 'enrich' | 'assign' | 'convert' | 'reject' | 'log-interactio
     RouterLink,
     LeadInfoCardComponent,
     LeadActionEnrichComponent,
-    LeadActionAssignComponent,
     LeadActionRejectComponent,
     LeadActionConvertComponent,
     InteractionTimelineComponent,

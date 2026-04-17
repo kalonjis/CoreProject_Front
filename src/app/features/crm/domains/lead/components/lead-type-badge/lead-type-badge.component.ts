@@ -1,3 +1,8 @@
+/**
+ * Displays a neutral badge label for a {@link LeadType}.
+ *
+ * Uses a single flat style — differentiation is done through the label text, not colour.
+ */
 import { Component, Input } from '@angular/core';
 import { LeadType, LEAD_TYPE_LABELS } from '../../models/lead.model';
 

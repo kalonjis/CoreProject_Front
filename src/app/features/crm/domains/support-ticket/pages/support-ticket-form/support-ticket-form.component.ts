@@ -1,3 +1,11 @@
+/**
+ * Creation form for a new CRM support ticket.
+ *
+ * Supports optional pre-fill via the {@code contactPublicId} query parameter.
+ * Uses {@link ContactPickerComponent} and {@link CommercialPickerComponent} for
+ * typeahead selection of the submitter and assignee.
+ * Redirects to the ticket detail page after successful creation.
+ */
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';

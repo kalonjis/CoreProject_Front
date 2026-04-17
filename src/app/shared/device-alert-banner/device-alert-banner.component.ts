@@ -1,6 +1,6 @@
 import { Component, inject, DestroyRef, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import {AuthFacade} from '../../core/auth';
@@ -9,7 +9,7 @@ import {FeedbackService} from '../feedback/tools/feedback.service';
 
 @Component({
     selector: 'app-device-alert-banner',
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule],
     templateUrl: './device-alert-banner.component.html',
     styleUrl: './device-alert-banner.component.scss'
 })

@@ -1,18 +1,18 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .ticket-detail {
   padding: 1.5rem;
 
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1.25rem;
-    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+    a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
   }
 
-  &__state  { color: $gray-dark; font-style: italic; }
-  &__error  { color: $danger-color; }
+  &__state  { color: variables.$gray-dark; font-style: italic; }
+  &__error  { color: variables.$danger-color; }
 
   &__layout {
     display: grid;
@@ -36,7 +36,7 @@
 
   &__date {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__source-badge {
@@ -53,13 +53,13 @@
   &__subject {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0;
   }
 
   &__description {
     font-size: 0.9375rem;
-    color: $text-color;
+    color: variables.$text-color;
     white-space: pre-line;
     margin: 0;
     line-height: 1.6;
@@ -67,7 +67,7 @@
 
   &__no-description {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -81,13 +81,13 @@
 
     dt {
       font-weight: 600;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
 
     dd {
       margin: 0;
-      color: $text-color;
-      a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+      color: variables.$text-color;
+      a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
     }
   }
 
@@ -105,8 +105,8 @@
 
   &__panel {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -117,12 +117,12 @@
     font-size: 0.875rem;
     font-weight: 600;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__panel-hint {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -140,16 +140,16 @@
   }
 
   input, select, textarea {
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     padding: 6px 10px;
     font-size: 0.875rem;
     font-family: inherit;
     background: #fff;
-    color: $text-color;
+    color: variables.$text-color;
     width: 100%;
     box-sizing: border-box;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   textarea { resize: vertical; }
@@ -162,7 +162,7 @@
 
   &__reporter-email {
     font-size: 0.8125rem;
-    color: $primary-color;
+    color: variables.$primary-color;
     text-decoration: none;
     &:hover { text-decoration: underline; }
   }
@@ -181,7 +181,7 @@
   &__danger-zone {
     margin-top: auto;
     padding-top: 0.5rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
 
     .btn--danger {
       width: 100%;
@@ -189,9 +189,9 @@
       font-size: 0.875rem;
       font-weight: 500;
       color: white;
-      background-color: $danger-color;
+      background-color: variables.$danger-color;
       border: none;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       cursor: pointer;
       transition: opacity 0.2s;
       &:hover { opacity: 0.85; }

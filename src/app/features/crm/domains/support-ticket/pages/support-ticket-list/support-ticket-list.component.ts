@@ -1,3 +1,10 @@
+/**
+ * Paginated list page for CRM support tickets.
+ *
+ * Supports keyword search, status/source filters, advanced filters (contact, assignee,
+ * organisation) via picker components, and pagination.
+ * Navigates to {@link SupportTicketDetailComponent} on row click.
+ */
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';

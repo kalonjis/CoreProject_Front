@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .ticket-form {
   padding: 1.5rem;
@@ -7,15 +7,15 @@
 
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1.25rem;
-    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+    a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
   }
 
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0 0 1.5rem;
   }
 
@@ -37,18 +37,18 @@
     }
 
     input, textarea {
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       padding: 8px 10px;
       font-size: 0.875rem;
       font-family: inherit;
       background: #fff;
-      color: $text-color;
+      color: variables.$text-color;
       transition: border-color 0.15s;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
+        border-color: variables.$primary-color;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
       }
     }

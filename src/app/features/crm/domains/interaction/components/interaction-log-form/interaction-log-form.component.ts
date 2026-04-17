@@ -1,3 +1,10 @@
+/**
+ * Inline form for manually logging a CRM interaction (call, email, meeting, note, etc.).
+ *
+ * Supports logging against a deal, contact, or lead context.
+ * Type-specific sub-sections (call log, email log) are shown dynamically.
+ * Emits {@link logged} on success and {@link cancelled} when the user dismisses.
+ */
 import { Component, Input, OnInit, Output, EventEmitter, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {

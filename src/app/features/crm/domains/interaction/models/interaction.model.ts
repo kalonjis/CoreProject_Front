@@ -1,5 +1,6 @@
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
+/** Channel or nature of a CRM interaction. */
 export enum InteractionType {
   CALL        = 'CALL',
   EMAIL       = 'EMAIL',
@@ -11,11 +12,13 @@ export enum InteractionType {
   CONTACT_FORM  = 'CONTACT_FORM'
 }
 
+/** Direction of a CRM interaction relative to the company. */
 export enum InteractionDirection {
   OUTBOUND = 'OUTBOUND',
   INBOUND  = 'INBOUND'
 }
 
+/** Qualitative outcome of a CRM interaction. */
 export enum InteractionOutcome {
   POSITIVE  = 'POSITIVE',
   NEUTRAL   = 'NEUTRAL',
@@ -23,6 +26,7 @@ export enum InteractionOutcome {
   NO_ANSWER = 'NO_ANSWER'
 }
 
+/** Result status of a phone call interaction. */
 export enum CallStatus {
   ANSWERED  = 'ANSWERED',
   VOICEMAIL = 'VOICEMAIL',
@@ -57,6 +61,7 @@ export const CALL_STATUS_LABELS: Record<CallStatus, string> = {
 
 // ─── Response models ─────────────────────────────────────────────────────────
 
+/** Call-specific metadata attached to a call interaction. */
 export interface CallLogResponse {
   phoneNumber:     string | null;
   durationSeconds: number | null;
@@ -64,6 +69,7 @@ export interface CallLogResponse {
   recordingUrl:    string | null;
 }
 
+/** Email-specific metadata attached to an email interaction, including open/click tracking. */
 export interface EmailLogResponse {
   emailSubject:      string;
   bodySnippet:       string | null;
@@ -74,6 +80,7 @@ export interface EmailLogResponse {
   wasClicked:        boolean;
 }
 
+/** Full interaction payload returned by the API, including optional call and email sub-logs. */
 export interface InteractionResponse {
   publicId:             string;
   type:                 InteractionType;
@@ -95,6 +102,7 @@ export interface InteractionResponse {
 
 // ─── Request models ──────────────────────────────────────────────────────────
 
+/** Request payload carrying call-specific details when logging a call interaction. */
 export interface CallLogRequest {
   phoneNumber?:    string;
   durationSeconds?: number;
@@ -102,12 +110,14 @@ export interface CallLogRequest {
   recordingUrl?:   string;
 }
 
+/** Request payload carrying email-specific details when logging an email interaction. */
 export interface EmailLogRequest {
   emailSubject:      string;
   bodySnippet?:      string;
   externalMessageId?: string;
 }
 
+/** Request payload for logging a new CRM interaction, with optional call or email sub-log. */
 export interface LogInteractionRequest {
   type:              InteractionType;
   direction?:        InteractionDirection;
@@ -123,6 +133,7 @@ export interface LogInteractionRequest {
   emailLog?:         EmailLogRequest;
 }
 
+/** Request payload for partially updating a logged interaction's metadata. */
 export interface UpdateInteractionRequest {
   subject?:         string;
   notes?:           string;

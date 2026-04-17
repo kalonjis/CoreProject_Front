@@ -1,3 +1,10 @@
+/**
+ * Detail page for a single CRM support ticket.
+ *
+ * Displays full ticket information and provides inline action panels for
+ * status transitions, reassignment, and subject/description editing.
+ * Admins can also delete the ticket via a confirmation dialog.
+ */
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';

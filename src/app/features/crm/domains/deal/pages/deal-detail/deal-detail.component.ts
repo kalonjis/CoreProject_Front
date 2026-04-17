@@ -24,7 +24,9 @@ import { CONTACT_ROLE_LABELS }            from '../../models/deal.model';
 import { Tag }                            from '../../../tag/models/tag.model';
 import { DealDetail }                     from '../../models/deal.model';
 
+/** Union of inline action panels that can be shown on the deal detail page. */
 type ActionPanel = 'move' | 'reassign' | 'contacts' | null;
+/** Tab identifiers for the deal detail tabbed view. */
 type DealTab     = 'activite' | 'contacts' | 'tickets' | 'modifications';
 
 @Component({
@@ -49,6 +51,10 @@ type DealTab     = 'activite' | 'contacts' | 'tickets' | 'modifications';
   templateUrl: './deal-detail.component.html',
   styleUrl: './deal-detail.component.scss'
 })
+/**
+ * Deal detail page showing the info card, tabbed sections (activity, contacts, support tickets, change log),
+ * commercial actions, and inline panels for stage move, reassign, and contact management.
+ */
 export class DealDetailComponent implements OnInit {
 
   readonly facade            = inject(DealFacade);

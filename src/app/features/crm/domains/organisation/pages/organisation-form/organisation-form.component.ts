@@ -15,6 +15,7 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
   templateUrl: './organisation-form.component.html',
   styleUrl: './organisation-form.component.scss'
 })
+/** Routed page for creating a new organisation or editing an existing one (mode driven by route data). */
 export class OrganisationFormComponent implements OnInit {
 
   private readonly route    = inject(ActivatedRoute);

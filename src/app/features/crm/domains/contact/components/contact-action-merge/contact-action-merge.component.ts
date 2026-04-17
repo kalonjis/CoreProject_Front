@@ -10,6 +10,7 @@ import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/p
   templateUrl: './contact-action-merge.component.html',
   styleUrl: './contact-action-merge.component.scss'
 })
+/** Form for merging two contacts: the selected source is archived and its data is transferred to this contact (the target). */
 export class ContactActionMergeComponent {
   /** Ce contact est la cible (le survivant) */
   @Input({ required: true }) publicId!: string;

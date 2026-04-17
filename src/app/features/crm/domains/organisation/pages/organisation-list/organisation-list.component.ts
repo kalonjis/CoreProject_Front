@@ -26,6 +26,10 @@ import { OrganisationDetail } from '../../models/organisation.model';
   templateUrl: './organisation-list.component.html',
   styleUrl: './organisation-list.component.scss'
 })
+/**
+ * Paginated organisation list page with keyword search, size/status/tag filters,
+ * sortable columns, and inline organisation creation.
+ */
 export class OrganisationListComponent implements OnInit {
 
   private readonly api        = inject(CrmOrganisationApiService);

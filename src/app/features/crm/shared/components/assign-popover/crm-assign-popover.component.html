@@ -1,0 +1,44 @@
+<div class="crm-assign-popover">
+
+  <!-- Trigger: assigned — compact (list): avatar only, not clickable -->
+  @if (assigneeName && compact) {
+    <div class="crm-assign-popover__avatar" [title]="assigneeName">
+      {{ assigneeInitials(assigneeName) }}
+    </div>
+  }
+
+  <!-- Trigger: assigned — full (info card): avatar + name + edit icon, clickable -->
+  @if (assigneeName && !compact) {
+    <div class="crm-assign-popover__assigned" (click)="toggle()">
+      <span class="crm-assign-popover__avatar crm-assign-popover__avatar--sm">{{ assigneeInitials(assigneeName) }}</span>
+      <span class="crm-assign-popover__name">{{ assigneeName }}</span>
+      <span class="crm-assign-popover__edit">✎</span>
+    </div>
+  }
+
+  <!-- Trigger: unassigned (both modes) -->
+  @if (!assigneeName) {
+    <span
+      class="crm-assign-popover__unassigned"
+      [class.crm-assign-popover__unassigned--pulse]="pulse"
+      (click)="toggle()"
+    >À assigner</span>
+  }
+
+  <!-- Dropdown -->
+  @if (open()) {
+    <div class="crm-assign-popover__dropdown">
+      @if (commercials.length === 0) {
+        <span class="crm-assign-popover__empty">Chargement…</span>
+      } @else {
+        @for (c of commercials; track c.publicId) {
+          <button class="crm-assign-popover__option" (click)="select(c)">
+            <span class="crm-assign-popover__option-avatar">{{ commercialInitials(c) }}</span>
+            <span>{{ displayName(c) }}</span>
+          </button>
+        }
+      }
+    </div>
+  }
+
+</div>

@@ -1,0 +1,139 @@
+@use 'variables';
+
+.crm-assign-popover {
+  position: relative;
+  display: inline-block;
+
+  // ─── Trigger: assigned avatar (compact list mode) ─────────────────────────
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    user-select: none;
+
+    &--sm {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.65rem;
+    }
+  }
+
+  // ─── Trigger: assigned full (info-card mode) ──────────────────────────────
+
+  &__assigned {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    border-radius: variables.$border-radius;
+    padding: 0.15rem 0.3rem;
+    margin: -0.15rem -0.3rem;
+    transition: background variables.$transition-fast;
+
+    &:hover { background: variables.$gray-light; }
+    &:hover .crm-assign-popover__edit { opacity: 1; }
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    color: variables.$text-color;
+  }
+
+  &__edit {
+    font-size: 0.7rem;
+    color: variables.$gray-dark;
+    opacity: 0;
+    transition: opacity variables.$transition-fast;
+  }
+
+  // ─── Trigger: unassigned ─────────────────────────────────────────────────
+
+  &__unassigned {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    font-style: italic;
+    color: #b45309;
+    background: #fffbeb;
+    border: 1px dashed #fcd34d;
+    border-radius: 4px;
+    padding: 0.2rem 0.55rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover { background: #fef3c7; border-color: #f59e0b; }
+
+    &--pulse { animation: crm-assign-pulse 2s ease-in-out infinite; }
+  }
+
+  @keyframes crm-assign-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+  }
+
+  // ─── Dropdown ────────────────────────────────────────────────────────────
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 200;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 0.25rem 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.45rem 0.75rem;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.8rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:hover { background: #f8fafc; }
+  }
+
+  &__option-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  &__empty {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+}

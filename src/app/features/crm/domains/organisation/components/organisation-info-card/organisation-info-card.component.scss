@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables';
 
 .info-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
 
   &__header {
@@ -16,7 +16,7 @@
 
   &__name {
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     color: #1e293b;
     margin: 0;
     line-height: 1.2;
@@ -46,7 +46,7 @@
       word-break: break-word;
     }
     a {
-      color: $primary-color;
+      color: variables.$primary-color;
       text-decoration: none;
       font-weight: 500;
       &:hover { text-decoration: underline; }

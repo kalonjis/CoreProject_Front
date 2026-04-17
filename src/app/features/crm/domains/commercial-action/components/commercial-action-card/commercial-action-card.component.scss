@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables';
 
 .action-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
@@ -39,14 +39,76 @@
     margin-left: auto;
   }
 
+  &__menu-wrapper {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: variables.$gray-dark;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.25rem;
+    border-radius: variables.$border-radius;
+    transition: variables.$transition-fast;
+
+    &:hover {
+      background: variables.$gray-light;
+      color: variables.$dark-color;
+    }
+  }
+
+  &__menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+  }
+
+  &__menu-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 130px;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow: hidden;
+    padding: 0.25rem 0;
+  }
+
+  &__menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0.45rem 0.875rem;
+    font-size: 0.875rem;
+    color: variables.$text-color;
+    cursor: pointer;
+    transition: background variables.$transition-fast;
+
+    &:hover { background: variables.$gray-light; }
+
+    &--danger {
+      color: variables.$danger-color;
+      &:hover { background: #fee2e2; }
+    }
+  }
+
   &__title {
     font-weight: 600;
     font-size: 0.875rem;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0;
     text-decoration: none;
     display: block;
-    &:hover { color: $primary-color; }
+    &:hover { color: variables.$primary-color; }
   }
 
   &__description {
@@ -79,15 +141,15 @@
 
 .btn {
   padding: 0.4rem 0.875rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   border: 1px solid transparent;
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &:disabled { opacity: 0.5; cursor: not-allowed; }
   &--sm { padding: 0.3rem 0.75rem; font-size: 0.75rem; }
-  &--primary { background: $primary-color; color: #fff; border-color: $primary-color; &:hover { opacity: 0.88; } }
-  &--ghost   { background: transparent; color: $gray-dark; border-color: $border-color; &:hover { color: $text-color; } }
+  &--primary { background: variables.$primary-color; color: #fff; border-color: variables.$primary-color; &:hover { opacity: 0.88; } }
+  &--ghost   { background: transparent; color: variables.$gray-dark; border-color: variables.$border-color; &:hover { color: variables.$text-color; } }
 }

@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .deal-list {
 
@@ -18,17 +18,17 @@
 
   &__header-actions { display: flex; gap: 0.75rem; }
 
-  &__title { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; }
+  &__title { font-size: 1.5rem; font-weight: variables.$font-weight-bold; color: variables.$dark-color; margin: 0; }
 
   &__count {
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.55rem;
-    background: $gray-medium;
+    background: variables.$gray-medium;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   // ─── Filters ─────────────────────────────────────────────────────────────────
@@ -41,8 +41,8 @@
     margin-bottom: 1.25rem;
     padding: 0.75rem 1rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
 
     > input, > select { width: auto; }
   }
@@ -62,8 +62,8 @@
 
   &__table-wrapper {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     overflow: hidden;
   }
 
@@ -72,13 +72,13 @@
     border-collapse: collapse;
     font-size: 0.875rem;
 
-    thead tr { background: $gray-medium; }
+    thead tr { background: variables.$gray-medium; }
 
     th {
       padding: 0.75rem 1rem;
       text-align: left;
       font-weight: 600;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -87,27 +87,27 @@
 
     td {
       padding: 0.75rem 1rem;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid variables.$border-color;
       vertical-align: middle;
     }
   }
 
   &__row {
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
     &:hover td { background: #f8faff; }
     &--overdue td { background-color: rgba(#e65100, 0.03); }
   }
 
-  &__name      { font-weight: 600; color: $dark-color; }
-  &__secondary { color: $gray-dark; }
+  &__name      { font-weight: 600; color: variables.$dark-color; }
+  &__secondary { color: variables.$gray-dark; }
 
   &__overdue-date { color: #e65100; font-weight: 600; }
 
   // ─── States ──────────────────────────────────────────────────────────────────
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; font-size: 0.9rem; }
-  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: $border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; font-size: 0.9rem; }
+  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: variables.$border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
 
   // ─── Pagination ──────────────────────────────────────────────────────────────
 
@@ -121,17 +121,17 @@
 
   &__page-btn {
     padding: 0.4rem 0.875rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     background: #fff;
     cursor: pointer;
     font-size: 0.875rem;
-    transition: $transition-fast;
-    &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; }
+    transition: variables.$transition-fast;
+    &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
-  &__page-info { font-size: 0.875rem; color: $gray-dark; }
+  &__page-info { font-size: 0.875rem; color: variables.$gray-dark; }
 
   // ─── Responsive ──────────────────────────────────────────────────────────────
 

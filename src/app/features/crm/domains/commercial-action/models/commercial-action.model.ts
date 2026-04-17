@@ -2,6 +2,7 @@ import { InteractionOutcome } from '../../interaction/models/interaction.model';
 
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
+/** Types of commercial actions that can be scheduled for a CRM entity. */
 export enum CommercialActionType {
   TASK    = 'TASK',
   CALL    = 'CALL',
@@ -23,12 +24,14 @@ export function requiresCalendarSlot(type: CommercialActionType): boolean {
   return type === CommercialActionType.MEETING || type === CommercialActionType.DEMO;
 }
 
+/** Lifecycle status of a commercial action. */
 export enum CommercialActionStatus {
   PENDING   = 'PENDING',
   DONE      = 'DONE',
   CANCELLED = 'CANCELLED'
 }
 
+/** Priority level of a commercial action. */
 export enum CommercialActionPriority {
   LOW    = 'LOW',
   MEDIUM = 'MEDIUM',
@@ -51,6 +54,7 @@ export const COMMERCIAL_ACTION_PRIORITY_LABELS: Record<CommercialActionPriority,
 
 // ─── Response model ──────────────────────────────────────────────────────────
 
+/** API response payload representing a persisted commercial action. */
 export interface CommercialActionResponse {
   publicId:           string;
   title:              string;
@@ -76,6 +80,7 @@ export interface CommercialActionResponse {
 
 // ─── Request models ──────────────────────────────────────────────────────────
 
+/** Request payload for creating a new commercial action. */
 export interface CreateCommercialActionRequest {
   title:              string;
   description?:       string;
@@ -92,6 +97,7 @@ export interface CreateCommercialActionRequest {
   durationMinutes?:   number;
 }
 
+/** Request payload for partially updating an existing commercial action. */
 export interface UpdateCommercialActionRequest {
   title?:             string;
   description?:       string;
@@ -105,10 +111,12 @@ export interface UpdateCommercialActionRequest {
   durationMinutes?:   number;
 }
 
+/** Request payload for reassigning a commercial action to another user. */
 export interface ReassignCommercialActionRequest {
   assignedToPublicId: string;
 }
 
+/** Outcome status of a completed phone call action. */
 export enum CallStatus {
   ANSWERED  = 'ANSWERED',
   VOICEMAIL = 'VOICEMAIL',
@@ -121,23 +129,27 @@ export const CALL_STATUS_LABELS: Record<CallStatus, string> = {
   [CallStatus.NO_ANSWER]: 'Pas de réponse'
 };
 
+/** Completion details for a CALL-type commercial action. */
 export interface CompleteCallDetails {
   status:           CallStatus;
   durationSeconds?: number;
   phoneNumber?:     string;
 }
 
+/** Completion details for an EMAIL-type commercial action. */
 export interface CompleteEmailDetails {
   emailSubject:       string;
   bodySnippet?:       string;
   externalMessageId?: string;
 }
 
+/** Completion details for a MEETING or DEMO-type commercial action. */
 export interface CompleteMeetingDetails {
   outcome?: InteractionOutcome;
   notes?:   string;
 }
 
+/** Request payload for marking a commercial action as completed, with optional type-specific details. */
 export interface CompleteCommercialActionRequest {
   callLogDetails?:    CompleteCallDetails;
   emailLogDetails?:   CompleteEmailDetails;

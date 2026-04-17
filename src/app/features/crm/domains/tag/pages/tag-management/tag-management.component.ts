@@ -13,6 +13,7 @@ import { Tag } from '../../models/tag.model';
   templateUrl: './tag-management.component.html',
   styleUrl: './tag-management.component.scss'
 })
+/** Admin page for managing CRM tags: create, rename, recolour, and delete. */
 export class TagManagementComponent implements OnInit {
 
   private readonly api     = inject(CrmTagApiService);

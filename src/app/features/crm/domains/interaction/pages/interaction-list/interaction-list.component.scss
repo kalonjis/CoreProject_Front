@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .interaction-list {
   padding: 1.5rem;
@@ -15,14 +15,14 @@
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0;
   }
 
   &__form-panel {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
   }
@@ -35,7 +35,7 @@
 
   &__form-hint {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin: 0 0 1rem;
   }
 
@@ -43,7 +43,7 @@
     padding: 1rem 1.25rem;
     background: #f0f9ff;
     border: 1px solid #bae6fd;
-    border-radius: $border-radius-lg;
+    border-radius: variables.$border-radius-lg;
     font-size: 0.875rem;
     color: #0c4a6e;
   }

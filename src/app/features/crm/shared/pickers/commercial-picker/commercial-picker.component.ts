@@ -1,3 +1,10 @@
+/**
+ * Dropdown picker for selecting a CRM commercial (sales rep).
+ *
+ * Loads all active commercials from {@link CrmUserApiService} on init.
+ * Supports an optional "unassigned" null option via the {@link nullable} input.
+ * Emits the selected commercial's publicId, or {@code null} when unassigned.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmUserApiService } from '../../services/crm-user-api.service';

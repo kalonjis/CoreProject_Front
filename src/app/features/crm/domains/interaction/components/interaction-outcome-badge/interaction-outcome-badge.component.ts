@@ -1,3 +1,8 @@
+/**
+ * Displays a colour-coded badge for an {@link InteractionOutcome}.
+ *
+ * Positive, neutral, negative, and no-answer outcomes each render with a distinct style.
+ */
 import { Component, Input } from '@angular/core';
 import { InteractionOutcome, INTERACTION_OUTCOME_LABELS } from '../../models/interaction.model';
 

@@ -1,3 +1,9 @@
+/**
+ * HTTP client for CRM user-related endpoints ({@code /api/crm/users}).
+ *
+ * Provides access to the list of active commercials used in assignment pickers
+ * across leads, deals, support tickets, and commercial actions.
+ */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

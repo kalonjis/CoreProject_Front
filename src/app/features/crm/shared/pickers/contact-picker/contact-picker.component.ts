@@ -1,3 +1,10 @@
+/**
+ * Typeahead picker for selecting a CRM contact.
+ *
+ * Searches contacts in real-time via {@link CrmContactApiService} as the user types.
+ * Emits a {@link ContactPickerValue} (publicId + display label) on selection, or
+ * {@code null} when the selection is cleared.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';

@@ -1,14 +1,14 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .org-detail {
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1.25rem;
 
     a {
-      color: $primary-color;
+      color: variables.$primary-color;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
@@ -34,8 +34,8 @@
     flex-direction: column;
     gap: 0.375rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 0.75rem;
 
     .btn {
@@ -45,7 +45,7 @@
 
     &__divider {
       height: 1px;
-      background: $border-color;
+      background: variables.$border-color;
       margin: 0.25rem 0;
     }
   }
@@ -61,7 +61,7 @@
   &__tabs {
     display: flex;
     gap: 0;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 2px solid variables.$border-color;
     margin-bottom: 1.5rem;
   }
 
@@ -71,17 +71,17 @@
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
     border-bottom: 2px solid transparent;
     margin-bottom: -2px;
     transition: color 0.15s, border-color 0.15s;
 
-    &:hover { color: $dark-color; }
+    &:hover { color: variables.$dark-color; }
 
     &--active {
-      color: $primary-color;
-      border-bottom-color: $primary-color;
+      color: variables.$primary-color;
+      border-bottom-color: variables.$primary-color;
       font-weight: 600;
     }
   }
@@ -93,17 +93,17 @@
   }
 
   &__info {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 
   &__error {
-    color: $danger-color;
+    color: variables.$danger-color;
   }
 
   &__state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -112,8 +112,8 @@
 
   &__sidebar-tags {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
@@ -132,15 +132,15 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.75rem;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   // ─── Deals section ──────────────────────────────────────────────────────────
 
   &__deals {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -157,14 +157,14 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
     flex: 1;
   }
 
   &__deals-count {
     font-size: 0.8rem;
-    color: $gray-dark;
-    background: $gray-medium;
+    color: variables.$gray-dark;
+    background: variables.$gray-medium;
     padding: 0.15em 0.55em;
     border-radius: 999px;
     font-weight: 500;
@@ -178,18 +178,18 @@
 
   &__btn {
     padding: 0.4rem 0.875rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
     &--outline {
       background: transparent;
-      border-color: $border-color;
-      color: $gray-dark;
-      &:hover { border-color: $primary-color; color: $primary-color; }
+      border-color: variables.$border-color;
+      color: variables.$gray-dark;
+      &:hover { border-color: variables.$primary-color; color: variables.$primary-color; }
     }
   }
 }
@@ -201,17 +201,17 @@
   border-collapse: collapse;
   font-size: 0.875rem;
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   overflow: hidden;
 
-  thead tr { background: $gray-medium; }
+  thead tr { background: variables.$gray-medium; }
 
   th {
     padding: 0.65rem 1rem;
     text-align: left;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -220,7 +220,7 @@
 
   td {
     padding: 0.75rem 1rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     vertical-align: middle;
     color: #334155;
   }

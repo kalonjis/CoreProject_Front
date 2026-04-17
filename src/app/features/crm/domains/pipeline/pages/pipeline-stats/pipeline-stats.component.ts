@@ -10,6 +10,7 @@ import { Pipeline, PipelineStats } from '../../models/pipeline.model';
   templateUrl: './pipeline-stats.component.html',
   styleUrl: './pipeline-stats.component.scss'
 })
+/** Pipeline statistics page showing per-stage conversion rates, deal counts, and average cycle days. */
 export class PipelineStatsComponent implements OnInit {
 
   private readonly pipelineApi = inject(CrmPipelineApiService);

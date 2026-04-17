@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .tm {
   padding: 1.5rem;
@@ -16,7 +16,7 @@
     margin: 0;
     font-size: 1.4rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__create-form {
@@ -24,7 +24,7 @@
   }
 
   &__state {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.9rem;
     padding: 2rem 0;
     text-align: center;
@@ -40,8 +40,8 @@
 
   &__row {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     overflow: hidden;
   }
 
@@ -79,8 +79,8 @@
       width: 36px;
       height: 32px;
       padding: 2px;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       cursor: pointer;
       background: none;
     }
@@ -88,7 +88,7 @@
 
   &__color-hex {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-family: monospace;
   }
 }

@@ -17,6 +17,7 @@ import { CompleteDemoFormComponent }    from '../complete/complete-demo-form/com
   ],
   templateUrl: './commercial-action-complete-form.component.html'
 })
+/** Modal form that delegates to type-specific completion sub-forms (call, email, meeting, demo, task). */
 export class CommercialActionCompleteFormComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest | undefined>();

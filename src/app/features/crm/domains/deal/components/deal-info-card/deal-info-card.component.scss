@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables';
 
 .info-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   padding: 1.5rem;
 
   &__header {
@@ -16,7 +16,7 @@
 
   &__title {
     font-size: 1.25rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     margin: 0;
     flex: 1;
   }
@@ -40,8 +40,8 @@
   &__field {
     dt {
       font-size: 0.75rem;
-      font-weight: $font-weight-bold;
-      color: $gray-dark;
+      font-weight: variables.$font-weight-bold;
+      color: variables.$gray-dark;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       margin-bottom: 0.2rem;
@@ -49,10 +49,10 @@
     dd {
       margin: 0;
       font-size: 0.9rem;
-      color: $text-color;
+      color: variables.$text-color;
     }
     a {
-      color: $primary-color;
+      color: variables.$primary-color;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
@@ -68,17 +68,17 @@
   &__lost-reason {
     white-space: pre-wrap;
     font-size: 0.875rem;
-    color: $danger-color;
-    background: rgba($danger-color, 0.05);
-    border-left: 3px solid $danger-color;
+    color: variables.$danger-color;
+    background: rgba(variables.$danger-color, 0.05);
+    border-left: 3px solid variables.$danger-color;
     padding: 0.5rem 0.75rem;
-    border-radius: 0 $border-radius $border-radius 0;
+    border-radius: 0 variables.$border-radius variables.$border-radius 0;
   }
 
   &__notes {
     white-space: pre-wrap;
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__contacts {
@@ -94,12 +94,12 @@
     padding: 0.25rem 0;
     font-size: 0.875rem;
 
-    &:not(:last-child) { border-bottom: 1px solid $border-color; }
+    &:not(:last-child) { border-bottom: 1px solid variables.$border-color; }
   }
 
   &__contact-role {
     font-size: 0.75rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     background: #f3f4f6;
     padding: 0.1em 0.5em;
     border-radius: 999px;
@@ -107,7 +107,7 @@
 
   &__contact-primary {
     font-size: 0.7rem;
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
     padding: 0.1em 0.4em;
     border-radius: 999px;
@@ -115,7 +115,7 @@
 
   &__empty {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 }

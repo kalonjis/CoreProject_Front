@@ -14,6 +14,7 @@ import { CommercialActionFormComponent }           from '../commercial-action-fo
 import { CommercialActionCompleteFormComponent }   from '../commercial-action-complete-form/commercial-action-complete-form.component';
 import { ConfirmDialogService }                    from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 
+/** Event payload emitted when a commercial action is confirmed as completed. */
 export interface CompleteEvent {
   publicId: string;
   details?: CompleteCommercialActionRequest;
@@ -32,6 +33,7 @@ export interface CompleteEvent {
   templateUrl: './commercial-action-card.component.html',
   styleUrl: './commercial-action-card.component.scss'
 })
+/** Reusable card that displays a single commercial action with complete and cancel actions. */
 export class CommercialActionCardComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() completed = new EventEmitter<CompleteEvent>();
@@ -41,8 +43,9 @@ export class CommercialActionCardComponent {
   private readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly CommercialActionStatus = CommercialActionStatus;
-  readonly showEditModal           = signal(false);
-  readonly showCompleteModal       = signal(false);
+  readonly showEditModal     = signal(false);
+  readonly showCompleteModal = signal(false);
+  readonly showMenu          = signal(false);
 
   get isPending(): boolean   { return this.action.status === CommercialActionStatus.PENDING; }
   get dueDateLabel(): string { return requiresCalendarSlot(this.action.type) ? 'RDV' : 'Échéance'; }

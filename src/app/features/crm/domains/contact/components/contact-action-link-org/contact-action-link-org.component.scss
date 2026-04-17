@@ -1,15 +1,15 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .action-panel__hint {
   font-size: 0.875rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin: 0;
 
   code {
-    background: $gray-medium;
+    background: variables.$gray-medium;
     padding: 0.1rem 0.4rem;
-    border-radius: $border-radius-sm;
+    border-radius: variables.$border-radius-sm;
     font-size: 0.8rem;
   }
 }

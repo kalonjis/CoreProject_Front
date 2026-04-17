@@ -11,6 +11,7 @@ import { PipelineStep } from '../../../pipeline/models/pipeline.model';
   templateUrl: './deal-action-move-stage.component.html',
   styleUrl: './deal-action-move-stage.component.scss'
 })
+/** Form for moving a deal to a different pipeline stage, with a mandatory lost-reason modal when targeting a lost step. */
 export class DealActionMoveStageComponent implements OnInit {
   @Input({ required: true }) publicId!: string;
   @Input({ required: true }) pipelinePublicId!: string;

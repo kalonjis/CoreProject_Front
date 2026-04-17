@@ -1,3 +1,8 @@
+/**
+ * Displays a colour-coded badge for an {@link InteractionType}.
+ *
+ * Renders an icon and a human-readable label styled per interaction type.
+ */
 import { Component, Input } from '@angular/core';
 import { InteractionType, INTERACTION_TYPE_LABELS } from '../../models/interaction.model';
 

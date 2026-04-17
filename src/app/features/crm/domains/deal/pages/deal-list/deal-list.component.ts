@@ -17,6 +17,7 @@ import { Tag } from '../../../tag/models/tag.model';
   templateUrl: './deal-list.component.html',
   styleUrl: './deal-list.component.scss'
 })
+/** Paginated deal list page with keyword search, status/tag/overdue filters, and navigation to deal detail or creation. */
 export class DealListComponent implements OnInit {
 
   readonly facade  = inject(DealFacade);

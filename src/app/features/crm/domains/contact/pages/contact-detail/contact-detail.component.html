@@ -51,15 +51,7 @@
               (cancelled)="toggleAction(null)"
             />
           }
-          @case ('assign') {
-            <app-contact-action-assign
-              [publicId]="c.publicId"
-              [currentAssigneePublicId]="c.assignedToPublicId"
-              (assigned)="onActionDone()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
-          @case ('link-org') {
+@case ('link-org') {
             <app-contact-action-link-org
               [publicId]="c.publicId"
               [currentOrgPublicId]="c.organisationPublicId"
@@ -212,7 +204,7 @@
       <!-- ─── Sidebar (droite) ────────────────────────────────────────────── -->
       <aside class="contact-detail__sidebar">
 
-        <app-contact-info-card [contact]="c" />
+        <app-contact-info-card [contact]="c" [publicId]="c.publicId" (assigned)="onActionDone()" />
 
         <div class="contact-detail__tags-section">
           <h3 class="contact-detail__sidebar-title">Tags</h3>
@@ -227,10 +219,7 @@
           <button class="btn btn--sidebar-action" (click)="toggleAction('status')">
             <span class="action-icon">◈</span> Changer statut
           </button>
-          <button class="btn btn--sidebar-action" (click)="toggleAction('assign')">
-            <span class="action-icon">→</span> Assigner
-          </button>
-          <button class="btn btn--sidebar-action" (click)="toggleAction('link-org')">
+<button class="btn btn--sidebar-action" (click)="toggleAction('link-org')">
             <span class="action-icon">🏢</span> Organisation
           </button>
           <button class="btn btn--sidebar-action btn--sidebar-action--danger" (click)="toggleAction('merge')">

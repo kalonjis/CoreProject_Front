@@ -6,6 +6,23 @@
       <span class="action-card__overdue-label">En retard</span>
     }
     <span class="action-card__assignee">{{ action.assignedToUsername }}</span>
+
+    <div class="action-card__menu-wrapper">
+      <button class="action-card__menu-btn" (click)="showMenu.set(!showMenu())" title="Plus d'actions">⋮</button>
+      @if (showMenu()) {
+        <div class="action-card__menu-backdrop" (click)="showMenu.set(false)"></div>
+        <div class="action-card__menu-dropdown">
+          <button class="action-card__menu-item" (click)="showMenu.set(false); showEditModal.set(true)">
+            Modifier
+          </button>
+          @if (isPending) {
+            <button class="action-card__menu-item action-card__menu-item--danger" (click)="showMenu.set(false); onCancel()">
+              Annuler
+            </button>
+          }
+        </div>
+      }
+    </div>
   </div>
 
   <a class="action-card__title" [routerLink]="['/crm/commercial-actions', action.publicId]">{{ action.title }}</a>
@@ -24,19 +41,11 @@
     <p class="action-card__location">📍 {{ action.location }}</p>
   }
 
-  <div class="action-card__actions">
-    <button class="btn btn--ghost btn--sm" (click)="showEditModal.set(true)">
-      Modifier
-    </button>
-    @if (isPending) {
-      <button class="btn btn--primary btn--sm" (click)="onComplete()">
-        ✓ Terminer
-      </button>
-      <button class="btn btn--ghost btn--sm" (click)="onCancel()">
-        Annuler
-      </button>
-    }
-  </div>
+  @if (isPending) {
+    <div class="action-card__actions">
+      <button class="btn btn--primary btn--sm" (click)="onComplete()">✓ Terminer</button>
+    </div>
+  }
 </div>
 
 @if (showEditModal()) {

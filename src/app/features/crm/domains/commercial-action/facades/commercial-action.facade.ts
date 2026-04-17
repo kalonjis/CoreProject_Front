@@ -7,6 +7,11 @@ import {
   CompleteCommercialActionRequest
 } from '../models/commercial-action.model';
 
+/**
+ * Facade managing the current user's commercial action list.
+ * Holds a reactive signal-based state (actions, loading, filter)
+ * and delegates API calls to {@link CrmCommercialActionApiService}.
+ */
 @Injectable({ providedIn: 'root' })
 export class CommercialActionFacade {
 
@@ -21,6 +26,7 @@ export class CommercialActionFacade {
   readonly loading = this._loading.asReadonly();
   readonly filter  = this._filter.asReadonly();
 
+  /** Loads the current user's actions from the API using the active filter. */
   load(): void {
     this._loading.set(true);
     this.api.getMyActions(this._filter()).subscribe({
@@ -29,11 +35,13 @@ export class CommercialActionFacade {
     });
   }
 
+  /** Updates the active status filter and reloads the action list. */
   setFilter(status: CommercialActionStatus | undefined): void {
     this._filter.set(status);
     this.load();
   }
 
+  /** Marks an action as completed and removes it from the local list on success. */
   complete(publicId: string, details?: CompleteCommercialActionRequest): void {
     this.api.complete(publicId, details).subscribe({
       next: () => {
@@ -44,6 +52,7 @@ export class CommercialActionFacade {
     });
   }
 
+  /** Cancels an action and removes it from the local list on success. */
   cancel(publicId: string): void {
     this.api.cancel(publicId).subscribe({
       next:  () => this._actions.update(list => list.filter(a => a.publicId !== publicId)),

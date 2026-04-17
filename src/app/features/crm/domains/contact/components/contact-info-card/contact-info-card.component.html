@@ -22,7 +22,12 @@
     }
     <div class="contact-info-card__field">
       <span class="contact-info-card__label">Assigné à</span>
-      <span class="contact-info-card__value">{{ contact.assignedToUsername ?? '—' }}</span>
+      <app-crm-assign-popover
+        [assigneeName]="contact.assignedToUsername"
+        [commercials]="commercials()"
+        [compact]="false"
+        (selected)="onAssigneeSelected($event)"
+      />
     </div>
     @if (contact.originLeadPublicId) {
       <div class="contact-info-card__field">

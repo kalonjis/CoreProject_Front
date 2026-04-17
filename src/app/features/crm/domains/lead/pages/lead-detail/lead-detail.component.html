@@ -7,11 +7,27 @@
   @if (facade.lead(); as l) {
 
     <div class="lead-detail__header">
-      <button class="lead-detail__back" (click)="back()">← Retour</button>
+      <nav class="lead-detail__breadcrumb">
+        <a class="lead-detail__breadcrumb-link" (click)="back()">Leads</a>
+        <span class="lead-detail__breadcrumb-sep">/</span>
+        <span class="lead-detail__breadcrumb-current">
+          @if (l.firstName || l.lastName) {
+            {{ l.firstName }} {{ l.lastName }}
+          } @else {
+            {{ l.email }}
+          }
+        </span>
+      </nav>
       <div class="lead-detail__identity">
-        <h1 class="lead-detail__email">{{ l.email }}</h1>
+        <h1 class="lead-detail__name">
+          @if (l.firstName || l.lastName) {
+            {{ l.firstName }} {{ l.lastName }}
+          } @else {
+            {{ l.email }}
+          }
+        </h1>
         @if (l.firstName || l.lastName) {
-          <span class="lead-detail__name">{{ l.firstName }} {{ l.lastName }}</span>
+          <span class="lead-detail__email">{{ l.email }}</span>
         }
       </div>
     </div>
@@ -28,13 +44,6 @@
                 [publicId]="l.publicId"
                 [lead]="l"
                 (enriched)="onActionDone()"
-                (cancelled)="toggleAction(null)"
-              />
-            }
-            @case ('assign') {
-              <app-lead-action-assign
-                [publicId]="l.publicId"
-                (assigned)="onActionDone()"
                 (cancelled)="toggleAction(null)"
               />
             }
@@ -132,15 +141,14 @@
           </div>
         }
 
-        <app-lead-info-card [lead]="l" />
+        <app-lead-info-card [lead]="l" [publicId]="l.publicId" (assigned)="onActionDone()" />
 
         @if (!facade.isTerminal()) {
           <div class="lead-detail__action-bar">
             <button class="btn btn--secondary" (click)="toggleAction('enrich')">Enrichir</button>
-            <button class="btn btn--secondary" (click)="toggleAction('assign')">Assigner</button>
 
             @if (canMarkInReview()) {
-              <button class="btn btn--secondary" (click)="facade.markInReview()" [disabled]="facade.actionLoading()">
+              <button class="btn btn--primary-outline" (click)="facade.markInReview()" [disabled]="facade.actionLoading()">
                 Mettre en revue
               </button>
             }

@@ -8,7 +8,6 @@ import { CrmContactApiService }            from '../../services/crm-contact-api.
 import { CrmTagApiService }                from '../../../tag/services/crm-tag-api.service';
 import { CrmSupportTicketApiService }      from '../../../support-ticket/services/crm-support-ticket-api.service';
 import { ContactInfoCardComponent }        from '../../components/contact-info-card/contact-info-card.component';
-import { ContactActionAssignComponent }    from '../../components/contact-action-assign/contact-action-assign.component';
 import { ContactActionStatusComponent }    from '../../components/contact-action-status/contact-action-status.component';
 import { ContactActionLinkOrgComponent }   from '../../components/contact-action-link-org/contact-action-link-org.component';
 import { ContactActionMergeComponent }     from '../../components/contact-action-merge/contact-action-merge.component';
@@ -27,7 +26,9 @@ import { DealSummary }                     from '../../../deal/models/deal.model
 import { Tag }                             from '../../../tag/models/tag.model';
 import { SupportTicketSummary }            from '../../../support-ticket/models/support-ticket.model';
 
-type ActiveAction = 'assign' | 'status' | 'link-org' | 'merge' | null;
+/** Union of inline action panels that can be shown on the contact detail page. */
+type ActiveAction = 'status' | 'link-org' | 'merge' | null;
+/** Tab identifiers for the contact detail tabbed view. */
 type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modifications';
 
 @Component({
@@ -35,7 +36,6 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modification
   providers: [ContactFacade, InteractionFacade],
   imports: [
     ContactInfoCardComponent,
-    ContactActionAssignComponent,
     ContactActionStatusComponent,
     ContactActionLinkOrgComponent,
     ContactActionMergeComponent,
@@ -55,6 +55,10 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modification
   templateUrl: './contact-detail.component.html',
   styleUrl: './contact-detail.component.scss'
 })
+/**
+ * Contact detail page showing the info card, tabbed sections (activity, commercial actions,
+ * deals, support tickets, change log), and inline action panels for assign/status/org/merge.
+ */
 export class ContactDetailComponent implements OnInit {
 
   readonly facade            = inject(ContactFacade);

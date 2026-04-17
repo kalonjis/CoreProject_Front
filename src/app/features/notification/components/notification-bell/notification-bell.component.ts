@@ -8,7 +8,7 @@ import {
   signal, effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+
 
 import { NotificationFacade } from '../../services/notification.facade';
 import { NotificationDropdownComponent } from '../notification-dropdown/notification-dropdown.component';
@@ -24,7 +24,7 @@ import { SseConnectionStatus } from '../../models/notification.state';
  */
 @Component({
     selector: 'app-notification-bell',
-    imports: [CommonModule, RouterLink, NotificationDropdownComponent],
+    imports: [CommonModule, NotificationDropdownComponent],
     templateUrl: './notification-bell.component.html',
     styleUrl: './notification-bell.component.scss'
 })

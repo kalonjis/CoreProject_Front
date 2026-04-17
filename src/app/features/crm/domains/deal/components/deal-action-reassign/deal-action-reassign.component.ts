@@ -12,6 +12,7 @@ import { CommercialSummary, commercialDisplayName } from '../../../../shared/mod
   templateUrl: './deal-action-reassign.component.html',
   styleUrl: './deal-action-reassign.component.scss'
 })
+/** Form for reassigning a deal to another commercial. */
 export class DealActionReassignComponent implements OnInit {
   @Input({ required: true }) publicId!: string;
   @Output() reassigned = new EventEmitter<void>();

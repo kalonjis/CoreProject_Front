@@ -29,6 +29,7 @@ import { CommercialActionCompleteFormComponent }  from '../../components/commerc
   templateUrl: './commercial-action-detail.component.html',
   styleUrl:    './commercial-action-detail.component.scss'
 })
+/** Page component displaying the full details of a single commercial action with edit, complete, and cancel capabilities. */
 export class CommercialActionDetailComponent implements OnInit {
 
   private readonly route    = inject(ActivatedRoute);

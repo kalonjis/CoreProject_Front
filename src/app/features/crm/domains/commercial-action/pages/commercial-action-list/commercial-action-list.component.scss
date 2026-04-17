@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .ca-list {
   padding: 1.5rem;
@@ -15,14 +15,14 @@
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0;
   }
 
   &__form-panel {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
   }
@@ -31,7 +31,7 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 1rem;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__filters {
@@ -48,7 +48,7 @@
   }
 
   &__state {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     font-size: 0.875rem;
     padding: 1rem 0;
@@ -57,20 +57,20 @@
 
 .btn {
   padding: 0.5rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   border: 1px solid transparent;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &:disabled { opacity: 0.5; cursor: not-allowed; }
-  &--primary { background: $primary-color; color: #fff; border-color: $primary-color; &:hover { opacity: 0.88; } }
-  &--ghost   { background: transparent; color: $gray-dark; border-color: $border-color; &:hover { color: $text-color; } }
+  &--primary { background: variables.$primary-color; color: #fff; border-color: variables.$primary-color; &:hover { opacity: 0.88; } }
+  &--ghost   { background: transparent; color: variables.$gray-dark; border-color: variables.$border-color; &:hover { color: variables.$text-color; } }
 
   &--filter {
     background: #f3f4f6;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     border-color: transparent;
     font-size: 0.8125rem;
     padding: 0.35rem 0.875rem;
@@ -78,8 +78,8 @@
   }
 
   &--filter-active {
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
   }
 }

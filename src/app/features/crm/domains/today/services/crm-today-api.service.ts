@@ -1,3 +1,8 @@
+/**
+ * HTTP client for the CRM Today API ({@code /api/crm/today}).
+ *
+ * Retrieves the aggregated daily summary for the authenticated commercial.
+ */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

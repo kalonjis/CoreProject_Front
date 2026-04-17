@@ -1,4 +1,6 @@
-@import '../../../../../shared/styles/action-panel';
+@use "sass:color";
+@use 'variables' as *;
+@use '../../../../../shared/styles/action-panel';
 
 .complete-context {
   background: $gray-light;
@@ -43,7 +45,7 @@
   transition: $transition-fast;
 
   &:hover:not(.outcome-chip--active) {
-    border-color: darken($border-color, 12%);
+    border-color: color.adjust($border-color, $lightness: -12%);
     color: $text-color;
   }
 

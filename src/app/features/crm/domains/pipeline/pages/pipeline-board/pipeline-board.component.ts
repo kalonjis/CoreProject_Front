@@ -10,6 +10,7 @@ import { DealStatus, DealSummary } from '../../../deal/models/deal.model';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 
+/** Holds the deal and target step awaiting the user's lost-reason input before the move is confirmed. */
 interface PendingLostMove {
   deal: DealSummary;
   targetStep: PipelineStep;
@@ -21,6 +22,10 @@ interface PendingLostMove {
   templateUrl: './pipeline-board.component.html',
   styleUrl: './pipeline-board.component.scss'
 })
+/**
+ * Kanban pipeline board with drag-and-drop deal cards, per-stage totals, optimistic stage moves,
+ * and mandatory lost-reason modal when a deal is moved to a lost step.
+ */
 export class PipelineBoardComponent implements OnInit {
 
   private readonly pipelineApi = inject(CrmPipelineApiService);

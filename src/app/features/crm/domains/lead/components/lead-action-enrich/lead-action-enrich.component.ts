@@ -1,3 +1,9 @@
+/**
+ * Inline action panel for enriching a lead with additional contact and qualification data.
+ *
+ * Pre-fills form fields from the current lead data.
+ * Emits {@link enriched} after a successful API call and {@link cancelled} on dismissal.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';

@@ -3,27 +3,33 @@ import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { CrmDashboardApiService }   from '../../services/crm-dashboard-api.service';
 import { CrmTodayApiService }       from '../../../today/services/crm-today-api.service';
-import { CrmStats }                 from '../../models/crm-stats.model';
+import { CrmStats, RevenueMonth }   from '../../models/crm-stats.model';
 import { TodaySummary }             from '../../../today/models/today.model';
-import { ChangeLogWidgetComponent } from '../../../crm-change-log/components/change-log-widget/change-log-widget.component';
+import { RevenueChartComponent }   from '../../components/revenue-chart/revenue-chart.component';
+import { ActivityFeedComponent }   from '../../components/activity-feed/activity-feed.component';
 import { CommercialActionResponse, COMMERCIAL_ACTION_TYPE_LABELS } from '../../../commercial-action/models/commercial-action.model';
 
 @Component({
   selector: 'app-crm-dashboard',
-  imports: [DecimalPipe, ChangeLogWidgetComponent],
+  imports: [DecimalPipe, RevenueChartComponent, ActivityFeedComponent],
   templateUrl: './crm-dashboard.component.html',
   styleUrl: './crm-dashboard.component.scss'
 })
+/**
+ * Main CRM dashboard page displaying KPI metrics, revenue history chart,
+ * overdue actions, deals closing soon, and the activity feed.
+ */
 export class CrmDashboardComponent implements OnInit {
 
   private readonly dashboardApi = inject(CrmDashboardApiService);
   private readonly todayApi     = inject(CrmTodayApiService);
   private readonly router       = inject(Router);
 
-  readonly stats       = signal<CrmStats | null>(null);
-  readonly today       = signal<TodaySummary | null>(null);
-  readonly loading     = signal(true);
-  readonly error       = signal<string | null>(null);
+  readonly stats          = signal<CrmStats | null>(null);
+  readonly today          = signal<TodaySummary | null>(null);
+  readonly revenueHistory = signal<RevenueMonth[]>([]);
+  readonly loading        = signal(true);
+  readonly error          = signal<string | null>(null);
 
   readonly ACTION_TYPE_LABELS = COMMERCIAL_ACTION_TYPE_LABELS;
 
@@ -52,6 +58,10 @@ export class CrmDashboardComponent implements OnInit {
     });
     this.todayApi.getSummary().subscribe({
       next: s => this.today.set(s),
+      error: () => {}
+    });
+    this.dashboardApi.getRevenueHistory(12).subscribe({
+      next:  h => this.revenueHistory.set(h),
       error: () => {}
     });
   }

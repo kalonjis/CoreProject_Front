@@ -15,6 +15,7 @@ import {
   templateUrl: './organisation-action-create.component.html',
   styleUrl: './organisation-action-create.component.scss'
 })
+/** Inline form for creating a new organisation. */
 export class OrganisationActionCreateComponent {
   @Output() created   = new EventEmitter<OrganisationDetail>();
   @Output() cancelled = new EventEmitter<void>();

@@ -16,6 +16,7 @@ import { ContactSummary } from '../../../contact/models/contact.model';
   templateUrl: './deal-action-create.component.html',
   styleUrl: './deal-action-create.component.scss'
 })
+/** Inline form for creating a new deal, with pipeline/stage selection and optional contact picker. */
 export class DealActionCreateComponent implements OnInit {
   /** Pre-filled contact (from contact-detail page). When absent, a picker is shown. */
   @Input() contactPublicId = '';

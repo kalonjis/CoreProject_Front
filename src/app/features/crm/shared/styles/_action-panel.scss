@@ -1,9 +1,10 @@
-@import 'variables';
+@use "sass:color";
+@use 'variables';
 
 .action-panel {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -18,22 +19,22 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__hint {
     margin: 0;
     font-size: 0.85rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__error {
     margin: 0;
     font-size: 0.875rem;
-    color: $danger-color;
+    color: variables.$danger-color;
     padding: 0.4rem 0.75rem;
     background: #fee2e2;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
   }
 
   &__grid {
@@ -52,30 +53,30 @@
     label {
       font-size: 0.8rem;
       font-weight: 600;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
 
     select {
       padding: 0.5rem 0.75rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-size: 0.875rem;
       font-family: inherit;
       background: #fff;
       cursor: pointer;
 
-      &:focus { outline: none; border-color: $primary-color; }
+      &:focus { outline: none; border-color: variables.$primary-color; }
     }
 
     input, textarea {
       padding: 0.5rem 0.75rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-size: 0.875rem;
       font-family: inherit;
       resize: vertical;
 
-      &:focus { outline: none; border-color: $primary-color; }
+      &:focus { outline: none; border-color: variables.$primary-color; }
     }
   }
 
@@ -95,15 +96,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   padding: 1rem;
   animation: crm-fade-in 0.2s ease-out;
 }
 
 .crm-modal {
   background: #fff;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
   width: 100%;
   max-width: 560px;
   max-height: 90vh;
@@ -119,7 +120,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.125rem 1.5rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     position: sticky;
     top: 0;
     background: #fff;
@@ -130,23 +131,23 @@
     margin: 0;
     font-size: 1.05rem;
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__close {
     background: none;
     border: none;
     font-size: 1rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
     padding: 0.3rem 0.5rem;
-    border-radius: $border-radius-sm;
+    border-radius: variables.$border-radius-sm;
     line-height: 1;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
     &:hover {
-      background: $gray-light;
-      color: $dark-color;
+      background: variables.$gray-light;
+      color: variables.$dark-color;
     }
   }
 
@@ -155,22 +156,22 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.625rem 1.5rem;
-    background: $gray-light;
-    border-bottom: 1px solid $border-color;
+    background: variables.$gray-light;
+    border-bottom: 1px solid variables.$border-color;
     font-size: 0.8rem;
   }
 
   &__step {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-weight: 500;
 
     &--active {
-      color: $primary-color;
+      color: variables.$primary-color;
       font-weight: 600;
     }
   }
 
-  &__step-sep { color: $gray-dark; }
+  &__step-sep { color: variables.$gray-dark; }
 
   &__body {
     padding: 1.5rem;
@@ -188,13 +189,13 @@
 
   &__footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 0.625rem;
-    background: $gray-light;
-    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+    background: variables.$gray-light;
+    border-radius: 0 0 variables.$border-radius-lg variables.$border-radius-lg;
   }
 }
 
@@ -212,19 +213,20 @@
 
 .btn {
   padding: 0.5rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   border: 1px solid transparent;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  &--primary   { background: $primary-color;  color: #fff;        border-color: $primary-color;  &:hover:not(:disabled) { background: darken($primary-color, 8%); } }
-  &--secondary { background: $gray-medium;    color: $text-color; border-color: $border-color;   &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } }
-  &--danger         { background: $danger-color;   color: #fff;        border-color: $danger-color;   &:hover:not(:disabled) { background: darken($danger-color, 8%); } }
-  &--danger-outline { background: transparent;     color: $danger-color; border-color: $danger-color; &:hover:not(:disabled) { background: #fee2e2; } }
-  &--ghost     { background: transparent;     color: $gray-dark;  border-color: $border-color;   &:hover:not(:disabled) { color: $text-color; } }
+  &--primary   { background: variables.$primary-color;  color: #fff;        border-color: variables.$primary-color;  &:hover:not(:disabled) { background: color.adjust(variables.$primary-color, $lightness: -8%); } }
+  &--secondary { background: variables.$gray-medium;    color: variables.$text-color; border-color: variables.$border-color;   &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; } }
+  &--primary-outline { background: transparent; color: variables.$primary-color; border-color: variables.$primary-color; &:hover:not(:disabled) { background: color.adjust(variables.$primary-color, $lightness: 46%); } }
+  &--danger         { background: variables.$danger-color;   color: #fff;        border-color: variables.$danger-color;   &:hover:not(:disabled) { background: color.adjust(variables.$danger-color, $lightness: -8%); } }
+  &--danger-outline { background: transparent;     color: variables.$danger-color; border-color: variables.$danger-color; &:hover:not(:disabled) { background: #fee2e2; } }
+  &--ghost     { background: transparent;     color: variables.$gray-dark;  border-color: variables.$border-color;   &:hover:not(:disabled) { color: variables.$text-color; } }
   &--sm        { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
 }

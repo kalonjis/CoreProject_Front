@@ -11,6 +11,7 @@ import { OrganisationStatus, ORGANISATION_STATUS_LABELS } from '../../models/org
   templateUrl: './organisation-action-status.component.html',
   styleUrl: './organisation-action-status.component.scss'
 })
+/** Inline form for transitioning an organisation's lifecycle status. */
 export class OrganisationActionStatusComponent {
   @Input({ required: true }) publicId!: string;
   @Input({ required: true }) currentStatus!: OrganisationStatus;

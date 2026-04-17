@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .contact-list {
   &__header {
@@ -22,14 +22,14 @@
     align-items: center;
     gap: 0.625rem;
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
-    color: $dark-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$dark-color;
     margin: 0 0 0.2rem;
   }
 
   &__subtitle {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin: 0;
   }
 
@@ -37,11 +37,11 @@
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.55rem;
-    background: $gray-medium;
+    background: variables.$gray-medium;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__filters {
@@ -52,8 +52,8 @@
     margin-bottom: 1.25rem;
     padding: 0.75rem 1rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
 
     > input, > select { width: auto; }
   }
@@ -62,27 +62,27 @@
     flex: 1;
     max-width: 360px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__select {
     min-width: 140px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     background: #fff;
     cursor: pointer;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
-  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: $border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
+  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: variables.$border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; }
 
-  &__table-wrapper { background: #fff; border: 1px solid $border-color; border-radius: $border-radius-lg; overflow: visible; }
+  &__table-wrapper { background: #fff; border: 1px solid variables.$border-color; border-radius: variables.$border-radius-lg; overflow: visible; }
 
   &__table {
     width: 100%;
@@ -90,13 +90,13 @@
     font-size: 0.875rem;
 
     thead tr {
-      background: $gray-medium;
+      background: variables.$gray-medium;
       position: sticky;
       top: 0;
       z-index: 10;
 
-      th:first-child { border-radius: $border-radius-lg 0 0 0; }
-      th:last-child  { border-radius: 0 $border-radius-lg 0 0; }
+      th:first-child { border-radius: variables.$border-radius-lg 0 0 0; }
+      th:last-child  { border-radius: 0 variables.$border-radius-lg 0 0; }
     }
 
     th {
@@ -110,7 +110,7 @@
       white-space: nowrap;
     }
 
-    td { padding: 0.6rem 1rem; border-top: 1px solid $border-color; vertical-align: middle; }
+    td { padding: 0.6rem 1rem; border-top: 1px solid variables.$border-color; vertical-align: middle; }
   }
 
   &__th--sortable {
@@ -118,7 +118,7 @@
     user-select: none;
     transition: color 0.15s;
     &:hover { color: #64748b; }
-    &.contact-list__th--active { color: $primary-color; }
+    &.contact-list__th--active { color: variables.$primary-color; }
   }
 
   &__sort-icon {
@@ -128,33 +128,18 @@
     opacity: 0.25;
     transition: transform 0.2s ease, opacity 0.15s, color 0.15s;
 
-    &--active { opacity: 0.8; color: $primary-color; }
+    &--active { opacity: 0.8; color: variables.$primary-color; }
     &--asc    { transform: rotate(180deg); }
   }
 
-  &__row { cursor: pointer; transition: $transition-fast; &:hover td { background: #f8faff; } }
+  &__row { cursor: pointer; transition: variables.$transition-fast; &:hover td { background: #f8faff; } }
 
   &__contact-cell { display: flex; flex-direction: column; gap: 0.15rem; }
 
-  &__name  { font-weight: 600; color: $text-color; font-size: 0.875rem; }
-  &__email { font-size: 0.75rem; color: $gray-dark; }
+  &__name  { font-weight: 600; color: variables.$text-color; font-size: 0.875rem; }
+  &__email { font-size: 0.75rem; color: variables.$gray-dark; }
 
-  &__secondary { color: $gray-dark; font-size: 0.875rem; }
-
-  &__avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.875rem;
-    height: 1.875rem;
-    border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    user-select: none;
-  }
+  &__secondary { color: variables.$gray-dark; font-size: 0.875rem; }
 
   &__linked-badge {
     display: inline-block;
@@ -167,75 +152,7 @@
     border: 1px solid #bbf7d0;
   }
 
-  // ─── Assign popover ────────────────────────────────────────────────────────
-
   &__assign-cell { position: relative; }
-
-  &__assign-wrap { position: relative; display: inline-block; }
-
-  &__unassigned {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 500;
-    font-style: italic;
-    color: #b45309;
-    background: #fffbeb;
-    border: 1px dashed #fcd34d;
-    border-radius: 4px;
-    padding: 0.2rem 0.55rem;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-
-    &:hover { background: #fef3c7; border-color: #f59e0b; }
-  }
-
-  &__assign-popover {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    z-index: 100;
-    min-width: 180px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    padding: 0.25rem 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__assign-option {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.45rem 0.75rem;
-    background: none;
-    border: none;
-    text-align: left;
-    font-size: 0.8rem;
-    color: #1e293b;
-    cursor: pointer;
-    transition: background 0.1s;
-    &:hover { background: #f8fafc; }
-  }
-
-  &__assign-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.62rem;
-    font-weight: 700;
-  }
-
-  &__assign-empty { padding: 0.5rem 0.75rem; font-size: 0.8rem; color: #94a3b8; }
 
   // ─── Organisation link ─────────────────────────────────────────────────────
 
@@ -282,6 +199,6 @@
   }
 
   &__pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.25rem; }
-  &__page-btn { padding: 0.4rem 0.875rem; border: 1px solid $border-color; border-radius: $border-radius; background: #fff; cursor: pointer; font-size: 0.875rem; transition: $transition-fast; &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
-  &__page-info { font-size: 0.875rem; color: $gray-dark; }
+  &__page-btn { padding: 0.4rem 0.875rem; border: 1px solid variables.$border-color; border-radius: variables.$border-radius; background: #fff; cursor: pointer; font-size: 0.875rem; transition: variables.$transition-fast; &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
+  &__page-info { font-size: 0.875rem; color: variables.$gray-dark; }
 }

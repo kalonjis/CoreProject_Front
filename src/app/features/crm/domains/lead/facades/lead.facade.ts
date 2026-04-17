@@ -1,3 +1,10 @@
+/**
+ * Facade for the CRM Lead domain.
+ *
+ * Centralises reactive state (list, detail, commercial actions) and delegates
+ * all HTTP calls to {@link CrmLeadApiService} and {@link CrmCommercialActionApiService}.
+ * Scoped per component via {@code providers} — each lead page gets its own instance.
+ */
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { CrmLeadApiService }             from '../services/crm-lead-api.service';
 import { CrmCommercialActionApiService } from '../../commercial-action/services/crm-commercial-action-api.service';

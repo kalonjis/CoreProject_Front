@@ -9,6 +9,7 @@ import { CommercialActionCardComponent, CompleteEvent } from '../../components/c
   templateUrl: './commercial-action-list.component.html',
   styleUrl: './commercial-action-list.component.scss'
 })
+/** Page component listing the current user's commercial actions with status filtering. */
 export class CommercialActionListComponent implements OnInit {
 
   readonly facade = inject(CommercialActionFacade);

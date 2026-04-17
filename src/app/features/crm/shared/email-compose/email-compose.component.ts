@@ -1,3 +1,10 @@
+/**
+ * Rich-text email compose panel for CRM contexts.
+ *
+ * Wraps a {@link RichTextEditorComponent} (TipTap) with a subject field.
+ * Emits {@link send} with subject and HTML body when the user clicks Send.
+ * The parent is responsible for calling {@link reset} after the HTTP call completes.
+ */
 import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RichTextEditorComponent } from '../../../../shared/rich-text-editor/rich-text-editor.component';

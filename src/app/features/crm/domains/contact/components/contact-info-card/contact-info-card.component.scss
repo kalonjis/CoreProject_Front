@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables';
 
 .contact-info-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
     flex-direction: column;
     gap: 0.15rem;
     padding: 0.7rem 0;
-    border-bottom: 1px solid $gray-light;
+    border-bottom: 1px solid variables.$gray-light;
 
     &:last-child { border-bottom: none; }
   }
@@ -35,14 +35,14 @@
 
   &__value {
     font-size: 0.875rem;
-    color: $text-color;
+    color: variables.$text-color;
     margin: 0;
     font-weight: 500;
   }
 
   &__link {
     font-size: 0.875rem;
-    color: $primary-color;
+    color: variables.$primary-color;
     text-decoration: none;
     font-weight: 500;
 

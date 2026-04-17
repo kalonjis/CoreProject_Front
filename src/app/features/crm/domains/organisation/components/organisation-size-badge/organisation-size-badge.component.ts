@@ -21,6 +21,7 @@ import { OrganisationSize, ORGANISATION_SIZE_LABELS } from '../../models/organis
     }
   `]
 })
+/** Inline badge rendering an organisation's size tier label. */
 export class OrganisationSizeBadgeComponent {
   @Input({ required: true }) size!: OrganisationSize;
   readonly labels = ORGANISATION_SIZE_LABELS;

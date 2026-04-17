@@ -1,3 +1,8 @@
+/**
+ * Displays a colour-coded badge for a {@link SupportTicketStatus}.
+ *
+ * Each status (open, in-progress, resolved, closed) renders with a distinct style.
+ */
 import { Component, Input } from '@angular/core';
 import { SupportTicketStatus, SUPPORT_TICKET_STATUS_LABELS } from '../../models/support-ticket.model';
 

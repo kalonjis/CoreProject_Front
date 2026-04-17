@@ -1,13 +1,13 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .contact-detail {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
-  &__error   { text-align: center; padding: 2rem; color: $danger-color; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; }
+  &__error   { text-align: center; padding: 2rem; color: variables.$danger-color; }
 
   // ─── Header ──────────────────────────────────────────────────────────────────
 
@@ -17,7 +17,7 @@
     gap: 1rem;
     flex-wrap: wrap;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
   }
 
   &__back {
@@ -26,16 +26,16 @@
     padding: 0.25rem 0.5rem;
     cursor: pointer;
     font-size: 0.8125rem;
-    color: $gray-dark;
-    transition: $transition-fast;
+    color: variables.$gray-dark;
+    transition: variables.$transition-fast;
     white-space: nowrap;
-    border-radius: $border-radius;
-    &:hover { background: $gray-light; color: $primary-color; }
+    border-radius: variables.$border-radius;
+    &:hover { background: variables.$gray-light; color: variables.$primary-color; }
   }
 
   &__identity { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-  &__name { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; line-height: 1.2; }
-  &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
+  &__name { font-size: 1.5rem; font-weight: variables.$font-weight-bold; color: variables.$dark-color; margin: 0; line-height: 1.2; }
+  &__jobtitle { font-size: 0.875rem; color: variables.$gray-dark; }
   &__header-actions { display: flex; align-items: center; gap: 0.5rem; }
 
   // ─── Two-column layout ───────────────────────────────────────────────────────
@@ -67,8 +67,8 @@
 
   &__tags-section {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -79,7 +79,7 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-weight: 600;
     margin: 0;
   }
@@ -89,8 +89,8 @@
     flex-direction: column;
     gap: 0.25rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 0.5rem;
 
     .btn--sidebar-action {
@@ -99,36 +99,36 @@
       justify-content: flex-start;
       background: transparent;
       border: none;
-      color: $text-color;
+      color: variables.$text-color;
       font-size: 0.875rem;
       padding: 0.55rem 0.75rem;
-      border-radius: $border-radius;
+      border-radius: variables.$border-radius;
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      transition: $transition-fast;
+      transition: variables.$transition-fast;
 
       .action-icon {
         font-size: 0.9rem;
         width: 1.1rem;
         text-align: center;
         flex-shrink: 0;
-        color: $gray-dark;
+        color: variables.$gray-dark;
       }
 
       &:hover:not(:disabled) {
-        background: rgba($primary-color, 0.07);
-        color: $primary-color;
+        background: rgba(variables.$primary-color, 0.07);
+        color: variables.$primary-color;
 
-        .action-icon { color: $primary-color; }
+        .action-icon { color: variables.$primary-color; }
       }
 
       &--danger {
-        color: $danger-color;
-        .action-icon { color: $danger-color; }
+        color: variables.$danger-color;
+        .action-icon { color: variables.$danger-color; }
         &:hover:not(:disabled) {
           background: #fee2e2;
-          color: $danger-color;
+          color: variables.$danger-color;
         }
       }
     }
@@ -139,7 +139,7 @@
   &__tabs {
     display: flex;
     gap: 0;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 2px solid variables.$border-color;
   }
 
   &__tab {
@@ -150,13 +150,13 @@
     padding: 0.6rem 1.1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
     white-space: nowrap;
 
-    &:hover { color: $primary-color; }
-    &--active { color: $primary-color; border-bottom-color: $primary-color; }
+    &:hover { color: variables.$primary-color; }
+    &--active { color: variables.$primary-color; border-bottom-color: variables.$primary-color; }
   }
 
   &__tab-panel {
@@ -174,7 +174,7 @@
 
   &__actions-state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -190,8 +190,8 @@
 
   &__section-count {
     font-size: 0.8rem;
-    color: $gray-dark;
-    background: $gray-medium;
+    color: variables.$gray-dark;
+    background: variables.$gray-medium;
     padding: 0.15em 0.55em;
     border-radius: 999px;
     font-weight: 500;
@@ -200,7 +200,7 @@
 
   &__section-state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -220,11 +220,11 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.625rem 0.75rem;
-    border: 1px solid $gray-medium;
+    border: 1px solid variables.$gray-medium;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.15s;
-    &:hover { background: $gray-light; }
+    &:hover { background: variables.$gray-light; }
   }
 
   &__ticket-subject {
@@ -236,7 +236,7 @@
     white-space: nowrap;
   }
 
-  &__ticket-date { font-size: 0.75rem; color: $gray-dark; white-space: nowrap; }
+  &__ticket-date { font-size: 0.75rem; color: variables.$gray-dark; white-space: nowrap; }
 
   // ─── Responsive ──────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .today {
   padding: 1.5rem;
@@ -12,18 +12,18 @@
     margin: 0 0 0.2rem;
     font-size: 1.5rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__subtitle {
     margin: 0;
     font-size: 0.9rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     text-transform: capitalize;
   }
 
   &__loading {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     padding: 2rem 0;
     text-align: center;
     font-size: 0.9rem;
@@ -36,7 +36,7 @@
     padding: 3rem 1rem;
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
-    border-radius: $border-radius-lg;
+    border-radius: variables.$border-radius-lg;
     margin-bottom: 1.5rem;
   }
 
@@ -63,16 +63,16 @@
 
   &__section {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     overflow: hidden;
     margin-bottom: 1.25rem;
 
     &--danger  { border-left: 4px solid #ef4444; }
     &--warning { border-left: 4px solid #f97316; }
-    &--primary { border-left: 4px solid $primary-color; }
+    &--primary { border-left: 4px solid variables.$primary-color; }
     &--info    { border-left: 4px solid #3b82f6; }
-    &--neutral { border-left: 4px solid $gray-dark; }
+    &--neutral { border-left: 4px solid variables.$gray-dark; }
   }
 
   &__section-header {
@@ -80,7 +80,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.875rem 1.25rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     background: #fafafa;
   }
 
@@ -90,7 +90,7 @@
     gap: 0.5rem;
     font-size: 0.875rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -111,7 +111,7 @@
     &--warning { background: #ffedd5; color: #c2410c; }
     &--primary { background: #ede9fe; color: #5b21b6; }
     &--info    { background: #dbeafe; color: #1d4ed8; }
-    &--neutral { background: $gray-medium; color: $gray-dark; }
+    &--neutral { background: variables.$gray-medium; color: variables.$gray-dark; }
   }
 
   // ─── Cards ─────────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@
     gap: 1rem;
     cursor: pointer;
     transition: background 0.12s;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
 
     &:last-child { border-bottom: none; }
     &:hover { background: #f9fafb; }
@@ -156,7 +156,7 @@
   &__card-title {
     font-size: 0.875rem;
     font-weight: 600;
-    color: $text-color;
+    color: variables.$text-color;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -165,13 +165,13 @@
 
   &__card-sub {
     font-size: 0.78rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     white-space: nowrap;
   }
 
   &__card-date {
     font-size: 0.78rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     white-space: nowrap;
 
     &--overdue {
@@ -183,13 +183,13 @@
   &__card-amount {
     font-size: 0.82rem;
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
     white-space: nowrap;
   }
 
   &__card-arrow {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   // ─── Type badges (action types) ────────────────────────────────────────────
@@ -235,6 +235,6 @@
     &--open        { background: #dbeafe; color: #1d4ed8; }
     &--in_progress { background: #fef9c3; color: #854d0e; }
     &--resolved    { background: #d1fae5; color: #065f46; }
-    &--closed      { background: $gray-medium; color: $gray-dark; }
+    &--closed      { background: variables.$gray-medium; color: variables.$gray-dark; }
   }
 }

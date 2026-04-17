@@ -10,6 +10,7 @@ import { DealStatusBadgeComponent } from '../deal-status-badge/deal-status-badge
   templateUrl: './deal-mini-card.component.html',
   styleUrl: './deal-mini-card.component.scss'
 })
+/** Compact deal card showing title, amount, stage, status badge, and close date; navigates to deal detail on click. */
 export class DealMiniCardComponent {
 
   @Input({ required: true }) deal!: DealSummary;

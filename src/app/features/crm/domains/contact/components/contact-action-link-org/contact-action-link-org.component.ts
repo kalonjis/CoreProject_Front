@@ -10,6 +10,7 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
   templateUrl: './contact-action-link-org.component.html',
   styleUrl: './contact-action-link-org.component.scss'
 })
+/** Form for linking or unlinking a contact to an organisation, with confirmation before unlinking. */
 export class ContactActionLinkOrgComponent {
   @Input({ required: true }) publicId!: string;
   @Input() currentOrgPublicId: string | null = null;

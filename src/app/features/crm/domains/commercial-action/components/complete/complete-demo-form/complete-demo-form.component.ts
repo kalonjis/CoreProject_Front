@@ -9,6 +9,7 @@ import { InteractionOutcome } from '../../../../interaction/models/interaction.m
   templateUrl: './complete-demo-form.component.html',
   styleUrl:    './complete-demo-form.component.scss'
 })
+/** Completion form for DEMO-type commercial actions, capturing outcome and notes. */
 export class CompleteDemoFormComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest>();

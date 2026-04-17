@@ -1,3 +1,11 @@
+/**
+ * Domain models for the CRM Support Ticket domain.
+ *
+ * Covers enums (status, source), display label maps, allowed status transitions,
+ * API response interfaces (summary and detail), and request interfaces
+ * (create, update, change-status, assign, filter).
+ */
+
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 export enum SupportTicketStatus {

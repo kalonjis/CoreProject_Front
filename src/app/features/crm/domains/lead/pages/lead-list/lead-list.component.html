@@ -121,34 +121,14 @@
                   }
                 </td>
                 <td><app-lead-status-badge [status]="lead.status" /></td>
-                <td class="lead-list__assign-cell">
-                  @if (lead.assignedTo) {
-                    <div class="lead-list__avatar" [title]="lead.assignedTo">
-                      {{ initials(lead.assignedTo) }}
-                    </div>
-                  } @else {
-                    <div class="lead-list__assign-wrap">
-                      <span
-                        class="lead-list__unassigned"
-                        [class.lead-list__unassigned--pulse]="isOverdue(lead.submittedAt)"
-                        (click)="openAssignPopover($event, lead.publicId)"
-                      >À assigner</span>
-
-                      @if (popoverLeadId() === lead.publicId) {
-                        <div class="lead-list__assign-popover" (click)="$event.stopPropagation()">
-                          @for (c of commercials(); track c.publicId) {
-                            <button class="lead-list__assign-option" (click)="selectCommercial($event, lead, c)">
-                              <div class="lead-list__assign-avatar">{{ commercialInitials(c) }}</div>
-                              <span>{{ commercialDisplayName(c) }}</span>
-                            </button>
-                          }
-                          @if (commercials().length === 0) {
-                            <span class="lead-list__assign-empty">Chargement…</span>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
+                <td class="lead-list__assign-cell" (click)="$event.stopPropagation()">
+                  <app-crm-assign-popover
+                    [assigneeName]="lead.assignedTo"
+                    [commercials]="commercials()"
+                    [compact]="true"
+                    [pulse]="isOverdue(lead.submittedAt)"
+                    (selected)="onLeadAssigned(lead, $event)"
+                  />
                 </td>
                 <td class="lead-list__date-col">{{ lead.submittedAt | date:'dd/MM/yy HH:mm' }}</td>
               </tr>

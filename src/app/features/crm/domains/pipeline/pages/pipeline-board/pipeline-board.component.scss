@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables';
 
 .board {
   height: 100%;
@@ -21,27 +21,27 @@
 
   &__title {
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     margin: 0;
   }
 
   &__pipeline-select {
     font-size: 0.95rem;
     font-weight: 500;
-    color: $text-color;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    color: variables.$text-color;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     padding: 0.25rem 0.6rem;
     background: #fff;
     cursor: pointer;
     font-family: inherit;
 
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__name {
     font-size: 1rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__columns {
@@ -56,8 +56,8 @@
   &__column {
     flex: 0 0 240px;
     background: #f8fafc;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color;
+    border-radius: variables.$border-radius-lg;
+    border: 1px solid variables.$border-color;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 220px);
@@ -72,9 +72,9 @@
     justify-content: space-between;
     padding: 0.75rem 0.75rem 0.6rem;
     border-top: 3px solid transparent;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     background: #fff;
-    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    border-radius: variables.$border-radius-lg variables.$border-radius-lg 0 0;
   }
 
   &__col-header-left {
@@ -109,8 +109,8 @@
 
   &__col-count {
     font-size: 0.75rem;
-    background: $gray-medium;
-    color: $gray-dark;
+    background: variables.$gray-medium;
+    color: variables.$gray-dark;
     padding: 0.1em 0.5em;
     border-radius: 999px;
     font-weight: 600;
@@ -191,21 +191,21 @@
 
   &__card-placeholder {
     height: 72px;
-    border: 2px dashed $border-color;
-    border-radius: $border-radius;
+    border: 2px dashed variables.$border-color;
+    border-radius: variables.$border-radius;
     background: transparent;
   }
 
   &__empty {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     text-align: center;
     padding: 1rem 0;
   }
 
-  &__info  { color: $gray-dark; font-style: italic; }
-  &__error { color: $danger-color; }
+  &__info  { color: variables.$gray-dark; font-style: italic; }
+  &__error { color: variables.$danger-color; }
 }
 
 // CDK Drag-and-drop global styles
@@ -231,16 +231,16 @@
 }
 
 .cdk-drop-list-receiving {
-  background: rgba($primary-color, 0.04);
-  border-radius: $border-radius;
+  background: rgba(variables.$primary-color, 0.04);
+  border-radius: variables.$border-radius;
 }
 
 .btn--primary {
   padding: 0.45rem 1rem;
-  background: $primary-color;
+  background: variables.$primary-color;
   color: #fff;
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   cursor: pointer;
   &:hover { opacity: 0.88; }
@@ -250,7 +250,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -258,59 +258,59 @@
 
 .lost-modal {
   background: #fff;
-  border-radius: $border-radius-lg;
-  box-shadow: $box-shadow-lg;
-  padding: $spacer-4;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$box-shadow-lg;
+  padding: variables.$spacer-4;
   width: 100%;
   max-width: 480px;
 
   &__title {
     font-size: 1.1rem;
-    font-weight: $font-weight-bold;
-    color: $danger-color;
-    margin: 0 0 $spacer-1;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$danger-color;
+    margin: 0 0 variables.$spacer-1;
   }
 
   &__subtitle {
     font-size: 0.875rem;
-    color: $gray-dark;
-    margin: 0 0 $spacer-3;
+    color: variables.$gray-dark;
+    margin: 0 0 variables.$spacer-3;
   }
 
   &__field {
     display: flex;
     flex-direction: column;
-    gap: $spacer-1;
-    margin-bottom: $spacer-3;
+    gap: variables.$spacer-1;
+    margin-bottom: variables.$spacer-3;
   }
 
   &__label {
     font-size: 0.875rem;
-    font-weight: $font-weight-bold;
-    color: $text-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$text-color;
   }
 
   &__textarea {
     width: 100%;
     resize: vertical;
-    padding: $spacer-2;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    font-family: $font-family-base;
+    padding: variables.$spacer-2;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
+    font-family: variables.$font-family-base;
     font-size: 0.875rem;
-    line-height: $line-height-base;
+    line-height: variables.$line-height-base;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: $danger-color;
-      box-shadow: 0 0 0 2px rgba($danger-color, 0.15);
+      border-color: variables.$danger-color;
+      box-shadow: 0 0 0 2px rgba(variables.$danger-color, 0.15);
     }
   }
 
   &__footer {
     display: flex;
-    gap: $spacer-2;
+    gap: variables.$spacer-2;
     justify-content: flex-end;
   }
 }

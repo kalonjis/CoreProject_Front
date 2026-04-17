@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .contact-form {
   max-width: 700px;
@@ -11,25 +11,25 @@
 
   &__back {
     background: none;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     padding: 0.4rem 0.75rem;
     cursor: pointer;
     font-size: 0.875rem;
-    color: $gray-dark;
-    transition: $transition-fast;
+    color: variables.$gray-dark;
+    transition: variables.$transition-fast;
     white-space: nowrap;
-    &:hover { border-color: $primary-color; color: $primary-color; }
+    &:hover { border-color: variables.$primary-color; color: variables.$primary-color; }
   }
 
-  &__title { font-size: 1.25rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; }
+  &__title { font-size: 1.25rem; font-weight: variables.$font-weight-bold; color: variables.$dark-color; margin: 0; }
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; }
 
   &__card {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -49,16 +49,16 @@
 
     &--full { grid-column: 1 / -1; }
 
-    label { font-size: 0.8rem; font-weight: 600; color: $gray-dark; }
+    label { font-size: 0.8rem; font-weight: 600; color: variables.$gray-dark; }
 
     input, textarea {
       padding: 0.5rem 0.75rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-size: 0.875rem;
       font-family: inherit;
       resize: vertical;
-      &:focus { outline: none; border-color: $primary-color; }
+      &:focus { outline: none; border-color: variables.$primary-color; }
     }
   }
 

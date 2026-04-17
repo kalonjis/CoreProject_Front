@@ -81,9 +81,20 @@
 
         </div>
 
-        <!-- Modifications récentes -->
+        <!-- Revenus mensuels -->
+        <div class="dash__card dash__card--chart">
+          <div class="dash__chart-header">
+            <span class="dash__chart-title">Revenus mensuels</span>
+            <span class="dash__chart-sub">12 derniers mois</span>
+          </div>
+          <div class="dash__chart-body">
+            <app-revenue-chart [data]="revenueHistory()" />
+          </div>
+        </div>
+
+        <!-- Activité récente -->
         <div class="dash__card">
-          <app-change-log-widget />
+          <app-activity-feed />
         </div>
 
       </div>

@@ -1,5 +1,7 @@
 <div class="lead-info-card">
-  <div class="lead-info-card__row">
+
+  <!-- Statut + Type côte à côte -->
+  <div class="lead-info-card__row lead-info-card__row--two-col">
     <div class="lead-info-card__field">
       <span class="lead-info-card__label">Statut</span>
       <app-lead-status-badge [status]="lead.status" />
@@ -8,64 +10,57 @@
       <span class="lead-info-card__label">Type</span>
       <app-lead-type-badge [type]="lead.leadType" />
     </div>
+  </div>
+
+  <!-- Assigné à + Source -->
+  <div class="lead-info-card__row lead-info-card__row--two-col">
     <div class="lead-info-card__field">
       <span class="lead-info-card__label">Assigné à</span>
-      @if (lead.assignedToUsername) {
-        <div class="lead-info-card__assignee">
-          <span class="lead-info-card__avatar">{{ initials(lead.assignedToUsername) }}</span>
-          <span class="lead-info-card__value">{{ lead.assignedToUsername }}</span>
-        </div>
-      } @else {
-        <span class="lead-info-card__value">—</span>
-      }
+      <app-crm-assign-popover
+        [assigneeName]="lead.assignedToUsername"
+        [commercials]="commercials()"
+        [compact]="false"
+        (selected)="onAssigneeSelected($event)"
+      />
     </div>
     <div class="lead-info-card__field">
       <span class="lead-info-card__label">Source</span>
       <span class="lead-info-card__value">{{ lead.leadSource ? leadSourceLabels[lead.leadSource] : '—' }}</span>
     </div>
-    <div class="lead-info-card__field">
-      <span class="lead-info-card__label">Soumis le</span>
-      <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-    </div>
-    @if (lead.convertedAt) {
-      <div class="lead-info-card__field">
-        <span class="lead-info-card__label">Converti le</span>
-        <span class="lead-info-card__value">{{ lead.convertedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-      </div>
-    }
-    <div class="lead-info-card__field">
-      <span class="lead-info-card__label">Mis à jour</span>
-      <span class="lead-info-card__value">{{ lead.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-    </div>
   </div>
 
-  @if (lead.civility || lead.firstName || lead.lastName || lead.phone || lead.organisationName) {
-    <div class="lead-info-card__row">
-      @if (lead.civility || lead.firstName || lead.lastName) {
-        <div class="lead-info-card__field">
-          <span class="lead-info-card__label">Nom</span>
-          <span class="lead-info-card__value">
-            @if (lead.civility) { {{ civilityLabels[lead.civility] }} }
-            {{ lead.firstName }} {{ lead.lastName }}
-          </span>
-        </div>
-      }
-      @if (lead.phone) {
-        <div class="lead-info-card__field">
-          <span class="lead-info-card__label">Téléphone</span>
-          <span class="lead-info-card__value">{{ lead.phone }}</span>
-        </div>
-      }
-      @if (lead.organisationName) {
-        <div class="lead-info-card__field">
-          <span class="lead-info-card__label">Entreprise</span>
-          <span class="lead-info-card__value">{{ lead.organisationName }}</span>
-        </div>
-      }
+  <!-- Coordonnées de contact -->
+  @if (lead.organisationName) {
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Entreprise</span>
+      <span class="lead-info-card__value">{{ lead.organisationName }}</span>
+    </div>
+  }
+  @if (lead.phone) {
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Téléphone</span>
+      <span class="lead-info-card__value">{{ lead.phone }}</span>
     </div>
   }
 
+  <div class="lead-info-card__divider"></div>
+  <div class="lead-info-card__field">
+    <span class="lead-info-card__label">Soumis le</span>
+    <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy' }}</span>
+  </div>
+  @if (lead.convertedAt) {
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Converti le</span>
+      <span class="lead-info-card__value">{{ lead.convertedAt | date:'dd/MM/yyyy' }}</span>
+    </div>
+  }
+  <div class="lead-info-card__field">
+    <span class="lead-info-card__label">Mis à jour</span>
+    <span class="lead-info-card__value">{{ lead.updatedAt | date:'dd/MM/yyyy' }}</span>
+  </div>
+
   @if (lead.rejectionReason) {
+    <div class="lead-info-card__divider"></div>
     <div class="lead-info-card__rejection">
       <span class="lead-info-card__label">Motif de rejet</span>
       <p class="lead-info-card__value lead-info-card__value--danger">{{ lead.rejectionReason }}</p>
