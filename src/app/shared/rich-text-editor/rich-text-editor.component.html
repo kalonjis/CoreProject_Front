@@ -3,15 +3,35 @@
   <!-- ── Toolbar ─────────────────────────────────────────────────────────── -->
   <div class="rte__toolbar" role="toolbar" aria-label="Formatting options">
 
+    <button type="button" class="rte__btn" [class.rte__btn--active]="isH2()"
+            (click)="toggleH2()" title="Titre H2">
+      H2
+    </button>
+    <button type="button" class="rte__btn" [class.rte__btn--active]="isH3()"
+            (click)="toggleH3()" title="Titre H3">
+      H3
+    </button>
+
+    <span class="rte__separator" aria-hidden="true"></span>
+
     <button type="button" class="rte__btn" [class.rte__btn--active]="isBold()"
             (click)="toggleBold()" title="Gras (Ctrl+B)">
       <strong>B</strong>
     </button>
-
     <button type="button" class="rte__btn" [class.rte__btn--active]="isItalic()"
             (click)="toggleItalic()" title="Italique (Ctrl+I)">
       <em>I</em>
     </button>
+    <button type="button" class="rte__btn rte__btn--underline" [class.rte__btn--active]="isUnderline()"
+            (click)="toggleUnderline()" title="Souligné (Ctrl+U)">
+      U
+    </button>
+    <button type="button" class="rte__btn rte__btn--strike" [class.rte__btn--active]="isStrike()"
+            (click)="toggleStrike()" title="Barré">
+      S
+    </button>
+
+    <span class="rte__separator" aria-hidden="true"></span>
 
     <button type="button" class="rte__btn" [class.rte__btn--active]="isLink()"
             (click)="toggleLink()" title="Lien">
@@ -24,11 +44,15 @@
             (click)="toggleBulletList()" title="Liste à puces">
       &#8226;&#8212;
     </button>
-
     <button type="button" class="rte__btn" [class.rte__btn--active]="isOrderedList()"
             (click)="toggleOrderedList()" title="Liste numérotée">
       1.
     </button>
+
+    <span class="rte__separator" aria-hidden="true"></span>
+
+    <button type="button" class="rte__btn" (click)="undo()" title="Annuler (Ctrl+Z)">↩</button>
+    <button type="button" class="rte__btn" (click)="redo()" title="Rétablir (Ctrl+Y)">↪</button>
 
   </div>
 

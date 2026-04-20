@@ -53,6 +53,16 @@ export class CrmTagApiService {
     return this.http.delete<void>(`${this.base}/${tagPublicId}/deals/${dealPublicId}`);
   }
 
+  /** Links a tag to a lead. */
+  addToLead(tagPublicId: string, leadPublicId: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/${tagPublicId}/leads/${leadPublicId}`, {});
+  }
+
+  /** Removes a tag from a lead. */
+  removeFromLead(tagPublicId: string, leadPublicId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${tagPublicId}/leads/${leadPublicId}`);
+  }
+
   /** Links a tag to an organisation. */
   addToOrganisation(tagPublicId: string, organisationPublicId: string): Observable<void> {
     return this.http.post<void>(`${this.base}/${tagPublicId}/organisations/${organisationPublicId}`, {});

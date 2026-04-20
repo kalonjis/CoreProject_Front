@@ -92,6 +92,8 @@ export interface LeadSummary {
   convertedAt: string | null;
 }
 
+import { Tag } from '../../tag/models/tag.model';
+
 export interface LeadDetail {
   publicId: string;
   email: string;
@@ -99,6 +101,7 @@ export interface LeadDetail {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  jobTitle: string | null;
   organisationName: string | null;
   subject: string;
   message: string | null;
@@ -113,6 +116,7 @@ export interface LeadDetail {
   createdAt: string;
   updatedAt: string;
   existingContactPublicId: string | null;
+  tags: Tag[];
 }
 
 // ─── Request models ────────────────────────────────────────────────────────────
@@ -134,6 +138,7 @@ export interface EnrichLeadRequest {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string | null;
+  jobTitle?: string | null;
   organisationName?: string | null;
   leadType?: LeadType | null;
   leadSource?: LeadSource | null;

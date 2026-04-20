@@ -35,6 +35,11 @@
           </div>
 
           <div class="action-panel__row">
+            <label for="enrich-jobtitle">Poste</label>
+            <input id="enrich-jobtitle" type="text" [(ngModel)]="jobTitle" placeholder="Ex: Directeur médical" maxlength="150" />
+          </div>
+
+          <div class="action-panel__row">
             <label for="enrich-org">Entreprise</label>
             <input id="enrich-org" type="text" [(ngModel)]="organisationName" placeholder="Nom de l'entreprise" maxlength="200" />
           </div>

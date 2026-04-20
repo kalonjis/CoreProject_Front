@@ -76,4 +76,8 @@ export class CrmLeadApiService {
   reject(publicId: string, body: RejectLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/reject`, body);
   }
+
+  sendEmail(publicId: string, body: { subject: string; body: string }): Observable<void> {
+    return this.http.post<void>(`${this.base}/${publicId}/email`, body);
+  }
 }

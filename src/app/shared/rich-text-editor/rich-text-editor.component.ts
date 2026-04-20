@@ -13,6 +13,7 @@ import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
 
 /**
  * Headless rich-text editor built on TipTap (ProseMirror).
@@ -61,9 +62,13 @@ export class RichTextEditorComponent
 
   readonly isBold        = signal(false);
   readonly isItalic      = signal(false);
+  readonly isUnderline   = signal(false);
+  readonly isStrike      = signal(false);
   readonly isBulletList  = signal(false);
   readonly isOrderedList = signal(false);
   readonly isLink        = signal(false);
+  readonly isH2          = signal(false);
+  readonly isH3          = signal(false);
 
   // ── ControlValueAccessor callbacks ───────────────────────────────────────
 
@@ -77,6 +82,7 @@ export class RichTextEditorComponent
       element: this.editorEl.nativeElement,
       extensions: [
         StarterKit,
+        Underline,
         Link.configure({ openOnClick: false, autolink: true }),
         Placeholder.configure({ placeholder: this.placeholder }),
       ],
@@ -119,8 +125,14 @@ export class RichTextEditorComponent
 
   toggleBold(): void        { this.editor?.chain().focus().toggleBold().run(); }
   toggleItalic(): void      { this.editor?.chain().focus().toggleItalic().run(); }
+  toggleUnderline(): void   { this.editor?.chain().focus().toggleUnderline().run(); }
+  toggleStrike(): void      { this.editor?.chain().focus().toggleStrike().run(); }
   toggleBulletList(): void  { this.editor?.chain().focus().toggleBulletList().run(); }
   toggleOrderedList(): void { this.editor?.chain().focus().toggleOrderedList().run(); }
+  toggleH2(): void          { this.editor?.chain().focus().toggleHeading({ level: 2 }).run(); }
+  toggleH3(): void          { this.editor?.chain().focus().toggleHeading({ level: 3 }).run(); }
+  undo(): void              { this.editor?.chain().focus().undo().run(); }
+  redo(): void              { this.editor?.chain().focus().redo().run(); }
 
   /**
    * Toggles a hyperlink on the current selection.
@@ -144,8 +156,12 @@ export class RichTextEditorComponent
   private syncToolbar(editor: Editor): void {
     this.isBold.set(editor.isActive('bold'));
     this.isItalic.set(editor.isActive('italic'));
+    this.isUnderline.set(editor.isActive('underline'));
+    this.isStrike.set(editor.isActive('strike'));
     this.isBulletList.set(editor.isActive('bulletList'));
     this.isOrderedList.set(editor.isActive('orderedList'));
     this.isLink.set(editor.isActive('link'));
+    this.isH2.set(editor.isActive('heading', { level: 2 }));
+    this.isH3.set(editor.isActive('heading', { level: 3 }));
   }
 }

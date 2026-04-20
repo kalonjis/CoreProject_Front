@@ -110,15 +110,13 @@
               </td>
               <td class="ticket-list__secondary">{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
               <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
-              <td>
-                @if (ticket.assignedToUsername) {
-                  <div class="ticket-list__assignee">
-                    <span class="ticket-list__avatar">{{ initials(ticket.assignedToUsername) }}</span>
-                    <span class="ticket-list__secondary">{{ ticket.assignedToUsername }}</span>
-                  </div>
-                } @else {
-                  <span class="ticket-list__secondary">—</span>
-                }
+              <td (click)="$event.stopPropagation()">
+                <app-crm-assign-popover
+                  [assigneeName]="ticket.assignedToUsername"
+                  [commercials]="commercials()"
+                  [compact]="true"
+                  (selected)="assignInList(ticket, $event)"
+                />
               </td>
               <td class="ticket-list__secondary ticket-list__date-col">{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>
             </tr>

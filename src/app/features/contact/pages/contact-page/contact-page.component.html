@@ -91,15 +91,41 @@
 
       </div>
 
-      <!-- Phone / Organisation (contact mode only) -->
-      @if (!isSupportMode()) {
-        <div class="form-row">
+      <!-- Email / Phone -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <input type="email" id="email" formControlName="email"
+            placeholder="votre@email.com" autocomplete="email">
+          @if (f['email'].invalid && f['email'].touched) {
+            <div class="validation-error">
+              @if (f['email'].errors?.['required']) { L'adresse email est requise }
+              @else if (f['email'].errors?.['email']) { Veuillez entrer une adresse email valide }
+              @else if (f['email'].errors?.['maxlength']) { L'email ne peut pas dépasser 254 caractères }
+            </div>
+          }
+        </div>
+        @if (!isSupportMode()) {
           <div class="form-group">
             <label for="phone">Téléphone <span class="optional">(optionnel)</span></label>
             <input type="tel" id="phone" formControlName="phone"
               placeholder="+32 470 00 00 00" autocomplete="tel">
             @if (f['phone'].invalid && f['phone'].touched) {
               <div class="validation-error">Le téléphone ne peut pas dépasser 20 caractères</div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Poste / Entreprise (contact mode only) -->
+      @if (!isSupportMode()) {
+        <div class="form-row">
+          <div class="form-group">
+            <label for="jobTitle">Poste <span class="optional">(optionnel)</span></label>
+            <input type="text" id="jobTitle" formControlName="jobTitle"
+              placeholder="Ex: Directeur médical" autocomplete="organization-title">
+            @if (f['jobTitle'].invalid && f['jobTitle'].touched) {
+              <div class="validation-error">Le poste ne peut pas dépasser 150 caractères</div>
             }
           </div>
           <div class="form-group">
@@ -112,20 +138,6 @@
           </div>
         </div>
       }
-
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email <span class="required">*</span></label>
-        <input type="email" id="email" formControlName="email"
-          placeholder="votre@email.com" autocomplete="email">
-        @if (f['email'].invalid && f['email'].touched) {
-          <div class="validation-error">
-            @if (f['email'].errors?.['required']) { L'adresse email est requise }
-            @else if (f['email'].errors?.['email']) { Veuillez entrer une adresse email valide }
-            @else if (f['email'].errors?.['maxlength']) { L'email ne peut pas dépasser 254 caractères }
-          </div>
-        }
-      </div>
 
       <!-- Support: subject field -->
       @if (isSupportMode()) {
@@ -162,6 +174,7 @@
           @else { <span class="optional">(optionnel)</span> }
         </label>
         <textarea id="message" formControlName="message" rows="6"
+          [maxlength]="messageMaxLength()"
           [placeholder]="isSupportMode()
             ? 'Décrivez votre problème en détail (étapes pour reproduire, message d\'erreur...)'
             : 'Votre message...'">
@@ -170,11 +183,11 @@
           <div class="validation-error">
             @if (f['message'].errors?.['required']) { Le message est requis }
             @else if (f['message'].errors?.['minlength']) { Le message doit contenir au moins 10 caractères }
-            @else if (f['message'].errors?.['maxlength']) { Le message ne peut pas dépasser 5000 caractères }
+            @else { Le message ne peut pas dépasser {{ messageMaxLength() }} caractères }
           </div>
         }
         <div class="char-count">
-          {{ f['message'].value?.length || 0 }} / 5000
+          {{ f['message'].value?.length || 0 }} / {{ messageMaxLength() }}
         </div>
       </div>
 

@@ -1,15 +1,12 @@
-import { Component, OnInit, inject, signal, effect } from '@angular/core';
+import { Component, OnInit, inject, signal, effect, computed, HostListener, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ContactFacade }    from '../../facades/contact.facade';
 import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
-import { AuthStore }        from '../../../../../../core/auth/state/auth.store';
 import { CrmContactApiService }            from '../../services/crm-contact-api.service';
 import { CrmTagApiService }                from '../../../tag/services/crm-tag-api.service';
 import { CrmSupportTicketApiService }      from '../../../support-ticket/services/crm-support-ticket-api.service';
 import { ContactInfoCardComponent }        from '../../components/contact-info-card/contact-info-card.component';
-import { ContactActionStatusComponent }    from '../../components/contact-action-status/contact-action-status.component';
-import { ContactActionLinkOrgComponent }   from '../../components/contact-action-link-org/contact-action-link-org.component';
 import { ContactActionMergeComponent }     from '../../components/contact-action-merge/contact-action-merge.component';
 import { InteractionTimelineComponent }    from '../../../interaction/components/interaction-timeline/interaction-timeline.component';
 import { InteractionLogFormComponent }     from '../../../interaction/components/interaction-log-form/interaction-log-form.component';
@@ -18,7 +15,6 @@ import { CommercialActionFormComponent }   from '../../../commercial-action/comp
 import { DealActionCreateComponent }       from '../../../deal/components/deal-action-create/deal-action-create.component';
 import { DealMiniCardComponent }           from '../../../deal/components/deal-mini-card/deal-mini-card.component';
 import { CrmEmptyStateComponent }          from '../../../../shared/empty-state/crm-empty-state.component';
-import { TagInputComponent }               from '../../../tag/components/tag-input/tag-input.component';
 import { EmailComposeComponent, EmailComposeSubmit } from '../../../../shared/email-compose/email-compose.component';
 import { ChangeLogListComponent }          from '../../../crm-change-log/components/change-log-list/change-log-list.component';
 import { SupportTicketStatusBadgeComponent } from '../../../support-ticket/components/support-ticket-status-badge/support-ticket-status-badge.component';
@@ -27,7 +23,7 @@ import { Tag }                             from '../../../tag/models/tag.model';
 import { SupportTicketSummary }            from '../../../support-ticket/models/support-ticket.model';
 
 /** Union of inline action panels that can be shown on the contact detail page. */
-type ActiveAction = 'status' | 'link-org' | 'merge' | null;
+type ActiveAction = 'merge' | null;
 /** Tab identifiers for the contact detail tabbed view. */
 type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modifications';
 
@@ -36,8 +32,6 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modification
   providers: [ContactFacade, InteractionFacade],
   imports: [
     ContactInfoCardComponent,
-    ContactActionStatusComponent,
-    ContactActionLinkOrgComponent,
     ContactActionMergeComponent,
     InteractionTimelineComponent,
     InteractionLogFormComponent,
@@ -46,7 +40,6 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modification
     DealActionCreateComponent,
     DealMiniCardComponent,
     CrmEmptyStateComponent,
-    TagInputComponent,
     EmailComposeComponent,
     ChangeLogListComponent,
     SupportTicketStatusBadgeComponent,
@@ -66,25 +59,51 @@ export class ContactDetailComponent implements OnInit {
 
   private readonly route       = inject(ActivatedRoute);
   private readonly router      = inject(Router);
-  private readonly authStore   = inject(AuthStore);
   private readonly contactApi  = inject(CrmContactApiService);
   private readonly tagApi      = inject(CrmTagApiService);
   private readonly ticketApi   = inject(CrmSupportTicketApiService);
 
-  readonly activeTab       = signal<ContactTab>('activite');
-  readonly activeAction    = signal<ActiveAction>(null);
-  readonly showLogForm     = signal(false);
-  readonly showActionForm  = signal(false);
-  readonly showDealCreate  = signal(false);
+  readonly activeTab        = signal<ContactTab>('activite');
+  readonly activeAction     = signal<ActiveAction>(null);
+  readonly showLogForm      = signal(false);
+  readonly showActionForm   = signal(false);
+  readonly showDealCreate   = signal(false);
   readonly showEmailCompose = signal(false);
+  readonly showTagPopover   = signal(false);
 
   readonly deals          = signal<DealSummary[]>([]);
   readonly dealsLoading   = signal(false);
   readonly tickets        = signal<SupportTicketSummary[]>([]);
   readonly ticketsLoading = signal(false);
   readonly tags           = signal<Tag[]>([]);
+  readonly allTags        = signal<Tag[]>([]);
+  readonly tagQuery       = signal('');
+
+  readonly filteredTags = computed(() => {
+    const q       = this.tagQuery().toLowerCase().trim();
+    const applied = this.tags();
+    const pool    = this.allTags().filter(t => !applied.some(a => a.publicId === t.publicId));
+    return q ? pool.filter(t => t.name.toLowerCase().includes(q)) : pool;
+  });
+
+  readonly canCreateTag = computed(() => {
+    const q = this.tagQuery().trim().toLowerCase();
+    return q.length > 0 && !this.allTags().some(t => t.name.toLowerCase() === q);
+  });
+
+  readonly displayedTags = computed(() => {
+    const tags = this.filteredTags();
+    return this.tagQuery() ? tags : tags.slice(0, 8);
+  });
 
   private publicId = '';
+
+  private readonly elRef = inject(ElementRef);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(e: MouseEvent): void {
+    if (!this.elRef.nativeElement.contains(e.target)) this.showTagPopover.set(false);
+  }
 
   constructor() {
     effect(() => {
@@ -93,13 +112,12 @@ export class ContactDetailComponent implements OnInit {
     });
   }
 
-  get currentUserPublicId(): string { return this.authStore.user()?.publicId ?? ''; }
-
   ngOnInit(): void {
     this.publicId = this.route.snapshot.paramMap.get('publicId')!;
     this.facade.loadDetail(this.publicId);
     this.loadDeals();
     this.loadTickets();
+    this.tagApi.findAll().subscribe(tags => this.allTags.set(tags));
   }
 
   private loadDeals(): void {
@@ -154,13 +172,24 @@ export class ContactDetailComponent implements OnInit {
     this.loadDeals();
   }
 
-  onTagAdded(tag: Tag): void {
-    this.tagApi.addToContact(tag.publicId, this.publicId).subscribe(() =>
-      this.tags.update(list => [...list, tag])
-    );
+  selectTag(tag: Tag): void {
+    this.tagApi.addToContact(tag.publicId, this.publicId).subscribe(() => {
+      this.tags.update(list => [...list, tag]);
+      this.tagQuery.set('');
+      this.showTagPopover.set(false);
+    });
   }
 
-  onTagRemoved(tag: Tag): void {
+  createAndAddTag(): void {
+    const name = this.tagQuery().trim();
+    if (!name) return;
+    this.tagApi.create({ name }).subscribe(tag => {
+      this.allTags.update(list => [...list, tag].sort((a, b) => a.name.localeCompare(b.name)));
+      this.selectTag(tag);
+    });
+  }
+
+  removeTag(tag: Tag): void {
     this.tagApi.removeFromContact(tag.publicId, this.publicId).subscribe(() =>
       this.tags.update(list => list.filter(t => t.publicId !== tag.publicId))
     );

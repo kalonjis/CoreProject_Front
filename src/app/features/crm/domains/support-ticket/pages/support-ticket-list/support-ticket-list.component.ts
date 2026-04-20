@@ -24,21 +24,29 @@ import { CrmEmptyStateComponent } from '../../../../shared/empty-state/crm-empty
 import { ContactPickerComponent, ContactPickerValue } from '../../../../shared/pickers/contact-picker/contact-picker.component';
 import { CommercialPickerComponent } from '../../../../shared/pickers/commercial-picker/commercial-picker.component';
 import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
+import { CrmAssignPopoverComponent } from '../../../../shared/components/assign-popover/crm-assign-popover.component';
+import { CrmUserApiService } from '../../../../shared/services/crm-user-api.service';
+import { CommercialSummary } from '../../../../shared/models/commercial.model';
+import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 
 @Component({
   selector: 'app-support-ticket-list',
   imports: [FormsModule, DatePipe, SupportTicketStatusBadgeComponent, CrmEmptyStateComponent,
-            ContactPickerComponent, CommercialPickerComponent, OrganisationPickerComponent],
+            ContactPickerComponent, CommercialPickerComponent, OrganisationPickerComponent,
+            CrmAssignPopoverComponent],
   templateUrl: './support-ticket-list.component.html',
   styleUrl: './support-ticket-list.component.scss'
 })
 export class SupportTicketListComponent implements OnInit {
 
-  private readonly api    = inject(CrmSupportTicketApiService);
-  private readonly router = inject(Router);
+  private readonly api      = inject(CrmSupportTicketApiService);
+  private readonly userApi  = inject(CrmUserApiService);
+  private readonly feedback = inject(FeedbackService);
+  private readonly router   = inject(Router);
 
-  readonly page    = signal<Page<SupportTicketSummary> | null>(null);
-  readonly loading = signal(false);
+  readonly page        = signal<Page<SupportTicketSummary> | null>(null);
+  readonly loading     = signal(false);
+  readonly commercials = signal<CommercialSummary[]>([]);
 
   // Filters
   keyword                 = '';
@@ -60,7 +68,13 @@ export class SupportTicketListComponent implements OnInit {
   readonly sourceLabels  = SUPPORT_TICKET_SOURCE_LABELS;
   readonly SupportTicketSource = SupportTicketSource;
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.load();
+    this.userApi.getCommercials().subscribe({
+      next: list => this.commercials.set(list),
+      error: ()   => this.feedback.showError('Impossible de charger les commerciaux.')
+    });
+  }
 
   load(): void {
     this.loading.set(true);
@@ -76,6 +90,17 @@ export class SupportTicketListComponent implements OnInit {
     this.api.findAll(filter, this.currentPage, this.pageSize).subscribe({
       next: p => { this.page.set(p); this.loading.set(false); },
       error: () => this.loading.set(false)
+    });
+  }
+
+  assignInList(ticket: SupportTicketSummary, commercial: CommercialSummary): void {
+    const prev = ticket.assignedToUsername;
+    ticket.assignedToUsername = commercial.username;
+    this.api.assign(ticket.publicId, { assignedToPublicId: commercial.publicId }).subscribe({
+      error: () => {
+        ticket.assignedToUsername = prev;
+        this.feedback.showError('Erreur lors de l\'assignation.');
+      }
     });
   }
 
@@ -110,8 +135,4 @@ export class SupportTicketListComponent implements OnInit {
   }
 
   newTicket(): void { this.router.navigate(['/crm/support-tickets/new']); }
-
-  initials(name: string): string {
-    return name.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
-  }
 }

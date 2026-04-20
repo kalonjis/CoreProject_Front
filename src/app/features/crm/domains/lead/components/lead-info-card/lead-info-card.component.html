@@ -29,24 +29,16 @@
     </div>
   </div>
 
-  <!-- Coordonnées de contact -->
-  @if (lead.organisationName) {
-    <div class="lead-info-card__field">
-      <span class="lead-info-card__label">Entreprise</span>
-      <span class="lead-info-card__value">{{ lead.organisationName }}</span>
-    </div>
-  }
-  @if (lead.phone) {
-    <div class="lead-info-card__field">
-      <span class="lead-info-card__label">Téléphone</span>
-      <span class="lead-info-card__value">{{ lead.phone }}</span>
-    </div>
-  }
-
   <div class="lead-info-card__divider"></div>
-  <div class="lead-info-card__field">
-    <span class="lead-info-card__label">Soumis le</span>
-    <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy' }}</span>
+  <div class="lead-info-card__row lead-info-card__row--two-col">
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Soumis le</span>
+      <span class="lead-info-card__value">{{ lead.submittedAt | date:'dd/MM/yyyy' }}</span>
+    </div>
+    <div class="lead-info-card__field">
+      <span class="lead-info-card__label">Mis à jour</span>
+      <span class="lead-info-card__value">{{ lead.updatedAt | date:'dd/MM/yyyy' }}</span>
+    </div>
   </div>
   @if (lead.convertedAt) {
     <div class="lead-info-card__field">
@@ -54,10 +46,6 @@
       <span class="lead-info-card__value">{{ lead.convertedAt | date:'dd/MM/yyyy' }}</span>
     </div>
   }
-  <div class="lead-info-card__field">
-    <span class="lead-info-card__label">Mis à jour</span>
-    <span class="lead-info-card__value">{{ lead.updatedAt | date:'dd/MM/yyyy' }}</span>
-  </div>
 
   @if (lead.rejectionReason) {
     <div class="lead-info-card__divider"></div>

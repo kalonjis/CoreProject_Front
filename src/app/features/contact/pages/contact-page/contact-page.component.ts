@@ -33,9 +33,10 @@ export class ContactPageComponent implements OnInit {
   private readonly detectedSource: LeadSource = this.resolveLeadSource();
 
   // State
-  isSubmitting  = signal(false);
-  formError     = signal<string | null>(null);
-  isSupportMode = signal(false);
+  isSubmitting    = signal(false);
+  formError       = signal<string | null>(null);
+  isSupportMode   = signal(false);
+  messageMaxLength = signal(1000);
 
   // Options
   readonly leadTypes      = Object.values(LeadType);
@@ -50,11 +51,12 @@ export class ContactPageComponent implements OnInit {
     firstName:        ['', [Validators.maxLength(100)]],
     lastName:         ['', [Validators.maxLength(100)]],
     phone:            ['', [Validators.maxLength(20)]],
+    jobTitle:         ['', [Validators.maxLength(150)]],
     organisationName: ['', [Validators.maxLength(200)]],
     email:            ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
     leadType:         [LeadType.GENERAL, [Validators.required]],
     subject:          ['', [Validators.maxLength(255)]],
-    message:          ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
+    message:          ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
     confirmEmail:     ['']
   });
 
@@ -104,6 +106,7 @@ export class ContactPageComponent implements OnInit {
       firstName:        trim('firstName'),
       lastName:         trim('lastName'),
       phone:            trim('phone'),
+      jobTitle:         trim('jobTitle'),
       organisationName: trim('organisationName'),
       message:          this.contactForm.get('message')!.value.trim(),
       leadType:         this.contactForm.get('leadType')!.value,
@@ -163,14 +166,16 @@ export class ContactPageComponent implements OnInit {
       firstName.setValidators([Validators.required, Validators.maxLength(50)]);
       lastName.setValidators([Validators.required, Validators.maxLength(50)]);
       subject.setValidators([Validators.required, Validators.maxLength(255)]);
-      message.setValidators([Validators.maxLength(5000)]);
+      message.setValidators([Validators.maxLength(3000)]);
       leadType.clearValidators();
+      this.messageMaxLength.set(3000);
     } else {
       firstName.setValidators([Validators.maxLength(100)]);
       lastName.setValidators([Validators.maxLength(100)]);
       subject.clearValidators();
-      message.setValidators([Validators.required, Validators.minLength(10), Validators.maxLength(5000)]);
+      message.setValidators([Validators.required, Validators.minLength(10), Validators.maxLength(1000)]);
       leadType.setValidators([Validators.required]);
+      this.messageMaxLength.set(1000);
     }
 
     [firstName, lastName, subject, message, leadType].forEach(c => c.updateValueAndValidity());
