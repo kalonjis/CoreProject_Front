@@ -1,3 +1,9 @@
+/**
+ * Inline action panel for rejecting a lead.
+ *
+ * Requires a rejection reason and shows a confirmation dialog before calling the API.
+ * Emits {@link rejected} on success and {@link cancelled} on dismissal.
+ */
 import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';

@@ -1,3 +1,9 @@
+/**
+ * Inline form for creating a new CRM lead manually.
+ *
+ * Emits the created {@link LeadDetail} via {@link created} on success,
+ * or {@link cancelled} when the user dismisses the form.
+ */
 import { Component, Output, EventEmitter, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';

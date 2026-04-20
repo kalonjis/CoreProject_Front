@@ -52,7 +52,14 @@
             }
           </dd>
           <dt>Assigné à</dt>
-          <dd>{{ t.assignedToUsername ?? '—' }}</dd>
+          <dd>
+            <app-crm-assign-popover
+              [assigneeName]="t.assignedToUsername"
+              [commercials]="commercials()"
+              [compact]="false"
+              (selected)="onAssign($event)"
+            />
+          </dd>
         </dl>
       </div>
 
@@ -64,12 +71,6 @@
               [class.btn--active]="activePanel() === 'status'"
               (click)="togglePanel('status')">
               Changer statut
-            </button>
-            <button
-              class="btn btn--ghost"
-              [class.btn--active]="activePanel() === 'assign'"
-              (click)="togglePanel('assign')">
-              Assigner
             </button>
             <button
               class="btn btn--ghost"
@@ -107,33 +108,6 @@
                   <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
                 </div>
               }
-            </div>
-          }
-
-          @case ('assign') {
-            <div class="ticket-detail__panel">
-              <h4 class="ticket-detail__panel-title">Assigner</h4>
-              <label class="ticket-detail__label">Commercial</label>
-              @if (commercials().length === 0) {
-                <p>Chargement…</p>
-              } @else {
-                <select [(ngModel)]="assigneePublicId">
-                  @if (isAdmin) {
-                    <option value="">— Non assigné —</option>
-                  } @else {
-                    <option value="" disabled>— Sélectionner un commercial —</option>
-                  }
-                  @for (c of commercials(); track c.publicId) {
-                    <option [value]="c.publicId">{{ displayName(c) }}</option>
-                  }
-                </select>
-              }
-              <div class="ticket-detail__panel-footer">
-                <button class="btn btn--primary" [disabled]="saving()" (click)="submitAssign()">
-                  {{ saving() ? '…' : 'Assigner' }}
-                </button>
-                <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
-              </div>
             </div>
           }
 

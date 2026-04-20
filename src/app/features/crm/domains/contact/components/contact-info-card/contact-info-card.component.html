@@ -5,24 +5,13 @@
       <app-contact-status-badge [status]="contact.status" />
     </div>
     <div class="contact-info-card__field">
-      <span class="contact-info-card__label">Email</span>
-      <span class="contact-info-card__value">{{ contact.email }}</span>
-    </div>
-    @if (contact.phone) {
-      <div class="contact-info-card__field">
-        <span class="contact-info-card__label">Téléphone</span>
-        <span class="contact-info-card__value">{{ contact.phone }}</span>
-      </div>
-    }
-    @if (contact.jobTitle) {
-      <div class="contact-info-card__field">
-        <span class="contact-info-card__label">Poste</span>
-        <span class="contact-info-card__value">{{ contact.jobTitle }}</span>
-      </div>
-    }
-    <div class="contact-info-card__field">
       <span class="contact-info-card__label">Assigné à</span>
-      <span class="contact-info-card__value">{{ contact.assignedToUsername ?? '—' }}</span>
+      <app-crm-assign-popover
+        [assigneeName]="contact.assignedToUsername"
+        [commercials]="commercials()"
+        [compact]="false"
+        (selected)="onAssigneeSelected($event)"
+      />
     </div>
     @if (contact.originLeadPublicId) {
       <div class="contact-info-card__field">

@@ -21,7 +21,9 @@ import { CrmSupportTicketApiService } from '../../../support-ticket/services/crm
 import { SupportTicketStatusBadgeComponent } from '../../../support-ticket/components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { ChangeLogListComponent } from '../../../crm-change-log/components/change-log-list/change-log-list.component';
 
+/** Union of inline action panels that can be shown on the organisation detail page. */
 type ActionPanel = 'merge' | 'status' | null;
+/** Tab identifiers for the organisation detail tabbed view. */
 type OrgTab = 'infos' | 'contacts' | 'tickets' | 'modifications';
 
 @Component({
@@ -44,6 +46,10 @@ type OrgTab = 'infos' | 'contacts' | 'tickets' | 'modifications';
   templateUrl: './organisation-detail.component.html',
   styleUrl: './organisation-detail.component.scss'
 })
+/**
+ * Organisation detail page showing the info card, tabbed sections (contacts, support tickets, change log),
+ * related deals, and inline action panels for status change and merge.
+ */
 export class OrganisationDetailComponent implements OnInit {
 
   private readonly route  = inject(ActivatedRoute);

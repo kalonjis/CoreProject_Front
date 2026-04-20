@@ -1,3 +1,9 @@
+/**
+ * Generic empty-state placeholder for CRM list views.
+ *
+ * Displays an icon, a title, an optional subtitle, and an optional CTA button.
+ * Emits {@link ctaClick} when the user clicks the action button.
+ */
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

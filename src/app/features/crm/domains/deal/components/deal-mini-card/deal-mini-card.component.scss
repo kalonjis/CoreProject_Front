@@ -1,26 +1,26 @@
-@import 'variables';
+@use 'variables';
 
 .deal-mini-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-left: 4px solid $primary-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-left: 4px solid variables.$primary-color;
+  border-radius: variables.$border-radius;
   padding: 0.875rem 1rem;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
   outline: none;
 
   &:hover {
-    border-color: $primary-color;
-    box-shadow: $box-shadow-sm;
+    border-color: variables.$primary-color;
+    box-shadow: variables.$box-shadow-sm;
     transform: translateY(-1px);
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+    box-shadow: 0 0 0 3px rgba(variables.$primary-color, 0.25);
   }
 
   // ─── Status variants ────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@
   &__title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
     flex: 1;
     min-width: 0;
     white-space: nowrap;
@@ -71,22 +71,22 @@
     flex-wrap: wrap;
     gap: 0.3rem;
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__stage {
     font-weight: 500;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   &__sep {
-    color: $border-color;
+    color: variables.$border-color;
     user-select: none;
   }
 
   &__amount {
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__overdue {
@@ -99,7 +99,7 @@
   }
 
   &__date {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.78rem;
   }
 
@@ -114,7 +114,7 @@
     align-items: center;
     gap: 0.3rem;
     font-size: 0.75rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__assignee-icon {

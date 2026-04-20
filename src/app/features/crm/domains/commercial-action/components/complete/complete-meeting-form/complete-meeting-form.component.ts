@@ -9,6 +9,7 @@ import { InteractionOutcome } from '../../../../interaction/models/interaction.m
   templateUrl: './complete-meeting-form.component.html',
   styleUrl:    './complete-meeting-form.component.scss'
 })
+/** Completion form for MEETING-type commercial actions, capturing outcome and notes. */
 export class CompleteMeetingFormComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest>();

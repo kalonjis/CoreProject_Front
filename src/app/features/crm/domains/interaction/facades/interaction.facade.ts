@@ -4,8 +4,13 @@ import { CrmTimelineApiService }    from '../../timeline/services/crm-timeline-a
 import { FeedbackService }          from '../../../../../shared/feedback/tools/feedback.service';
 import { TimelineEntryResponse }    from '../../timeline/models/timeline.model';
 
+/** Identifies the entity whose timeline should be loaded and refreshed. */
 type InteractionContext = { type: 'deal' | 'contact' | 'lead'; publicId: string };
 
+/**
+ * Facade managing the interaction timeline for a deal, contact, or lead.
+ * Provided at component level (not root) — each detail page owns an independent instance.
+ */
 @Injectable()
 export class InteractionFacade {
 
@@ -20,15 +25,18 @@ export class InteractionFacade {
   readonly entries  = this._entries.asReadonly();
   readonly loading  = this._loading.asReadonly();
 
+  /** Sets the entity context and loads the corresponding interaction timeline. */
   loadFor(type: InteractionContext['type'], publicId: string): void {
     this._context.set({ type, publicId });
     this.load();
   }
 
+  /** Reloads the timeline for the current context (used after logging a new interaction). */
   refresh(): void {
     this.load();
   }
 
+  /** Deletes an interaction and reloads the timeline. */
   deleteInteraction(publicId: string): void {
     this.interactionApi.delete(publicId).subscribe({
       next:  () => this.load(),

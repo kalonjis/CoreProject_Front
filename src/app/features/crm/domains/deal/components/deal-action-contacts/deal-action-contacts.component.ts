@@ -16,6 +16,7 @@ import {
   templateUrl: './deal-action-contacts.component.html',
   styleUrl: './deal-action-contacts.component.scss'
 })
+/** Panel for managing the contact-role associations on a deal: add, remove, update role, and set primary contact. */
 export class DealActionContactsComponent implements OnInit {
   @Input({ required: true }) dealPublicId!: string;
   @Input({ required: true }) contacts!: DealContactRoleResponse[];

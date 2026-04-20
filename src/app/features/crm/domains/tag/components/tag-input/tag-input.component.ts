@@ -13,6 +13,10 @@ import { TagChipComponent } from '../tag-chip/tag-chip.component';
   templateUrl: './tag-input.component.html',
   styleUrl: './tag-input.component.scss'
 })
+/**
+ * Tag input with autocomplete dropdown, inline chip display, and inline tag creation.
+ * Emits {@code tagAdded} and {@code tagRemoved} events — entity linking is handled by the parent.
+ */
 export class TagInputComponent implements OnInit {
 
   @Input({ required: true }) entityTags!: Tag[];

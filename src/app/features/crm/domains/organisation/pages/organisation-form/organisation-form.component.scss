@@ -1,15 +1,15 @@
-@import 'variables';
+@use 'variables';
 
 .org-form {
   max-width: 720px;
 
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1rem;
 
     a {
-      color: $primary-color;
+      color: variables.$primary-color;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
@@ -17,7 +17,7 @@
 
   &__title {
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     margin: 0 0 1.5rem;
   }
 
@@ -34,23 +34,23 @@
 
     label {
       font-size: 0.8rem;
-      font-weight: $font-weight-bold;
-      color: $gray-dark;
+      font-weight: variables.$font-weight-bold;
+      color: variables.$gray-dark;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
 
     input, select, textarea {
       padding: 0.45rem 0.65rem;
-      border: 1px solid $border-color;
-      border-radius: $border-radius;
+      border: 1px solid variables.$border-color;
+      border-radius: variables.$border-radius;
       font-size: 0.875rem;
       background: #fff;
       font-family: inherit;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
+        border-color: variables.$primary-color;
       }
     }
 
@@ -69,24 +69,24 @@
   }
 
   &__info {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
   }
 }
 
 .btn {
   padding: 0.5rem 1.25rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   border: 1px solid transparent;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &--primary {
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
     &:hover { opacity: 0.88; }
     &:disabled { opacity: 0.5; cursor: default; }
@@ -94,8 +94,8 @@
 
   &--ghost {
     background: transparent;
-    color: $text-color;
-    border-color: $border-color;
-    &:hover { background: $body-bg; }
+    color: variables.$text-color;
+    border-color: variables.$border-color;
+    &:hover { background: variables.$body-bg; }
   }
 }

@@ -1,3 +1,10 @@
+/**
+ * Two-step action panel for converting a lead into a contact (and optionally creating a deal).
+ *
+ * Step 1: fills in the contact creation form pre-populated from lead data and calls the convert API.
+ * Step 2: optionally creates a deal linked to the newly created contact.
+ * Emits {@link converted} when the flow completes and {@link cancelled} on dismissal.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';

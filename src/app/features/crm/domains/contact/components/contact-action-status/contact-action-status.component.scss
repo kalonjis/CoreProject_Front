@@ -1,12 +1,12 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   background: #fff;
   cursor: pointer;
-  &:focus { outline: none; border-color: $primary-color; }
+  &:focus { outline: none; border-color: variables.$primary-color; }
 }

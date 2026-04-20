@@ -10,6 +10,7 @@ import { OrganisationStatusBadgeComponent } from '../organisation-status-badge/o
   templateUrl: './organisation-info-card.component.html',
   styleUrl: './organisation-info-card.component.scss'
 })
+/** Read-only card displaying an organisation's core fields, status and size badges, and audit timestamps. */
 export class OrganisationInfoCardComponent {
   @Input({ required: true }) organisation!: OrganisationDetail;
 }

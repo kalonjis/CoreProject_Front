@@ -1,8 +1,8 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .action-panel__hint {
   font-size: 0.8rem;
-  color: $gray-dark;
+  color: variables.$gray-dark;
   margin: 0;
 }

@@ -19,6 +19,10 @@ import {
   templateUrl: './crm-search-modal.component.html',
   styleUrl: './crm-search-modal.component.scss'
 })
+/**
+ * Full-screen CRM search modal with debounced live search, grouped results,
+ * and keyboard navigation (arrow keys, Enter to navigate, Escape to close).
+ */
 export class CrmSearchModalComponent implements OnInit, AfterViewInit {
   @Output() closed = new EventEmitter<void>();
 

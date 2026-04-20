@@ -1,5 +1,5 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .ticket-list {
 
@@ -20,17 +20,17 @@
 
   &__header-actions { display: flex; gap: 0.75rem; }
 
-  &__title { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; }
+  &__title { font-size: 1.5rem; font-weight: variables.$font-weight-bold; color: variables.$dark-color; margin: 0; }
 
   &__count {
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.55rem;
-    background: $gray-medium;
+    background: variables.$gray-medium;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   // ─── Filters ───────────────────────────────────────────────────────────────
@@ -43,8 +43,8 @@
     margin-bottom: 0.625rem;
     padding: 0.75rem 1rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
 
     > input, > select { width: auto; }
 
@@ -58,10 +58,10 @@
     flex: 1;
     min-width: 180px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__checkbox {
@@ -76,12 +76,12 @@
 
   &__advanced-toggle {
     margin-left: auto;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.8rem;
 
     &--active {
-      color: $primary-color;
-      border-color: $primary-color;
+      color: variables.$primary-color;
+      border-color: variables.$primary-color;
     }
   }
 
@@ -105,8 +105,8 @@
 
   &__table-wrapper {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     overflow: hidden;
   }
 
@@ -116,7 +116,7 @@
     font-size: 0.875rem;
 
     thead tr {
-      background: $gray-medium;
+      background: variables.$gray-medium;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -126,7 +126,7 @@
       padding: 0.75rem 1rem;
       text-align: left;
       font-weight: 600;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -135,24 +135,24 @@
 
     td {
       padding: 0.75rem 1rem;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid variables.$border-color;
       vertical-align: middle;
     }
   }
 
   &__row {
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
     &:hover td { background: #f8faff; }
   }
 
   &__subject {
     font-weight: 600;
-    color: $dark-color;
+    color: variables.$dark-color;
     max-width: 320px;
   }
 
-  &__secondary { color: $gray-dark; }
+  &__secondary { color: variables.$gray-dark; }
 
   &__source-chip {
     display: inline-block;
@@ -198,7 +198,7 @@
 
   // ─── States ────────────────────────────────────────────────────────────────
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; font-size: 0.9rem; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; font-size: 0.9rem; }
 
   // ─── Pagination ────────────────────────────────────────────────────────────
 
@@ -212,15 +212,15 @@
 
   &__page-btn {
     padding: 0.4rem 0.875rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     background: #fff;
     cursor: pointer;
     font-size: 0.875rem;
-    transition: $transition-fast;
-    &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; }
+    transition: variables.$transition-fast;
+    &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
-  &__page-info { font-size: 0.875rem; color: $gray-dark; }
+  &__page-info { font-size: 0.875rem; color: variables.$gray-dark; }
 }

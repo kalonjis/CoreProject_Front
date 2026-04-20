@@ -1,42 +1,77 @@
-@import 'variables';
-@import '../../../../shared/styles/action-panel';
+@use 'variables';
+@use '../../../../shared/styles/action-panel';
 
 .contact-detail {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; }
-  &__error   { text-align: center; padding: 2rem; color: $danger-color; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; }
+  &__error   { text-align: center; padding: 2rem; color: variables.$danger-color; }
 
   // ─── Header ──────────────────────────────────────────────────────────────────
 
   &__header {
     display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__breadcrumb {
+    display: flex;
     align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid $border-color;
-  }
-
-  &__back {
-    background: none;
-    border: none;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
+    gap: 0.4rem;
     font-size: 0.8125rem;
-    color: $gray-dark;
-    transition: $transition-fast;
-    white-space: nowrap;
-    border-radius: $border-radius;
-    &:hover { background: $gray-light; color: $primary-color; }
+    color: variables.$gray-dark;
+
+    &-link {
+      color: variables.$primary-color;
+      cursor: pointer;
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+
+    &-sep { color: variables.$border-color; }
+
+    &-current { color: variables.$gray-dark; font-weight: 500; }
   }
 
-  &__identity { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-  &__name { font-size: 1.5rem; font-weight: $font-weight-bold; color: $dark-color; margin: 0; line-height: 1.2; }
-  &__jobtitle { font-size: 0.875rem; color: $gray-dark; }
-  &__header-actions { display: flex; align-items: center; gap: 0.5rem; }
+  &__identity { display: flex; flex-direction: column; gap: 0.15rem; }
+  &__name { font-size: 1.375rem; font-weight: variables.$font-weight-bold; color: variables.$dark-color; margin: 0; }
+
+  &__org {
+    font-size: 0.875rem;
+    color: variables.$gray-dark;
+    &-icon { font-style: normal; }
+  }
+
+  &__contact-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__email {
+    font-size: 0.875rem;
+    color: variables.$gray-dark;
+    transition: color variables.$transition-fast;
+    cursor: pointer;
+
+    &:hover { color: #2563eb; }
+    &-icon { font-size: 1.05rem; }
+
+  }
+
+  &__contact-sep { font-size: 0.75rem; color: variables.$border-color; line-height: 1; user-select: none; }
+
+  &__phone {
+    font-size: 0.875rem;
+    color: variables.$gray-dark;
+    transition: color variables.$transition-fast;
+    cursor: default;
+    &:hover { color: #2563eb; }
+  }
 
   // ─── Two-column layout ───────────────────────────────────────────────────────
 
@@ -45,7 +80,6 @@
     grid-template-columns: 1fr 280px;
     gap: 1.5rem;
     align-items: start;
-    max-width: 1440px;
   }
 
   &__main {
@@ -65,73 +99,161 @@
 
   // ─── Sidebar blocks ──────────────────────────────────────────────────────────
 
-  &__tags-section {
-    background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  &__sidebar-title {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: $gray-dark;
-    font-weight: 600;
-    margin: 0;
-  }
-
   &__action-bar {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.5rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
-    padding: 0.5rem;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
+    padding: 1rem;
 
-    .btn--sidebar-action {
-      width: 100%;
-      text-align: left;
-      justify-content: flex-start;
-      background: transparent;
-      border: none;
-      color: $text-color;
-      font-size: 0.875rem;
-      padding: 0.55rem 0.75rem;
-      border-radius: $border-radius;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: $transition-fast;
+    .btn { width: 100%; justify-content: center; }
 
-      .action-icon {
-        font-size: 0.9rem;
-        width: 1.1rem;
-        text-align: center;
-        flex-shrink: 0;
-        color: $gray-dark;
-      }
+    .btn--primary-outline:hover:not(:disabled) { background: #eff6ff; }
+    .btn--danger-outline:hover:not(:disabled)  { background: #fee2e2; }
+  }
 
-      &:hover:not(:disabled) {
-        background: rgba($primary-color, 0.07);
-        color: $primary-color;
+  &__tags-zone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0.25rem 0 0.25rem;
+  }
 
-        .action-icon { color: $primary-color; }
-      }
+  &__tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.45rem;
+    background: #f8fafc;
+    border: 1px solid variables.$border-color;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: variables.$text-color;
+    max-width: 100%;
+  }
 
-      &--danger {
-        color: $danger-color;
-        .action-icon { color: $danger-color; }
-        &:hover:not(:disabled) {
-          background: #fee2e2;
-          color: $danger-color;
-        }
-      }
-    }
+  &__tag-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__tag-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    color: variables.$gray-dark;
+    &:hover { color: variables.$danger-color; }
+  }
+
+  &__tag-wrapper { position: relative; }
+
+  &__btn-tag {
+    width: 100%;
+    justify-content: flex-start;
+    background: transparent;
+    border: 1px solid variables.$border-color;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    &:hover { background: #eff6ff; border-color: #bfdbfe; }
+  }
+
+  &__tag-icon { font-size: 1rem; }
+
+  &__tag-popover {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    overflow: hidden;
+  }
+
+  &__tag-search {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-bottom: 1px solid variables.$border-color;
+    font-size: 0.875rem;
+    font-family: inherit;
+    outline: none;
+    &:focus { border-bottom-color: #3b82f6; }
+  }
+
+  &__tag-options {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  &__tag-section-header {
+    padding: 0.35rem 0.75rem 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: variables.$gray-dark;
+  }
+
+  &__tag-option {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    &:hover { background: variables.$gray-light; }
+  }
+
+  &__tag-option-icon { font-size: 0.75rem; flex-shrink: 0; }
+
+  &__tag-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__tag-create {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8125rem;
+    color: #2563eb;
+    cursor: pointer;
+    border-top: 1px solid variables.$border-color;
+    font-weight: 500;
+    &:hover { background: #eff6ff; }
+
+    strong { font-weight: 600; }
+
+    &-icon { font-size: 0.9rem; font-weight: 700; flex-shrink: 0; }
+  }
+
+  &__tag-hint {
+    display: block;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8rem;
+    color: variables.$gray-dark;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.4;
   }
 
   // ─── Tabs ────────────────────────────────────────────────────────────────────
@@ -139,7 +261,7 @@
   &__tabs {
     display: flex;
     gap: 0;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 2px solid variables.$border-color;
   }
 
   &__tab {
@@ -150,13 +272,13 @@
     padding: 0.6rem 1.1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
     white-space: nowrap;
 
-    &:hover { color: $primary-color; }
-    &--active { color: $primary-color; border-bottom-color: $primary-color; }
+    &:hover { color: variables.$primary-color; }
+    &--active { color: variables.$primary-color; border-bottom-color: variables.$primary-color; }
   }
 
   &__tab-panel {
@@ -174,7 +296,7 @@
 
   &__actions-state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -190,8 +312,8 @@
 
   &__section-count {
     font-size: 0.8rem;
-    color: $gray-dark;
-    background: $gray-medium;
+    color: variables.$gray-dark;
+    background: variables.$gray-medium;
     padding: 0.15em 0.55em;
     border-radius: 999px;
     font-weight: 500;
@@ -200,7 +322,7 @@
 
   &__section-state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -220,11 +342,11 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.625rem 0.75rem;
-    border: 1px solid $gray-medium;
+    border: 1px solid variables.$gray-medium;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.15s;
-    &:hover { background: $gray-light; }
+    &:hover { background: variables.$gray-light; }
   }
 
   &__ticket-subject {
@@ -236,7 +358,7 @@
     white-space: nowrap;
   }
 
-  &__ticket-date { font-size: 0.75rem; color: $gray-dark; white-space: nowrap; }
+  &__ticket-date { font-size: 0.75rem; color: variables.$gray-dark; white-space: nowrap; }
 
   // ─── Responsive ──────────────────────────────────────────────────────────────
 

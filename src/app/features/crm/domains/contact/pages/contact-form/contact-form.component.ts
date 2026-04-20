@@ -12,6 +12,7 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
   templateUrl: './contact-form.component.html',
   styleUrl: './contact-form.component.scss'
 })
+/** Routed page for creating a new contact or editing an existing one (mode driven by route data). */
 export class ContactFormComponent implements OnInit {
 
   private readonly api      = inject(CrmContactApiService);

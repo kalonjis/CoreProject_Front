@@ -1,12 +1,12 @@
-@import 'variables';
+@use 'variables';
 
 .ca-detail {
 
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1.25rem;
-    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+    a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
   }
 
   &__header {
@@ -16,7 +16,7 @@
   &__title {
     font-size: 1.375rem;
     font-weight: 700;
-    color: $dark-color;
+    color: variables.$dark-color;
     margin: 0 0 0.625rem;
   }
 
@@ -30,7 +30,7 @@
   &__type-badge {
     display: inline-block;
     padding: 0.2rem 0.6rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.75rem;
     font-weight: 600;
     background: #e0e7ff;
@@ -40,7 +40,7 @@
   &__overdue {
     display: inline-block;
     padding: 0.2rem 0.6rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.75rem;
     font-weight: 600;
     background: #fee2e2;
@@ -61,24 +61,24 @@
   }
 
   &__description {
-    color: $text-color;
+    color: variables.$text-color;
     line-height: 1.6;
     margin: 0;
     padding: 1rem;
-    background: $body-bg;
-    border-radius: $border-radius;
-    border: 1px solid $border-color;
+    background: variables.$body-bg;
+    border-radius: variables.$border-radius;
+    border: 1px solid variables.$border-color;
   }
 
   &__section {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     padding-top: 1.25rem;
   }
 
   &__section-title {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin: 0 0 0.875rem;
@@ -92,13 +92,13 @@
 
     dt {
       font-size: 0.8125rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-weight: 500;
     }
 
     dd {
       font-size: 0.875rem;
-      color: $dark-color;
+      color: variables.$dark-color;
       margin: 0;
     }
   }
@@ -111,7 +111,7 @@
 
   &__context-link {
     font-size: 0.875rem;
-    color: $primary-color;
+    color: variables.$primary-color;
     text-decoration: none;
     &:hover { text-decoration: underline; }
   }
@@ -122,7 +122,7 @@
     gap: 0.5rem;
   }
 
-  &__info  { color: $gray-dark; font-style: italic; }
+  &__info  { color: variables.$gray-dark; font-style: italic; }
 }
 
 // ─── Buttons ──────────────────────────────────────────────────────────────────
@@ -130,32 +130,32 @@
 .btn {
   width: 100%;
   padding: 0.5rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   cursor: pointer;
   text-align: center;
   border: 1px solid transparent;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &--secondary {
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
     &:hover { opacity: 0.88; }
   }
 
   &--ghost {
     background: transparent;
-    color: $text-color;
-    border-color: $border-color;
-    &:hover { background: $body-bg; }
+    color: variables.$text-color;
+    border-color: variables.$border-color;
+    &:hover { background: variables.$body-bg; }
   }
 
   &--danger {
     background: transparent;
-    color: $danger-color;
-    border-color: $danger-color;
-    &:hover { background: rgba($danger-color, 0.06); }
+    color: variables.$danger-color;
+    border-color: variables.$danger-color;
+    &:hover { background: rgba(variables.$danger-color, 0.06); }
   }
 }
 
@@ -173,7 +173,7 @@
 
 .crm-modal {
   background: #fff;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   max-width: 560px;
   width: 100%;

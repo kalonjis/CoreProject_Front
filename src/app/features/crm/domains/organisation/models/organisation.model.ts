@@ -1,5 +1,6 @@
 import { Tag } from '../../tag/models/tag.model';
 
+/** Lifecycle status of a CRM organisation. */
 export enum OrganisationStatus {
   PROSPECT = 'PROSPECT',
   CLIENT   = 'CLIENT'
@@ -10,6 +11,7 @@ export const ORGANISATION_STATUS_LABELS: Record<OrganisationStatus, string> = {
   [OrganisationStatus.CLIENT]:   'Client'
 };
 
+/** Size tier of a CRM organisation. */
 export enum OrganisationSize {
   MICRO      = 'MICRO',
   SMALL      = 'SMALL',
@@ -28,6 +30,7 @@ export const ORGANISATION_SIZE_LABELS: Record<OrganisationSize, string> = {
 
 // ─── Response models ────────────────────────────────────────────────────────
 
+/** Lightweight organisation representation used in list views and pickers. */
 export interface OrganisationSummary {
   publicId:  string;
   name:      string;
@@ -38,6 +41,7 @@ export interface OrganisationSummary {
   phone:     string | null;
 }
 
+/** Full organisation detail payload including tags, address, and audit timestamps. */
 export interface OrganisationDetail {
   publicId:         string;
   name:             string;
@@ -55,6 +59,7 @@ export interface OrganisationDetail {
 
 // ─── Request models ─────────────────────────────────────────────────────────
 
+/** Filter criteria for the paginated organisation list endpoint. */
 export interface OrganisationFilter {
   keyword?:      string;
   industry?:     string;
@@ -64,6 +69,7 @@ export interface OrganisationFilter {
   tagPublicId?:  string;
 }
 
+/** Request payload for creating a new organisation. */
 export interface CreateOrganisationRequest {
   name:             string;
   website?:         string;
@@ -74,6 +80,7 @@ export interface CreateOrganisationRequest {
   notes?:           string;
 }
 
+/** Request payload for partially updating an organisation's profile fields. */
 export interface UpdateOrganisationRequest {
   name?:            string;
   website?:         string;
@@ -84,11 +91,13 @@ export interface UpdateOrganisationRequest {
   notes?:           string;
 }
 
+/** Request payload for merging two organisations (source is archived, target is enriched). */
 export interface MergeOrganisationRequest {
   sourcePublicId: string;
   targetPublicId: string;
 }
 
+/** Request payload for transitioning an organisation's lifecycle status. */
 export interface UpdateOrganisationStatusRequest {
   status: OrganisationStatus;
 }

@@ -24,6 +24,7 @@ import { DealStatus, DEAL_STATUS_LABELS } from '../../models/deal.model';
     .deal-badge--lost { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
   `]
 })
+/** Inline badge rendering a deal's outcome status with its colour-coded style. */
 export class DealStatusBadgeComponent {
   @Input({ required: true }) status!: DealStatus;
   readonly labels = DEAL_STATUS_LABELS;

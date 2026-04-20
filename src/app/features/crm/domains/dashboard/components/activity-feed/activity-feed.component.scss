@@ -1,0 +1,137 @@
+.feed {
+
+  // ── Header ────────────────────────────────────────────────────────────────
+  &__header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         1rem 1.25rem 0;
+  }
+
+  &__title {
+    font-size:   0.875rem;
+    font-weight: 600;
+    color:       #1e293b;
+  }
+
+  &__see-all {
+    font-size:       0.75rem;
+    color:           #3b82f6;
+    text-decoration: none;
+    font-weight:     500;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  // ── Filter tabs ────────────────────────────────────────────────────────────
+  &__tabs {
+    display:     flex;
+    gap:         0.25rem;
+    padding:     0.625rem 1.25rem 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  &__tab {
+    background:     none;
+    border:         none;
+    padding:        0.3rem 0.625rem;
+    font-size:      0.75rem;
+    font-weight:    500;
+    color:          #94a3b8;
+    cursor:         pointer;
+    border-radius:  6px;
+    transition:     background 0.12s, color 0.12s;
+
+    &:hover { background: #f8fafc; color: #475569; }
+
+    &--active {
+      background: #eff6ff;
+      color:      #2563eb;
+      font-weight: 600;
+    }
+  }
+
+  // ── List ──────────────────────────────────────────────────────────────────
+  &__list {
+    list-style: none;
+    margin:     0;
+    padding:    0.5rem 0;
+  }
+
+  &__item {
+    display:     flex;
+    align-items: flex-start;
+    gap:         0.75rem;
+    padding:     0.6rem 1.25rem;
+    transition:  background 0.1s;
+
+    &--clickable {
+      cursor: pointer;
+      &:hover { background: #f8fafc; }
+    }
+  }
+
+  // ── Dot ───────────────────────────────────────────────────────────────────
+  &__dot {
+    width:        8px;
+    height:       8px;
+    border-radius: 50%;
+    margin-top:   0.3rem;
+    flex-shrink:  0;
+
+    &--green  { background: #22c55e; }
+    &--blue   { background: #3b82f6; }
+    &--violet { background: #8b5cf6; }
+    &--teal   { background: #14b8a6; }
+    &--amber  { background: #f59e0b; }
+    &--orange { background: #f97316; }
+    &--red    { background: #ef4444; }
+    &--gray   { background: #94a3b8; }
+  }
+
+  // ── Content ───────────────────────────────────────────────────────────────
+  &__content {
+    flex:        1;
+    min-width:   0;
+    display:     flex;
+    flex-direction: column;
+    gap:         0.1rem;
+  }
+
+  &__message {
+    font-size:    0.8rem;
+    color:        #334155;
+    line-height:  1.4;
+    white-space:  nowrap;
+    overflow:     hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__entity {
+    font-weight: 600;
+    color:       #0f172a;
+  }
+
+  &__actor {
+    font-size: 0.72rem;
+    color:     #94a3b8;
+  }
+
+  // ── Time ──────────────────────────────────────────────────────────────────
+  &__time {
+    font-size:   0.7rem;
+    color:       #cbd5e1;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+
+  // ── States ────────────────────────────────────────────────────────────────
+  &__loading,
+  &__empty {
+    font-size:  0.875rem;
+    color:      #94a3b8;
+    padding:    1.5rem 1.25rem;
+    text-align: center;
+  }
+}

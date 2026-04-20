@@ -22,6 +22,7 @@ import { CommercialActionStatus, COMMERCIAL_ACTION_STATUS_LABELS } from '../../m
     }
   `]
 })
+/** Inline badge displaying the lifecycle status of a commercial action. */
 export class CommercialActionStatusBadgeComponent {
   @Input({ required: true }) status!: CommercialActionStatus;
   get label(): string { return COMMERCIAL_ACTION_STATUS_LABELS[this.status]; }

@@ -1,4 +1,5 @@
-@import 'variables';
+@use "sass:color";
+@use 'variables';
 
 .lead-list {
   &__header {
@@ -25,14 +26,14 @@
     align-items: center;
     gap: 0.625rem;
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
-    color: $dark-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$dark-color;
     margin: 0 0 0.2rem;
   }
 
   &__subtitle {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin: 0;
   }
 
@@ -40,11 +41,11 @@
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.55rem;
-    background: $gray-medium;
+    background: variables.$gray-medium;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__filters {
@@ -55,31 +56,31 @@
     margin-bottom: 1.25rem;
     padding: 0.75rem 1rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
   }
 
   &__search {
     width: 220px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
 
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__select {
     width: auto;
     min-width: 140px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     background: #fff;
     cursor: pointer;
 
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__checkbox-label {
@@ -94,23 +95,23 @@
 
   .btn {
     padding: 0.45rem 1rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
     &--primary {
-      background: $primary-color;
+      background: variables.$primary-color;
       color: #fff;
       border: none;
-      &:hover { background: darken($primary-color, 8%); }
+      &:hover { background: color.adjust(variables.$primary-color, $lightness: -8%); }
     }
 
     &--secondary {
       background: #fff;
-      color: $primary-color;
-      border: 1px solid $primary-color;
+      color: variables.$primary-color;
+      border: 1px solid variables.$primary-color;
       &:hover { background: #f0f4ff; }
     }
   }
@@ -119,7 +120,7 @@
     padding: 0.75rem 1rem;
     background: #fee2e2;
     color: #991b1b;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     margin-bottom: 1rem;
     font-size: 0.875rem;
   }
@@ -127,14 +128,14 @@
   &__loading {
     text-align: center;
     padding: 2rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.9rem;
   }
 
   &__table-wrapper {
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
     overflow: visible; // allow popover to overflow the table
   }
 
@@ -144,13 +145,13 @@
     font-size: 0.875rem;
 
     thead tr {
-      background: $gray-medium;
+      background: variables.$gray-medium;
       position: sticky;
       top: 0;
       z-index: 10;
 
-      th:first-child { border-radius: $border-radius-lg 0 0 0; }
-      th:last-child  { border-radius: 0 $border-radius-lg 0 0; }
+      th:first-child { border-radius: variables.$border-radius-lg 0 0 0; }
+      th:last-child  { border-radius: 0 variables.$border-radius-lg 0 0; }
     }
 
     th {
@@ -170,19 +171,19 @@
       transition: color 0.15s;
 
       &:hover { color: #64748b; }
-      &.lead-list__th--active { color: $primary-color; }
+      &.lead-list__th--active { color: variables.$primary-color; }
     }
 
     td {
       padding: 0.6rem 1rem;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid variables.$border-color;
       vertical-align: middle;
     }
   }
 
   &__row {
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
     &:hover td { background: #f8faff; }
   }
@@ -195,17 +196,17 @@
 
   &__name {
     font-weight: 600;
-    color: $text-color;
+    color: variables.$text-color;
     font-size: 0.875rem;
   }
 
   &__email {
     font-size: 0.75rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__secondary {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.875rem;
   }
 
@@ -214,7 +215,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   &__source-chip {
@@ -229,116 +230,14 @@
     white-space: nowrap;
   }
 
-  &__avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.875rem;
-    height: 1.875rem;
-    border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    user-select: none;
-  }
-
   &__assign-cell {
     position: relative;
-  }
-
-  &__assign-wrap {
-    position: relative;
-    display: inline-block;
-  }
-
-  &__unassigned {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 500;
-    font-style: italic;
-    color: #b45309;
-    background: #fffbeb;
-    border: 1px dashed #fcd34d;
-    border-radius: 4px;
-    padding: 0.2rem 0.55rem;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-
-    &:hover {
-      background: #fef3c7;
-      border-color: #f59e0b;
-    }
-
-    &--pulse {
-      animation: lead-pulse 2s ease-in-out infinite;
-    }
-  }
-
-  &__assign-popover {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    z-index: 100;
-    min-width: 180px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    padding: 0.25rem 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__assign-option {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.45rem 0.75rem;
-    background: none;
-    border: none;
-    text-align: left;
-    font-size: 0.8rem;
-    color: #1e293b;
-    cursor: pointer;
-    transition: background 0.1s;
-
-    &:hover { background: #f8fafc; }
-  }
-
-  &__assign-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-  }
-
-  &__assign-empty {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    color: #94a3b8;
-  }
-
-  @keyframes lead-pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.55; }
   }
 
   &__date-col {
     text-align: left;
     white-space: nowrap;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.8rem;
   }
 
@@ -349,14 +248,14 @@
     opacity: 0.25;
     transition: transform 0.2s ease, opacity 0.15s, color 0.15s;
 
-    &--active { opacity: 0.8; color: $primary-color; }
+    &--active { opacity: 0.8; color: variables.$primary-color; }
     &--asc    { transform: rotate(180deg); }
   }
 
   &__empty {
     text-align: center;
     padding: 2rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__pagination {
@@ -369,19 +268,19 @@
 
   &__page-btn {
     padding: 0.4rem 0.875rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     background: #fff;
     cursor: pointer;
     font-size: 0.875rem;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
-    &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; }
+    &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
   &__page-info {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 }

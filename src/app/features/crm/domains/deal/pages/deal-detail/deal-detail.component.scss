@@ -1,11 +1,11 @@
-@import 'variables';
+@use 'variables';
 
 .deal-detail {
   &__breadcrumb {
     font-size: 0.875rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-bottom: 1.25rem;
-    a { color: $primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
+    a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
   }
 
   &__layout {
@@ -27,14 +27,14 @@
     gap: 0.5rem;
   }
 
-  &__info  { color: $gray-dark; font-style: italic; }
-  &__error { color: $danger-color; }
+  &__info  { color: variables.$gray-dark; font-style: italic; }
+  &__error { color: variables.$danger-color; }
 
   // ─── Tabs ───────────────────────────────────────────────────────────────────
 
   &__tabs {
     display: flex;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 2px solid variables.$border-color;
     margin-top: 1.5rem;
   }
 
@@ -46,15 +46,15 @@
     padding: 0.6rem 1.1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
 
-    &:hover { color: $primary-color; }
+    &:hover { color: variables.$primary-color; }
 
     &--active {
-      color: $primary-color;
-      border-bottom-color: $primary-color;
+      color: variables.$primary-color;
+      border-bottom-color: variables.$primary-color;
     }
   }
 
@@ -67,7 +67,7 @@
 
   &__timeline {
     margin-top: 1.5rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     padding-top: 1.25rem;
   }
 
@@ -82,11 +82,11 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
   }
 
   &__tags-section {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     padding-top: 1rem;
     display: flex;
     flex-direction: column;
@@ -97,13 +97,13 @@
     font-size: 0.875rem;
     font-weight: 600;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   &__actions-section {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     padding-top: 1rem;
     display: flex;
     flex-direction: column;
@@ -120,14 +120,14 @@
     font-size: 0.875rem;
     font-weight: 600;
     margin: 0;
-    color: $dark-color;
+    color: variables.$dark-color;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   &__actions-state {
     font-size: 0.8125rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
@@ -136,28 +136,28 @@
 .btn {
   width: 100%;
   padding: 0.5rem 1rem;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   font-size: 0.875rem;
   cursor: pointer;
   text-align: center;
   border: 1px solid transparent;
-  transition: $transition-fast;
+  transition: variables.$transition-fast;
 
   &--secondary {
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
-    border-color: $primary-color;
+    border-color: variables.$primary-color;
     &:hover { opacity: 0.88; }
   }
   &--ghost {
     background: transparent;
-    color: $text-color;
-    border-color: $border-color;
-    &:hover { background: $body-bg; }
+    color: variables.$text-color;
+    border-color: variables.$border-color;
+    &:hover { background: variables.$body-bg; }
   }
   &--active {
-    background: rgba($primary-color, 0.1);
-    border-color: $primary-color;
-    color: $primary-color;
+    background: rgba(variables.$primary-color, 0.1);
+    border-color: variables.$primary-color;
+    color: variables.$primary-color;
   }
 }

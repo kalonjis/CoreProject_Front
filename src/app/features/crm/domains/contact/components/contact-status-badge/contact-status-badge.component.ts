@@ -28,6 +28,7 @@ import { ContactStatus, CONTACT_STATUS_LABELS } from '../../models/contact.model
     }
   `]
 })
+/** Inline badge rendering a contact's lifecycle status with its colour-coded style. */
 export class ContactStatusBadgeComponent {
   @Input({ required: true }) status!: ContactStatus;
 

@@ -88,33 +88,13 @@
                   }
                 </td>
                 <td><app-contact-status-badge [status]="c.status" /></td>
-                <td class="contact-list__assign-cell">
-                  @if (c.assignedTo) {
-                    <div class="contact-list__avatar" [title]="c.assignedTo">
-                      {{ initials(c.assignedTo) }}
-                    </div>
-                  } @else {
-                    <div class="contact-list__assign-wrap">
-                      <span
-                        class="contact-list__unassigned"
-                        (click)="openAssignPopover($event, c.publicId)"
-                      >À assigner</span>
-
-                      @if (popoverContactId() === c.publicId) {
-                        <div class="contact-list__assign-popover" (click)="$event.stopPropagation()">
-                          @for (com of commercials(); track com.publicId) {
-                            <button class="contact-list__assign-option" (click)="selectCommercial($event, c, com)">
-                              <div class="contact-list__assign-avatar">{{ commercialInitials(com) }}</div>
-                              <span>{{ commercialDisplayName(com) }}</span>
-                            </button>
-                          }
-                          @if (commercials().length === 0) {
-                            <span class="contact-list__assign-empty">Chargement…</span>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
+                <td class="contact-list__assign-cell" (click)="$event.stopPropagation()">
+                  <app-crm-assign-popover
+                    [assigneeName]="c.assignedTo"
+                    [commercials]="commercials()"
+                    [compact]="true"
+                    (selected)="onContactAssigned(c, $event)"
+                  />
                 </td>
                 <td>
                   @if (c.organisationName && c.organisationPublicId) {

@@ -8,6 +8,7 @@ import { Tag } from '../../models/tag.model';
   templateUrl: './tag-chip.component.html',
   styleUrl: './tag-chip.component.scss'
 })
+/** Colour-coded chip rendering a tag, with optional remove button and navigation to the tag detail page. */
 export class TagChipComponent {
   @Input({ required: true }) tag!: Tag;
   @Input() removable  = false;

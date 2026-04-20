@@ -13,6 +13,7 @@ import {
   templateUrl: './complete-call-form.component.html',
   styleUrl:    './complete-call-form.component.scss'
 })
+/** Completion form specific to CALL-type commercial actions, capturing status, phone number, and duration. */
 export class CompleteCallFormComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest>();

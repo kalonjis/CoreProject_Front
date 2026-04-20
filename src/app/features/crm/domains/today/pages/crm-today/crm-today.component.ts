@@ -1,6 +1,13 @@
+/**
+ * "Today" dashboard page for the CRM.
+ *
+ * Displays a prioritised daily work list: overdue commercial actions, today's actions,
+ * overdue deals, deals closing soon, and open support tickets.
+ * Each item links to its corresponding detail page.
+ */
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { DatePipe, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { CrmTodayApiService } from '../../services/crm-today-api.service';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { TodaySummary } from '../../models/today.model';
@@ -10,7 +17,7 @@ import { SupportTicketSummary, SUPPORT_TICKET_STATUS_LABELS } from '../../../sup
 
 @Component({
   selector: 'app-crm-today',
-  imports: [DatePipe, CurrencyPipe, DecimalPipe],
+  imports: [DatePipe, DecimalPipe],
   templateUrl: './crm-today.component.html',
   styleUrl: './crm-today.component.scss'
 })

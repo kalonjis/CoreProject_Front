@@ -1,3 +1,11 @@
+/**
+ * Detail page for a single CRM support ticket.
+ *
+ * Displays full ticket information and provides inline action panels for
+ * status transitions and subject/description editing.
+ * Assignment is handled by CrmAssignPopoverComponent inline.
+ * Admins can also delete the ticket via a confirmation dialog.
+ */
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,13 +23,14 @@ import { SupportTicketStatusBadgeComponent } from '../../components/support-tick
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
 import { AuthFacade } from '../../../../../../core/auth/services/auth.facade';
-import { CommercialSummary, commercialDisplayName } from '../../../../shared/models/commercial.model';
+import { CommercialSummary } from '../../../../shared/models/commercial.model';
+import { CrmAssignPopoverComponent } from '../../../../shared/components/assign-popover/crm-assign-popover.component';
 
-type ActivePanel = 'status' | 'assign' | 'edit' | null;
+type ActivePanel = 'status' | 'edit' | null;
 
 @Component({
   selector: 'app-support-ticket-detail',
-  imports: [RouterLink, FormsModule, DatePipe, SupportTicketStatusBadgeComponent],
+  imports: [RouterLink, FormsModule, DatePipe, SupportTicketStatusBadgeComponent, CrmAssignPopoverComponent],
   templateUrl: './support-ticket-detail.component.html',
   styleUrl: './support-ticket-detail.component.scss'
 })
@@ -40,17 +49,12 @@ export class SupportTicketDetailComponent implements OnInit {
   readonly error        = signal<string | null>(null);
   readonly saving       = signal(false);
   readonly activePanel  = signal<ActivePanel>(null);
+  readonly commercials  = signal<CommercialSummary[]>([]);
 
   private publicId = '';
 
   // ─── Status panel ─────────────────────────────────────────────────────────
   newStatus: SupportTicketStatus | '' = '';
-
-  // ─── Assign panel ─────────────────────────────────────────────────────────
-  commercials      = signal<CommercialSummary[]>([]);
-  assigneePublicId = '';
-
-  readonly displayName = commercialDisplayName;
 
   // ─── Edit panel ───────────────────────────────────────────────────────────
   editSubject     = '';
@@ -69,12 +73,13 @@ export class SupportTicketDetailComponent implements OnInit {
     return this.authFacade.isAdmin();
   }
 
-  readonly statusLabels       = SUPPORT_TICKET_STATUS_LABELS;
+  readonly statusLabels        = SUPPORT_TICKET_STATUS_LABELS;
   readonly SupportTicketSource = SupportTicketSource;
 
   ngOnInit(): void {
     this.publicId = this.route.snapshot.paramMap.get('publicId') ?? '';
     this.load();
+    this.loadCommercials();
   }
 
   load(): void {
@@ -83,6 +88,27 @@ export class SupportTicketDetailComponent implements OnInit {
     this.api.getByPublicId(this.publicId).subscribe({
       next: t => { this.ticket.set(t); this.loading.set(false); },
       error: () => { this.error.set('Ticket introuvable.'); this.loading.set(false); }
+    });
+  }
+
+  private loadCommercials(): void {
+    if (this.authFacade.isAdmin()) {
+      this.userApi.getCommercials().subscribe({
+        next: list => this.commercials.set(list),
+        error: ()   => this.feedback.showError('Impossible de charger les commerciaux.')
+      });
+    } else {
+      const me = this.authFacade.user();
+      if (me) {
+        this.commercials.set([{ publicId: me.publicId, firstName: me.firstname, lastName: me.lastname, username: me.username }]);
+      }
+    }
+  }
+
+  onAssign(commercial: CommercialSummary): void {
+    this.api.assign(this.publicId, { assignedToPublicId: commercial.publicId }).subscribe({
+      next: t => this.ticket.set(t),
+      error: () => this.feedback.showError('Erreur lors de l\'assignation.')
     });
   }
 
@@ -96,21 +122,6 @@ export class SupportTicketDetailComponent implements OnInit {
       this.editSubject     = t.subject;
       this.editDescription = t.description ?? '';
     }
-    if (panel === 'assign') {
-      this.assigneePublicId = t?.assignedToPublicId ?? '';
-      if (this.authFacade.isAdmin()) {
-        this.userApi.getCommercials().subscribe({
-          next: list => this.commercials.set(list),
-          error: ()  => this.feedback.showError('Impossible de charger la liste des commerciaux.')
-        });
-      } else {
-        const me = this.authFacade.user();
-        if (me) {
-          this.commercials.set([{ publicId: me.publicId, firstName: me.firstname, lastName: me.lastname, username: me.username }]);
-          this.assigneePublicId = me.publicId;
-        }
-      }
-    }
     if (panel === 'status') {
       this.newStatus = '';
     }
@@ -123,16 +134,6 @@ export class SupportTicketDetailComponent implements OnInit {
     this.api.changeStatus(this.publicId, { status: this.newStatus as SupportTicketStatus }).subscribe({
       next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
       error: () => { this.saving.set(false); this.feedback.showError('Transition invalide.'); }
-    });
-  }
-
-  submitAssign(): void {
-    this.saving.set(true);
-    this.api.assign(this.publicId, {
-      assignedToPublicId: this.assigneePublicId || null
-    }).subscribe({
-      next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
-      error: () => { this.saving.set(false); this.feedback.showError('Erreur lors de l\'assignation.'); }
     });
   }
 

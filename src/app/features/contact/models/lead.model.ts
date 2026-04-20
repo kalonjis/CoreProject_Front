@@ -64,6 +64,7 @@ export interface SubmitLeadRequest {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  jobTitle?: string;
   organisationName?: string;
   message: string;
   leadType: LeadType;

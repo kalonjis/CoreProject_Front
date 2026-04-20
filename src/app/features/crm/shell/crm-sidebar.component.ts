@@ -1,3 +1,10 @@
+/**
+ * CRM navigation sidebar component.
+ *
+ * Renders the CRM nav items with optional badge counters (new leads, overdue actions,
+ * today's work). Supports collapse/expand with localStorage persistence.
+ * Badge counts are loaded once from the dashboard stats API on init.
+ */
 import { Component, OnInit, inject, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';

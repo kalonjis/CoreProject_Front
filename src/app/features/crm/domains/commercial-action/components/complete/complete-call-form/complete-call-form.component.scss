@@ -1,4 +1,6 @@
-@import '../../../../../shared/styles/action-panel';
+@use "sass:color";
+@use 'variables' as *;
+@use '../../../../../shared/styles/action-panel';
 
 .call-status-pills {
   display: flex;
@@ -20,7 +22,7 @@
   transition: $transition-fast;
 
   &:hover:not(.call-pill--active) {
-    border-color: darken($border-color, 12%);
+    border-color: color.adjust($border-color, $lightness: -12%);
     color: $text-color;
   }
 

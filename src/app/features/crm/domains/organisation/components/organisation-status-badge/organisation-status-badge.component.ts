@@ -24,6 +24,7 @@ import { OrganisationStatus, ORGANISATION_STATUS_LABELS } from '../../models/org
     .org-status-badge--client   { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
   `]
 })
+/** Inline badge rendering an organisation's lifecycle status with its colour-coded style. */
 export class OrganisationStatusBadgeComponent {
   @Input({ required: true }) status!: OrganisationStatus;
   readonly labels = ORGANISATION_STATUS_LABELS;

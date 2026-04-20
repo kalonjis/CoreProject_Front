@@ -6,6 +6,7 @@ import { CommercialActionResponse, CompleteCommercialActionRequest } from '../..
   templateUrl: './complete-task-form.component.html',
   styleUrl:    './complete-task-form.component.scss'
 })
+/** Completion confirmation form for TASK-type commercial actions (no additional details required). */
 export class CompleteTaskFormComponent {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest | undefined>();

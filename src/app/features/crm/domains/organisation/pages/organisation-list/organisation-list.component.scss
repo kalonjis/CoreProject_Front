@@ -1,4 +1,5 @@
-@import 'variables';
+@use "sass:color";
+@use 'variables';
 
 .org-list {
   &__header {
@@ -21,14 +22,14 @@
     align-items: center;
     gap: 0.625rem;
     font-size: 1.5rem;
-    font-weight: $font-weight-bold;
-    color: $dark-color;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$dark-color;
     margin: 0 0 0.2rem;
   }
 
   &__subtitle {
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin: 0;
   }
 
@@ -36,11 +37,11 @@
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.55rem;
-    background: $gray-medium;
+    background: variables.$gray-medium;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__filters {
@@ -51,8 +52,8 @@
     margin-bottom: 1.25rem;
     padding: 0.75rem 1rem;
     background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-lg;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
 
     > input, > select { width: auto; }
   }
@@ -62,30 +63,30 @@
     max-width: 360px;
     height: 2.25rem;
     padding: 0 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     box-sizing: border-box;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
   &__select {
     min-width: 140px;
     height: 2.25rem;
     padding: 0 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     background: #fff;
     cursor: pointer;
     box-sizing: border-box;
-    &:focus { outline: none; border-color: $primary-color; }
+    &:focus { outline: none; border-color: variables.$primary-color; }
   }
 
-  &__loading { text-align: center; padding: 2rem; color: $gray-dark; font-size: 0.9rem; }
-  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: $border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
+  &__loading { text-align: center; padding: 2rem; color: variables.$gray-dark; font-size: 0.9rem; }
+  &__error   { padding: 0.75rem 1rem; background: #fee2e2; color: #991b1b; border-radius: variables.$border-radius; margin-bottom: 1rem; font-size: 0.875rem; }
 
-  &__table-wrapper { background: #fff; border: 1px solid $border-color; border-radius: $border-radius-lg; overflow: hidden; }
+  &__table-wrapper { background: #fff; border: 1px solid variables.$border-color; border-radius: variables.$border-radius-lg; overflow: hidden; }
 
   &__table {
     width: 100%;
@@ -94,7 +95,7 @@
     table-layout: fixed;
 
     thead tr {
-      background: $gray-medium;
+      background: variables.$gray-medium;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -113,7 +114,7 @@
 
     td {
       padding: 0.6rem 1rem;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid variables.$border-color;
       vertical-align: middle;
     }
   }
@@ -123,7 +124,7 @@
     user-select: none;
     transition: color 0.15s;
     &:hover { color: #64748b; }
-    &.org-list__th--active { color: $primary-color; }
+    &.org-list__th--active { color: variables.$primary-color; }
   }
 
   &__sort-icon {
@@ -132,28 +133,28 @@
     font-size: 0.7rem;
     opacity: 0.25;
     transition: transform 0.2s ease, opacity 0.15s, color 0.15s;
-    &--active { opacity: 0.8; color: $primary-color; }
+    &--active { opacity: 0.8; color: variables.$primary-color; }
     &--asc    { transform: rotate(180deg); }
   }
 
   &__row {
     cursor: pointer;
-    transition: $transition-fast;
+    transition: variables.$transition-fast;
     &:hover td { background: #f8faff; }
   }
 
   &__name {
     font-weight: 600;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   &__secondary {
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-size: 0.875rem;
   }
 
   &__link {
-    color: $primary-color;
+    color: variables.$primary-color;
     text-decoration: none;
     font-size: 0.8125rem;
     &:hover { text-decoration: underline; }
@@ -168,18 +169,18 @@
   &__col-website { width: 14%; }
 
   &__pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.25rem; }
-  &__page-btn { padding: 0.4rem 0.875rem; border: 1px solid $border-color; border-radius: $border-radius; background: #fff; cursor: pointer; font-size: 0.875rem; transition: $transition-fast; &:hover:not(:disabled) { border-color: $primary-color; color: $primary-color; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
-  &__page-info { font-size: 0.875rem; color: $gray-dark; }
+  &__page-btn { padding: 0.4rem 0.875rem; border: 1px solid variables.$border-color; border-radius: variables.$border-radius; background: #fff; cursor: pointer; font-size: 0.875rem; transition: variables.$transition-fast; &:hover:not(:disabled) { border-color: variables.$primary-color; color: variables.$primary-color; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
+  &__page-info { font-size: 0.875rem; color: variables.$gray-dark; }
 
   .btn--primary {
     padding: 0.45rem 1rem;
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
     border: none;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    &:hover { background: darken($primary-color, 8%); }
+    &:hover { background: color.adjust(variables.$primary-color, $lightness: -8%); }
   }
 }

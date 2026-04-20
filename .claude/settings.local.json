@@ -3,7 +3,15 @@
     "allow": [
       "Bash(git:*)",
       "Bash(find:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); const keys = Object.keys\\({...p.dependencies, ...p.devDependencies}\\).filter\\(k => k.startsWith\\('@angular'\\)\\); keys.forEach\\(k => console.log\\(k, \\(p.dependencies||{}\\)[k] || \\(p.devDependencies||{}\\)[k]\\)\\)\")",
+      "Bash(npm view *)",
+      "Bash(npm update *)",
+      "Bash(npm list *)",
+      "Bash(npm install *)",
+      "Bash(npm audit *)",
+      "Bash(npx tsc *)",
+      "Bash(npx ng *)"
     ]
   }
 }

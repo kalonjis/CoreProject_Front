@@ -22,6 +22,7 @@ import { CommercialActionPriority, COMMERCIAL_ACTION_PRIORITY_LABELS } from '../
     }
   `]
 })
+/** Inline badge displaying the priority level of a commercial action. */
 export class CommercialActionPriorityBadgeComponent {
   @Input({ required: true }) priority!: CommercialActionPriority;
   get label(): string { return COMMERCIAL_ACTION_PRIORITY_LABELS[this.priority]; }

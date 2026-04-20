@@ -11,6 +11,7 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
   templateUrl: './contact-action-create.component.html',
   styleUrl: './contact-action-create.component.scss'
 })
+/** Inline form for creating a new contact, with optional pre-linked organisation. */
 export class ContactActionCreateComponent {
   /** Pre-filled organisation — the created contact will be linked to it. */
   @Input() organisationPublicId: string | null = null;

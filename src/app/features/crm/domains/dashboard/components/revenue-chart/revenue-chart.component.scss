@@ -1,0 +1,103 @@
+.rev-chart {
+  display: block;
+  overflow: visible;
+
+  // ─── Grid ──────────────────────────────────────────────────────────────────
+  &__grid {
+    stroke: #f1f5f9;
+    stroke-width: 1;
+  }
+
+  // ─── Area fill ─────────────────────────────────────────────────────────────
+  &__area {
+    fill: url(#rev-area-grad);
+  }
+
+  // ─── Line ──────────────────────────────────────────────────────────────────
+  &__line {
+    fill:           none;
+    stroke:         #3b82f6;
+    stroke-width:   2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // ─── Dots ──────────────────────────────────────────────────────────────────
+  &__point-group { cursor: crosshair; }
+
+  &__hit {
+    fill:    transparent;
+    stroke:  none;
+  }
+
+  &__dot {
+    fill:         #fff;
+    stroke:       #3b82f6;
+    stroke-width: 2;
+    transition:   r 0.1s;
+  }
+
+  &__point-group:hover &__dot {
+    r: 5.5;
+    stroke-width: 2.5;
+  }
+
+  // ─── Axis labels ───────────────────────────────────────────────────────────
+  &__y-label {
+    font-size:   9px;
+    fill:        #94a3b8;
+    text-anchor: end;
+    font-family: inherit;
+  }
+
+  &__x-label {
+    font-size:   9px;
+    fill:        #94a3b8;
+    text-anchor: middle;
+    font-family: inherit;
+  }
+
+  // ─── Vertical guide ────────────────────────────────────────────────────────
+  &__guide {
+    stroke:            #e2e8f0;
+    stroke-width:      1;
+    stroke-dasharray:  3 3;
+    pointer-events:    none;
+  }
+
+  // ─── Tooltip ───────────────────────────────────────────────────────────────
+  &__tip-bg {
+    fill:         #1e293b;
+    filter:       drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+  }
+
+  &__tip-month {
+    font-size:   9.5px;
+    fill:        #94a3b8;
+    text-anchor: middle;
+    font-family: inherit;
+  }
+
+  &__tip-value {
+    font-size:   12px;
+    font-weight: 700;
+    fill:        #f1f5f9;
+    text-anchor: middle;
+    font-family: inherit;
+  }
+
+  &__tip-deals {
+    font-size:   9px;
+    fill:        #64748b;
+    text-anchor: middle;
+    font-family: inherit;
+  }
+
+  // ─── Empty state ───────────────────────────────────────────────────────────
+  &__empty {
+    font-size:  0.875rem;
+    color:      #94a3b8;
+    text-align: center;
+    padding:    2rem 0;
+  }
+}

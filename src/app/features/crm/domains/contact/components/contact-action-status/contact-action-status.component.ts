@@ -10,6 +10,7 @@ import { ContactStatus, CONTACT_STATUS_LABELS, CONTACT_STATUS_TRANSITIONS } from
   templateUrl: './contact-action-status.component.html',
   styleUrl: './contact-action-status.component.scss'
 })
+/** Inline form for transitioning a contact's lifecycle status to one of its allowed next states. */
 export class ContactActionStatusComponent {
   @Input({ required: true }) publicId!: string;
   @Input({ required: true }) currentStatus!: ContactStatus;

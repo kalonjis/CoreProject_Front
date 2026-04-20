@@ -1,0 +1,60 @@
+<div class="feed">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="feed__header">
+    <span class="feed__title">Activité récente</span>
+    <a class="feed__see-all" routerLink="/activity-logs">Tout voir →</a>
+  </div>
+
+  <!-- ── Filter tabs ─────────────────────────────────────────────────────── -->
+  <div class="feed__tabs">
+    @for (f of filters; track f.key) {
+      <button
+        class="feed__tab"
+        [class.feed__tab--active]="filter() === f.key"
+        (click)="setFilter(f.key)">
+        {{ f.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ── List ────────────────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="feed__loading">Chargement…</div>
+
+  } @else if (entries().length === 0) {
+    <div class="feed__empty">Aucune activité récente.</div>
+
+  } @else {
+    <ul class="feed__list">
+      @for (entry of entries(); track entry.publicId) {
+        <li
+          class="feed__item"
+          [class.feed__item--clickable]="!!entry.navPath"
+          (click)="navigate(entry)">
+
+          <!-- dot -->
+          <span class="feed__dot feed__dot--{{ entry.dotClass }}"></span>
+
+          <!-- content -->
+          <span class="feed__content">
+            <span class="feed__message">
+              {{ entry.message }}
+              @if (entry.entityName) {
+                <strong class="feed__entity"> {{ entry.entityName }}</strong>
+              }
+            </span>
+            @if (entry.actor) {
+              <span class="feed__actor">Par {{ entry.actor }}</span>
+            }
+          </span>
+
+          <!-- time -->
+          <span class="feed__time">{{ timeAgo(entry.timestamp) }}</span>
+
+        </li>
+      }
+    </ul>
+  }
+
+</div>

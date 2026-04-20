@@ -1,6 +1,29 @@
+@use '../styles/action-panel';
+
 .email-compose {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+
+  &__title {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &__title-icon { font-style: normal; }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
   &__input {
     width: 100%;
+    &:focus {
+      border-color: #2563eb !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }
   }
 
   &__body-row {
@@ -9,7 +32,22 @@
     gap: 0.4rem;
   }
 
-  app-rich-text-editor {
-    width: 100%;
+  app-rich-text-editor { width: 100%; }
+
+  .action-panel__footer { gap: 1rem; }
+
+  &__btn-send {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    &:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+
+  &__btn-cancel {
+    background: transparent;
+    color: #6b7280;
+    border-color: transparent;
+    &:hover:not(:disabled) { background: #f3f4f6; color: #374151; }
   }
 }

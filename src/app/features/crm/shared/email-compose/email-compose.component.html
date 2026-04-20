@@ -1,7 +1,9 @@
 <div class="email-compose action-panel">
-  <h3 class="action-panel__title">Envoyer un email</h3>
+  <h3 class="action-panel__title email-compose__title">
+    <span class="email-compose__title-icon">✉</span> Envoyer un email
+  </h3>
 
-  <div class="action-panel__grid">
+  <div class="email-compose__fields">
     <div class="action-panel__row">
       <label for="ec-subject">Sujet *</label>
       <input
@@ -18,19 +20,19 @@
       <label>Message *</label>
       <app-rich-text-editor
         [(ngModel)]="body"
-        placeholder="Rédigez votre message…"
+        placeholder="Écrivez votre message ici… (Astuce : utilisez des variables pour personnaliser)"
       />
     </div>
   </div>
 
   <div class="action-panel__footer">
     <button
-      class="btn btn--primary"
+      class="btn email-compose__btn-send"
       (click)="onSend()"
       [disabled]="!canSend || sending()"
     >
       {{ sending() ? 'Envoi…' : 'Envoyer' }}
     </button>
-    <button class="btn btn--ghost" (click)="cancel.emit()">Annuler</button>
+    <button class="btn email-compose__btn-cancel" (click)="cancel.emit()">Annuler</button>
   </div>
 </div>

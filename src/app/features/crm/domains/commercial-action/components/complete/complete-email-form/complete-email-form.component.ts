@@ -8,6 +8,7 @@ import { CommercialActionResponse, CompleteCommercialActionRequest } from '../..
   templateUrl: './complete-email-form.component.html',
   styleUrl:    './complete-email-form.component.scss'
 })
+/** Completion form for EMAIL-type commercial actions, capturing subject and body snippet. */
 export class CompleteEmailFormComponent implements OnInit {
   @Input({ required: true }) action!: CommercialActionResponse;
   @Output() confirmed = new EventEmitter<CompleteCommercialActionRequest>();

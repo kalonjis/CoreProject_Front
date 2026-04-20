@@ -6,16 +6,26 @@
 
     <!-- ─── Header ────────────────────────────────────────────────────────── -->
     <div class="contact-detail__header">
-      <button class="contact-detail__back" (click)="back()">← Retour</button>
+      <nav class="contact-detail__breadcrumb">
+        <a class="contact-detail__breadcrumb-link" (click)="back()">Contacts</a>
+        <span class="contact-detail__breadcrumb-sep">/</span>
+        <span class="contact-detail__breadcrumb-current">{{ c.firstName }} {{ c.lastName }}</span>
+      </nav>
       <div class="contact-detail__identity">
         <h1 class="contact-detail__name">{{ c.firstName }} {{ c.lastName }}</h1>
-        @if (c.jobTitle) { <span class="contact-detail__jobtitle">{{ c.jobTitle }}</span> }
-      </div>
-      <div class="contact-detail__header-actions">
-        <button class="btn btn--primary btn--sm" (click)="showEmailCompose.set(!showEmailCompose())">
-          {{ showEmailCompose() ? 'Annuler' : '✉ Email' }}
-        </button>
-        <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
+        @if (c.jobTitle) {
+          <span class="contact-detail__org">
+            {{ c.jobTitle }}
+            <span class="contact-detail__org-icon">🏢</span>
+          </span>
+        }
+        <div class="contact-detail__contact-line">
+          <span class="contact-detail__email" (click)="showEmailCompose.set(true)"><span class="contact-detail__email-icon">📧</span> {{ c.email }}</span>
+          @if (c.phone) {
+            <span class="contact-detail__contact-sep">•</span>
+            <span class="contact-detail__phone">📞 {{ c.phone }}</span>
+          }
+        </div>
       </div>
     </div>
 
@@ -42,38 +52,12 @@
           />
         }
 
-        @switch (activeAction()) {
-          @case ('status') {
-            <app-contact-action-status
-              [publicId]="c.publicId"
-              [currentStatus]="c.status"
-              (statusChanged)="onActionDone()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
-          @case ('assign') {
-            <app-contact-action-assign
-              [publicId]="c.publicId"
-              [currentAssigneePublicId]="c.assignedToPublicId"
-              (assigned)="onActionDone()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
-          @case ('link-org') {
-            <app-contact-action-link-org
-              [publicId]="c.publicId"
-              [currentOrgPublicId]="c.organisationPublicId"
-              (linked)="onActionDone()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
-          @case ('merge') {
-            <app-contact-action-merge
-              [publicId]="c.publicId"
-              (merged)="onActionDone()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
+        @if (activeAction() === 'merge') {
+          <app-contact-action-merge
+            [publicId]="c.publicId"
+            (merged)="onActionDone()"
+            (cancelled)="toggleAction(null)"
+          />
         }
 
         <!-- ─── Tabs ─────────────────────────────────────────────────────── -->
@@ -212,30 +196,66 @@
       <!-- ─── Sidebar (droite) ────────────────────────────────────────────── -->
       <aside class="contact-detail__sidebar">
 
-        <app-contact-info-card [contact]="c" />
-
-        <div class="contact-detail__tags-section">
-          <h3 class="contact-detail__sidebar-title">Tags</h3>
-          <app-tag-input
-            [entityTags]="tags()"
-            (tagAdded)="onTagAdded($event)"
-            (tagRemoved)="onTagRemoved($event)"
-          />
-        </div>
+        <app-contact-info-card [contact]="c" [publicId]="c.publicId" (assigned)="onActionDone()" />
 
         <div class="contact-detail__action-bar">
-          <button class="btn btn--sidebar-action" (click)="toggleAction('status')">
-            <span class="action-icon">◈</span> Changer statut
-          </button>
-          <button class="btn btn--sidebar-action" (click)="toggleAction('assign')">
-            <span class="action-icon">→</span> Assigner
-          </button>
-          <button class="btn btn--sidebar-action" (click)="toggleAction('link-org')">
-            <span class="action-icon">🏢</span> Organisation
-          </button>
-          <button class="btn btn--sidebar-action btn--sidebar-action--danger" (click)="toggleAction('merge')">
-            <span class="action-icon">⇄</span> Fusionner
-          </button>
+
+          @if (tags().length > 0) {
+            <div class="contact-detail__tags-zone">
+              @for (tag of tags(); track tag.publicId) {
+                <span class="contact-detail__tag-chip">
+                  <span class="contact-detail__tag-dot" [style.background]="tag.color"></span>
+                  {{ tag.name }}
+                  <button class="contact-detail__tag-remove" (click)="removeTag(tag)">×</button>
+                </span>
+              }
+            </div>
+          }
+
+          <button class="btn btn--primary-outline" (click)="goEdit()">📝 Modifier le contact</button>
+
+          <div class="contact-detail__tag-wrapper">
+            <button class="btn contact-detail__btn-tag" (click)="$event.stopPropagation(); showTagPopover.set(!showTagPopover())">
+              <span class="contact-detail__tag-icon">🏷️</span> Ajouter un tag
+            </button>
+            @if (showTagPopover()) {
+              <div class="contact-detail__tag-popover" (click)="$event.stopPropagation()">
+                <input
+                  type="text"
+                  class="contact-detail__tag-search"
+                  placeholder="Rechercher un tag…"
+                  [value]="tagQuery()"
+                  (input)="tagQuery.set($any($event.target).value)"
+                  autofocus
+                />
+                <ul class="contact-detail__tag-options">
+                  @if (!tagQuery() && filteredTags().length > 0) {
+                    <li class="contact-detail__tag-section-header">Suggestions</li>
+                  }
+                  @for (tag of displayedTags(); track tag.publicId) {
+                    <li class="contact-detail__tag-option" (click)="selectTag(tag)">
+                      <span class="contact-detail__tag-option-icon">🏷️</span>
+                      <span class="contact-detail__tag-swatch" [style.background]="tag.color"></span>
+                      {{ tag.name }}
+                    </li>
+                  } @empty {
+                    @if (!tagQuery()) {
+                      <li class="contact-detail__tag-hint">Saisissez un nom pour créer un nouveau tag</li>
+                    }
+                  }
+                  @if (canCreateTag()) {
+                    <li class="contact-detail__tag-create" (click)="createAndAddTag()">
+                      <span class="contact-detail__tag-create-icon">＋</span>
+                      Créer le tag <strong>« {{ tagQuery() }} »</strong>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+
+          <button class="btn btn--danger-outline" (click)="toggleAction('merge')">⇄ Fusionner</button>
+
         </div>
 
       </aside>

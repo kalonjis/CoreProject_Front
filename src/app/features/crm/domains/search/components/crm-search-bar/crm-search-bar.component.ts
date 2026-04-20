@@ -17,6 +17,10 @@ import {
   templateUrl: './crm-search-bar.component.html',
   styleUrl: './crm-search-bar.component.scss'
 })
+/**
+ * CRM search bar with debounced live search, grouped results dropdown,
+ * and keyboard navigation (Escape to close, click-outside dismissal).
+ */
 export class CrmSearchBarComponent {
 
   private readonly api    = inject(CrmSearchApiService);

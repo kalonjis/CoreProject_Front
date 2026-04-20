@@ -1,4 +1,5 @@
-@import 'variables';
+@use "sass:color";
+@use 'variables';
 
 .search-modal-overlay {
   position: fixed;
@@ -30,14 +31,14 @@
     align-items: center;
     gap: 0.625rem;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     flex-shrink: 0;
   }
 
   &__icon {
     font-size: 1rem;
     flex-shrink: 0;
-    color: $gray-dark;
+    color: variables.$gray-dark;
   }
 
   &__input {
@@ -45,7 +46,7 @@
     border: none;
     outline: none;
     font-size: 1rem;
-    color: $text-color;
+    color: variables.$text-color;
     background: transparent;
     min-width: 0;
 
@@ -57,23 +58,23 @@
     border: none;
     cursor: pointer;
     font-size: 0.8rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
     line-height: 1;
     flex-shrink: 0;
-    &:hover { background: $gray-medium; color: $text-color; }
+    &:hover { background: variables.$gray-medium; color: variables.$text-color; }
   }
 
   &__kbd {
     display: inline-flex;
     align-items: center;
     padding: 0.15rem 0.4rem;
-    background: $gray-medium;
-    border: 1px solid $border-color;
+    background: variables.$gray-medium;
+    border: 1px solid variables.$border-color;
     border-radius: 4px;
     font-size: 0.7rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-family: inherit;
     flex-shrink: 0;
   }
@@ -81,8 +82,8 @@
   &__spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid $border-color;
-    border-top-color: $primary-color;
+    border: 2px solid variables.$border-color;
+    border-top-color: variables.$primary-color;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
     flex-shrink: 0;
@@ -107,7 +108,7 @@
 
   &__group {
     &:not(:last-child) {
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid variables.$border-color;
     }
   }
 
@@ -122,7 +123,7 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     background: #fafafa;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid variables.$border-color;
     position: sticky;
     top: 0;
   }
@@ -135,7 +136,7 @@
     padding: 0.7rem 1.25rem;
     background: none;
     border: none;
-    border-bottom: 1px solid lighten($border-color, 3%);
+    border-bottom: 1px solid color.adjust(variables.$border-color, $lightness: 3%);
     cursor: pointer;
     transition: background 0.1s;
 
@@ -148,12 +149,12 @@
   &__item-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   &__item-sub {
     font-size: 0.78rem;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     margin-top: 0.15rem;
   }
 
@@ -163,7 +164,7 @@
     display: flex;
     gap: 1.25rem;
     padding: 0.6rem 1.25rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid variables.$border-color;
     background: #fafafa;
     flex-shrink: 0;
 
@@ -180,10 +181,10 @@
       align-items: center;
       padding: 0.1rem 0.35rem;
       background: #fff;
-      border: 1px solid $border-color;
+      border: 1px solid variables.$border-color;
       border-radius: 4px;
       font-size: 0.7rem;
-      color: $gray-dark;
+      color: variables.$gray-dark;
       font-family: inherit;
     }
   }

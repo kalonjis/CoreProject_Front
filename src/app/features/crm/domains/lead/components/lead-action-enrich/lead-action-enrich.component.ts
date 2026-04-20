@@ -1,3 +1,9 @@
+/**
+ * Inline action panel for enriching a lead with additional contact and qualification data.
+ *
+ * Pre-fills form fields from the current lead data.
+ * Emits {@link enriched} after a successful API call and {@link cancelled} on dismissal.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CrmLeadApiService } from '../../services/crm-lead-api.service';
@@ -23,6 +29,7 @@ export class LeadActionEnrichComponent implements OnInit {
   firstName        = '';
   lastName         = '';
   phone            = '';
+  jobTitle         = '';
   organisationName = '';
   leadType: LeadType | null = null;
   leadSource: LeadSource | null = null;
@@ -41,6 +48,7 @@ export class LeadActionEnrichComponent implements OnInit {
       this.firstName        = this.lead.firstName        ?? '';
       this.lastName         = this.lead.lastName         ?? '';
       this.phone            = this.lead.phone            ?? '';
+      this.jobTitle         = this.lead.jobTitle         ?? '';
       this.organisationName = this.lead.organisationName ?? '';
       this.leadType         = this.lead.leadType         ?? null;
       this.leadSource       = this.lead.leadSource       ?? null;
@@ -54,6 +62,7 @@ export class LeadActionEnrichComponent implements OnInit {
       firstName:        this.firstName        || null,
       lastName:         this.lastName         || null,
       phone:            this.phone            || null,
+      jobTitle:         this.jobTitle         || null,
       organisationName: this.organisationName || null,
       leadType:         this.leadType         || null,
       leadSource:       this.leadSource       || null

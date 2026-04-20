@@ -5,6 +5,7 @@ import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/to
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 import { Pipeline, PipelineStep } from '../../models/pipeline.model';
 
+/** Local form model for creating or editing a pipeline stage. */
 interface StepForm {
   name:            string;
   color:           string;
@@ -21,6 +22,7 @@ const emptyStepForm = (): StepForm => ({ name: '', color: '#6366f1', isWon: fals
   templateUrl: './pipeline-settings.component.html',
   styleUrl: './pipeline-settings.component.scss'
 })
+/** Admin page for managing pipelines and their stages: create, edit, delete, and reorder. */
 export class PipelineSettingsComponent implements OnInit {
 
   private readonly api     = inject(CrmPipelineApiService);

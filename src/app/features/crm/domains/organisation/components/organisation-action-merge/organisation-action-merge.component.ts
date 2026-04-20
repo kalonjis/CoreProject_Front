@@ -10,6 +10,7 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
   templateUrl: './organisation-action-merge.component.html',
   styleUrl: './organisation-action-merge.component.scss'
 })
+/** Form for merging two organisations: the selected source is archived and its data transferred to this organisation (the target). */
 export class OrganisationActionMergeComponent {
   @Input({ required: true }) publicId!: string;
   @Output() merged    = new EventEmitter<string>();

@@ -1,3 +1,13 @@
+/**
+ * Read model for the CRM unified timeline.
+ *
+ * A timeline entry is a projection of either an Interaction or a completed CommercialAction,
+ * unified into a single {@link TimelineEntryResponse} shape. Entries are never persisted
+ * independently — they are computed on the fly by {@code TimelineService} on the backend.
+ *
+ * The {@link toDisplayType} helper maps any entry to the nearest {@link InteractionType}
+ * for badge rendering in {@link InteractionTypeBadgeComponent}.
+ */
 import {
   CallLogResponse,
   EmailLogResponse,

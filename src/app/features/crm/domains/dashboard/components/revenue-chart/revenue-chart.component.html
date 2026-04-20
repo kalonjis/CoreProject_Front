@@ -1,0 +1,74 @@
+@if (points().length > 1) {
+  <svg
+    [attr.viewBox]="'0 0 ' + W + ' ' + H"
+    width="100%"
+    preserveAspectRatio="xMidYMid meet"
+    class="rev-chart"
+    aria-label="Graphique revenus mensuels"
+    role="img">
+
+    <defs>
+      <linearGradient id="rev-area-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.20" />
+        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02" />
+      </linearGradient>
+    </defs>
+
+    <!-- ─── Gridlines & Y labels ──────────────────────────────────────────── -->
+    @for (g of gridlines(); track g.y) {
+      <line
+        [attr.x1]="padL" [attr.y1]="g.y"
+        [attr.x2]="W - padR" [attr.y2]="g.y"
+        class="rev-chart__grid" />
+      <text
+        [attr.x]="padL - 6" [attr.y]="g.y + 4"
+        class="rev-chart__y-label">{{ g.label }}</text>
+    }
+
+    <!-- ─── Area fill ─────────────────────────────────────────────────────── -->
+    <path [attr.d]="areaPath()" class="rev-chart__area" />
+
+    <!-- ─── Line ──────────────────────────────────────────────────────────── -->
+    <path [attr.d]="linePath()" class="rev-chart__line" />
+
+    <!-- ─── X labels ─────────────────────────────────────────────────────── -->
+    @for (pt of points(); track pt.month; let i = $index) {
+      @if (showLabel(i, points().length)) {
+        <text
+          [attr.x]="pt.x" [attr.y]="H - padB + 18"
+          class="rev-chart__x-label">{{ pt.label }}</text>
+      }
+    }
+
+    <!-- ─── Dots + invisible hit zone ────────────────────────────────────── -->
+    @for (pt of points(); track pt.month) {
+      <g (mouseenter)="showTooltip(pt)" (mouseleave)="hideTooltip()" class="rev-chart__point-group">
+        <!-- hit zone -->
+        <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="14" class="rev-chart__hit" />
+        <!-- visible dot -->
+        <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="4"  class="rev-chart__dot" />
+      </g>
+    }
+
+    <!-- ─── Vertical guide + Tooltip ────────────────────────────────────── -->
+    @if (tooltip(); as t) {
+      <!-- guide line dot → X axis -->
+      <line
+        [attr.x1]="t.x" [attr.y1]="t.y + 6"
+        [attr.x2]="t.x" [attr.y2]="chartBottom"
+        class="rev-chart__guide" />
+
+      <!-- tooltip card -->
+      <g [attr.transform]="'translate(' + tooltipX(t.x) + ',' + tooltipY(t.y) + ')'">
+        <rect x="-54" y="-50" width="108" height="46" rx="6" class="rev-chart__tip-bg" />
+        <text y="-33" class="rev-chart__tip-month">{{ t.label }}</text>
+        <text y="-18" class="rev-chart__tip-value">{{ formatRevenue(t.revenue) }}</text>
+        <text y="-6"  class="rev-chart__tip-deals">{{ t.dealsWon }} deal{{ t.dealsWon !== 1 ? 's' : '' }}</text>
+      </g>
+    }
+
+  </svg>
+
+} @else {
+  <p class="rev-chart__empty">Pas assez de données</p>
+}

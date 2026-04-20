@@ -1,12 +1,12 @@
-@import 'variables';
+@use 'variables';
 
 $sidebar-width:           240px;
 $sidebar-collapsed-width: 52px;
-$sidebar-bg:              $secondary-color;
+$sidebar-bg:              variables.$secondary-color;
 $sidebar-text:            #ecf0f1;
 $sidebar-active-bg:       rgba(255, 255, 255, 0.12);
 $sidebar-hover-bg:        rgba(255, 255, 255, 0.07);
-$sidebar-accent:          $primary-color;
+$sidebar-accent:          variables.$primary-color;
 $sidebar-transition:      0.22s ease;
 
 .crm-sidebar {
@@ -76,7 +76,7 @@ $sidebar-transition:      0.22s ease;
 
   &__logo {
     font-size: 1.1rem;
-    font-weight: $font-weight-bold;
+    font-weight: variables.$font-weight-bold;
     letter-spacing: 0.05em;
     color: #fff;
     white-space: nowrap;
@@ -91,7 +91,7 @@ $sidebar-transition:      0.22s ease;
     font-size: 1.1rem;
     line-height: 1;
     padding: 0.2rem 0.3rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     transition: color 0.15s, opacity $sidebar-transition;
     flex-shrink: 0;
 
@@ -109,7 +109,7 @@ $sidebar-transition:      0.22s ease;
     padding: 0.5rem 0.5rem;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
     text-align: left;
@@ -155,7 +155,7 @@ $sidebar-transition:      0.22s ease;
     align-items: center;
     gap: 0.75rem;
     padding: 0.625rem 0.5rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     color: $sidebar-text;
     text-decoration: none;
     transition: background-color 0.15s;
@@ -203,7 +203,7 @@ $sidebar-transition:      0.22s ease;
     align-items: center;
     gap: 0.75rem;
     padding: 0.625rem 0.5rem;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
     transition: background-color 0.15s, color 0.15s;
@@ -222,7 +222,7 @@ $sidebar-transition:      0.22s ease;
     height: 1.25rem;
     padding: 0 0.35rem;
     border-radius: 999px;
-    background: $primary-color;
+    background: variables.$primary-color;
     color: #fff;
     font-size: 0.7rem;
     font-weight: 700;

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, HostListener, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,8 @@ import { CrmEmptyStateComponent }      from '../../../../shared/empty-state/crm-
 import { CrmTagApiService } from '../../../tag/services/crm-tag-api.service';
 import { Tag } from '../../../tag/models/tag.model';
 import { CrmUserApiService }          from '../../../../shared/services/crm-user-api.service';
-import { CommercialSummary, commercialDisplayName } from '../../../../shared/models/commercial.model';
+import { CrmAssignPopoverComponent }  from '../../../../shared/components/assign-popover/crm-assign-popover.component';
+import { CommercialSummary } from '../../../../shared/models/commercial.model';
 import { ContactActionCreateComponent } from '../../components/contact-action-create/contact-action-create.component';
 import { OrganisationActionCreateComponent } from '../../../organisation/components/organisation-action-create/organisation-action-create.component';
 import { ContactDetail } from '../../models/contact.model';
@@ -22,10 +23,14 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
 @Component({
   selector: 'app-contact-list',
   providers: [ContactFacade, InteractionFacade],
-  imports: [FormsModule, ContactStatusBadgeComponent, CrmEmptyStateComponent, ContactActionCreateComponent, OrganisationActionCreateComponent],
+  imports: [FormsModule, ContactStatusBadgeComponent, CrmEmptyStateComponent, ContactActionCreateComponent, OrganisationActionCreateComponent, CrmAssignPopoverComponent],
   templateUrl: './contact-list.component.html',
   styleUrl: './contact-list.component.scss'
 })
+/**
+ * Paginated contact list page with keyword search, status/tag filters, sortable columns,
+ * quick-assign popover, and inline contact/organisation creation.
+ */
 export class ContactListComponent implements OnInit {
 
   readonly facade  = inject(ContactFacade);
@@ -42,12 +47,10 @@ export class ContactListComponent implements OnInit {
   readonly contacts      = this.facade.contacts;
   readonly totalElements = this.facade.totalElements;
   readonly totalPages    = this.facade.totalPages;
-  readonly allTags       = signal<Tag[]>([]);
-  readonly commercials   = signal<CommercialSummary[]>([]);
-  readonly popoverContactId      = signal<string | null>(null);
-  readonly showCreate            = signal(false);
-  readonly pendingLinkContactId  = signal<string | null>(null);
-  readonly commercialDisplayName = commercialDisplayName;
+  readonly allTags              = signal<Tag[]>([]);
+  readonly commercials          = signal<CommercialSummary[]>([]);
+  readonly showCreate           = signal(false);
+  readonly pendingLinkContactId = signal<string | null>(null);
 
   readonly statuses     = Object.values(ContactStatus);
   readonly statusLabels = CONTACT_STATUS_LABELS;
@@ -60,9 +63,6 @@ export class ContactListComponent implements OnInit {
 
   readonly sortField = signal<string>('lastName');
   readonly sortDir   = signal<'asc' | 'desc'>('asc');
-
-  @HostListener('document:click')
-  onDocClick(): void { this.popoverContactId.set(null); }
 
   ngOnInit(): void {
     this.keywordSubject.pipe(
@@ -100,25 +100,7 @@ export class ContactListComponent implements OnInit {
 
   isSorted(field: string): boolean { return this.sortField() === field; }
 
-  initials(name: string): string {
-    const parts = name.split('.');
-    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return name.substring(0, 2).toUpperCase();
-  }
-
-  commercialInitials(c: CommercialSummary): string {
-    if (c.firstName && c.lastName) return (c.firstName[0] + c.lastName[0]).toUpperCase();
-    return c.username.substring(0, 2).toUpperCase();
-  }
-
-  openAssignPopover(event: MouseEvent, contactPublicId: string): void {
-    event.stopPropagation();
-    this.popoverContactId.set(this.popoverContactId() === contactPublicId ? null : contactPublicId);
-  }
-
-  selectCommercial(event: MouseEvent, contact: ContactSummary, commercial: CommercialSummary): void {
-    event.stopPropagation();
-    this.popoverContactId.set(null);
+  onContactAssigned(contact: ContactSummary, commercial: CommercialSummary): void {
     this.facade.assignInList(contact.publicId, { commercialPublicId: commercial.publicId }, commercial.username);
   }
 

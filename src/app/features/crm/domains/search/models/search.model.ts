@@ -1,5 +1,7 @@
+/** Union type of CRM entity categories returned by global search. */
 export type SearchResultType = 'CONTACT' | 'ORGANISATION' | 'DEAL' | 'LEAD';
 
+/** A single search result entry returned by the global CRM search. */
 export interface SearchResult {
   type:      SearchResultType;
   publicId:  string;
@@ -7,6 +9,7 @@ export interface SearchResult {
   subtitle:  string;
 }
 
+/** Response payload of the global CRM search endpoint. */
 export interface GlobalSearchResponse {
   results: SearchResult[];
 }

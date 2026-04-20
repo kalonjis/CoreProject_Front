@@ -1,3 +1,10 @@
+/**
+ * HTTP client for the CRM Timeline API ({@code /api/crm/timeline}).
+ *
+ * Returns unified timeline entries for a deal, contact, or lead.
+ * Each entry is either an Interaction or a completed CommercialAction,
+ * projected into a single {@link TimelineEntryResponse}.
+ */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

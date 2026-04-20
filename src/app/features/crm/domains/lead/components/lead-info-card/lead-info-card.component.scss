@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables';
 
 .lead-info-card {
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  border: 1px solid variables.$border-color;
+  border-radius: variables.$border-radius-lg;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -13,6 +13,16 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
+
+    &--two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: variables.$border-color;
+    margin: 0.25rem 0;
   }
 
   &__field,
@@ -28,41 +38,21 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: $gray-dark;
+    color: variables.$gray-dark;
     font-weight: 600;
-  }
-
-  &__assignee {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  &__avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: $primary-color;
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    flex-shrink: 0;
   }
 
   &__value {
     font-size: 0.875rem;
-    color: $text-color;
+    color: variables.$text-color;
     margin: 0;
 
-    &--danger  { color: $danger-color; }
+    &--danger  { color: variables.$danger-color; }
     &--message {
       white-space: pre-wrap;
       line-height: 1.5;
-      background: $gray-light;
-      border-radius: $border-radius;
+      background: variables.$gray-light;
+      border-radius: variables.$border-radius;
       padding: 0.75rem;
     }
   }

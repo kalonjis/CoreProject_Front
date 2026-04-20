@@ -1,4 +1,5 @@
-@import '../../../../../shared/styles/action-panel';
+@use 'variables' as *;
+@use '../../../../../shared/styles/action-panel';
 
 .complete-context {
   background: $gray-light;

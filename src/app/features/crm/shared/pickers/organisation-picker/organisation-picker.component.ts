@@ -1,3 +1,10 @@
+/**
+ * Typeahead picker for selecting a CRM organisation.
+ *
+ * Searches organisations in real-time via {@link CrmOrganisationApiService} as the user types.
+ * Emits an {@link OrganisationPickerValue} (publicId + name) on selection, or
+ * {@code null} when the selection is cleared.
+ */
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';

@@ -1,3 +1,9 @@
+/**
+ * HTTP client for the CRM Lead API ({@code /api/crm/leads}).
+ *
+ * Covers paginated listing, detail retrieval, and all lifecycle operations:
+ * enrich, assign, mark-in-review, create, convert, and reject.
+ */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -69,5 +75,9 @@ export class CrmLeadApiService {
 
   reject(publicId: string, body: RejectLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/reject`, body);
+  }
+
+  sendEmail(publicId: string, body: { subject: string; body: string }): Observable<void> {
+    return this.http.post<void>(`${this.base}/${publicId}/email`, body);
   }
 }

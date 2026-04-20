@@ -1,3 +1,8 @@
+/**
+ * Displays a colour-coded badge for a {@link LeadStatus}.
+ *
+ * Each status maps to a distinct background/border colour following the CRM design system.
+ */
 import { Component, Input } from '@angular/core';
 import { LeadStatus, LEAD_STATUS_LABELS } from '../../models/lead.model';
 

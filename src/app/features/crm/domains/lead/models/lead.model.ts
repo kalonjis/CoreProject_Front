@@ -1,3 +1,12 @@
+/**
+ * Domain models for the CRM Lead domain.
+ *
+ * Covers enums (status, type, civility, source), display label maps,
+ * API response interfaces (summary and detail), and request interfaces
+ * (filter, enrich, assign, convert, reject, create).
+ */
+
+/** Lifecycle status of a CRM lead. */
 export enum LeadStatus {
   NEW        = 'NEW',
   IN_REVIEW  = 'IN_REVIEW',
@@ -5,6 +14,7 @@ export enum LeadStatus {
   REJECTED   = 'REJECTED'
 }
 
+/** Categorisation of a lead by its business intent. */
 export enum LeadType {
   GENERAL     = 'GENERAL',
   COMMERCIAL  = 'COMMERCIAL',
@@ -13,11 +23,13 @@ export enum LeadType {
   OTHER       = 'OTHER'
 }
 
+/** Civility (title) of the lead contact person. */
 export enum Civility {
   MR  = 'MR',
   MRS = 'MRS'
 }
 
+/** Acquisition channel through which the lead originated. */
 export enum LeadSource {
   CONTACT_FORM   = 'CONTACT_FORM',
   PHONE          = 'PHONE',
@@ -80,6 +92,8 @@ export interface LeadSummary {
   convertedAt: string | null;
 }
 
+import { Tag } from '../../tag/models/tag.model';
+
 export interface LeadDetail {
   publicId: string;
   email: string;
@@ -87,6 +101,7 @@ export interface LeadDetail {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  jobTitle: string | null;
   organisationName: string | null;
   subject: string;
   message: string | null;
@@ -101,6 +116,7 @@ export interface LeadDetail {
   createdAt: string;
   updatedAt: string;
   existingContactPublicId: string | null;
+  tags: Tag[];
 }
 
 // ─── Request models ────────────────────────────────────────────────────────────
@@ -122,6 +138,7 @@ export interface EnrichLeadRequest {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string | null;
+  jobTitle?: string | null;
   organisationName?: string | null;
   leadType?: LeadType | null;
   leadSource?: LeadSource | null;
