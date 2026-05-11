@@ -17,7 +17,7 @@
     @if (organisation.website) {
       <div class="info-card__field">
         <dt>Site web</dt>
-        <dd><a [href]="organisation.website" target="_blank" rel="noopener">{{ organisation.website }}</a></dd>
+        <dd><a [href]="organisation.website" target="_blank" rel="noopener">🌐 {{ domainOf(organisation.website!) }}</a></dd>
       </div>
     }
     @if (organisation.phone) {

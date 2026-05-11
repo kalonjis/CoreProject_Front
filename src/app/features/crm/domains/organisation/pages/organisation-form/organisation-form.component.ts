@@ -23,12 +23,16 @@ export class OrganisationFormComponent implements OnInit {
   private readonly api      = inject(CrmOrganisationApiService);
   private readonly feedback = inject(FeedbackService);
 
+  /** Whether a create/load/update request is in flight. */
   readonly loading = signal(false);
 
+  /** Whether the form is in create or edit mode (resolved from route data). */
   mode: 'create' | 'edit' = 'create';
   private publicId = '';
 
+  /** All possible organisation sizes for the size select. */
   readonly sizes      = Object.values(OrganisationSize);
+  /** Human-readable labels keyed by OrganisationSize. */
   readonly sizeLabels = ORGANISATION_SIZE_LABELS;
 
   form = {
@@ -40,6 +44,7 @@ export class OrganisationFormComponent implements OnInit {
     notes:   ''
   };
 
+  /** Returns true when the name field is non-empty. */
   get isValid(): boolean {
     return this.form.name.trim().length > 0;
   }
@@ -72,6 +77,7 @@ export class OrganisationFormComponent implements OnInit {
     });
   }
 
+  /** Submits the form — calls create or update depending on mode, then navigates to the organisation detail. */
   submit(): void {
     if (!this.isValid) return;
 

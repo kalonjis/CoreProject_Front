@@ -86,64 +86,199 @@
           }
         }
 
-        <section class="lead-detail__section">
-          <div class="lead-detail__section-header">
-            <h2 class="lead-detail__section-title">Interactions</h2>
-            @if (!facade.isTerminal()) {
-              <button class="btn btn--sm btn--secondary" (click)="toggleAction('log-interaction')">
-                + Enregistrer
-              </button>
-            }
+        <!-- ─── Tabs ─────────────────────────────────────────────────────── -->
+        <nav class="lead-detail__tabs">
+          <button class="lead-detail__tab" [class.lead-detail__tab--active]="activeTab() === 'interactions'" (click)="activeTab.set('interactions')">Interactions</button>
+          <button class="lead-detail__tab" [class.lead-detail__tab--active]="activeTab() === 'afaire'"       (click)="activeTab.set('afaire')">À faire</button>
+          <button class="lead-detail__tab" [class.lead-detail__tab--active]="activeTab() === 'calendrier'"   (click)="activeTab.set('calendrier')">Calendrier</button>
+          <button class="lead-detail__tab" [class.lead-detail__tab--active]="activeTab() === 'deals'"        (click)="activeTab.set('deals')">Deals</button>
+          <button class="lead-detail__tab" [class.lead-detail__tab--active]="activeTab() === 'tickets'"      (click)="activeTab.set('tickets')">Tickets</button>
+        </nav>
+
+        <!-- ─── Quick-action bar ──────────────────────────────────────────── -->
+        @if (!facade.isTerminal()) {
+          <div class="lead-detail__quick-bar">
+            <button class="lead-detail__quick-btn lead-detail__quick-btn--note"
+                    (click)="openQuickAction('note')">
+              <span class="lead-detail__quick-icon">📝</span>
+              <span class="lead-detail__quick-label">Note</span>
+            </button>
+            <button class="lead-detail__quick-btn lead-detail__quick-btn--call"
+                    (click)="openQuickAction('call')">
+              <span class="lead-detail__quick-icon">📞</span>
+              <span class="lead-detail__quick-label">{{ activeTab() === 'interactions' ? 'Loguer appel' : 'Planifier appel' }}</span>
+            </button>
+            <button class="lead-detail__quick-btn lead-detail__quick-btn--email"
+                    (click)="openQuickAction('email')">
+              <span class="lead-detail__quick-icon">📧</span>
+              <span class="lead-detail__quick-label">{{ activeTab() === 'interactions' ? 'Archiver email' : 'Email' }}</span>
+            </button>
+            <button class="lead-detail__quick-btn lead-detail__quick-btn--meeting"
+                    (click)="openQuickAction('meeting')">
+              <span class="lead-detail__quick-icon">📅</span>
+              <span class="lead-detail__quick-label">{{ activeTab() === 'interactions' ? 'Loguer RDV' : 'Planifier RDV' }}</span>
+            </button>
+            <button class="lead-detail__quick-btn lead-detail__quick-btn--task"
+                    (click)="openQuickAction('task')">
+              <span class="lead-detail__quick-icon">✅</span>
+              <span class="lead-detail__quick-label">Tâche</span>
+            </button>
           </div>
+        }
 
-          @if (activeAction() === 'log-interaction') {
-            <app-interaction-log-form
-              [leadPublicId]="l.publicId"
-              (logged)="onInteractionLogged()"
-              (cancelled)="toggleAction(null)"
-            />
-          }
-
-          <app-interaction-timeline
-            [entries]="interactionFacade.entries()"
-            [loading]="interactionFacade.loading()"
-            (deleteRequested)="onInteractionDelete($event)"
-          />
-        </section>
-
-        <section class="lead-detail__section">
-          <div class="lead-detail__section-header">
-            <h2 class="lead-detail__section-title">Actions commerciales</h2>
+        @if (activeTab() === 'interactions') {
+          <div class="lead-detail__tab-panel">
             @if (!facade.isTerminal()) {
-              <button class="btn btn--sm btn--secondary" (click)="toggleAction('create-action')">
-                + Créer
-              </button>
+              <div class="lead-detail__timeline-header">
+                <button class="btn btn--secondary btn--sm" (click)="showLogForm.set(!showLogForm())">
+                  {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
+                </button>
+              </div>
             }
-          </div>
-
-          @if (activeAction() === 'create-action') {
-            <app-commercial-action-form
-              [leadPublicId]="l.publicId"
-              (created)="onActionCreated()"
-              (cancelled)="toggleAction(null)"
+            @if (showLogForm()) {
+              <app-interaction-log-form
+                [leadPublicId]="l.publicId"
+                (logged)="onInteractionLogged()"
+                (cancelled)="showLogForm.set(false)"
+              />
+            }
+            <app-interaction-timeline
+              [entries]="interactionFacade.entries()"
+              [loading]="interactionFacade.loading()"
+              (deleteRequested)="onInteractionDelete($event)"
             />
-          }
+          </div>
+        }
 
-          @if (facade.actionsLoading()) {
-            <p class="lead-detail__state">Chargement…</p>
-          } @else if (facade.actions().length === 0) {
-            <p class="lead-detail__state">Aucune action enregistrée.</p>
-          } @else {
-            @for (action of facade.actions(); track action.publicId) {
-              <app-commercial-action-card
-                [action]="action"
+        @if (activeTab() === 'afaire') {
+          <div class="lead-detail__tab-panel">
+            @if (!facade.isTerminal()) {
+              <div class="lead-detail__actions-header">
+                <button class="btn btn--secondary btn--sm" (click)="showActionForm.set(!showActionForm())">
+                  {{ showActionForm() ? 'Annuler' : '+ Tâche' }}
+                </button>
+              </div>
+            }
+            @if (showActionForm()) {
+              <app-commercial-action-form
+                [leadPublicId]="l.publicId"
+                [initialType]="quickActionType() ?? undefined"
+                (created)="onActionCreated()"
+                (cancelled)="showActionForm.set(false); quickActionType.set(null)"
+              />
+            }
+            @if (facade.actionsLoading()) {
+              <p class="lead-detail__state">Chargement…</p>
+            } @else {
+              <app-commercial-action-todo-list
+                [actions]="pendingActions()"
                 (completed)="onActionComplete($event)"
-                (cancelled)="onActionCancel(action.publicId)"
+                (cancelled)="onActionCancel($event)"
                 (edited)="facade.actionCreated(l.publicId)"
               />
             }
-          }
-        </section>
+          </div>
+        }
+
+        @if (activeTab() === 'calendrier') {
+          <div class="lead-detail__tab-panel">
+            <div class="lead-detail__calendar-header">
+              <button class="btn btn--secondary btn--sm"
+                      (click)="selectedCalendarEvent.set(null); showActionForm.set(!showActionForm())">
+                {{ showActionForm() ? 'Annuler' : '+ Planifier' }}
+              </button>
+            </div>
+            @if (showActionForm()) {
+              <app-commercial-action-form
+                [leadPublicId]="l.publicId"
+                [initialType]="quickActionType() ?? undefined"
+                (created)="onActionCreated()"
+                (cancelled)="showActionForm.set(false); quickActionType.set(null)"
+              />
+            }
+            @if (calendarActions().length === 0 && !showActionForm()) {
+              <app-crm-empty-state
+                icon="📅"
+                title="Aucun rendez-vous planifié"
+                subtitle="Les réunions et démos planifiées apparaîtront ici."
+              />
+            } @else if (!showActionForm()) {
+              <div class="lead-detail__agenda">
+                @for (event of calendarActions(); track event.publicId) {
+                  <div class="lead-detail__agenda-block"
+                       [class.lead-detail__agenda-block--demo]="event.type === CommercialActionType.DEMO"
+                       [class.lead-detail__agenda-block--selected]="selectedCalendarEvent()?.publicId === event.publicId"
+                       (click)="selectedCalendarEvent.set(selectedCalendarEvent()?.publicId === event.publicId ? null : event)">
+                    <div class="lead-detail__agenda-date">
+                      <span class="lead-detail__agenda-day">{{ event.dueDate | date:'dd' }}</span>
+                      <span class="lead-detail__agenda-month">{{ event.dueDate | date:'MMM' }}</span>
+                    </div>
+                    <div class="lead-detail__agenda-info">
+                      <span class="lead-detail__agenda-title">{{ event.title }}</span>
+                      <div class="lead-detail__agenda-meta">
+                        <span>{{ event.dueDate | date:'HH:mm' }}</span>
+                        @if (event.durationMinutes) { <span>· {{ event.durationMinutes }} min</span> }
+                        @if (event.location) { <span>· {{ event.location }}</span> }
+                      </div>
+                    </div>
+                    <span class="lead-detail__agenda-chevron">›</span>
+                  </div>
+                  @if (selectedCalendarEvent()?.publicId === event.publicId) {
+                    <div class="lead-detail__agenda-detail"
+                         [class.lead-detail__agenda-detail--demo]="event.type === CommercialActionType.DEMO">
+                      <div class="lead-detail__agenda-detail-header">
+                        <span class="lead-detail__agenda-detail-type">
+                          {{ event.type === CommercialActionType.DEMO ? '🎯 Démonstration' : '📅 Réunion / RDV' }}
+                        </span>
+                        <button class="lead-detail__agenda-detail-close" (click)="selectedCalendarEvent.set(null); $event.stopPropagation()">×</button>
+                      </div>
+                      <h3 class="lead-detail__agenda-detail-title">{{ event.title }}</h3>
+                      <ul class="lead-detail__agenda-detail-info">
+                        <li>🗓 {{ event.dueDate | date:"EEEE d MMMM yyyy 'à' HH:mm" }}</li>
+                        @if (event.durationMinutes) { <li>⏱ {{ event.durationMinutes }} min</li> }
+                        @if (event.location) { <li>📍 {{ event.location }}</li> }
+                        <li>👤 {{ event.assignedToUsername }}</li>
+                      </ul>
+                      @if (event.description) {
+                        <p class="lead-detail__agenda-detail-desc">{{ event.description }}</p>
+                      }
+                      <div class="lead-detail__agenda-detail-actions">
+                        <button class="btn btn--primary btn--sm"
+                                (click)="onActionComplete({ publicId: event.publicId }); selectedCalendarEvent.set(null); $event.stopPropagation()">
+                          ✓ Marquer terminée
+                        </button>
+                        <button class="btn btn--danger-outline btn--sm"
+                                (click)="onActionCancel(event.publicId); selectedCalendarEvent.set(null); $event.stopPropagation()">
+                          Annuler
+                        </button>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (activeTab() === 'deals') {
+          <div class="lead-detail__tab-panel">
+            <app-crm-empty-state
+              icon="💼"
+              title="Aucun deal"
+              subtitle="Les deals liés à ce lead apparaîtront ici."
+            />
+          </div>
+        }
+
+        @if (activeTab() === 'tickets') {
+          <div class="lead-detail__tab-panel">
+            <app-crm-empty-state
+              icon="🎫"
+              title="Aucun ticket"
+              subtitle="Les tickets de support liés à ce lead apparaîtront ici."
+            />
+          </div>
+        }
 
       </div>
 
@@ -239,6 +374,30 @@
       </aside>
 
     </div>
+
+    <!-- ─── Modals (position:fixed — outside the grid) ───────────────────── -->
+
+    @if (showLogCallModal()) {
+      <app-log-call-modal [leadPublicId]="l.publicId" (logged)="onLogged()" (cancelled)="showLogCallModal.set(false)" />
+    }
+    @if (showLogEmailModal()) {
+      <app-log-email-modal [leadPublicId]="l.publicId" (logged)="onLogged()" (cancelled)="showLogEmailModal.set(false)" />
+    }
+    @if (showLogNoteModal()) {
+      <app-log-note-modal [leadPublicId]="l.publicId" (logged)="onLogged()" (cancelled)="showLogNoteModal.set(false)" />
+    }
+    @if (showLogMeetingModal()) {
+      <app-log-meeting-modal [leadPublicId]="l.publicId" (logged)="onLogged()" (cancelled)="showLogMeetingModal.set(false)" />
+    }
+    @if (showScheduleCallModal()) {
+      <app-schedule-call-modal [leadPublicId]="l.publicId" (created)="onScheduled()" (cancelled)="showScheduleCallModal.set(false)" />
+    }
+    @if (showScheduleMeetingModal()) {
+      <app-schedule-meeting-modal [leadPublicId]="l.publicId" (created)="onScheduled()" (cancelled)="showScheduleMeetingModal.set(false)" />
+    }
+    @if (showCreateTaskModal()) {
+      <app-create-task-modal [leadPublicId]="l.publicId" (created)="onScheduled()" (cancelled)="showCreateTaskModal.set(false)" />
+    }
 
   }
 </div>

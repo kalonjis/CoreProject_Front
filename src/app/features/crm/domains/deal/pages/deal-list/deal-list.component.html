@@ -13,6 +13,33 @@
     </div>
   </div>
 
+  <!-- ─── Stats bar ───────────────────────────────────────────────────────── -->
+  @if (stats(); as s) {
+    <div class="deal-list__stats">
+      <div class="deal-list__stat deal-list__stat--open">
+        <span class="deal-list__stat-value">{{ s.dealsOpen }}</span>
+        <span class="deal-list__stat-label">Deals ouverts</span>
+      </div>
+      <div class="deal-list__stat deal-list__stat--pipe">
+        <span class="deal-list__stat-value">{{ s.pipelineValue | currency:'EUR':'symbol':'1.0-0':'fr' }}</span>
+        <span class="deal-list__stat-label">Pipe en cours</span>
+      </div>
+      <div class="deal-list__stat deal-list__stat--won">
+        <span class="deal-list__stat-value">{{ s.revenueWonThisMonth | currency:'EUR':'symbol':'1.0-0':'fr' }}</span>
+        <span class="deal-list__stat-label">
+          Gagné ce mois
+          @if (s.dealsWonThisMonth > 0) {
+            <strong> · {{ s.dealsWonThisMonth }} deal{{ s.dealsWonThisMonth > 1 ? 's' : '' }}</strong>
+          }
+        </span>
+      </div>
+      <div class="deal-list__stat deal-list__stat--forecast">
+        <span class="deal-list__stat-value">{{ s.forecastRevenue | currency:'EUR':'symbol':'1.0-0':'fr' }}</span>
+        <span class="deal-list__stat-label">Prévisionnel</span>
+      </div>
+    </div>
+  }
+
   <!-- ─── Filters ────────────────────────────────────────────────────────── -->
   <div class="deal-list__filters">
     <input
@@ -53,39 +80,63 @@
       (ctaClick)="goCreate()"
     />
   } @else {
-    <div class="deal-list__table-wrapper">
-      <table class="deal-list__table">
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Statut</th>
-            <th>Montant</th>
-            <th>Étape</th>
-            <th>Contact</th>
-            <th>Responsable</th>
-            <th>Clôture prévue</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (deal of deals(); track deal.publicId) {
-            <tr class="deal-list__row" [class.deal-list__row--overdue]="deal.isOverdue" (click)="viewDetail(deal.publicId)">
-              <td class="deal-list__name">{{ deal.title }}</td>
-              <td><app-deal-status-badge [status]="deal.status" /></td>
-              <td class="deal-list__secondary">
-                @if (deal.amount != null) {
-                  {{ deal.amount | currency:deal.currency:'symbol':'1.0-2':'fr' }}
-                } @else { — }
-              </td>
-              <td class="deal-list__secondary">{{ deal.stageName }}</td>
-              <td class="deal-list__secondary">{{ deal.contactFullName ?? '—' }}</td>
-              <td class="deal-list__secondary">{{ deal.assignedToUsername }}</td>
-              <td [class.deal-list__overdue-date]="deal.isOverdue" [class.deal-list__secondary]="!deal.isOverdue">
-                {{ deal.expectedCloseDate ? (deal.expectedCloseDate | date:'dd/MM/yyyy') : '—' }}
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="deal-list__rows">
+
+      <div class="deal-list__col-headers">
+        <span>Deal</span>
+        <span>Statut</span>
+        <span>Montant</span>
+        <span>Responsable</span>
+        <span>Clôture</span>
+      </div>
+
+      @for (deal of deals(); track deal.publicId) {
+        <div class="deal-list__row"
+             [class.deal-list__row--overdue]="deal.isOverdue"
+             (click)="viewDetail(deal.publicId)">
+
+          <!-- Deal : titre + étape · contact -->
+          <div class="deal-list__cell deal-list__cell--deal">
+            <span class="deal-list__deal-title">{{ deal.title }}</span>
+            <span class="deal-list__deal-sub">
+              {{ deal.stageName }}
+              @if (deal.contactFullName) {
+                <span class="deal-list__deal-contact"> · {{ deal.contactFullName }}</span>
+              }
+            </span>
+          </div>
+
+          <!-- Statut -->
+          <div class="deal-list__cell">
+            <app-deal-status-badge [status]="deal.status" />
+          </div>
+
+          <!-- Montant -->
+          <div class="deal-list__cell">
+            @if (deal.amount != null) {
+              <span class="deal-list__amount">
+                {{ deal.amount | currency:deal.currency:'symbol':'1.0-0':'fr' }}
+              </span>
+            } @else {
+              <span class="deal-list__amount deal-list__amount--empty">—</span>
+            }
+          </div>
+
+          <!-- Responsable avec avatar -->
+          <div class="deal-list__cell">
+            <div class="deal-list__avatar">{{ initials(deal.assignedToUsername) }}</div>
+            <span class="deal-list__assignee-name">{{ deal.assignedToUsername }}</span>
+          </div>
+
+          <!-- Date de clôture -->
+          <div class="deal-list__cell" [class.deal-list__cell--overdue]="deal.isOverdue">
+            @if (deal.expectedCloseDate) {
+              {{ deal.expectedCloseDate | date:'dd/MM/yy' }}
+            } @else { — }
+          </div>
+
+        </div>
+      }
     </div>
   }
 

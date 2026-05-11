@@ -26,6 +26,8 @@ import { OrganisationStatus, ORGANISATION_STATUS_LABELS } from '../../models/org
 })
 /** Inline badge rendering an organisation's lifecycle status with its colour-coded style. */
 export class OrganisationStatusBadgeComponent {
+  /** Organisation lifecycle status to render. */
   @Input({ required: true }) status!: OrganisationStatus;
+  /** Label lookup table for template access. */
   readonly labels = ORGANISATION_STATUS_LABELS;
 }

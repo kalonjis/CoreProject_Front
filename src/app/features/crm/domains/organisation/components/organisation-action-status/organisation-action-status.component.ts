@@ -13,23 +13,30 @@ import { OrganisationStatus, ORGANISATION_STATUS_LABELS } from '../../models/org
 })
 /** Inline form for transitioning an organisation's lifecycle status. */
 export class OrganisationActionStatusComponent {
+  /** Public ID of the organisation whose status is being changed. */
   @Input({ required: true }) publicId!: string;
+  /** Current status, excluded from the list of available targets. */
   @Input({ required: true }) currentStatus!: OrganisationStatus;
+  /** Emitted after a successful status transition. */
   @Output() statusChanged = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without saving. */
   @Output() cancelled     = new EventEmitter<void>();
 
   private readonly api      = inject(CrmOrganisationApiService);
   private readonly feedback = inject(FeedbackService);
 
   selectedStatus: OrganisationStatus | '' = '';
+  /** True while the status-change request is in flight. */
   readonly loading = signal(false);
 
+  /** Returns all statuses that differ from the current one. */
   get availableStatuses(): OrganisationStatus[] {
     return Object.values(OrganisationStatus).filter(s => s !== this.currentStatus);
   }
 
   readonly statusLabels = ORGANISATION_STATUS_LABELS;
 
+  /** Submits the selected status transition to the API. */
   submit(): void {
     if (!this.selectedStatus) return;
     this.loading.set(true);

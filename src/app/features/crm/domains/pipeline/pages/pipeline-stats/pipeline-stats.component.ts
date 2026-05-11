@@ -16,12 +16,18 @@ export class PipelineStatsComponent implements OnInit {
   private readonly pipelineApi = inject(CrmPipelineApiService);
   private readonly router      = inject(Router);
 
+  /** All pipelines available for the pipeline selector. */
   readonly allPipelines = signal<Pipeline[]>([]);
+  /** Statistics for the currently selected pipeline; null while loading. */
   readonly stats        = signal<PipelineStats | null>(null);
+  /** Whether a pipeline or stats request is in flight. */
   readonly loading      = signal(false);
+  /** Error message shown if a request fails. */
   readonly error        = signal<string | null>(null);
 
+  /** Number of deals that entered the first stage (top-of-funnel entry count). */
   readonly topOfFunnel      = computed(() => this.stats()?.stages[0]?.dealsEntered ?? 0);
+  /** Total number of deals currently sitting in any stage of the pipeline. */
   readonly totalDealsCurrently = computed(() =>
     this.stats()?.stages.reduce((sum, s) => sum + s.dealsCurrently, 0) ?? 0
   );
@@ -43,6 +49,7 @@ export class PipelineStatsComponent implements OnInit {
     });
   }
 
+  /** Loads stats for the given pipeline unless it is already the active one. */
   selectPipeline(publicId: string): void {
     if (publicId === this.stats()?.pipelinePublicId) return;
     this.loading.set(true);
@@ -57,5 +64,6 @@ export class PipelineStatsComponent implements OnInit {
     });
   }
 
+  /** Navigates back to the pipeline board. */
   goBoard(): void { this.router.navigate(['/crm/pipeline']); }
 }

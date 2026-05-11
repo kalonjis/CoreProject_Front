@@ -29,7 +29,9 @@ import { InteractionOutcome, INTERACTION_OUTCOME_LABELS } from '../../models/int
   `]
 })
 export class InteractionOutcomeBadgeComponent {
+  /** Interaction outcome to render. */
   @Input({ required: true }) outcome!: InteractionOutcome;
 
+  /** Human-readable label for the current outcome. */
   get label(): string { return INTERACTION_OUTCOME_LABELS[this.outcome]; }
 }

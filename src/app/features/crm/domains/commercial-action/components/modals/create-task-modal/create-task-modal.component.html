@@ -1,0 +1,61 @@
+<app-modal-layout
+  title="Créer une tâche"
+  icon="✅"
+  [accentColor]="accentColor"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Titre <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="text" [(ngModel)]="title" name="title"
+             placeholder="Ex : Envoyer la proposition commerciale…" required autofocus />
+    </div>
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Responsable <span class="modal-form__label-required">*</span></label>
+        <select class="modal-form__select" [(ngModel)]="assignedToPublicId" name="assignedToPublicId" required>
+          <option value="" disabled>— Choisir —</option>
+          @for (c of commercials(); track c.publicId) {
+            <option [value]="c.publicId">{{ displayName(c) }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Priorité</label>
+        <select class="modal-form__select" [(ngModel)]="priority" name="priority">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ priorityLabel(p) }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Échéance</label>
+        <input class="modal-form__input" type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Rappel</label>
+        <input class="modal-form__input" type="datetime-local" [(ngModel)]="reminderAt" name="reminderAt" />
+      </div>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Description</label>
+      <textarea class="modal-form__textarea" [(ngModel)]="description" name="description"
+                rows="3" placeholder="Détails, contexte, critères de complétion…"></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Création…' : 'Créer la tâche' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

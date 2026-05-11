@@ -1,17 +1,10 @@
-/**
- * Detail page for a single CRM support ticket.
- *
- * Displays full ticket information and provides inline action panels for
- * status transitions and subject/description editing.
- * Assignment is handled by CrmAssignPopoverComponent inline.
- * Admins can also delete the ticket via a confirmation dialog.
- */
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { CrmSupportTicketApiService } from '../../services/crm-support-ticket-api.service';
 import { CrmUserApiService } from '../../../../shared/services/crm-user-api.service';
+import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
 import {
   SupportTicketDetail,
   SupportTicketStatus,
@@ -20,21 +13,37 @@ import {
   SUPPORT_TICKET_TRANSITIONS
 } from '../../models/support-ticket.model';
 import { SupportTicketStatusBadgeComponent } from '../../components/support-ticket-status-badge/support-ticket-status-badge.component';
-import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
-import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
-import { AuthFacade } from '../../../../../../core/auth/services/auth.facade';
-import { CommercialSummary } from '../../../../shared/models/commercial.model';
-import { CrmAssignPopoverComponent } from '../../../../shared/components/assign-popover/crm-assign-popover.component';
+import { FeedbackService }        from '../../../../../../shared/feedback/tools/feedback.service';
+import { ConfirmDialogService }   from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
+import { AuthFacade }             from '../../../../../../core/auth/services/auth.facade';
+import { CommercialSummary }      from '../../../../shared/models/commercial.model';
+import { CrmAssignPopoverComponent }     from '../../../../shared/components/assign-popover/crm-assign-popover.component';
+import { InteractionTimelineComponent }  from '../../../interaction/components/interaction-timeline/interaction-timeline.component';
+import { LogNoteModalComponent }         from '../../../interaction/components/modals/log-note-modal/log-note-modal.component';
+import { LogCallModalComponent }         from '../../../interaction/components/modals/log-call-modal/log-call-modal.component';
+import { LogEmailModalComponent }        from '../../../interaction/components/modals/log-email-modal/log-email-modal.component';
 
 type ActivePanel = 'status' | 'edit' | null;
+type QuickIntent = 'note' | 'call' | 'email';
 
 @Component({
   selector: 'app-support-ticket-detail',
-  imports: [RouterLink, FormsModule, DatePipe, SupportTicketStatusBadgeComponent, CrmAssignPopoverComponent],
+  providers: [InteractionFacade],
+  imports: [
+    RouterLink, FormsModule, DatePipe,
+    SupportTicketStatusBadgeComponent,
+    CrmAssignPopoverComponent,
+    InteractionTimelineComponent,
+    LogNoteModalComponent,
+    LogCallModalComponent,
+    LogEmailModalComponent,
+  ],
   templateUrl: './support-ticket-detail.component.html',
-  styleUrl: './support-ticket-detail.component.scss'
+  styleUrl:    './support-ticket-detail.component.scss'
 })
 export class SupportTicketDetailComponent implements OnInit {
+
+  readonly interactionFacade = inject(InteractionFacade);
 
   private readonly route      = inject(ActivatedRoute);
   private readonly router     = inject(Router);
@@ -51,14 +60,37 @@ export class SupportTicketDetailComponent implements OnInit {
   readonly activePanel  = signal<ActivePanel>(null);
   readonly commercials  = signal<CommercialSummary[]>([]);
 
+  readonly showNoteModal  = signal(false);
+  readonly showCallModal  = signal(false);
+  readonly showEmailModal = signal(false);
+
   private publicId = '';
 
-  // ─── Status panel ─────────────────────────────────────────────────────────
   newStatus: SupportTicketStatus | '' = '';
-
-  // ─── Edit panel ───────────────────────────────────────────────────────────
   editSubject     = '';
   editDescription = '';
+
+  constructor() {
+    effect(() => {
+      const t = this.ticket();
+      if (t?.contactPublicId) {
+        this.interactionFacade.loadFor('contact', t.contactPublicId);
+      }
+    });
+  }
+
+  /** Display name of the ticket requester (CRM contact > reporter name > email > fallback). */
+  get requesterName(): string {
+    const t = this.ticket();
+    return t?.contactFullName ?? t?.reporterName ?? t?.reporterEmail ?? 'Inconnu';
+  }
+
+  /** Two-letter initials derived from the requester's name. */
+  get requesterInitials(): string {
+    const name = this.ticket()?.contactFullName ?? this.ticket()?.reporterName;
+    if (!name) return '?';
+    return name.split(' ').filter(w => w).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  }
 
   get allowedTransitions(): SupportTicketStatus[] {
     const t = this.ticket();
@@ -100,7 +132,12 @@ export class SupportTicketDetailComponent implements OnInit {
     } else {
       const me = this.authFacade.user();
       if (me) {
-        this.commercials.set([{ publicId: me.publicId, firstName: me.firstname, lastName: me.lastname, username: me.username }]);
+        this.commercials.set([{
+          publicId: me.publicId,
+          firstName: me.firstname,
+          lastName: me.lastname,
+          username: me.username
+        }]);
       }
     }
   }
@@ -113,18 +150,13 @@ export class SupportTicketDetailComponent implements OnInit {
   }
 
   togglePanel(panel: ActivePanel): void {
-    if (this.activePanel() === panel) {
-      this.activePanel.set(null);
-      return;
-    }
+    if (this.activePanel() === panel) { this.activePanel.set(null); return; }
     const t = this.ticket();
     if (panel === 'edit' && t) {
       this.editSubject     = t.subject;
       this.editDescription = t.description ?? '';
     }
-    if (panel === 'status') {
-      this.newStatus = '';
-    }
+    if (panel === 'status') this.newStatus = '';
     this.activePanel.set(panel);
   }
 
@@ -132,7 +164,7 @@ export class SupportTicketDetailComponent implements OnInit {
     if (!this.newStatus) return;
     this.saving.set(true);
     this.api.changeStatus(this.publicId, { status: this.newStatus as SupportTicketStatus }).subscribe({
-      next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
+      next:  () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
       error: () => { this.saving.set(false); this.feedback.showError('Transition invalide.'); }
     });
   }
@@ -142,14 +174,11 @@ export class SupportTicketDetailComponent implements OnInit {
       title: 'Supprimer ce ticket',
       message: 'Cette action est irréversible. Le ticket sera définitivement supprimé.',
       confirmButtonText: 'Supprimer',
-      cancelButtonText: 'Annuler',
+      cancelButtonText:  'Annuler',
       type: 'danger'
     }).then(() => {
       this.api.delete(this.publicId).subscribe({
-        next: () => {
-          this.feedback.showSuccess('Ticket supprimé.');
-          this.router.navigate(['/crm/support-tickets']);
-        },
+        next:  () => { this.feedback.showSuccess('Ticket supprimé.'); this.router.navigate(['/crm/support-tickets']); },
         error: () => this.feedback.showError('Impossible de supprimer ce ticket.')
       });
     }).catch(() => {});
@@ -162,8 +191,28 @@ export class SupportTicketDetailComponent implements OnInit {
       subject:     this.editSubject.trim(),
       description: this.editDescription.trim() || undefined
     }).subscribe({
-      next: () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
+      next:  () => { this.saving.set(false); this.activePanel.set(null); this.load(); },
       error: () => { this.saving.set(false); this.feedback.showError('Erreur lors de la mise à jour.'); }
     });
+  }
+
+  openQuickAction(intent: QuickIntent): void {
+    this.showNoteModal.set(false);
+    this.showCallModal.set(false);
+    this.showEmailModal.set(false);
+    if (intent === 'note')  this.showNoteModal.set(true);
+    if (intent === 'call')  this.showCallModal.set(true);
+    if (intent === 'email') this.showEmailModal.set(true);
+  }
+
+  onLogged(): void {
+    this.showNoteModal.set(false);
+    this.showCallModal.set(false);
+    this.showEmailModal.set(false);
+    this.interactionFacade.refresh();
+  }
+
+  onInteractionDelete(publicId: string): void {
+    this.interactionFacade.deleteInteraction(publicId);
   }
 }

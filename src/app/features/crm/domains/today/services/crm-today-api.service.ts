@@ -14,6 +14,7 @@ export class CrmTodayApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/today';
 
+  /** Returns the aggregated daily summary for the authenticated commercial. */
   getSummary(): Observable<TodaySummary> {
     return this.http.get<TodaySummary>(this.base);
   }

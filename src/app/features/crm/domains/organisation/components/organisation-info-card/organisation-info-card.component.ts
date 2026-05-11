@@ -12,5 +12,11 @@ import { OrganisationStatusBadgeComponent } from '../organisation-status-badge/o
 })
 /** Read-only card displaying an organisation's core fields, status and size badges, and audit timestamps. */
 export class OrganisationInfoCardComponent {
+  /** Full organisation details to display. */
   @Input({ required: true }) organisation!: OrganisationDetail;
+
+  domainOf(url: string): string {
+    try { return new URL(url).hostname.replace(/^www\./, ''); }
+    catch { return url; }
+  }
 }

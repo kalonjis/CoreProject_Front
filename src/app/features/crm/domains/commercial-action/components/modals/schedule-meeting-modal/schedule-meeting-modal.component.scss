@@ -1,0 +1,9 @@
+@use '../../../../../shared/styles/modal-form' as *;
+
+.schedule-meeting-modal {
+  &__submit {
+    background: #16a34a;
+    border-color: #16a34a;
+    &:hover:not(:disabled) { background: #15803d; border-color: #15803d; }
+  }
+}

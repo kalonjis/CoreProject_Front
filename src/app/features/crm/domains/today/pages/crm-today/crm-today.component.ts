@@ -27,14 +27,18 @@ export class CrmTodayComponent implements OnInit {
   private readonly router   = inject(Router);
   private readonly feedback = inject(FeedbackService);
 
+  /** Date used to display "today" in the template header. */
   readonly today   = new Date();
+  /** Whether the summary is being fetched. */
   readonly loading = signal(false);
+  /** Today's work summary from the API; null while loading. */
   readonly summary = signal<TodaySummary | null>(null);
 
   readonly ACTION_TYPE_LABELS     = COMMERCIAL_ACTION_TYPE_LABELS;
   readonly ACTION_PRIORITY_LABELS = COMMERCIAL_ACTION_PRIORITY_LABELS;
   readonly TICKET_STATUS_LABELS   = SUPPORT_TICKET_STATUS_LABELS;
 
+  /** Total number of items across all sections (used for the empty-state check). */
   readonly totalItems = computed(() => {
     const s = this.summary();
     if (!s) return 0;
@@ -54,14 +58,17 @@ export class CrmTodayComponent implements OnInit {
     });
   }
 
+  /** Navigates to the detail page for the given commercial action. */
   goAction(action: CommercialActionResponse): void {
     this.router.navigate(['/crm/commercial-actions', action.publicId]);
   }
 
+  /** Navigates to the detail page for the given deal. */
   goDeal(deal: DealSummary): void {
     this.router.navigate(['/crm/deals', deal.publicId]);
   }
 
+  /** Navigates to the detail page for the given support ticket. */
   goTicket(ticket: SupportTicketSummary): void {
     this.router.navigate(['/crm/support-tickets', ticket.publicId]);
   }

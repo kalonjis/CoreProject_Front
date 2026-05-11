@@ -26,7 +26,9 @@ import { CommercialPickerComponent } from '../../../../shared/pickers/commercial
 import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../../shared/pickers/organisation-picker/organisation-picker.component';
 import { CrmAssignPopoverComponent } from '../../../../shared/components/assign-popover/crm-assign-popover.component';
 import { CrmUserApiService } from '../../../../shared/services/crm-user-api.service';
+import { CrmDashboardApiService } from '../../../dashboard/services/crm-dashboard-api.service';
 import { CommercialSummary } from '../../../../shared/models/commercial.model';
+import { CrmStats } from '../../../dashboard/models/crm-stats.model';
 import { FeedbackService } from '../../../../../../shared/feedback/tools/feedback.service';
 
 @Component({
@@ -39,16 +41,17 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
 })
 export class SupportTicketListComponent implements OnInit {
 
-  private readonly api      = inject(CrmSupportTicketApiService);
-  private readonly userApi  = inject(CrmUserApiService);
-  private readonly feedback = inject(FeedbackService);
-  private readonly router   = inject(Router);
+  private readonly api          = inject(CrmSupportTicketApiService);
+  private readonly userApi      = inject(CrmUserApiService);
+  private readonly dashboardApi = inject(CrmDashboardApiService);
+  private readonly feedback     = inject(FeedbackService);
+  private readonly router       = inject(Router);
 
   readonly page        = signal<Page<SupportTicketSummary> | null>(null);
   readonly loading     = signal(false);
   readonly commercials = signal<CommercialSummary[]>([]);
+  readonly stats       = signal<CrmStats | null>(null);
 
-  // Filters
   keyword                 = '';
   statusFilter: SupportTicketStatus | '' = '';
   sourceFilter: SupportTicketSource | '' = '';
@@ -56,11 +59,10 @@ export class SupportTicketListComponent implements OnInit {
   contactPublicId         = '';
   assignedToPublicId      = '';
   organisationPublicId    = '';
+  showAdvancedFilters     = false;
 
-  showAdvancedFilters = false;
-
-  currentPage = 0;
-  readonly pageSize = 15;
+  currentPage         = 0;
+  readonly pageSize   = 15;
 
   readonly statuses      = Object.values(SupportTicketStatus);
   readonly statusLabels  = SUPPORT_TICKET_STATUS_LABELS;
@@ -74,6 +76,7 @@ export class SupportTicketListComponent implements OnInit {
       next: list => this.commercials.set(list),
       error: ()   => this.feedback.showError('Impossible de charger les commerciaux.')
     });
+    this.dashboardApi.getStats().subscribe({ next: s => this.stats.set(s) });
   }
 
   load(): void {
@@ -122,9 +125,7 @@ export class SupportTicketListComponent implements OnInit {
   }
 
   onUnassignedOnlyChange(): void {
-    if (this.unassignedOnly) {
-      this.assignedToPublicId = '';
-    }
+    if (this.unassignedOnly) this.assignedToPublicId = '';
     this.search();
   }
 
@@ -135,4 +136,11 @@ export class SupportTicketListComponent implements OnInit {
   }
 
   newTicket(): void { this.router.navigate(['/crm/support-tickets/new']); }
+
+  initials(username: string): string {
+    const parts = username.trim().split(/[\s._-]+/);
+    return parts.length >= 2
+      ? (parts[0][0] + parts[1][0]).toUpperCase()
+      : username.slice(0, 2).toUpperCase();
+  }
 }

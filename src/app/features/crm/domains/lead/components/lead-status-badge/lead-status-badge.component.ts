@@ -32,8 +32,10 @@ import { LeadStatus, LEAD_STATUS_LABELS } from '../../models/lead.model';
   `]
 })
 export class LeadStatusBadgeComponent {
+  /** Lead lifecycle status to render. */
   @Input({ required: true }) status!: LeadStatus;
 
+  /** Human-readable label for the current status, falling back to the raw enum value. */
   get label(): string {
     return LEAD_STATUS_LABELS[this.status] ?? this.status;
   }

@@ -24,8 +24,11 @@ import { CommercialSummary }          from '../../../../shared/models/commercial
   styleUrl: './lead-info-card.component.scss'
 })
 export class LeadInfoCardComponent implements OnInit {
+  /** Full lead details to display. */
   @Input({ required: true }) lead!: LeadDetail;
+  /** Public ID of the lead, used for assignment API calls. */
   @Input({ required: true }) publicId!: string;
+  /** Emitted after a successful reassignment. */
   @Output() assigned = new EventEmitter<void>();
 
   private readonly api        = inject(CrmLeadApiService);
@@ -33,9 +36,12 @@ export class LeadInfoCardComponent implements OnInit {
   private readonly feedback   = inject(FeedbackService);
   private readonly authFacade = inject(AuthFacade);
 
+  /** Label lookup tables for template display. */
   readonly civilityLabels   = CIVILITY_LABELS;
   readonly leadSourceLabels = LEAD_SOURCE_LABELS;
+  /** Available commercials for the assignee picker. */
   readonly commercials      = signal<CommercialSummary[]>([]);
+  /** True while an assignment request is in flight. */
   readonly loading          = signal(false);
 
   ngOnInit(): void {
@@ -52,6 +58,7 @@ export class LeadInfoCardComponent implements OnInit {
     }
   }
 
+  /** Assigns the lead to the selected commercial and emits {@link assigned} on success. */
   onAssigneeSelected(c: CommercialSummary): void {
     if (this.loading()) return;
     this.loading.set(true);

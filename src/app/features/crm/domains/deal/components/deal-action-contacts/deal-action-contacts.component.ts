@@ -18,16 +18,22 @@ import {
 })
 /** Panel for managing the contact-role associations on a deal: add, remove, update role, and set primary contact. */
 export class DealActionContactsComponent implements OnInit {
+  /** Public ID of the deal being edited. */
   @Input({ required: true }) dealPublicId!: string;
+  /** Current list of contact-role associations for this deal. */
   @Input({ required: true }) contacts!: DealContactRoleResponse[];
+  /** Emitted after any contact association is added, removed, or changed. */
   @Output() changed   = new EventEmitter<void>();
+  /** Emitted when the user dismisses the panel without saving. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly facade     = inject(DealFacade);
   private readonly contactApi = inject(CrmContactApiService);
   private readonly feedback   = inject(FeedbackService);
 
+  /** Contacts returned by the live keyword search. */
   readonly contactResults = signal<ContactSummary[]>([]);
+  /** True while a contact search request is in flight. */
   readonly searching      = signal(false);
 
   keyword       = '';
@@ -39,6 +45,7 @@ export class DealActionContactsComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  /** Searches contacts by keyword and populates {@link contactResults}. */
   search(): void {
     if (!this.keyword.trim()) return;
     this.searching.set(true);
@@ -48,12 +55,14 @@ export class DealActionContactsComponent implements OnInit {
     });
   }
 
+  /** Selects a contact from the search results for the pending association. */
   selectContact(c: ContactSummary): void {
     this.selectedContactPublicId = c.publicId;
     this.keyword = `${c.firstName} ${c.lastName}`;
     this.contactResults.set([]);
   }
 
+  /** Adds the selected contact with the chosen role to the deal. */
   addContact(): void {
     if (!this.selectedContactPublicId) return;
     this.facade.addContact(this.dealPublicId, {

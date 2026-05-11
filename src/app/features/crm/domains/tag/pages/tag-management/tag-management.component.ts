@@ -21,19 +21,27 @@ export class TagManagementComponent implements OnInit {
   private readonly feedback = inject(FeedbackService);
   private readonly authStore = inject(AuthStore);
 
+  /** Whether the current user has the ADMIN role; gates create/edit/delete actions. */
   readonly isAdmin  = this.authStore.isAdmin;
+  /** All CRM tags; updated optimistically after create/edit/delete. */
   readonly tags     = signal<Tag[]>([]);
+  /** Whether the tag list is being fetched. */
   readonly loading  = signal(false);
+  /** Whether a create or edit request is in flight. */
   readonly saving   = signal(false);
 
-  // ─── Create form ─────────────────────────────────────────────────────────
+  /** Controls visibility of the inline create form. */
   showCreateForm = false;
+  /** Name field for the new tag. */
   newName        = '';
+  /** Colour hex for the new tag (default indigo). */
   newColor       = '#6366f1';
 
-  // ─── Edit form ───────────────────────────────────────────────────────────
+  /** Public ID of the tag currently being edited; empty string when no edit is active. */
   editingId   = '';
+  /** Working copy of the tag name in the edit form. */
   editName    = '';
+  /** Working copy of the tag colour in the edit form. */
   editColor   = '';
 
   // ─── Lifecycle ───────────────────────────────────────────────────────────
@@ -52,6 +60,7 @@ export class TagManagementComponent implements OnInit {
 
   // ─── Create ──────────────────────────────────────────────────────────────
 
+  /** Shows the create form and resets its fields; collapses any active edit. */
   openCreateForm(): void {
     this.showCreateForm = true;
     this.newName  = '';
@@ -59,10 +68,12 @@ export class TagManagementComponent implements OnInit {
     this.editingId = '';
   }
 
+  /** Hides the create form without saving. */
   cancelCreate(): void {
     this.showCreateForm = false;
   }
 
+  /** Creates the tag via the API and inserts it alphabetically into the list. */
   submitCreate(): void {
     if (!this.newName.trim()) return;
     this.saving.set(true);
@@ -79,6 +90,7 @@ export class TagManagementComponent implements OnInit {
 
   // ─── Edit ────────────────────────────────────────────────────────────────
 
+  /** Pre-fills the edit form with the tag's current values and collapses the create form. */
   startEdit(tag: Tag): void {
     this.editingId     = tag.publicId;
     this.editName      = tag.name;
@@ -86,10 +98,12 @@ export class TagManagementComponent implements OnInit {
     this.showCreateForm = false;
   }
 
+  /** Collapses the edit form without saving. */
   cancelEdit(): void {
     this.editingId = '';
   }
 
+  /** Saves the edited tag name and colour; updates the list in place. */
   submitEdit(): void {
     if (!this.editName.trim()) return;
     this.saving.set(true);
@@ -109,6 +123,7 @@ export class TagManagementComponent implements OnInit {
 
   // ─── Delete ──────────────────────────────────────────────────────────────
 
+  /** Shows a confirmation dialog then deletes the tag and removes it from the list. */
   async deleteTag(tag: Tag): Promise<void> {
     await this.confirm.confirm({
       title: 'Supprimer le tag',

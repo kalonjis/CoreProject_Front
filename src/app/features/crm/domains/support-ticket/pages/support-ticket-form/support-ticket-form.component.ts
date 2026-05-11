@@ -29,13 +29,16 @@ export class SupportTicketFormComponent implements OnInit {
   private readonly route      = inject(ActivatedRoute);
   private readonly feedback   = inject(FeedbackService);
 
+  /** Whether the create request is in flight. */
   readonly saving = signal(false);
 
   subject             = '';
   description         = '';
+  /** Public ID of the contact set as ticket submitter. */
   submittedByPublicId = '';
   assignedToPublicId  = '';
 
+  /** Display label for the contact pre-filled via query param (read-only display). */
   prefilledContactLabel = '';
 
   ngOnInit(): void {
@@ -51,18 +54,22 @@ export class SupportTicketFormComponent implements OnInit {
     }
   }
 
+  /** Updates submittedByPublicId when the contact picker emits a selection. */
   onContactSelected(v: ContactPickerValue | null): void {
     this.submittedByPublicId = v?.publicId ?? '';
   }
 
+  /** Updates assignedToPublicId when the commercial picker emits a selection. */
   onCommercialSelected(publicId: string | null): void {
     this.assignedToPublicId = publicId ?? '';
   }
 
+  /** Returns true when subject and submitter are both set. */
   get isValid(): boolean {
     return this.subject.trim().length > 0 && this.submittedByPublicId.length > 0;
   }
 
+  /** Creates the ticket via the API, then navigates to the new ticket detail. */
   submit(): void {
     if (!this.isValid) return;
 

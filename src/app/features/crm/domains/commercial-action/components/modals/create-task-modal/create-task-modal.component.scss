@@ -1,0 +1,9 @@
+@use '../../../../../shared/styles/modal-form' as *;
+
+.create-task-modal {
+  &__submit {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    &:hover:not(:disabled) { background: #6d28d9; border-color: #6d28d9; }
+  }
+}

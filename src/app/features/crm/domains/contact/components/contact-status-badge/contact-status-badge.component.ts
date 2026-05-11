@@ -30,8 +30,10 @@ import { ContactStatus, CONTACT_STATUS_LABELS } from '../../models/contact.model
 })
 /** Inline badge rendering a contact's lifecycle status with its colour-coded style. */
 export class ContactStatusBadgeComponent {
+  /** Contact lifecycle status to render. */
   @Input({ required: true }) status!: ContactStatus;
 
+  /** Human-readable label for the current status, falling back to the raw enum value. */
   get label(): string {
     return CONTACT_STATUS_LABELS[this.status] ?? this.status;
   }

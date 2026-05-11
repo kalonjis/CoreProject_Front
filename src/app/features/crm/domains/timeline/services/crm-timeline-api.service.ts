@@ -16,15 +16,23 @@ export class CrmTimelineApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/timeline';
 
+  /** Returns the unified activity timeline (interactions + completed actions) for a deal. */
   getTimelineByDeal(dealPublicId: string): Observable<TimelineEntryResponse[]> {
     return this.http.get<TimelineEntryResponse[]>(`${this.base}/deal/${dealPublicId}`);
   }
 
+  /** Returns the unified activity timeline (interactions + completed actions) for a contact. */
   getTimelineByContact(contactPublicId: string): Observable<TimelineEntryResponse[]> {
     return this.http.get<TimelineEntryResponse[]>(`${this.base}/contact/${contactPublicId}`);
   }
 
+  /** Returns the unified activity timeline (interactions + completed actions) for a lead. */
   getTimelineByLead(leadPublicId: string): Observable<TimelineEntryResponse[]> {
     return this.http.get<TimelineEntryResponse[]>(`${this.base}/lead/${leadPublicId}`);
+  }
+
+  /** Returns the aggregated activity timeline across all contacts of an organisation. */
+  getTimelineByOrganisation(organisationPublicId: string): Observable<TimelineEntryResponse[]> {
+    return this.http.get<TimelineEntryResponse[]>(`${this.base}/organisation/${organisationPublicId}`);
   }
 }

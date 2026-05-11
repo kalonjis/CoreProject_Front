@@ -24,6 +24,7 @@ export class CrmSupportTicketApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/support-tickets';
 
+  /** Returns a paginated list of support tickets filtered by the given criteria. */
   findAll(filter: SupportTicketFilter, page: number, size: number): Observable<Page<SupportTicketSummary>> {
     let params = new HttpParams()
       .set('page', page)
@@ -41,26 +42,32 @@ export class CrmSupportTicketApiService {
     return this.http.get<Page<SupportTicketSummary>>(this.base, { params });
   }
 
+  /** Returns the full detail of a single support ticket by its public UUID. */
   getByPublicId(publicId: string): Observable<SupportTicketDetail> {
     return this.http.get<SupportTicketDetail>(`${this.base}/${publicId}`);
   }
 
+  /** Creates a new support ticket. */
   create(body: CreateSupportTicketRequest): Observable<SupportTicketDetail> {
     return this.http.post<SupportTicketDetail>(this.base, body);
   }
 
+  /** Partially updates a support ticket's subject and description. */
   update(publicId: string, body: UpdateSupportTicketRequest): Observable<SupportTicketDetail> {
     return this.http.patch<SupportTicketDetail>(`${this.base}/${publicId}`, body);
   }
 
+  /** Transitions a support ticket to a new lifecycle status. */
   changeStatus(publicId: string, body: ChangeSupportTicketStatusRequest): Observable<SupportTicketDetail> {
     return this.http.patch<SupportTicketDetail>(`${this.base}/${publicId}/status`, body);
   }
 
+  /** Assigns a support ticket to a commercial. */
   assign(publicId: string, body: AssignSupportTicketRequest): Observable<SupportTicketDetail> {
     return this.http.patch<SupportTicketDetail>(`${this.base}/${publicId}/assign`, body);
   }
 
+  /** Permanently deletes a support ticket (admin only). */
   delete(publicId: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${publicId}`);
   }

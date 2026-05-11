@@ -1,0 +1,24 @@
+<div class="modal-overlay"
+     [class.modal-overlay--with-panel]="rightPanelOpen"
+     (click)="onOverlayClick($event)">
+  <div class="modal-layout"
+       [style.--modal-accent]="accentColor"
+       (click)="$event.stopPropagation()">
+
+    <div class="modal-layout__header" [style.background]="accentColor + '0d'">
+      <div class="modal-layout__icon-badge" [style.background]="accentColor + '22'">
+        <span class="modal-layout__icon" [style.color]="accentColor">{{ icon }}</span>
+      </div>
+      <h2 class="modal-layout__title">{{ title }}</h2>
+      <button class="modal-layout__close"
+              type="button"
+              aria-label="Fermer"
+              (click)="closed.emit()">×</button>
+    </div>
+
+    <div class="modal-layout__body">
+      <ng-content />
+    </div>
+
+  </div>
+</div>

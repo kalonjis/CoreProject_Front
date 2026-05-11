@@ -39,11 +39,17 @@ export class TagDetailComponent implements OnInit {
   private readonly dealApi    = inject(CrmDealApiService);
   private readonly orgApi     = inject(CrmOrganisationApiService);
 
+  /** The resolved tag; null while loading. */
   readonly tag          = signal<Tag | null>(null);
+  /** Contacts tagged with this tag. */
   readonly contacts     = signal<ContactSummary[]>([]);
+  /** Deals tagged with this tag. */
   readonly deals        = signal<DealSummary[]>([]);
+  /** Organisations tagged with this tag. */
   readonly organisations = signal<OrganisationSummary[]>([]);
+  /** Whether the initial forkJoin load is in progress. */
   readonly loading      = signal(true);
+  /** Error message shown if any load request fails. */
   readonly error        = signal<string | null>(null);
 
   private publicId = '';
@@ -70,7 +76,10 @@ export class TagDetailComponent implements OnInit {
     });
   }
 
+  /** Navigates to the contact detail page. */
   viewContact(publicId: string): void      { this.router.navigate(['/crm/contacts', publicId]); }
+  /** Navigates to the deal detail page. */
   viewDeal(publicId: string): void         { this.router.navigate(['/crm/deals', publicId]); }
+  /** Navigates to the organisation detail page. */
   viewOrganisation(publicId: string): void { this.router.navigate(['/crm/organisations', publicId]); }
 }

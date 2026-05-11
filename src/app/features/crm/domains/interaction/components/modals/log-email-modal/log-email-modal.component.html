@@ -1,0 +1,45 @@
+<app-modal-layout
+  title="Archiver un email"
+  icon="📧"
+  [accentColor]="accentColor"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Date &amp; heure <span class="modal-form__label-required">*</span></label>
+        <input class="modal-form__input" type="datetime-local" [(ngModel)]="occurredAt" name="occurredAt" required />
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Direction</label>
+        <select class="modal-form__select" [(ngModel)]="direction" name="direction">
+          @for (d of directions; track d) {
+            <option [value]="d">{{ directionLabel(d) }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Objet <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="text" [(ngModel)]="emailSubject" name="emailSubject"
+             placeholder="Objet de l'email…" required />
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Contenu (extrait)</label>
+      <textarea class="modal-form__textarea" [(ngModel)]="bodySnippet" name="bodySnippet"
+                rows="4" placeholder="Copier-coller ici le corps ou un extrait de l'email…"></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Archiver l\'email' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

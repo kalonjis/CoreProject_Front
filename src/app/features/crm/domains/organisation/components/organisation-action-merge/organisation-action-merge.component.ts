@@ -12,26 +12,33 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
 })
 /** Form for merging two organisations: the selected source is archived and its data transferred to this organisation (the target). */
 export class OrganisationActionMergeComponent {
+  /** Public ID of the target organisation (the one that survives the merge). */
   @Input({ required: true }) publicId!: string;
+  /** Emitted with the surviving organisation's public ID after a successful merge. */
   @Output() merged    = new EventEmitter<string>();
+  /** Emitted when the user dismisses the form without merging. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api     = inject(CrmOrganisationApiService);
   private readonly feedback = inject(FeedbackService);
   private readonly confirm  = inject(ConfirmDialogService);
 
+  /** True while the merge request is in flight. */
   readonly loading = signal(false);
 
   sourcePublicId = '';
 
+  /** Updates the selected source organisation when the picker value changes. */
   onOrgSelected(v: OrganisationPickerValue | null): void {
     this.sourcePublicId = v?.publicId ?? '';
   }
 
+  /** True when a source organisation different from the target has been selected. */
   get isValid(): boolean {
     return this.sourcePublicId.trim().length > 0 && this.sourcePublicId.trim() !== this.publicId;
   }
 
+  /** Prompts for confirmation then triggers the merge API call. */
   async submit(): Promise<void> {
     if (!this.isValid) return;
 

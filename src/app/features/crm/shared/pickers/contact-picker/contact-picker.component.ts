@@ -25,18 +25,24 @@ export interface ContactPickerValue {
   styleUrl: './contact-picker.component.scss'
 })
 export class ContactPickerComponent implements OnInit, OnDestroy {
+  /** Placeholder text shown in the search input when empty. */
   @Input() placeholder = 'Rechercher un contact…';
-  /** Label à afficher immédiatement (ex: nom connu au moment du pre-fill) */
+  /** Display label to show immediately without triggering a search (e.g. pre-existing value). */
   @Input() prefilledLabel = '';
+  /** Emits the selected contact value, or null when cleared. */
   @Output() selected = new EventEmitter<ContactPickerValue | null>();
 
   private readonly api      = inject(CrmContactApiService);
   private readonly search$  = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
+  /** Current text in the search input. */
   query         = '';
+  /** Display label of the currently selected contact; shown in place of the input. */
   selectedLabel = '';
+  /** Contact results for the current search query (capped at 8). */
   results       = signal<ContactSummary[]>([]);
+  /** Whether a search request is in flight. */
   searching     = signal(false);
 
   ngOnInit(): void {
@@ -64,15 +70,18 @@ export class ContactPickerComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /** Pushes the current query into the debounced search stream; clears results for empty input. */
   onInput(): void {
     if (!this.query.trim()) { this.results.set([]); return; }
     this.search$.next(this.query);
   }
 
+  /** Collapses the dropdown after a short delay to allow mousedown selection to fire first. */
   onBlur(): void {
     setTimeout(() => this.results.set([]), 150);
   }
 
+  /** Selects a contact, builds its display label, and emits the value. */
   select(c: ContactSummary): void {
     this.selectedLabel = [c.firstName, c.lastName].filter(Boolean).join(' ') || c.email;
     this.query = '';
@@ -80,6 +89,7 @@ export class ContactPickerComponent implements OnInit, OnDestroy {
     this.selected.emit({ publicId: c.publicId, label: this.selectedLabel });
   }
 
+  /** Clears the selection and emits null. */
   clear(): void {
     this.selectedLabel = '';
     this.query = '';

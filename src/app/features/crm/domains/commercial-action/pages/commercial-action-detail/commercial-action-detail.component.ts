@@ -37,13 +37,20 @@ export class CommercialActionDetailComponent implements OnInit {
   private readonly feedback = inject(FeedbackService);
   private readonly confirm  = inject(ConfirmDialogService);
 
+  /** The loaded commercial action, or null while loading. */
   readonly action           = signal<CommercialActionResponse | null>(null);
+  /** True while the detail is being fetched. */
   readonly loading          = signal(false);
+  /** Controls visibility of the inline edit form. */
   readonly showEditModal    = signal(false);
+  /** Controls visibility of the completion form modal. */
   readonly showCompleteModal = signal(false);
 
+  /** Exposed to the template for status comparisons. */
   readonly CommercialActionStatus = CommercialActionStatus;
+  /** Exposed to the template to show calendar-related fields conditionally. */
   readonly requiresCalendarSlot   = requiresCalendarSlot;
+  /** Human-readable type labels for the template. */
   readonly TYPE_LABELS            = COMMERCIAL_ACTION_TYPE_LABELS;
 
   private publicId = '';
@@ -53,6 +60,7 @@ export class CommercialActionDetailComponent implements OnInit {
     this.load();
   }
 
+  /** Fetches the commercial action detail from the API. */
   load(): void {
     this.loading.set(true);
     this.api.getByPublicId(this.publicId).subscribe({
@@ -61,11 +69,13 @@ export class CommercialActionDetailComponent implements OnInit {
     });
   }
 
+  /** Closes the edit form and reloads the action after a successful update. */
   onEdited(): void {
     this.showEditModal.set(false);
     this.load();
   }
 
+  /** Submits the completion request and reloads the action on success. */
   onConfirmed(details: CompleteCommercialActionRequest | undefined): void {
     this.showCompleteModal.set(false);
     const a = this.action();
@@ -76,6 +86,7 @@ export class CommercialActionDetailComponent implements OnInit {
     });
   }
 
+  /** Prompts for confirmation then cancels the action. */
   onCancel(): void {
     const a = this.action();
     if (!a) return;

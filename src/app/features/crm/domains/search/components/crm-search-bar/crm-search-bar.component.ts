@@ -29,15 +29,20 @@ export class CrmSearchBarComponent {
 
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
 
+  /** Current text entered in the search input. */
   readonly query   = signal('');
+  /** Flat list of results returned by the last API call. */
   readonly results = signal<SearchResult[]>([]);
+  /** Whether a search request is in flight. */
   readonly loading = signal(false);
+  /** Whether the results dropdown is visible. */
   readonly open    = signal(false);
 
   readonly TYPE_LABELS = SEARCH_TYPE_LABELS;
   readonly TYPE_ROUTES = SEARCH_TYPE_ROUTES;
   readonly TYPE_ICONS  = SEARCH_TYPE_ICONS;
 
+  /** Results grouped by entity type for section rendering in the dropdown. */
   readonly grouped = computed(() => {
     const map = new Map<SearchResultType, SearchResult[]>();
     for (const r of this.results()) {
@@ -47,6 +52,7 @@ export class CrmSearchBarComponent {
     return map;
   });
 
+  /** Iterable entries of grouped results for use in @for loops. */
   readonly groupedEntries = computed(() => Array.from(this.grouped().entries()));
 
   private readonly search$ = new Subject<string>();
@@ -70,17 +76,20 @@ export class CrmSearchBarComponent {
     });
   }
 
+  /** Updates the query signal and pushes the value into the debounced search stream. */
   onInput(value: string): void {
     this.query.set(value);
     if (value.length < 2) { this.results.set([]); this.open.set(false); return; }
     this.search$.next(value);
   }
 
+  /** Navigates to the entity detail page for the given result and closes the dropdown. */
   navigate(result: SearchResult): void {
     this.router.navigate([SEARCH_TYPE_ROUTES[result.type], result.publicId]);
     this.close();
   }
 
+  /** Hides the dropdown and resets query and results. */
   close(): void {
     this.open.set(false);
     this.query.set('');

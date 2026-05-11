@@ -6,6 +6,7 @@
  * Delegates all state management to {@link LeadFacade}.
  */
 import { Component, OnInit, inject, signal, computed, effect, HostListener, ElementRef } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { LeadFacade }        from '../../facades/lead.facade';
 import { InteractionFacade } from '../../../interaction/facades/interaction.facade';
@@ -18,28 +19,48 @@ import { LeadActionRejectComponent }     from '../../components/lead-action-reje
 import { LeadActionConvertComponent }    from '../../components/lead-action-convert/lead-action-convert.component';
 import { InteractionTimelineComponent }  from '../../../interaction/components/interaction-timeline/interaction-timeline.component';
 import { InteractionLogFormComponent }   from '../../../interaction/components/interaction-log-form/interaction-log-form.component';
-import { CommercialActionCardComponent, CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
+import { CommercialActionTodoListComponent } from '../../../commercial-action/components/commercial-action-todo-list/commercial-action-todo-list.component';
+import { CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
 import { CommercialActionFormComponent } from '../../../commercial-action/components/commercial-action-form/commercial-action-form.component';
 import { EmailComposeComponent, EmailComposeSubmit } from '../../../../shared/email-compose/email-compose.component';
+import { CrmEmptyStateComponent }        from '../../../../shared/empty-state/crm-empty-state.component';
 import { CrmTagApiService }     from '../../../tag/services/crm-tag-api.service';
 import { Tag }                  from '../../../tag/models/tag.model';
+import { CommercialActionStatus, CommercialActionType, CommercialActionResponse, requiresCalendarSlot } from '../../../commercial-action/models/commercial-action.model';
+import { LogCallModalComponent }         from '../../../interaction/components/modals/log-call-modal/log-call-modal.component';
+import { LogEmailModalComponent }        from '../../../interaction/components/modals/log-email-modal/log-email-modal.component';
+import { LogNoteModalComponent }         from '../../../interaction/components/modals/log-note-modal/log-note-modal.component';
+import { LogMeetingModalComponent }      from '../../../interaction/components/modals/log-meeting-modal/log-meeting-modal.component';
+import { ScheduleCallModalComponent }    from '../../../commercial-action/components/modals/schedule-call-modal/schedule-call-modal.component';
+import { ScheduleMeetingModalComponent } from '../../../commercial-action/components/modals/schedule-meeting-modal/schedule-meeting-modal.component';
+import { CreateTaskModalComponent }      from '../../../commercial-action/components/modals/create-task-modal/create-task-modal.component';
 
-type ActiveAction = 'enrich' | 'convert' | 'reject' | 'log-interaction' | 'create-action' | null;
+type ActiveAction = 'enrich' | 'convert' | 'reject' | null;
+type LeadTab      = 'interactions' | 'afaire' | 'calendrier' | 'deals' | 'tickets';
 
 @Component({
   selector: 'app-lead-detail',
   providers: [LeadFacade, InteractionFacade],
   imports: [
     RouterLink,
+    DatePipe,
     EmailComposeComponent,
+    CrmEmptyStateComponent,
     LeadInfoCardComponent,
     LeadActionEnrichComponent,
     LeadActionRejectComponent,
     LeadActionConvertComponent,
     InteractionTimelineComponent,
     InteractionLogFormComponent,
-    CommercialActionCardComponent,
-    CommercialActionFormComponent
+    CommercialActionTodoListComponent,
+    CommercialActionFormComponent,
+    LogCallModalComponent,
+    LogEmailModalComponent,
+    LogNoteModalComponent,
+    LogMeetingModalComponent,
+    ScheduleCallModalComponent,
+    ScheduleMeetingModalComponent,
+    CreateTaskModalComponent
   ],
   templateUrl: './lead-detail.component.html',
   styleUrl: './lead-detail.component.scss'
@@ -56,12 +77,37 @@ export class LeadDetailComponent implements OnInit {
   private readonly tagApi    = inject(CrmTagApiService);
   private readonly elRef     = inject(ElementRef);
 
+  readonly activeTab        = signal<LeadTab>('interactions');
   readonly activeAction     = signal<ActiveAction>(null);
+  readonly showLogForm      = signal(false);
+  readonly showActionForm   = signal(false);
   readonly showEmailCompose = signal(false);
   readonly showTagPopover   = signal(false);
+
+  /** Controls visibility of each specialized log modal (Interactions — the past). */
+  readonly showLogCallModal    = signal(false);
+  readonly showLogEmailModal   = signal(false);
+  readonly showLogNoteModal    = signal(false);
+  readonly showLogMeetingModal = signal(false);
+
+  /** Controls visibility of each specialized schedule modal (À faire — the future). */
+  readonly showScheduleCallModal    = signal(false);
+  readonly showScheduleMeetingModal = signal(false);
+  readonly showCreateTaskModal      = signal(false);
   readonly tags             = signal<Tag[]>([]);
   readonly allTags          = signal<Tag[]>([]);
   readonly tagQuery         = signal('');
+
+  readonly quickActionType       = signal<CommercialActionType | null>(null);
+
+  readonly pendingActions        = computed(() => this.facade.actions().filter(a => a.status === CommercialActionStatus.PENDING));
+  readonly calendarActions       = computed(() =>
+    this.facade.actions()
+      .filter(a => a.status === CommercialActionStatus.PENDING && requiresCalendarSlot(a.type) && !!a.dueDate)
+      .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
+  );
+  readonly CommercialActionType  = CommercialActionType;
+  readonly selectedCalendarEvent = signal<CommercialActionResponse | null>(null);
 
   readonly filteredTags = computed(() => {
     const q       = this.tagQuery().toLowerCase().trim();
@@ -141,7 +187,7 @@ export class LeadDetailComponent implements OnInit {
   }
 
   onInteractionLogged(): void {
-    this.activeAction.set(null);
+    this.showLogForm.set(false);
     this.interactionFacade.refresh();
   }
 
@@ -157,8 +203,52 @@ export class LeadDetailComponent implements OnInit {
     this.facade.cancelAction(publicId);
   }
 
+  /**
+   * Routes a quick-bar click to the correct modal based on intent and active tab.
+   * On the Interactions tab: opens the matching Log modal (archiving the past).
+   * On any other tab: opens the matching Schedule modal (planning the future).
+   */
+  openQuickAction(intent: 'note' | 'call' | 'email' | 'meeting' | 'task'): void {
+    if (this.activeTab() === 'interactions' && intent !== 'task') {
+      const logMap: Record<string, () => void> = {
+        note:    () => this.showLogNoteModal.set(true),
+        call:    () => this.showLogCallModal.set(true),
+        email:   () => this.showLogEmailModal.set(true),
+        meeting: () => this.showLogMeetingModal.set(true),
+      };
+      logMap[intent]?.();
+    } else {
+      const scheduleMap: Record<string, () => void> = {
+        note:    () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+        call:    () => { this.showScheduleCallModal.set(true); this.activeTab.set('afaire'); },
+        email:   () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+        meeting: () => { this.showScheduleMeetingModal.set(true); this.activeTab.set('calendrier'); },
+        task:    () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+      };
+      scheduleMap[intent]?.();
+    }
+  }
+
+  /** Called after any log modal saves — refreshes the interaction timeline. */
+  onLogged(): void {
+    this.showLogCallModal.set(false);
+    this.showLogEmailModal.set(false);
+    this.showLogNoteModal.set(false);
+    this.showLogMeetingModal.set(false);
+    this.interactionFacade.refresh();
+  }
+
+  /** Called after any schedule modal saves — refreshes pending actions. */
+  onScheduled(): void {
+    this.showScheduleCallModal.set(false);
+    this.showScheduleMeetingModal.set(false);
+    this.showCreateTaskModal.set(false);
+    this.facade.actionCreated(this.publicId);
+  }
+
   onActionCreated(): void {
-    this.activeAction.set(null);
+    this.showActionForm.set(false);
+    this.quickActionType.set(null);
     this.facade.actionCreated(this.publicId);
   }
 

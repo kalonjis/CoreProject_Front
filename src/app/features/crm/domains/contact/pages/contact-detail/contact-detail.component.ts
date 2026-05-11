@@ -10,22 +10,30 @@ import { ContactInfoCardComponent }        from '../../components/contact-info-c
 import { ContactActionMergeComponent }     from '../../components/contact-action-merge/contact-action-merge.component';
 import { InteractionTimelineComponent }    from '../../../interaction/components/interaction-timeline/interaction-timeline.component';
 import { InteractionLogFormComponent }     from '../../../interaction/components/interaction-log-form/interaction-log-form.component';
-import { CommercialActionCardComponent, CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
+import { CommercialActionTodoListComponent } from '../../../commercial-action/components/commercial-action-todo-list/commercial-action-todo-list.component';
+import { CompleteEvent } from '../../../commercial-action/components/commercial-action-card/commercial-action-card.component';
 import { CommercialActionFormComponent }   from '../../../commercial-action/components/commercial-action-form/commercial-action-form.component';
 import { DealActionCreateComponent }       from '../../../deal/components/deal-action-create/deal-action-create.component';
 import { DealMiniCardComponent }           from '../../../deal/components/deal-mini-card/deal-mini-card.component';
 import { CrmEmptyStateComponent }          from '../../../../shared/empty-state/crm-empty-state.component';
 import { EmailComposeComponent, EmailComposeSubmit } from '../../../../shared/email-compose/email-compose.component';
-import { ChangeLogListComponent }          from '../../../crm-change-log/components/change-log-list/change-log-list.component';
 import { SupportTicketStatusBadgeComponent } from '../../../support-ticket/components/support-ticket-status-badge/support-ticket-status-badge.component';
 import { DealSummary }                     from '../../../deal/models/deal.model';
 import { Tag }                             from '../../../tag/models/tag.model';
 import { SupportTicketSummary }            from '../../../support-ticket/models/support-ticket.model';
+import { CommercialActionStatus, CommercialActionType, CommercialActionResponse, requiresCalendarSlot } from '../../../commercial-action/models/commercial-action.model';
+import { LogCallModalComponent }         from '../../../interaction/components/modals/log-call-modal/log-call-modal.component';
+import { LogEmailModalComponent }        from '../../../interaction/components/modals/log-email-modal/log-email-modal.component';
+import { LogNoteModalComponent }         from '../../../interaction/components/modals/log-note-modal/log-note-modal.component';
+import { LogMeetingModalComponent }      from '../../../interaction/components/modals/log-meeting-modal/log-meeting-modal.component';
+import { ScheduleCallModalComponent }    from '../../../commercial-action/components/modals/schedule-call-modal/schedule-call-modal.component';
+import { ScheduleMeetingModalComponent } from '../../../commercial-action/components/modals/schedule-meeting-modal/schedule-meeting-modal.component';
+import { CreateTaskModalComponent }      from '../../../commercial-action/components/modals/create-task-modal/create-task-modal.component';
 
 /** Union of inline action panels that can be shown on the contact detail page. */
 type ActiveAction = 'merge' | null;
 /** Tab identifiers for the contact detail tabbed view. */
-type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modifications';
+type ContactTab   = 'interactions' | 'afaire' | 'calendrier' | 'deals' | 'tickets';
 
 @Component({
   selector: 'app-contact-detail',
@@ -35,14 +43,20 @@ type ContactTab   = 'activite' | 'actions' | 'deals' | 'tickets' | 'modification
     ContactActionMergeComponent,
     InteractionTimelineComponent,
     InteractionLogFormComponent,
-    CommercialActionCardComponent,
+    CommercialActionTodoListComponent,
     CommercialActionFormComponent,
     DealActionCreateComponent,
     DealMiniCardComponent,
     CrmEmptyStateComponent,
     EmailComposeComponent,
-    ChangeLogListComponent,
     SupportTicketStatusBadgeComponent,
+    LogCallModalComponent,
+    LogEmailModalComponent,
+    LogNoteModalComponent,
+    LogMeetingModalComponent,
+    ScheduleCallModalComponent,
+    ScheduleMeetingModalComponent,
+    CreateTaskModalComponent,
     DatePipe
   ],
   templateUrl: './contact-detail.component.html',
@@ -63,13 +77,24 @@ export class ContactDetailComponent implements OnInit {
   private readonly tagApi      = inject(CrmTagApiService);
   private readonly ticketApi   = inject(CrmSupportTicketApiService);
 
-  readonly activeTab        = signal<ContactTab>('activite');
+  readonly activeTab        = signal<ContactTab>('interactions');
   readonly activeAction     = signal<ActiveAction>(null);
   readonly showLogForm      = signal(false);
   readonly showActionForm   = signal(false);
   readonly showDealCreate   = signal(false);
   readonly showEmailCompose = signal(false);
   readonly showTagPopover   = signal(false);
+
+  /** Controls visibility of each specialized log modal (Interactions — the past). */
+  readonly showLogCallModal    = signal(false);
+  readonly showLogEmailModal   = signal(false);
+  readonly showLogNoteModal    = signal(false);
+  readonly showLogMeetingModal = signal(false);
+
+  /** Controls visibility of each specialized schedule modal (À faire — the future). */
+  readonly showScheduleCallModal    = signal(false);
+  readonly showScheduleMeetingModal = signal(false);
+  readonly showCreateTaskModal      = signal(false);
 
   readonly deals          = signal<DealSummary[]>([]);
   readonly dealsLoading   = signal(false);
@@ -78,6 +103,17 @@ export class ContactDetailComponent implements OnInit {
   readonly tags           = signal<Tag[]>([]);
   readonly allTags        = signal<Tag[]>([]);
   readonly tagQuery       = signal('');
+
+  readonly quickActionType       = signal<CommercialActionType | null>(null);
+
+  readonly pendingActions        = computed(() => this.facade.actions().filter(a => a.status === CommercialActionStatus.PENDING));
+  readonly calendarActions       = computed(() =>
+    this.facade.actions()
+      .filter(a => a.status === CommercialActionStatus.PENDING && requiresCalendarSlot(a.type) && !!a.dueDate)
+      .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
+  );
+  readonly CommercialActionType  = CommercialActionType;
+  readonly selectedCalendarEvent = signal<CommercialActionResponse | null>(null);
 
   readonly filteredTags = computed(() => {
     const q       = this.tagQuery().toLowerCase().trim();
@@ -162,8 +198,52 @@ export class ContactDetailComponent implements OnInit {
     this.facade.cancelAction(publicId);
   }
 
+  /**
+   * Routes a quick-bar click to the correct modal based on intent and active tab.
+   * On the Interactions tab: opens the matching Log modal (archiving the past).
+   * On any other tab: opens the matching Schedule modal (planning the future).
+   */
+  openQuickAction(intent: 'note' | 'call' | 'email' | 'meeting' | 'task'): void {
+    if (this.activeTab() === 'interactions' && intent !== 'task') {
+      const logMap: Record<string, () => void> = {
+        note:    () => this.showLogNoteModal.set(true),
+        call:    () => this.showLogCallModal.set(true),
+        email:   () => this.showLogEmailModal.set(true),
+        meeting: () => this.showLogMeetingModal.set(true),
+      };
+      logMap[intent]?.();
+    } else {
+      const scheduleMap: Record<string, () => void> = {
+        note:    () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+        call:    () => { this.showScheduleCallModal.set(true); this.activeTab.set('afaire'); },
+        email:   () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+        meeting: () => { this.showScheduleMeetingModal.set(true); this.activeTab.set('calendrier'); },
+        task:    () => { this.showCreateTaskModal.set(true); this.activeTab.set('afaire'); },
+      };
+      scheduleMap[intent]?.();
+    }
+  }
+
+  /** Called after any log modal saves — refreshes the interaction timeline. */
+  onLogged(): void {
+    this.showLogCallModal.set(false);
+    this.showLogEmailModal.set(false);
+    this.showLogNoteModal.set(false);
+    this.showLogMeetingModal.set(false);
+    this.interactionFacade.refresh();
+  }
+
+  /** Called after any schedule modal saves — refreshes pending actions. */
+  onScheduled(): void {
+    this.showScheduleCallModal.set(false);
+    this.showScheduleMeetingModal.set(false);
+    this.showCreateTaskModal.set(false);
+    this.facade.actionCreated(this.publicId);
+  }
+
   onActionCreated(): void {
     this.showActionForm.set(false);
+    this.quickActionType.set(null);
     this.facade.actionCreated(this.publicId);
   }
 

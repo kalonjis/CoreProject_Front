@@ -27,22 +27,30 @@ import { FeedbackService } from '../../../../../../shared/feedback/tools/feedbac
   styleUrl: './interaction-log-form.component.scss'
 })
 export class InteractionLogFormComponent implements OnInit {
+  /** Public ID of the deal to associate with the logged interaction. */
   @Input() dealPublicId?: string;
+  /** Public ID of the contact to associate with the logged interaction. */
   @Input() contactPublicId?: string;
+  /** Public ID of the lead to associate with the logged interaction. */
   @Input() leadPublicId?: string;
+  /** Pre-selected interaction type shown when the form opens. */
   @Input() defaultType?: InteractionType;
+  /** Pre-filled subject value. */
   @Input() defaultSubject?: string;
+  /** Pre-filled notes value. */
   @Input() defaultNotes?: string;
+  /** Pre-filled duration in minutes. */
   @Input() defaultDurationMinutes?: number;
+  /** Emits when the interaction has been successfully saved. */
   @Output() logged    = new EventEmitter<void>();
+  /** Emits when the user cancels without saving. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api      = inject(CrmInteractionApiService);
   private readonly feedback = inject(FeedbackService);
 
+  /** Whether the log request is in flight. */
   readonly saving = signal(false);
-
-  // ─── Form fields ──────────────────────────────────────────────────────────
 
   type: InteractionType            = InteractionType.NOTE;
   direction: InteractionDirection | '' = '';
@@ -50,6 +58,7 @@ export class InteractionLogFormComponent implements OnInit {
   notes      = '';
   outcome: InteractionOutcome | '' = '';
   durationMinutes: number | null   = null;
+  /** ISO datetime string (minute precision) defaulting to now. */
   occurredAt = new Date().toISOString().slice(0, 16);
 
   ngOnInit(): void {
@@ -71,20 +80,30 @@ export class InteractionLogFormComponent implements OnInit {
 
   // ─── Enum lists for selects ───────────────────────────────────────────────
 
+  /** All possible interaction types for the type select. */
   readonly types      = Object.values(InteractionType);
+  /** All possible interaction directions for the direction select. */
   readonly directions = Object.values(InteractionDirection);
+  /** All possible interaction outcomes for the outcome select. */
   readonly outcomes   = Object.values(InteractionOutcome);
+  /** All possible call statuses for the call log sub-section. */
   readonly callStatuses = Object.values(CallStatus);
 
+  /** Returns the human-readable label for an interaction type. */
   typeLabel(t: InteractionType)       { return INTERACTION_TYPE_LABELS[t]; }
+  /** Returns the human-readable label for an interaction outcome. */
   outcomeLabel(o: InteractionOutcome) { return INTERACTION_OUTCOME_LABELS[o]; }
+  /** Returns the human-readable label for a call status. */
   callStatusLabel(s: CallStatus)      { return CALL_STATUS_LABELS[s]; }
 
+  /** Returns true when the current type is CALL (shows call log sub-fields). */
   get isCall()  { return this.type === InteractionType.CALL; }
+  /** Returns true when the current type is EMAIL (shows email log sub-fields). */
   get isEmail() { return this.type === InteractionType.EMAIL; }
 
   // ─── Submit ───────────────────────────────────────────────────────────────
 
+  /** Builds the request payload (including optional call/email sub-logs) and sends it to the API. */
   submit(): void {
     if (!this.subject.trim()) return;
 

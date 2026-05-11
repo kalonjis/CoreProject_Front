@@ -12,9 +12,13 @@ import { OrganisationPickerComponent, OrganisationPickerValue } from '../../../.
 })
 /** Form for linking or unlinking a contact to an organisation, with confirmation before unlinking. */
 export class ContactActionLinkOrgComponent {
+  /** Public ID of the contact to link. */
   @Input({ required: true }) publicId!: string;
+  /** Public ID of the currently linked organisation, or null if none. */
   @Input() currentOrgPublicId: string | null = null;
+  /** Emitted after a successful link or unlink operation. */
   @Output() linked    = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without saving. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api      = inject(CrmContactApiService);
@@ -22,12 +26,15 @@ export class ContactActionLinkOrgComponent {
   private readonly confirm  = inject(ConfirmDialogService);
 
   organisationPublicId = '';
+  /** True while the HTTP request is in flight. */
   readonly loading = signal(false);
 
+  /** Updates the selected organisation when the picker value changes. */
   onOrgSelected(v: OrganisationPickerValue | null): void {
     this.organisationPublicId = v?.publicId ?? '';
   }
 
+  /** Prompts for confirmation and removes the organisation link from this contact. */
   async unlink(): Promise<void> {
     try {
       await this.confirm.confirm({ title: 'Délier l\'organisation', message: 'Retirer l\'organisation de ce contact ?', type: 'warning' });
@@ -40,6 +47,7 @@ export class ContactActionLinkOrgComponent {
     });
   }
 
+  /** Links the selected organisation to this contact. */
   submit(): void {
     if (!this.organisationPublicId.trim()) return;
     this.loading.set(true);

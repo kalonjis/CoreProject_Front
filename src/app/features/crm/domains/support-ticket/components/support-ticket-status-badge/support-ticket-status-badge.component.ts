@@ -33,6 +33,8 @@ import { SupportTicketStatus, SUPPORT_TICKET_STATUS_LABELS } from '../../models/
   `]
 })
 export class SupportTicketStatusBadgeComponent {
+  /** Support ticket status to render. */
   @Input({ required: true }) status!: SupportTicketStatus;
+  /** Human-readable label for the current status. */
   get label(): string { return SUPPORT_TICKET_STATUS_LABELS[this.status]; }
 }

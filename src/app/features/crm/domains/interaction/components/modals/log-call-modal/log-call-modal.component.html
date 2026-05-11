@@ -1,0 +1,50 @@
+<app-modal-layout
+  title="Loguer un appel"
+  icon="📞"
+  [accentColor]="accentColor"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Date &amp; heure <span class="modal-form__label-required">*</span></label>
+        <input class="modal-form__input" type="datetime-local" [(ngModel)]="occurredAt" name="occurredAt" required />
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Durée (min)</label>
+        <input class="modal-form__input" type="number" min="1" [(ngModel)]="durationMinutes" name="durationMinutes" placeholder="ex : 15" />
+      </div>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Statut <span class="modal-form__label-required">*</span></label>
+      <select class="modal-form__select" [(ngModel)]="callStatus" name="callStatus">
+        @for (s of callStatuses; track s) {
+          <option [value]="s">{{ callStatusLabel(s) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Résumé <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="text" [(ngModel)]="subject" name="subject"
+             placeholder="Ex : Présentation produit, suivi devis…" required />
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Notes</label>
+      <textarea class="modal-form__textarea" [(ngModel)]="notes" name="notes"
+                rows="3" placeholder="Détails, points abordés, prochaines étapes…"></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer l\'appel' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

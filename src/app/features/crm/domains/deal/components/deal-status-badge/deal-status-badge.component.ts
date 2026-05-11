@@ -26,6 +26,8 @@ import { DealStatus, DEAL_STATUS_LABELS } from '../../models/deal.model';
 })
 /** Inline badge rendering a deal's outcome status with its colour-coded style. */
 export class DealStatusBadgeComponent {
+  /** Deal status to render. */
   @Input({ required: true }) status!: DealStatus;
+  /** Label lookup table for template access. */
   readonly labels = DEAL_STATUS_LABELS;
 }

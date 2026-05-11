@@ -1,6 +1,14 @@
 @use 'variables';
 
+:host {
+  display: block;
+  background: #f1f5f9;
+}
+
 .deal-detail {
+  background: #f1f5f9;
+
+  // ─── Breadcrumb ─────────────────────────────────────────────────────────────
   &__breadcrumb {
     font-size: 0.875rem;
     color: variables.$gray-dark;
@@ -8,47 +16,294 @@
     a { color: variables.$primary-color; text-decoration: none; &:hover { text-decoration: underline; } }
   }
 
+  // ─── Page Header ────────────────────────────────────────────────────────────
+  &__header {
+    margin-bottom: 1.5rem;
+  }
+
+  &__header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: variables.$dark-color;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+  }
+
+  &__subtitle-link {
+    color: #64748b;
+    font-weight: 500;
+    text-decoration: none;
+    &:hover { color: variables.$primary-color; text-decoration: underline; }
+  }
+
+  &__subtitle-sep {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+  }
+
+  &__overdue-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__pipeline-tag {
+    font-size: 0.8125rem;
+    color: variables.$gray-dark;
+    padding: 0.2rem 0.75rem;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: 99px;
+  }
+
+  // ─── Layout ─────────────────────────────────────────────────────────────────
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 320px;
     gap: 1.5rem;
     align-items: start;
   }
 
-  &__sidebar {
+  &__main {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.875rem;
+    min-width: 0;
   }
 
-  &__actions {
+  // ─── Cards (white elevated zones) ───────────────────────────────────────────
+  &__card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &--tabs {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  // ─── Pipeline Stepper ───────────────────────────────────────────────────────
+  &__stepper {
+    display: flex;
+    padding: 1.25rem 1rem 1rem;
+    overflow-x: auto;
+  }
+
+  &__step {
+    position: relative;
+    flex: 1;
+    min-width: 56px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      height: 2px;
+      background: #e2e8f0;
+      transition: background 0.2s;
+      z-index: 0;
+    }
+    &::before { left: 0; right: 50%; }
+    &::after  { left: 50%; right: 0; }
+
+    &:first-child::before { display: none; }
+    &:last-child::after   { display: none; }
+
+    &--done {
+      &::before, &::after { background: variables.$primary-color; }
+
+      .deal-detail__step-dot {
+        background: variables.$primary-color;
+        border-color: variables.$primary-color;
+      }
+      .deal-detail__step-name {
+        color: variables.$primary-color;
+        font-weight: 500;
+      }
+    }
+
+    &--active {
+      &::before { background: variables.$primary-color; }
+
+      .deal-detail__step-dot {
+        width: 22px;
+        height: 22px;
+        margin-top: -2px;
+        background: variables.$primary-color;
+        border-color: variables.$primary-color;
+        box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.15);
+      }
+      .deal-detail__step-name {
+        color: variables.$primary-color;
+        font-weight: 700;
+      }
+
+      &.deal-detail__step--won {
+        .deal-detail__step-dot {
+          background: #16a34a;
+          border-color: #16a34a;
+          box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.15);
+        }
+        .deal-detail__step-name { color: #16a34a; }
+      }
+    }
+  }
+
+  &__step-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: #fff;
+    z-index: 1;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  &__step-name {
+    font-size: 0.6875rem;
+    color: variables.$gray-dark;
+    text-align: center;
+    margin-top: 0.4rem;
+    line-height: 1.3;
+    word-break: break-word;
+    max-width: 72px;
+  }
+
+  // ─── Prochaine étape banner ──────────────────────────────────────────────────
+  &__next-step {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid variables.$primary-color;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    flex-wrap: wrap;
+  }
+
+  &__next-step-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1d4ed8;
+    white-space: nowrap;
+    padding: 0.15rem 0.5rem;
+    background: #dbeafe;
+    border-radius: 4px;
+  }
+
+  &__next-step-title {
+    font-weight: 600;
+    color: variables.$dark-color;
+  }
+
+  &__next-step-date {
+    color: variables.$gray-dark;
+    font-size: 0.8125rem;
+  }
+
+  // ─── Quick-bar — ligne horizontale fine ─────────────────────────────────────
+  &__quick-bar {
+    display: flex;
     gap: 0.5rem;
   }
 
-  &__info  { color: variables.$gray-dark; font-style: italic; }
-  &__error { color: variables.$danger-color; }
+  &__quick-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0 0.875rem;
+    height: 38px;
+    border: 1px solid variables.$border-color;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: variables.$transition-fast;
+    color: variables.$text-color;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &--note   { border-left: 3px solid #f59e0b; &:hover { background: #fffbeb; } }
+    &--call   { border-left: 3px solid #2563eb; &:hover { background: #eff6ff; } }
+    &--email  { border-left: 3px solid #0284c7; &:hover { background: #f0f9ff; } }
+    &--meeting { border-left: 3px solid #16a34a; &:hover { background: #f0fdf4; } }
+  }
+
+  &__quick-icon {
+    font-size: 0.9375rem;
+    line-height: 1;
+  }
 
   // ─── Tabs ───────────────────────────────────────────────────────────────────
-
   &__tabs {
     display: flex;
-    border-bottom: 2px solid variables.$border-color;
-    margin-top: 1.5rem;
+    border-bottom: 1px solid variables.$border-color;
+    padding: 0 0.5rem;
+    background: #fafafa;
   }
 
   &__tab {
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    padding: 0.6rem 1.1rem;
+    margin-bottom: -1px;
+    padding: 0.75rem 0.875rem;
     font-size: 0.875rem;
     font-weight: 500;
     color: variables.$gray-dark;
     cursor: pointer;
     transition: variables.$transition-fast;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 
     &:hover { color: variables.$primary-color; }
 
@@ -58,81 +313,308 @@
     }
   }
 
+  &__tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: variables.$primary-color;
+    color: #fff;
+    border-radius: 99px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+
   &__tab-panel {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
-    padding-top: 1.25rem;
+    padding: 1.25rem;
   }
 
-  &__timeline {
-    margin-top: 1.5rem;
-    border-top: 1px solid variables.$border-color;
-    padding-top: 1.25rem;
-  }
-
-  &__timeline-header {
+  &__tab-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
   }
 
-  &__timeline-title {
-    font-size: 1rem;
+  &__tab-title {
+    font-size: 0.9375rem;
     font-weight: 600;
+    color: variables.$dark-color;
     margin: 0;
+  }
+
+  // ─── Table contacts — Premium style ─────────────────────────────────────────
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th {
+      text-align: left;
+      padding: 0.5rem 1rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid variables.$border-color;
+      background: transparent;
+    }
+
+    td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: variables.$text-color;
+      vertical-align: middle;
+    }
+  }
+
+  &__table-name {
+    font-weight: 600;
     color: variables.$dark-color;
   }
 
-  &__tags-section {
-    border-top: 1px solid variables.$border-color;
-    padding-top: 1rem;
+  &__table-row {
+    cursor: pointer;
+    transition: variables.$transition-fast;
+    &:hover td { background: #f8fafc; }
+    &:last-child td { border-bottom: none; }
+  }
+
+  // ─── Ticket row-cards ────────────────────────────────────────────────────────
+  &__ticket-rows {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  &__tags-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 0;
-    color: variables.$dark-color;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  &__ticket-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border: 1px solid variables.$border-color;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: variables.$transition-fast;
+
+    &:hover {
+      background: #fff;
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transform: translateX(2px);
+    }
   }
 
-  &__actions-section {
-    border-top: 1px solid variables.$border-color;
-    padding-top: 1rem;
+  &__ticket-main {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.2rem;
+    min-width: 0;
   }
 
-  &__actions-header {
+  &__ticket-subject {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: variables.$dark-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__ticket-contact {
+    font-size: 0.8125rem;
+    color: variables.$gray-dark;
+  }
+
+  &__ticket-aside {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  &__ticket-date {
+    font-size: 0.8125rem;
+    color: variables.$gray-dark;
+    white-space: nowrap;
+  }
+
+  // ─── Sidebar ────────────────────────────────────────────────────────────────
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 1.5rem;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+
+  // ─── Profile card — fond dynamique selon statut ──────────────────────────────
+  &__profile {
+    padding: 1.5rem 1.25rem 1.125rem;
+    border-bottom: 1px solid variables.$border-color;
+
+    &--open { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+    &--won  { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+    &--lost { background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%); }
+  }
+
+  &__profile--open  &__amount { color: #1e40af; }
+  &__profile--won   &__amount { color: #166534; }
+  &__profile--lost  &__amount { color: #991b1b; }
+
+  &__amount {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.125rem;
+    line-height: 1;
+    color: variables.$dark-color;
+
+    &--empty {
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: variables.$gray-dark;
+      font-style: italic;
+    }
+  }
+
+  &__profile-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+
+    &--full {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+  }
+
+  &__profile-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__profile-value {
+    font-size: 0.875rem;
+    color: variables.$text-color;
+    text-align: right;
+    word-break: break-word;
+
+    &--link {
+      color: variables.$primary-color;
+      text-decoration: none;
+      font-weight: 500;
+      &:hover { text-decoration: underline; }
+    }
+
+    &--overdue {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    &--lost {
+      color: #dc2626;
+      font-size: 0.8125rem;
+      font-style: italic;
+    }
+
+    &--notes {
+      font-size: 0.8125rem;
+      color: variables.$gray-dark;
+      line-height: 1.4;
+      text-align: left;
+    }
+  }
+
+  // ─── Sidebar sections ────────────────────────────────────────────────────────
+  &__sidebar-section {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid variables.$border-color;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  &__section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  &__actions-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 0;
-    color: variables.$dark-color;
+  &__section-title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    margin: 0;
   }
 
-  &__actions-state {
+  &__icon-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid variables.$border-color;
+    background: #fff;
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: variables.$text-color;
+    line-height: 1;
+    &:hover { background: variables.$body-bg; }
+  }
+
+  // ─── Admin section ───────────────────────────────────────────────────────────
+  &__admin {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  &__admin-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  // ─── Utilities ───────────────────────────────────────────────────────────────
+  &__empty {
     font-size: 0.8125rem;
     color: variables.$gray-dark;
     font-style: italic;
     margin: 0;
   }
+
+  &__info { color: variables.$gray-dark; font-style: italic; }
 }
 
+// ─── Buttons ────────────────────────────────────────────────────────────────
 .btn {
   width: 100%;
   padding: 0.5rem 1rem;
@@ -143,18 +625,26 @@
   border: 1px solid transparent;
   transition: variables.$transition-fast;
 
+  &--sm {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+    width: auto;
+  }
+
   &--secondary {
     background: variables.$primary-color;
     color: #fff;
     border-color: variables.$primary-color;
     &:hover { opacity: 0.88; }
   }
+
   &--ghost {
     background: transparent;
     color: variables.$text-color;
     border-color: variables.$border-color;
     &:hover { background: variables.$body-bg; }
   }
+
   &--active {
     background: rgba(variables.$primary-color, 0.1);
     border-color: variables.$primary-color;

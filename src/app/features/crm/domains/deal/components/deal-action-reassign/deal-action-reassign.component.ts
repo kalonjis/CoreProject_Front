@@ -14,8 +14,11 @@ import { CommercialSummary, commercialDisplayName } from '../../../../shared/mod
 })
 /** Form for reassigning a deal to another commercial. */
 export class DealActionReassignComponent implements OnInit {
+  /** Public ID of the deal to reassign. */
   @Input({ required: true }) publicId!: string;
+  /** Emitted after the deal has been successfully reassigned. */
   @Output() reassigned = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without saving. */
   @Output() cancelled  = new EventEmitter<void>();
 
   private readonly api        = inject(CrmDealApiService);
@@ -23,8 +26,10 @@ export class DealActionReassignComponent implements OnInit {
   private readonly feedback   = inject(FeedbackService);
   private readonly authFacade = inject(AuthFacade);
 
+  /** Available commercials for the picker. */
   commercials        = signal<CommercialSummary[]>([]);
   selectedPublicId   = '';
+  /** True while the reassignment request is in flight. */
   readonly loading   = signal(false);
 
   readonly displayName = commercialDisplayName;
@@ -44,6 +49,7 @@ export class DealActionReassignComponent implements OnInit {
     }
   }
 
+  /** Submits the reassignment to the API and emits {@link reassigned} on success. */
   submit(): void {
     if (!this.selectedPublicId) return;
     this.loading.set(true);

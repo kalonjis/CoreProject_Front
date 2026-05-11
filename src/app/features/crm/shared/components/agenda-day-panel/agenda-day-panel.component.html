@@ -1,0 +1,84 @@
+@if (visible()) {
+  <div class="agenda-panel agenda-panel--visible">
+
+    <div class="agenda-panel__header">
+      <span class="agenda-panel__icon">📅</span>
+      <div class="agenda-panel__header-text">
+        <span class="agenda-panel__label">Agenda du</span>
+        <strong class="agenda-panel__date">
+          {{ activeDate() | date:'EEEE d MMMM':'':'fr' }}
+        </strong>
+      </div>
+    </div>
+
+    <div class="agenda-panel__body">
+
+      @if (loading()) {
+        <p class="agenda-panel__loading">Chargement…</p>
+      } @else if (items().length === 0) {
+        <div class="agenda-panel__empty">
+          <span class="agenda-panel__empty-icon">🗓️</span>
+          <p class="agenda-panel__empty-text">Aucun événement ce jour.</p>
+          <p class="agenda-panel__empty-sub">Vous êtes disponible !</p>
+        </div>
+      } @else {
+        <div class="agenda-panel__list">
+          @for (item of items(); track item.publicId) {
+
+            <div class="agenda-panel__block"
+                 [style.--item-color]="item.color"
+                 [class.agenda-panel__block--expanded]="expandedId() === item.publicId"
+                 (click)="toggle(item.publicId)">
+
+              <div class="agenda-panel__block-time">
+                @if (item.typeLabel === 'Toute la journée') {
+                  <span class="agenda-panel__block-allday">↑</span>
+                } @else {
+                  <span class="agenda-panel__block-hour">{{ item.timeIso | date:'HH' }}</span>
+                  <span class="agenda-panel__block-min">{{ item.timeIso | date:'mm' }}</span>
+                }
+              </div>
+
+              <div class="agenda-panel__block-info">
+                <span class="agenda-panel__block-title">{{ item.title }}</span>
+                <span class="agenda-panel__block-type">
+                  {{ item.typeLabel }}
+                  @if (item.duration) {
+                    <span class="agenda-panel__block-duration">· {{ formatDuration(item.duration) }}</span>
+                  }
+                </span>
+              </div>
+
+              @if (item.source === 'calendar') {
+                <span class="agenda-panel__block-badge">Cal</span>
+              }
+
+              <span class="agenda-panel__block-chevron"
+                    [class.agenda-panel__block-chevron--open]="expandedId() === item.publicId">›</span>
+            </div>
+
+            @if (expandedId() === item.publicId) {
+              <div class="agenda-panel__detail" [style.--item-color]="item.color">
+                @if (item.location) {
+                  <p class="agenda-panel__detail-row">📍 {{ item.location }}</p>
+                }
+                @if (item.duration) {
+                  <p class="agenda-panel__detail-row">⏱ {{ item.duration }} min</p>
+                }
+                @if (item.assignee) {
+                  <p class="agenda-panel__detail-row">👤 {{ item.assignee }}</p>
+                }
+                @if (item.description) {
+                  <p class="agenda-panel__detail-desc">{{ item.description }}</p>
+                }
+              </div>
+            }
+
+          }
+        </div>
+      }
+
+    </div>
+
+  </div>
+}
