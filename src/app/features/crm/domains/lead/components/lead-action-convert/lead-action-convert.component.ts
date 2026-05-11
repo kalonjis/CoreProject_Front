@@ -124,9 +124,14 @@ export class LeadActionConvertComponent implements OnInit {
         this.feedback.showSuccess('Lead converti en contact.');
         this.loadContactAndGoToDeal();
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.feedback.showError('Impossible de convertir le lead.');
+        if (err?.status === 409) {
+          this.feedback.showError('Un contact avec cet email existe déjà.');
+          this.converted.emit();
+        } else {
+          this.feedback.showError('Impossible de convertir le lead.');
+        }
       }
     });
   }
