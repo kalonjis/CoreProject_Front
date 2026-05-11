@@ -30,12 +30,21 @@ import { CommercialSummary, commercialDisplayName } from '../../../../shared/mod
  * Supports address autocomplete, assignee selection, and calendar fields for MEETING/DEMO types.
  */
 export class CommercialActionFormComponent implements OnInit, OnDestroy {
+  /** Public ID of the deal to link the new action to. */
   @Input() dealPublicId?: string;
+  /** Public ID of the contact to link the new action to. */
   @Input() contactPublicId?: string;
+  /** Public ID of the lead to link the new action to. */
   @Input() leadPublicId?: string;
+  /** Existing action to edit; when set, the form operates in edit mode. */
   @Input() existingAction?: CommercialActionResponse;
+  /** Pre-selects a specific action type when creating a new action. */
+  @Input() initialType?: CommercialActionType;
+  /** Emitted after a new action has been successfully created. */
   @Output() created   = new EventEmitter<void>();
+  /** Emitted after an existing action has been successfully updated. */
   @Output() updated   = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without saving. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api           = inject(CrmCommercialActionApiService);
@@ -44,8 +53,10 @@ export class CommercialActionFormComponent implements OnInit, OnDestroy {
   private readonly authFacade    = inject(AuthFacade);
   private readonly addressApi    = inject(AddressSuggestionApiService);
 
+  /** True while the create or update request is in flight. */
   readonly saving = signal(false);
 
+  /** True when the form is operating on an existing action. */
   get isEditMode(): boolean { return !!this.existingAction; }
 
   // ─── Address picker ───────────────────────────────────────────────────────
@@ -71,6 +82,8 @@ export class CommercialActionFormComponent implements OnInit, OnDestroy {
 
     if (this.existingAction) {
       this.populateFromExisting(this.existingAction);
+    } else if (this.initialType) {
+      this.type = this.initialType;
     }
 
     if (this.authFacade.isAdmin()) {
@@ -128,8 +141,10 @@ export class CommercialActionFormComponent implements OnInit, OnDestroy {
   typeLabel(t: CommercialActionType)         { return COMMERCIAL_ACTION_TYPE_LABELS[t]; }
   priorityLabel(p: CommercialActionPriority) { return COMMERCIAL_ACTION_PRIORITY_LABELS[p]; }
 
+  /** True when the selected type requires calendar slot fields (location, duration). */
   get showCalendarFields(): boolean { return requiresCalendarSlot(this.type); }
 
+  /** Triggers a debounced address search when the user types in the address field. */
   onAddressInput(): void { this.addressSearch$.next(this.addressQuery); }
 
   onAddressBlur(): void {

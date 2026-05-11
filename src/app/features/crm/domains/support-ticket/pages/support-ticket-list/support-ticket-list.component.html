@@ -13,6 +13,24 @@
     </div>
   </div>
 
+  <!-- ─── Stats bar ───────────────────────────────────────────────────────── -->
+  @if (stats(); as s) {
+    <div class="ticket-list__stats">
+      <div class="ticket-list__stat ticket-list__stat--open">
+        <span class="ticket-list__stat-value">{{ s.ticketsOpen }}</span>
+        <span class="ticket-list__stat-label">Tickets ouverts</span>
+      </div>
+      <div class="ticket-list__stat ticket-list__stat--progress">
+        <span class="ticket-list__stat-value">{{ s.ticketsInProgress }}</span>
+        <span class="ticket-list__stat-label">En cours</span>
+      </div>
+      <div class="ticket-list__stat ticket-list__stat--overdue">
+        <span class="ticket-list__stat-value">{{ s.overdueActions }}</span>
+        <span class="ticket-list__stat-label">Actions en retard</span>
+      </div>
+    </div>
+  }
+
   <!-- ─── Filters (row 1) ───────────────────────────────────────────────── -->
   <div class="ticket-list__filters">
     <input
@@ -52,17 +70,11 @@
     <div class="ticket-list__filters ticket-list__filters--pickers">
       <div class="ticket-list__filter-group">
         <span class="ticket-list__filter-label">Contact</span>
-        <app-contact-picker
-          placeholder="Filtrer par contact…"
-          (selected)="onContactSelected($event)"
-        />
+        <app-contact-picker placeholder="Filtrer par contact…" (selected)="onContactSelected($event)" />
       </div>
       <div class="ticket-list__filter-group">
         <span class="ticket-list__filter-label">Organisation</span>
-        <app-organisation-picker
-          placeholder="Filtrer par organisation…"
-          (selected)="onOrganisationSelected($event)"
-        />
+        <app-organisation-picker placeholder="Filtrer par organisation…" (selected)="onOrganisationSelected($event)" />
       </div>
       <div class="ticket-list__filter-group">
         <span class="ticket-list__filter-label">Assigné à</span>
@@ -76,7 +88,7 @@
     </div>
   }
 
-  <!-- ─── Table ─────────────────────────────────────────────────────────── -->
+  <!-- ─── Rows ──────────────────────────────────────────────────────────── -->
   @if (loading()) {
     <div class="ticket-list__loading">Chargement…</div>
   } @else if (page() && page()!.content.length === 0) {
@@ -88,41 +100,54 @@
       (ctaClick)="newTicket()"
     />
   } @else if (page(); as p) {
-    <div class="ticket-list__table-wrapper">
-      <table class="ticket-list__table">
-        <thead>
-          <tr>
-            <th>Sujet</th>
-            <th>Contact</th>
-            <th>Statut</th>
-            <th>Assigné à</th>
-            <th class="ticket-list__date-col">Créé le</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (ticket of p.content; track ticket.publicId) {
-            <tr class="ticket-list__row" (click)="openDetail(ticket.publicId)">
-              <td class="ticket-list__subject">
-                {{ ticket.subject }}
-                @if (ticket.source === SupportTicketSource.PUBLIC_FORM) {
-                  <span class="ticket-list__source-chip">Public</span>
-                }
-              </td>
-              <td class="ticket-list__secondary">{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
-              <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
-              <td (click)="$event.stopPropagation()">
-                <app-crm-assign-popover
-                  [assigneeName]="ticket.assignedToUsername"
-                  [commercials]="commercials()"
-                  [compact]="true"
-                  (selected)="assignInList(ticket, $event)"
-                />
-              </td>
-              <td class="ticket-list__secondary ticket-list__date-col">{{ ticket.createdAt | date:'dd/MM/yy HH:mm' }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="ticket-list__rows">
+
+      <div class="ticket-list__col-headers">
+        <span>Ticket</span>
+        <span>Statut</span>
+        <span>Assigné à</span>
+        <span>Créé le</span>
+      </div>
+
+      @for (ticket of p.content; track ticket.publicId) {
+        <div class="ticket-list__row" (click)="openDetail(ticket.publicId)">
+
+          <!-- Sujet + contact -->
+          <div class="ticket-list__cell ticket-list__cell--subject">
+            <span class="ticket-list__subject">
+              {{ ticket.subject }}
+              @if (ticket.source === SupportTicketSource.PUBLIC_FORM) {
+                <span class="ticket-list__source-chip">Public</span>
+              }
+            </span>
+            <span class="ticket-list__contact-sub">
+              {{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}
+            </span>
+          </div>
+
+          <!-- Statut -->
+          <div class="ticket-list__cell">
+            <app-support-ticket-status-badge [status]="ticket.status" />
+          </div>
+
+          <!-- Assigné / À assigner -->
+          <div class="ticket-list__cell ticket-list__assign-cell"
+               (click)="$event.stopPropagation()">
+            <app-crm-assign-popover
+              [assigneeName]="ticket.assignedToUsername"
+              [commercials]="commercials()"
+              [compact]="true"
+              (selected)="assignInList(ticket, $event)"
+            />
+          </div>
+
+          <!-- Date -->
+          <div class="ticket-list__cell ticket-list__cell--date">
+            {{ ticket.createdAt | date:'dd/MM/yy' }}
+          </div>
+
+        </div>
+      }
     </div>
 
     @if (p.totalPages > 1) {

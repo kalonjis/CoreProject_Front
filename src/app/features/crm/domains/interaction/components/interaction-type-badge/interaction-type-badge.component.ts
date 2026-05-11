@@ -37,9 +37,12 @@ import { InteractionType, INTERACTION_TYPE_LABELS } from '../../models/interacti
   `]
 })
 export class InteractionTypeBadgeComponent {
+  /** Interaction type to render. */
   @Input({ required: true }) type!: InteractionType;
 
+  /** Human-readable label for the current type. */
   get label(): string  { return INTERACTION_TYPE_LABELS[this.type]; }
+  /** Emoji icon representing the current interaction type. */
   get icon(): string {
     const icons: Record<InteractionType, string> = {
       [InteractionType.CALL]:        '📞',

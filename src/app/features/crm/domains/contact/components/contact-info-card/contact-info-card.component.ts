@@ -18,8 +18,11 @@ import { CommercialSummary }            from '../../../../shared/models/commerci
 })
 /** Info card for a contact with interactive assignee field. */
 export class ContactInfoCardComponent implements OnInit {
+  /** Full contact details to display. */
   @Input({ required: true }) contact!: ContactDetail;
+  /** Public ID of the contact, used for assignment API calls. */
   @Input({ required: true }) publicId!: string;
+  /** Emitted after a successful reassignment. */
   @Output() assigned = new EventEmitter<void>();
 
   private readonly api        = inject(CrmContactApiService);
@@ -27,7 +30,9 @@ export class ContactInfoCardComponent implements OnInit {
   private readonly feedback   = inject(FeedbackService);
   private readonly authFacade = inject(AuthFacade);
 
+  /** Available commercials for the assignee picker. */
   readonly commercials = signal<CommercialSummary[]>([]);
+  /** True while an assignment request is in flight. */
   readonly loading     = signal(false);
 
   ngOnInit(): void {
@@ -44,6 +49,7 @@ export class ContactInfoCardComponent implements OnInit {
     }
   }
 
+  /** Assigns the contact to the selected commercial and emits {@link assigned} on success. */
   onAssigneeSelected(c: CommercialSummary): void {
     if (this.loading()) return;
     this.loading.set(true);

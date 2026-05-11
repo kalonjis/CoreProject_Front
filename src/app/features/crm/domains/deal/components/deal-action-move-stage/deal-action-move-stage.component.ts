@@ -13,32 +13,43 @@ import { PipelineStep } from '../../../pipeline/models/pipeline.model';
 })
 /** Form for moving a deal to a different pipeline stage, with a mandatory lost-reason modal when targeting a lost step. */
 export class DealActionMoveStageComponent implements OnInit {
+  /** Public ID of the deal to move. */
   @Input({ required: true }) publicId!: string;
+  /** Public ID of the pipeline the deal belongs to, used to load available stages. */
   @Input({ required: true }) pipelinePublicId!: string;
+  /** Public ID of the deal's current stage, excluded from the target options. */
   @Input({ required: true }) currentStagePublicId!: string;
+  /** Emitted after the deal has been successfully moved. */
   @Output() moved     = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without saving. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly dealApi     = inject(CrmDealApiService);
   private readonly pipelineApi = inject(CrmPipelineApiService);
   private readonly feedback    = inject(FeedbackService);
 
+  /** True while the move request is in flight. */
   readonly loading       = signal(false);
+  /** Available pipeline steps (excluding the current stage). */
   readonly steps         = signal<PipelineStep[]>([]);
+  /** Controls visibility of the lost-reason confirmation modal. */
   readonly showLostModal = signal(false);
 
   selectedStagePublicId = '';
   lostReason            = '';
 
+  /** Returns the full pipeline step object for the currently selected stage, or null if none. */
   get selectedStep(): PipelineStep | null {
     return this.steps().find(s => s.publicId === this.selectedStagePublicId) ?? null;
   }
 
+  /** True when a different stage is selected. */
   get isValid(): boolean {
     return this.selectedStagePublicId.trim().length > 0
         && this.selectedStagePublicId !== this.currentStagePublicId;
   }
 
+  /** True when a non-empty lost reason has been entered. */
   get lostReasonValid(): boolean {
     return this.lostReason.trim().length > 0;
   }
@@ -52,6 +63,7 @@ export class DealActionMoveStageComponent implements OnInit {
     });
   }
 
+  /** Validates the selection and either opens the lost-reason modal or directly moves the deal. */
   submit(): void {
     if (!this.isValid) return;
     const step = this.selectedStep;

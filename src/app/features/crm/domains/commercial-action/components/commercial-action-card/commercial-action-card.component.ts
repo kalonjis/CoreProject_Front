@@ -9,7 +9,6 @@ import {
   requiresCalendarSlot
 } from '../../models/commercial-action.model';
 import { CommercialActionPriorityBadgeComponent }  from '../commercial-action-priority-badge/commercial-action-priority-badge.component';
-import { CommercialActionStatusBadgeComponent }    from '../commercial-action-status-badge/commercial-action-status-badge.component';
 import { CommercialActionFormComponent }           from '../commercial-action-form/commercial-action-form.component';
 import { CommercialActionCompleteFormComponent }   from '../commercial-action-complete-form/commercial-action-complete-form.component';
 import { ConfirmDialogService }                    from '../../../../../../shared/confirm-dialog/tools/confirm-dialog.service';
@@ -26,7 +25,6 @@ export interface CompleteEvent {
     DatePipe,
     RouterLink,
     CommercialActionPriorityBadgeComponent,
-    CommercialActionStatusBadgeComponent,
     CommercialActionFormComponent,
     CommercialActionCompleteFormComponent
   ],
@@ -47,9 +45,39 @@ export class CommercialActionCardComponent {
   readonly showCompleteModal = signal(false);
   readonly showMenu          = signal(false);
 
+  private static readonly TYPE_ICONS: Record<CommercialActionType, string> = {
+    [CommercialActionType.TASK]:    '✅',
+    [CommercialActionType.CALL]:    '📞',
+    [CommercialActionType.EMAIL]:   '📧',
+    [CommercialActionType.MEETING]: '📅',
+    [CommercialActionType.DEMO]:    '🎯',
+  };
+
+  private static readonly TYPE_COLORS: Record<CommercialActionType, string> = {
+    [CommercialActionType.TASK]:    '#475569',
+    [CommercialActionType.CALL]:    '#2563eb',
+    [CommercialActionType.EMAIL]:   '#d97706',
+    [CommercialActionType.MEETING]: '#16a34a',
+    [CommercialActionType.DEMO]:    '#7c3aed',
+  };
+
   get isPending(): boolean   { return this.action.status === CommercialActionStatus.PENDING; }
   get dueDateLabel(): string { return requiresCalendarSlot(this.action.type) ? 'RDV' : 'Échéance'; }
   get dueDateFormat(): string { return requiresCalendarSlot(this.action.type) ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy'; }
+
+  get typeIcon(): string  { return CommercialActionCardComponent.TYPE_ICONS[this.action.type]  ?? '📌'; }
+  get typeColor(): string { return CommercialActionCardComponent.TYPE_COLORS[this.action.type] ?? '#475569'; }
+
+  get isToday(): boolean {
+    if (!this.action.dueDate) return false;
+    return this.action.dueDate.slice(0, 10) === new Date().toISOString().slice(0, 10);
+  }
+
+  get truncatedDescription(): string {
+    const d = this.action.description;
+    if (!d) return '';
+    return d.length > 80 ? d.slice(0, 80) + '…' : d;
+  }
 
   onComplete(): void {
     this.showCompleteModal.set(true);

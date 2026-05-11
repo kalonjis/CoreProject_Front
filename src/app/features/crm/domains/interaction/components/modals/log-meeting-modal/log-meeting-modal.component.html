@@ -1,0 +1,42 @@
+<app-modal-layout
+  title="Loguer une réunion"
+  icon="📅"
+  [accentColor]="accentColor"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Date &amp; heure <span class="modal-form__label-required">*</span></label>
+        <input class="modal-form__input" type="datetime-local" [(ngModel)]="occurredAt" name="occurredAt" required />
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Durée (min)</label>
+        <input class="modal-form__input" type="number" min="1" [(ngModel)]="durationMinutes" name="durationMinutes" placeholder="ex : 60" />
+      </div>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Participants <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="text" [(ngModel)]="participants" name="participants"
+             placeholder="Ex : Alice Dupont, Bob Martin…" required />
+      <span class="modal-form__hint">Ce champ apparaîtra comme titre dans la timeline.</span>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Compte-rendu</label>
+      <textarea class="modal-form__textarea" [(ngModel)]="notes" name="notes"
+                rows="4" placeholder="Points abordés, décisions prises, actions à suivre…"></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer la réunion' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

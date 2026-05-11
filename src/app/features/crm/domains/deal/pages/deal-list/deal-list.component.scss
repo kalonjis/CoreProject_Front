@@ -1,6 +1,9 @@
 @use 'variables';
 @use '../../../../shared/styles/action-panel';
 
+// Shared grid: 5 columns used by both headers and rows
+$grid: 1fr 130px 140px 170px 90px;
+
 .deal-list {
 
   &__header {
@@ -31,6 +34,45 @@
     color: variables.$gray-dark;
   }
 
+  // ─── Stats bar ────────────────────────────────────────────────────────────────
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
+    border-top: 3px solid transparent;
+
+    &--open     { border-top-color: #2563eb; }
+    &--pipe     { border-top-color: #7c3aed; }
+    &--won      { border-top-color: #16a34a; }
+    &--forecast { border-top-color: #d97706; }
+  }
+
+  &__stat-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+  }
+
+  &__stat-label {
+    font-size: 0.75rem;
+    color: variables.$gray-dark;
+
+    strong { font-weight: 700; color: #475569; }
+  }
+
   // ─── Filters ─────────────────────────────────────────────────────────────────
 
   &__filters {
@@ -44,7 +86,7 @@
     border: 1px solid variables.$border-color;
     border-radius: variables.$border-radius-lg;
 
-    > input, > select { width: auto; }
+    > input, > select { width: auto; border-radius: 10px; }
   }
 
   &__search { flex: 1; min-width: 200px; }
@@ -58,51 +100,105 @@
     white-space: nowrap;
   }
 
-  // ─── Table ───────────────────────────────────────────────────────────────────
+  // ─── Rows ────────────────────────────────────────────────────────────────────
 
-  &__table-wrapper {
+  &__rows {
     background: #fff;
     border: 1px solid variables.$border-color;
     border-radius: variables.$border-radius-lg;
     overflow: hidden;
   }
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-
-    thead tr { background: variables.$gray-medium; }
-
-    th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: variables.$gray-dark;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 0.75rem 1rem;
-      border-top: 1px solid variables.$border-color;
-      vertical-align: middle;
-    }
+  &__col-headers {
+    display: grid;
+    grid-template-columns: $grid;
+    padding: 0.5rem 1.25rem;
+    background: variables.$gray-medium;
+    border-bottom: 1px solid variables.$border-color;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: variables.$gray-dark;
   }
 
   &__row {
+    display: grid;
+    grid-template-columns: $grid;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid variables.$border-color;
     cursor: pointer;
-    transition: variables.$transition-fast;
-    &:hover td { background: #f8faff; }
-    &--overdue td { background-color: rgba(#e65100, 0.03); }
+    transition: background 0.12s;
+
+    &:hover { background: #f8faff; }
+    &--overdue { background: rgba(#e65100, 0.025); }
   }
 
-  &__name      { font-weight: 600; color: variables.$dark-color; }
-  &__secondary { color: variables.$gray-dark; }
+  // ─── Cells ───────────────────────────────────────────────────────────────────
 
-  &__overdue-date { color: #e65100; font-weight: 600; }
+  &__cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    font-size: 0.875rem;
+    color: #334155;
+
+    &--deal   { flex-direction: column; align-items: flex-start; gap: 0.125rem; }
+    &--overdue { color: #e65100; font-weight: 600; }
+  }
+
+  &__deal-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__deal-sub {
+    font-size: 0.75rem;
+    color: variables.$gray-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__deal-contact { color: #94a3b8; }
+
+  &__amount {
+    font-weight: 700;
+    color: #1e293b;
+
+    &--empty { color: variables.$gray-dark; font-weight: 400; }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+  }
+
+  &__assignee-name {
+    font-size: 0.8125rem;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   // ─── States ──────────────────────────────────────────────────────────────────
 
@@ -135,8 +231,15 @@
 
   // ─── Responsive ──────────────────────────────────────────────────────────────
 
+  @media (max-width: 900px) {
+    &__stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (max-width: 768px) {
-    &__table { font-size: 0.8rem; }
-    &__filters { flex-wrap: wrap; }
+    &__col-headers { display: none; }
+    &__row { grid-template-columns: 1fr auto; gap: 0.5rem; }
+    &__cell:nth-child(3),
+    &__cell:nth-child(4),
+    &__cell:nth-child(5) { display: none; }
   }
 }

@@ -20,8 +20,11 @@ export class ContactFormComponent implements OnInit {
   private readonly route    = inject(ActivatedRoute);
   private readonly feedback = inject(FeedbackService);
 
+  /** Current form mode, driven by route data (`'create'` or `'edit'`). */
   readonly mode    = signal<'create' | 'edit'>('create');
+  /** True while the existing contact is being fetched in edit mode. */
   readonly loading = signal(false);
+  /** True while the create or update request is in flight. */
   readonly saving  = signal(false);
 
   publicId: string | null = null;
@@ -66,12 +69,14 @@ export class ContactFormComponent implements OnInit {
     this.form.organisationPublicId = v?.publicId ?? '';
   }
 
+  /** True when the mandatory fields (first name, last name, email) are filled. */
   get isValid(): boolean {
     return this.form.firstName.trim().length > 0
       && this.form.lastName.trim().length > 0
       && this.form.email.trim().length > 0;
   }
 
+  /** Dispatches to create or update depending on the current mode. */
   submit(): void {
     if (!this.isValid) return;
     this.mode() === 'create' ? this.create() : this.update();
@@ -119,6 +124,7 @@ export class ContactFormComponent implements OnInit {
     });
   }
 
+  /** Navigates back to the contact detail page or the list. */
   back(): void {
     this.publicId
       ? this.router.navigate(['/crm/contacts', this.publicId])

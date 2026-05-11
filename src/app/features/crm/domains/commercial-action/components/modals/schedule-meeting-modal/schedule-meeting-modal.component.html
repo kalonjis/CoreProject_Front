@@ -1,0 +1,75 @@
+<app-modal-layout
+  title="Planifier une réunion"
+  icon="📅"
+  [accentColor]="accentColor"
+  [rightPanelOpen]="agendaPanelOpen()"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Titre <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="text" [(ngModel)]="title" name="title"
+             placeholder="Ex : Démo produit avec Alice…" required autofocus />
+    </div>
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Responsable <span class="modal-form__label-required">*</span></label>
+        <select class="modal-form__select" [(ngModel)]="assignedToPublicId" name="assignedToPublicId" required>
+          <option value="" disabled>— Choisir —</option>
+          @for (c of commercials(); track c.publicId) {
+            <option [value]="c.publicId">{{ displayName(c) }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Priorité</label>
+        <select class="modal-form__select" [(ngModel)]="priority" name="priority">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ priorityLabel(p) }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-form__row">
+      <div class="modal-form__field">
+        <label class="modal-form__label">Date &amp; heure</label>
+        <input class="modal-form__input" type="datetime-local"
+               [ngModel]="dueDate" (ngModelChange)="onDueDateChange($event)"
+               name="dueDate" />
+      </div>
+      <div class="modal-form__field">
+        <label class="modal-form__label">Durée (min)</label>
+        <input class="modal-form__input" type="number" min="1" [(ngModel)]="durationMinutes" name="durationMinutes" />
+      </div>
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Lieu / Lien visio</label>
+      <input class="modal-form__input" type="text" [(ngModel)]="location" name="location"
+             placeholder="Ex : Salle A, https://meet.google.com/…" />
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Rappel</label>
+      <input class="modal-form__input" type="datetime-local" [(ngModel)]="reminderAt" name="reminderAt" />
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Description</label>
+      <textarea class="modal-form__textarea" [(ngModel)]="description" name="description"
+                rows="3" placeholder="Ordre du jour, contexte, objectifs…"></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Création…' : 'Planifier la réunion' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

@@ -1,4 +1,5 @@
 <div class="deal-detail">
+
   <div class="deal-detail__breadcrumb">
     <a routerLink="/crm/deals">Deals</a>
     <span> / </span>
@@ -8,199 +9,293 @@
   @if (facade.detailLoading()) {
     <p class="deal-detail__info">Chargement…</p>
   } @else if (facade.deal(); as d) {
+
+    <!-- ─── Page Header ─────────────────────────────────────────────────────── -->
+    <header class="deal-detail__header">
+      <div class="deal-detail__header-left">
+
+        <!-- Ligne 1 : Titre + badge statut + overdue -->
+        <div class="deal-detail__title-row">
+          <h1 class="deal-detail__title">{{ d.title }}</h1>
+          <app-deal-status-badge [status]="d.status" />
+          @if (d.isOverdue) {
+            <span class="deal-detail__overdue-tag">En retard</span>
+          }
+        </div>
+
+        <!-- Ligne 2 : Contexte Organisation · Contact -->
+        @if (d.organisationName || d.contactFullName) {
+          <div class="deal-detail__subtitle">
+            @if (d.organisationName) {
+              <a class="deal-detail__subtitle-link"
+                 [routerLink]="['/crm/organisations', d.organisationPublicId]">{{ d.organisationName }}</a>
+            }
+            @if (d.organisationName && d.contactFullName) {
+              <span class="deal-detail__subtitle-sep">·</span>
+            }
+            @if (d.contactFullName) {
+              <a class="deal-detail__subtitle-link"
+                 [routerLink]="['/crm/contacts', d.contactPublicId]">{{ d.contactFullName }}</a>
+            }
+          </div>
+        }
+
+        <!-- Ligne 3 : Pipeline · Étape -->
+        <span class="deal-detail__pipeline-tag">{{ d.pipelineName }} — {{ d.stageName }}</span>
+
+      </div>
+    </header>
+
+    <!-- ─── Main Layout ──────────────────────────────────────────────────────── -->
     <div class="deal-detail__layout">
 
+      <!-- ─── Main Content ─────────────────────────────────────────────────── -->
       <div class="deal-detail__main">
-        <app-deal-info-card [deal]="d" />
 
-        <!-- ─── Tabs ──────────────────────────────────────────────────────────── -->
-        <nav class="deal-detail__tabs">
-          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'activite'"      (click)="activeTab.set('activite')">Activité</button>
-          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'contacts'"      (click)="activeTab.set('contacts')">
-            Contacts
-            @if (d.contacts.length > 0) {
-              <span class="deal-detail__tab-count">{{ d.contacts.length }}</span>
-            }
-          </button>
-          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'tickets'"       (click)="activeTab.set('tickets')">
-            Tickets
-            @if (tickets().length > 0) {
-              <span class="deal-detail__tab-count">{{ tickets().length }}</span>
-            }
-          </button>
-          <button class="deal-detail__tab" [class.deal-detail__tab--active]="activeTab() === 'modifications'" (click)="activeTab.set('modifications')">Modifications</button>
-        </nav>
-
-        <!-- ─── Tab: Activité ──────────────────────────────────────────────────── -->
-        @if (activeTab() === 'activite') {
-          <div class="deal-detail__tab-panel">
-            <div class="deal-detail__timeline-header">
-              <button class="btn btn--primary btn--sm"
-                      (click)="showEmailCompose.set(!showEmailCompose())"
-                      [disabled]="!facade.deal()?.contactPublicId">
-                {{ showEmailCompose() ? 'Annuler' : '✉ Email' }}
-              </button>
-              <button class="btn btn--secondary btn--sm" (click)="showLogForm.set(!showLogForm())">
-                {{ showLogForm() ? 'Annuler' : '+ Interaction' }}
-              </button>
+        <!-- Pipeline Stepper — Card 1 -->
+        @if (pipeline()) {
+          <div class="deal-detail__card">
+            <div class="deal-detail__stepper">
+              @for (step of pipelineSteps(); track step.publicId; let first = $first; let last = $last) {
+                <div class="deal-detail__step"
+                     [class.deal-detail__step--done]="isStepDone(step, d)"
+                     [class.deal-detail__step--active]="isStepActive(step, d)"
+                     [class.deal-detail__step--won]="step.isWon && isStepActive(step, d)">
+                  <div class="deal-detail__step-dot"></div>
+                  <span class="deal-detail__step-name">{{ step.name }}</span>
+                </div>
+              }
             </div>
-            @if (showEmailCompose()) {
-              <app-email-compose
-                (send)="onEmailSend($event)"
-                (cancel)="showEmailCompose.set(false)"
-              />
-            }
-            @if (showLogForm()) {
-              <app-interaction-log-form
-                [dealPublicId]="d.publicId"
-                (logged)="onInteractionLogged()"
-                (cancelled)="showLogForm.set(false)"
-              />
-            }
-            <app-interaction-timeline
-              [entries]="interactionFacade.entries()"
-              [loading]="interactionFacade.loading()"
-              (deleteRequested)="onInteractionDelete($event)"
-            />
           </div>
         }
 
-        <!-- ─── Tab: Contacts ─────────────────────────────────────────────────── -->
-        @if (activeTab() === 'contacts') {
-          <div class="deal-detail__tab-panel">
-            <div class="deal-detail__contacts-header">
-              <h3 class="deal-detail__section-title">Contacts impliqués</h3>
-              <button class="btn btn--ghost btn--sm"
-                      [class.btn--active]="activeAction() === 'contacts'"
-                      (click)="setAction('contacts')">
-                Gérer
-              </button>
+        <!-- Prochaine étape banner -->
+        @if (d.status === 'OPEN') {
+          @if (nextPendingAction; as next) {
+            <div class="deal-detail__next-step">
+              <span class="deal-detail__next-step-label">Prochaine étape</span>
+              <span class="deal-detail__next-step-title">{{ next.title }}</span>
+              @if (next.dueDate) {
+                <span class="deal-detail__next-step-date">— {{ next.dueDate | date:'dd/MM/yyyy' }}</span>
+              }
             </div>
-
-            @if (d.contacts.length === 0) {
-              <p class="deal-detail__empty">Aucun contact lié à ce deal.</p>
-            } @else {
-              <table class="deal-detail__contacts-table">
-                <thead>
-                  <tr>
-                    <th>Nom</th>
-                    <th>Rôle</th>
-                    <th>Email</th>
-                    <th>Principal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (c of d.contacts; track c.contactPublicId) {
-                    <tr class="deal-detail__contact-row" [routerLink]="['/crm/contacts', c.contactPublicId]">
-                      <td>{{ c.contactFullName }}</td>
-                      <td>{{ roleLabels[c.role] }}</td>
-                      <td>{{ c.contactEmail ?? '—' }}</td>
-                      <td>{{ c.primary ? '★' : '' }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            }
-          </div>
-        }
-
-        <!-- ─── Tab: Tickets ───────────────────────────────────────────────────── -->
-        @if (activeTab() === 'tickets') {
-          <div class="deal-detail__tab-panel">
-            <h3 class="deal-detail__section-title">Tickets de support</h3>
-
-            @if (ticketsLoading()) {
-              <p class="deal-detail__empty">Chargement…</p>
-            } @else if (tickets().length === 0) {
-              <p class="deal-detail__empty">Aucun ticket lié à ce deal.</p>
-            } @else {
-              <table class="deal-detail__contacts-table">
-                <thead>
-                  <tr>
-                    <th>Sujet</th>
-                    <th>Contact</th>
-                    <th>Statut</th>
-                    <th>Créé le</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (ticket of tickets(); track ticket.publicId) {
-                    <tr class="deal-detail__contact-row" [routerLink]="['/crm/support-tickets', ticket.publicId]">
-                      <td>{{ ticket.subject }}</td>
-                      <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
-                      <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
-                      <td>{{ ticket.createdAt | date:'dd/MM/yyyy' }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            }
-          </div>
-        }
-
-        <!-- ─── Tab: Modifications ─────────────────────────────────────────────── -->
-        @if (activeTab() === 'modifications') {
-          <div class="deal-detail__tab-panel">
-            <app-change-log-list entityType="DEAL" [entityPublicId]="d.publicId" />
-          </div>
-        }
-      </div>
-
-      <aside class="deal-detail__sidebar">
-        <div class="deal-detail__actions">
-          <button class="btn btn--secondary" (click)="goEdit()">Modifier</button>
-          @if (d.status === 'OPEN') {
-            <button
-              class="btn btn--ghost"
-              [class.btn--active]="activeAction() === 'move'"
-              (click)="setAction('move')">
-              Changer d'étape
-            </button>
           }
-          <button
-            class="btn btn--ghost"
-            [class.btn--active]="activeAction() === 'reassign'"
-            (click)="setAction('reassign')">
-            Réassigner
+        }
+
+        <!-- Quick-bar (above tabs, persistente) -->
+        <div class="deal-detail__quick-bar">
+          <button class="deal-detail__quick-btn deal-detail__quick-btn--note"
+                  (click)="openQuickAction('note')">
+            <span class="deal-detail__quick-icon">✏️</span>
+            <span>Note</span>
           </button>
-          <button
-            class="btn btn--ghost"
-            [class.btn--active]="activeAction() === 'contacts'"
-            (click)="setAction('contacts')">
-            Contacts
+          <button class="deal-detail__quick-btn deal-detail__quick-btn--call"
+                  (click)="openQuickAction('call')">
+            <span class="deal-detail__quick-icon">📞</span>
+            <span>Appel</span>
+          </button>
+          <button class="deal-detail__quick-btn deal-detail__quick-btn--email"
+                  (click)="openQuickAction('email')">
+            <span class="deal-detail__quick-icon">✉</span>
+            <span>Email</span>
+          </button>
+          <button class="deal-detail__quick-btn deal-detail__quick-btn--meeting"
+                  (click)="openQuickAction('meeting')">
+            <span class="deal-detail__quick-icon">📅</span>
+            <span>RDV</span>
           </button>
         </div>
 
-        @switch (activeAction()) {
-          @case ('move') {
-            <app-deal-action-move-stage
-              [publicId]="d.publicId"
-              [pipelinePublicId]="d.pipelinePublicId"
-              [currentStagePublicId]="d.stagePublicId"
-              (moved)="onActionDone()"
-              (cancelled)="setAction(null)"
-            />
-          }
-          @case ('reassign') {
-            <app-deal-action-reassign
-              [publicId]="d.publicId"
-              (reassigned)="onActionDone()"
-              (cancelled)="setAction(null)"
-            />
-          }
-          @case ('contacts') {
-            <app-deal-action-contacts
-              [dealPublicId]="d.publicId"
-              [contacts]="d.contacts"
-              (changed)="facade.loadDetail(d.publicId)"
-              (cancelled)="setAction(null)"
-            />
-          }
-        }
+        <!-- Tabs + Content — Card 2 -->
+        <div class="deal-detail__card deal-detail__card--tabs">
 
-        <!-- ─── Tags ──────────────────────────────────────────────────────────── -->
-        <div class="deal-detail__tags-section">
-          <h4 class="deal-detail__tags-title">Tags</h4>
+          <nav class="deal-detail__tabs">
+            <button class="deal-detail__tab"
+                    [class.deal-detail__tab--active]="activeTab() === 'activite'"
+                    (click)="activeTab.set('activite')">Activité</button>
+            <button class="deal-detail__tab"
+                    [class.deal-detail__tab--active]="activeTab() === 'contacts'"
+                    (click)="activeTab.set('contacts')">
+              Contacts
+              @if (d.contacts.length > 0) {
+                <span class="deal-detail__tab-count">{{ d.contacts.length }}</span>
+              }
+            </button>
+            <button class="deal-detail__tab"
+                    [class.deal-detail__tab--active]="activeTab() === 'tickets'"
+                    (click)="activeTab.set('tickets')">
+              Tickets
+              @if (tickets().length > 0) {
+                <span class="deal-detail__tab-count">{{ tickets().length }}</span>
+              }
+            </button>
+            <button class="deal-detail__tab"
+                    [class.deal-detail__tab--active]="activeTab() === 'modifications'"
+                    (click)="activeTab.set('modifications')">Modifications</button>
+          </nav>
+
+          <!-- ─── Tab: Activité ──────────────────────────────────────────────── -->
+          @if (activeTab() === 'activite') {
+            <div class="deal-detail__tab-panel">
+              <app-interaction-timeline
+                [entries]="interactionFacade.entries()"
+                [loading]="interactionFacade.loading()"
+                (deleteRequested)="onInteractionDelete($event)"
+              />
+            </div>
+          }
+
+          <!-- ─── Tab: Contacts ──────────────────────────────────────────────── -->
+          @if (activeTab() === 'contacts') {
+            <div class="deal-detail__tab-panel">
+              <div class="deal-detail__tab-header">
+                <h3 class="deal-detail__tab-title">Contacts impliqués</h3>
+                <button class="btn btn--ghost btn--sm"
+                        [class.btn--active]="activeAction() === 'contacts'"
+                        (click)="setAction('contacts')">Gérer</button>
+              </div>
+
+              @if (d.contacts.length === 0) {
+                <p class="deal-detail__empty">Aucun contact lié à ce deal.</p>
+              } @else {
+                <table class="deal-detail__table">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Rôle</th>
+                      <th>Email</th>
+                      <th>Principal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (c of d.contacts; track c.contactPublicId) {
+                      <tr class="deal-detail__table-row"
+                          [routerLink]="['/crm/contacts', c.contactPublicId]">
+                        <td class="deal-detail__table-name">{{ c.contactFullName }}</td>
+                        <td>{{ roleLabels[c.role] }}</td>
+                        <td>{{ c.contactEmail ?? '—' }}</td>
+                        <td>{{ c.primary ? '★' : '' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+          }
+
+          <!-- ─── Tab: Tickets ───────────────────────────────────────────────── -->
+          @if (activeTab() === 'tickets') {
+            <div class="deal-detail__tab-panel">
+              <h3 class="deal-detail__tab-title">Tickets de support</h3>
+
+              @if (ticketsLoading()) {
+                <p class="deal-detail__empty">Chargement…</p>
+              } @else if (tickets().length === 0) {
+                <p class="deal-detail__empty">Aucun ticket lié à ce deal.</p>
+              } @else {
+                <div class="deal-detail__ticket-rows">
+                  @for (ticket of tickets(); track ticket.publicId) {
+                    <div class="deal-detail__ticket-row"
+                         [routerLink]="['/crm/support-tickets', ticket.publicId]">
+                      <div class="deal-detail__ticket-main">
+                        <span class="deal-detail__ticket-subject">{{ ticket.subject }}</span>
+                        <span class="deal-detail__ticket-contact">{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</span>
+                      </div>
+                      <div class="deal-detail__ticket-aside">
+                        <app-support-ticket-status-badge [status]="ticket.status" />
+                        <span class="deal-detail__ticket-date">{{ ticket.createdAt | date:'dd/MM/yyyy' }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          <!-- ─── Tab: Modifications ─────────────────────────────────────────── -->
+          @if (activeTab() === 'modifications') {
+            <div class="deal-detail__tab-panel">
+              <app-change-log-list entityType="DEAL" [entityPublicId]="d.publicId" />
+            </div>
+          }
+
+        </div><!-- /card--tabs -->
+
+      </div>
+
+      <!-- ─── Sidebar ───────────────────────────────────────────────────────── -->
+      <aside class="deal-detail__sidebar">
+
+        <!-- Profil KPI — fond dynamique selon statut -->
+        <div [class]="'deal-detail__profile deal-detail__profile--' + d.status.toLowerCase()">
+          @if (d.amount != null) {
+            <div class="deal-detail__amount">
+              {{ d.amount | currency:d.currency:'symbol':'1.0-2':'fr' }}
+            </div>
+          } @else {
+            <div class="deal-detail__amount deal-detail__amount--empty">Montant non défini</div>
+          }
+
+          <div class="deal-detail__profile-fields">
+            @if (d.organisationName) {
+              <div class="deal-detail__profile-row">
+                <span class="deal-detail__profile-label">Client</span>
+                <a class="deal-detail__profile-value deal-detail__profile-value--link"
+                   [routerLink]="['/crm/organisations', d.organisationPublicId]">
+                  {{ d.organisationName }}
+                </a>
+              </div>
+            }
+            @if (d.contactFullName) {
+              <div class="deal-detail__profile-row">
+                <span class="deal-detail__profile-label">Contact</span>
+                <a class="deal-detail__profile-value deal-detail__profile-value--link"
+                   [routerLink]="['/crm/contacts', d.contactPublicId]">
+                  {{ d.contactFullName }}
+                </a>
+              </div>
+            }
+            <div class="deal-detail__profile-row">
+              <span class="deal-detail__profile-label">Pipeline</span>
+              <span class="deal-detail__profile-value">{{ d.pipelineName }}</span>
+            </div>
+            @if (d.expectedCloseDate) {
+              <div class="deal-detail__profile-row">
+                <span class="deal-detail__profile-label">Clôture</span>
+                <span class="deal-detail__profile-value"
+                      [class.deal-detail__profile-value--overdue]="d.isOverdue">
+                  {{ d.expectedCloseDate | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+            }
+            <div class="deal-detail__profile-row">
+              <span class="deal-detail__profile-label">Responsable</span>
+              <span class="deal-detail__profile-value">{{ d.assignedToUsername }}</span>
+            </div>
+            @if (d.closedAt) {
+              <div class="deal-detail__profile-row">
+                <span class="deal-detail__profile-label">Clôturé le</span>
+                <span class="deal-detail__profile-value">{{ d.closedAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+            }
+            @if (d.lostReason) {
+              <div class="deal-detail__profile-row deal-detail__profile-row--full">
+                <span class="deal-detail__profile-label">Raison de perte</span>
+                <span class="deal-detail__profile-value deal-detail__profile-value--lost">{{ d.lostReason }}</span>
+              </div>
+            }
+            @if (d.notes) {
+              <div class="deal-detail__profile-row deal-detail__profile-row--full">
+                <span class="deal-detail__profile-label">Notes</span>
+                <span class="deal-detail__profile-value deal-detail__profile-value--notes">{{ d.notes }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="deal-detail__sidebar-section">
+          <h4 class="deal-detail__section-title">Tags</h4>
           <app-tag-input
             [entityTags]="tags()"
             (tagAdded)="onTagAdded($event)"
@@ -208,10 +303,12 @@
           />
         </div>
 
-        <div class="deal-detail__actions-section">
-          <div class="deal-detail__actions-header">
-            <h4 class="deal-detail__actions-title">Actions</h4>
-            <button class="btn btn--ghost btn--sm" (click)="showActionForm.set(!showActionForm())">
+        <!-- À faire -->
+        <div class="deal-detail__sidebar-section">
+          <div class="deal-detail__section-header">
+            <h4 class="deal-detail__section-title">À faire</h4>
+            <button class="deal-detail__icon-btn"
+                    (click)="showActionForm.set(!showActionForm())">
               {{ showActionForm() ? '✕' : '+' }}
             </button>
           </div>
@@ -225,9 +322,9 @@
           }
 
           @if (facade.actionsLoading()) {
-            <p class="deal-detail__actions-state">Chargement…</p>
+            <p class="deal-detail__empty">Chargement…</p>
           } @else if (facade.actions().length === 0) {
-            <p class="deal-detail__actions-state">Aucune action.</p>
+            <p class="deal-detail__empty">Aucune action planifiée.</p>
           } @else {
             @for (action of facade.actions(); track action.publicId) {
               <app-commercial-action-card
@@ -239,9 +336,90 @@
           }
         </div>
 
-      </aside>
+        <!-- Administration -->
+        <div class="deal-detail__admin">
+          <h4 class="deal-detail__section-title">Administration</h4>
+          <div class="deal-detail__admin-btns">
+            <button class="btn btn--secondary" (click)="goEdit()">Modifier le deal</button>
+            @if (d.status === 'OPEN') {
+              <button class="btn btn--ghost"
+                      [class.btn--active]="activeAction() === 'move'"
+                      (click)="setAction('move')">
+                Changer d'étape
+              </button>
+            }
+            <button class="btn btn--ghost"
+                    [class.btn--active]="activeAction() === 'reassign'"
+                    (click)="setAction('reassign')">
+              Réassigner
+            </button>
+            <button class="btn btn--ghost"
+                    [class.btn--active]="activeAction() === 'contacts'"
+                    (click)="setAction('contacts')">
+              Gérer les contacts
+            </button>
+          </div>
 
+          @switch (activeAction()) {
+            @case ('move') {
+              <app-deal-action-move-stage
+                [publicId]="d.publicId"
+                [pipelinePublicId]="d.pipelinePublicId"
+                [currentStagePublicId]="d.stagePublicId"
+                (moved)="onActionDone()"
+                (cancelled)="setAction(null)"
+              />
+            }
+            @case ('reassign') {
+              <app-deal-action-reassign
+                [publicId]="d.publicId"
+                (reassigned)="onActionDone()"
+                (cancelled)="setAction(null)"
+              />
+            }
+            @case ('contacts') {
+              <app-deal-action-contacts
+                [dealPublicId]="d.publicId"
+                [contacts]="d.contacts"
+                (changed)="facade.loadDetail(d.publicId)"
+                (cancelled)="setAction(null)"
+              />
+            }
+          }
+        </div>
+
+      </aside>
     </div>
+
+    <!-- ─── Log Modals ──────────────────────────────────────────────────────── -->
+    @if (showNoteModal()) {
+      <app-log-note-modal
+        [dealPublicId]="d.publicId"
+        (logged)="onLogged()"
+        (cancelled)="showNoteModal.set(false)"
+      />
+    }
+    @if (showCallModal()) {
+      <app-log-call-modal
+        [dealPublicId]="d.publicId"
+        (logged)="onLogged()"
+        (cancelled)="showCallModal.set(false)"
+      />
+    }
+    @if (showEmailModal()) {
+      <app-log-email-modal
+        [dealPublicId]="d.publicId"
+        (logged)="onLogged()"
+        (cancelled)="showEmailModal.set(false)"
+      />
+    }
+    @if (showMeetingModal()) {
+      <app-log-meeting-modal
+        [dealPublicId]="d.publicId"
+        (logged)="onLogged()"
+        (cancelled)="showMeetingModal.set(false)"
+      />
+    }
 
   }
 </div>

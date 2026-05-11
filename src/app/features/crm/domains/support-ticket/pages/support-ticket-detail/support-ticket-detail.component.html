@@ -10,126 +10,232 @@
   @if (error())   { <p class="ticket-detail__error">{{ error() }}</p> }
 
   @if (ticket(); as t) {
+
+    <!-- ─── Page Header ─────────────────────────────────────────────────────── -->
+    <header class="ticket-detail__header">
+      <div class="ticket-detail__title-row">
+        <h1 class="ticket-detail__title">{{ t.subject }}</h1>
+        <app-support-ticket-status-badge [status]="t.status" />
+        @if (t.source === SupportTicketSource.PUBLIC_FORM) {
+          <span class="ticket-detail__source-chip">Formulaire public</span>
+        }
+      </div>
+
+      <div class="ticket-detail__subtitle">
+        @if (t.contactPublicId && t.contactFullName) {
+          <a class="ticket-detail__subtitle-link"
+             [routerLink]="['/crm/contacts', t.contactPublicId]">{{ t.contactFullName }}</a>
+          <span class="ticket-detail__subtitle-sep">·</span>
+        } @else if (t.reporterName || t.reporterEmail) {
+          <span class="ticket-detail__subtitle-anon">{{ t.reporterName ?? t.reporterEmail }}</span>
+          <span class="ticket-detail__subtitle-sep">·</span>
+        }
+        <span>{{ t.createdAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </header>
+
+    <!-- ─── Main Layout ──────────────────────────────────────────────────────── -->
     <div class="ticket-detail__layout">
 
+      <!-- ─── Main Content ─────────────────────────────────────────────────── -->
       <div class="ticket-detail__main">
-        <div class="ticket-detail__meta">
-          <app-support-ticket-status-badge [status]="t.status" />
-          @if (t.source === SupportTicketSource.PUBLIC_FORM) {
-            <span class="ticket-detail__source-badge">Formulaire public</span>
-          }
-          <span class="ticket-detail__date">Créé le {{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
-          @if (t.updatedAt !== t.createdAt) {
-            <span class="ticket-detail__date">· Modifié {{ t.updatedAt | date:'dd/MM/yy HH:mm' }}</span>
+
+        <!-- Description card -->
+        <div class="ticket-detail__card">
+          <div class="ticket-detail__desc-header">
+            <span class="ticket-detail__desc-label">Description du problème</span>
+          </div>
+          @if (t.description) {
+            <p class="ticket-detail__description">{{ t.description }}</p>
+          } @else {
+            <p class="ticket-detail__no-description">Pas de description fournie.</p>
           }
         </div>
 
-        <h1 class="ticket-detail__subject">{{ t.subject }}</h1>
-
-        @if (t.description) {
-          <p class="ticket-detail__description">{{ t.description }}</p>
-        } @else {
-          <p class="ticket-detail__no-description">Pas de description.</p>
-        }
-
-        <dl class="ticket-detail__info">
-          <dt>Soumis par</dt>
-          <dd>
-            @if (t.contactPublicId) {
-              <a [routerLink]="['/crm/contacts', t.contactPublicId]">{{ t.contactFullName }}</a>
-            } @else if (t.reporterName || t.reporterEmail) {
-              <span class="ticket-detail__reporter">
-                {{ t.reporterName ?? t.reporterEmail }}
-                @if (t.reporterEmail) {
-                  <a [href]="'mailto:' + t.reporterEmail" class="ticket-detail__reporter-email">
-                    {{ t.reporterEmail }}
-                  </a>
-                }
-              </span>
-              <span class="ticket-detail__reporter-badge">Formulaire public</span>
-            } @else {
-              <span>—</span>
-            }
-          </dd>
-          <dt>Assigné à</dt>
-          <dd>
-            <app-crm-assign-popover
-              [assigneeName]="t.assignedToUsername"
-              [commercials]="commercials()"
-              [compact]="false"
-              (selected)="onAssign($event)"
-            />
-          </dd>
-        </dl>
-      </div>
-
-      <aside class="ticket-detail__sidebar">
-        @if (!isClosed) {
-          <div class="ticket-detail__actions">
-            <button
-              class="btn btn--ghost"
-              [class.btn--active]="activePanel() === 'status'"
-              (click)="togglePanel('status')">
-              Changer statut
-            </button>
-            <button
-              class="btn btn--ghost"
-              [class.btn--active]="activePanel() === 'edit'"
-              (click)="togglePanel('edit')">
-              Modifier
-            </button>
-          </div>
-        }
-
-        <div class="ticket-detail__danger-zone">
-          <button class="btn btn--danger" (click)="deleteTicket()">
-            Supprimer
+        <!-- Quick-bar (style Contact : icône au-dessus du label) -->
+        <div class="ticket-detail__quick-bar">
+          <button class="ticket-detail__quick-btn ticket-detail__quick-btn--note"
+                  [disabled]="!t.contactPublicId"
+                  (click)="openQuickAction('note')">
+            <span class="ticket-detail__quick-icon">📝</span>
+            <span class="ticket-detail__quick-label">Note</span>
+          </button>
+          <button class="ticket-detail__quick-btn ticket-detail__quick-btn--call"
+                  [disabled]="!t.contactPublicId"
+                  (click)="openQuickAction('call')">
+            <span class="ticket-detail__quick-icon">📞</span>
+            <span class="ticket-detail__quick-label">Loguer appel</span>
+          </button>
+          <button class="ticket-detail__quick-btn ticket-detail__quick-btn--email"
+                  [disabled]="!t.contactPublicId"
+                  (click)="openQuickAction('email')">
+            <span class="ticket-detail__quick-icon">📧</span>
+            <span class="ticket-detail__quick-label">Archiver email</span>
           </button>
         </div>
 
-        @switch (activePanel()) {
+        <!-- Timeline card -->
+        <div class="ticket-detail__card ticket-detail__card--tabs">
+          <div class="ticket-detail__tab-panel">
+            @if (!t.contactPublicId) {
+              <p class="ticket-detail__empty">
+                Ce ticket a été soumis via formulaire public sans contact CRM — la timeline est indisponible.
+              </p>
+            } @else {
+              <app-interaction-timeline
+                [entries]="interactionFacade.entries()"
+                [loading]="interactionFacade.loading()"
+                (deleteRequested)="onInteractionDelete($event)"
+              />
+            }
+          </div>
+        </div>
 
-          @case ('status') {
-            <div class="ticket-detail__panel">
-              <h4 class="ticket-detail__panel-title">Changer le statut</h4>
-              @if (allowedTransitions.length === 0) {
-                <p class="ticket-detail__panel-hint">Aucune transition disponible.</p>
-              } @else {
-                <select [(ngModel)]="newStatus">
-                  <option value="">— Choisir —</option>
-                  @for (s of allowedTransitions; track s) {
-                    <option [value]="s">{{ statusLabels[s] }}</option>
-                  }
-                </select>
+      </div>
+
+      <!-- ─── Sidebar ───────────────────────────────────────────────────────── -->
+      <aside class="ticket-detail__sidebar">
+
+        <!-- Profil : avatar + requester info + metadata -->
+        <div class="ticket-detail__profile">
+          <div class="ticket-detail__avatar">{{ requesterInitials }}</div>
+          <div class="ticket-detail__requester-name">{{ requesterName }}</div>
+
+          @if (t.reporterEmail && !t.contactPublicId) {
+            <a class="ticket-detail__requester-email"
+               [href]="'mailto:' + t.reporterEmail">{{ t.reporterEmail }}</a>
+          }
+          @if (t.contactPublicId) {
+            <a class="ticket-detail__requester-link"
+               [routerLink]="['/crm/contacts', t.contactPublicId]">Voir le contact →</a>
+          }
+
+          <div class="ticket-detail__profile-fields">
+            <div class="ticket-detail__profile-row">
+              <span class="ticket-detail__profile-label">Assigné à</span>
+              <div class="ticket-detail__profile-value">
+                <app-crm-assign-popover
+                  [assigneeName]="t.assignedToUsername"
+                  [commercials]="commercials()"
+                  [compact]="true"
+                  (selected)="onAssign($event)"
+                />
+              </div>
+            </div>
+            <div class="ticket-detail__profile-row">
+              <span class="ticket-detail__profile-label">Source</span>
+              <span class="ticket-detail__profile-value">
+                @if (t.source === SupportTicketSource.PUBLIC_FORM) {
+                  <span class="ticket-detail__source-badge">Formulaire public</span>
+                } @else {
+                  Interne
+                }
+              </span>
+            </div>
+            <div class="ticket-detail__profile-row">
+              <span class="ticket-detail__profile-label">Créé le</span>
+              <span class="ticket-detail__profile-value">{{ t.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            @if (t.updatedAt !== t.createdAt) {
+              <div class="ticket-detail__profile-row">
+                <span class="ticket-detail__profile-label">Modifié le</span>
+                <span class="ticket-detail__profile-value">{{ t.updatedAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Administration -->
+        <div class="ticket-detail__admin">
+          <h4 class="ticket-detail__section-title">Administration</h4>
+          <div class="ticket-detail__admin-btns">
+            @if (!isClosed) {
+              <button class="btn btn--ghost"
+                      [class.btn--active]="activePanel() === 'status'"
+                      (click)="togglePanel('status')">
+                Changer le statut
+              </button>
+              <button class="btn btn--secondary"
+                      [class.btn--active]="activePanel() === 'edit'"
+                      (click)="togglePanel('edit')">
+                Modifier
+              </button>
+            }
+            @if (isAdmin) {
+              <button class="btn btn--danger" (click)="deleteTicket()">Supprimer</button>
+            }
+          </div>
+
+          @switch (activePanel()) {
+            @case ('status') {
+              <div class="ticket-detail__panel">
+                <h4 class="ticket-detail__panel-title">Changer le statut</h4>
+                @if (allowedTransitions.length === 0) {
+                  <p class="ticket-detail__panel-hint">Aucune transition disponible.</p>
+                } @else {
+                  <select [(ngModel)]="newStatus">
+                    <option value="">— Choisir —</option>
+                    @for (s of allowedTransitions; track s) {
+                      <option [value]="s">{{ statusLabels[s] }}</option>
+                    }
+                  </select>
+                  <div class="ticket-detail__panel-footer">
+                    <button class="btn btn--primary"
+                            [disabled]="saving() || !newStatus"
+                            (click)="submitStatus()">
+                      {{ saving() ? '…' : 'Appliquer' }}
+                    </button>
+                    <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
+                  </div>
+                }
+              </div>
+            }
+
+            @case ('edit') {
+              <div class="ticket-detail__panel">
+                <h4 class="ticket-detail__panel-title">Modifier le ticket</h4>
+                <label class="ticket-detail__label">Sujet</label>
+                <input type="text" [(ngModel)]="editSubject" />
+                <label class="ticket-detail__label">Description</label>
+                <textarea [(ngModel)]="editDescription" rows="4"></textarea>
                 <div class="ticket-detail__panel-footer">
-                  <button class="btn btn--primary" [disabled]="saving() || !newStatus" (click)="submitStatus()">
-                    {{ saving() ? '…' : 'Appliquer' }}
+                  <button class="btn btn--primary"
+                          [disabled]="saving() || !editSubject.trim()"
+                          (click)="submitEdit()">
+                    {{ saving() ? '…' : 'Enregistrer' }}
                   </button>
                   <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
                 </div>
-              }
-            </div>
-          }
-
-          @case ('edit') {
-            <div class="ticket-detail__panel">
-              <h4 class="ticket-detail__panel-title">Modifier</h4>
-              <label class="ticket-detail__label">Sujet</label>
-              <input type="text" [(ngModel)]="editSubject" />
-              <label class="ticket-detail__label">Description</label>
-              <textarea [(ngModel)]="editDescription" rows="4"></textarea>
-              <div class="ticket-detail__panel-footer">
-                <button class="btn btn--primary" [disabled]="saving() || !editSubject.trim()" (click)="submitEdit()">
-                  {{ saving() ? '…' : 'Enregistrer' }}
-                </button>
-                <button class="btn btn--ghost" (click)="togglePanel(null)">Annuler</button>
               </div>
-            </div>
+            }
           }
+        </div>
 
-        }
       </aside>
-
     </div>
+
+    <!-- ─── Log Modals ──────────────────────────────────────────────────────── -->
+    @if (showNoteModal()) {
+      <app-log-note-modal
+        [contactPublicId]="t.contactPublicId ?? undefined"
+        (logged)="onLogged()"
+        (cancelled)="showNoteModal.set(false)"
+      />
+    }
+    @if (showCallModal()) {
+      <app-log-call-modal
+        [contactPublicId]="t.contactPublicId ?? undefined"
+        (logged)="onLogged()"
+        (cancelled)="showCallModal.set(false)"
+      />
+    }
+    @if (showEmailModal()) {
+      <app-log-email-modal
+        [contactPublicId]="t.contactPublicId ?? undefined"
+        (logged)="onLogged()"
+        (cancelled)="showEmailModal.set(false)"
+      />
+    }
+
   }
 </div>

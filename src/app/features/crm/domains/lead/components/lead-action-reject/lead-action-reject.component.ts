@@ -17,8 +17,11 @@ import { ConfirmDialogService } from '../../../../../../shared/confirm-dialog/to
   styleUrl: './lead-action-reject.component.scss'
 })
 export class LeadActionRejectComponent {
+  /** Public ID of the lead to reject. */
   @Input({ required: true }) publicId!: string;
+  /** Emitted after the lead has been successfully rejected. */
   @Output() rejected  = new EventEmitter<void>();
+  /** Emitted when the user dismisses the panel without submitting. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api     = inject(CrmLeadApiService);
@@ -26,8 +29,10 @@ export class LeadActionRejectComponent {
   private readonly confirm  = inject(ConfirmDialogService);
 
   rejectionReason = '';
+  /** True while the rejection request is in flight. */
   readonly loading = signal(false);
 
+  /** Prompts for confirmation then rejects the lead with the provided reason. */
   async submit(): Promise<void> {
     if (!this.rejectionReason.trim()) return;
 

@@ -14,6 +14,7 @@ export class CrmUserApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/users';
 
+  /** Returns all active commercials available for assignment across the CRM. */
   getCommercials(): Observable<CommercialSummary[]> {
     return this.http.get<CommercialSummary[]>(`${this.base}/commercials`);
   }

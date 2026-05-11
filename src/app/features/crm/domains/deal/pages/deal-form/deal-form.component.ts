@@ -25,10 +25,14 @@ export class DealFormComponent implements OnInit {
   private readonly pipelineApi = inject(CrmPipelineApiService);
   private readonly feedback    = inject(FeedbackService);
 
+  /** Whether a create/load/update request is in flight. */
   readonly loading   = signal(false);
+  /** All available pipelines fetched on init. */
   readonly pipelines = signal<Pipeline[]>([]);
+  /** Steps of the currently selected pipeline. */
   readonly steps     = signal<PipelineStep[]>([]);
 
+  /** Whether the form is in create or edit mode (resolved from route data). */
   mode: 'create' | 'edit' = 'create';
   private publicId = '';
 
@@ -45,6 +49,7 @@ export class DealFormComponent implements OnInit {
     notes:                ''
   };
 
+  /** Returns true when the form has the minimum required fields for the current mode. */
   get isValid(): boolean {
     const base = this.form.title.trim().length > 0;
     if (this.mode === 'edit') return base;
@@ -72,20 +77,24 @@ export class DealFormComponent implements OnInit {
     });
   }
 
+  /** Refreshes the steps list when the user selects a different pipeline; resets stagePublicId to the first step. */
   onPipelineChange(): void {
     const p = this.pipelines().find(p => p.publicId === this.form.pipelinePublicId);
     this.steps.set(p?.steps ?? []);
     this.form.stagePublicId = this.steps()[0]?.publicId ?? '';
   }
 
+  /** Updates contactPublicId when the contact picker emits a selection. */
   onContactSelected(v: ContactPickerValue | null): void {
     this.form.contactPublicId = v?.publicId ?? '';
   }
 
+  /** Updates organisationPublicId when the organisation picker emits a selection. */
   onOrgSelected(v: OrganisationPickerValue | null): void {
     this.form.organisationPublicId = v?.publicId ?? '';
   }
 
+  /** Updates assignedToPublicId when the commercial picker emits a selection. */
   onCommercialSelected(publicId: string | null): void {
     this.form.assignedToPublicId = publicId ?? '';
   }
@@ -112,6 +121,7 @@ export class DealFormComponent implements OnInit {
     });
   }
 
+  /** Submits the form — calls create or update depending on mode, then navigates to the deal detail. */
   submit(): void {
     if (!this.isValid) return;
     this.loading.set(true);

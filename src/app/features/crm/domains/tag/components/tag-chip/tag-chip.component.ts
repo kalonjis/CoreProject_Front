@@ -10,17 +10,23 @@ import { Tag } from '../../models/tag.model';
 })
 /** Colour-coded chip rendering a tag, with optional remove button and navigation to the tag detail page. */
 export class TagChipComponent {
+  /** The tag to render. */
   @Input({ required: true }) tag!: Tag;
+  /** When true, a remove (×) button is shown inside the chip. */
   @Input() removable  = false;
+  /** When true, clicking the chip navigates to the tag detail page. */
   @Input() navigable  = false;
+  /** Emits the tag when the remove button is clicked. */
   @Output() removed = new EventEmitter<Tag>();
 
   private readonly router = inject(Router);
 
+  /** Navigates to the tag detail page if navigable is true. */
   navigate(): void {
     if (this.navigable) this.router.navigate(['/crm/tags', this.tag.publicId]);
   }
 
+  /** Returns a dark or light foreground colour for readability against the tag's background. */
   get textColor(): string {
     return this.isLight(this.tag.color) ? '#1a1a2e' : '#ffffff';
   }

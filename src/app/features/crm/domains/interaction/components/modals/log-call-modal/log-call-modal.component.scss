@@ -1,0 +1,9 @@
+@use '../../../../../shared/styles/modal-form' as *;
+
+.log-call-modal {
+  &__submit {
+    background: #2563eb;
+    border-color: #2563eb;
+    &:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; }
+  }
+}

@@ -5,7 +5,7 @@ import { FeedbackService }          from '../../../../../shared/feedback/tools/f
 import { TimelineEntryResponse }    from '../../timeline/models/timeline.model';
 
 /** Identifies the entity whose timeline should be loaded and refreshed. */
-type InteractionContext = { type: 'deal' | 'contact' | 'lead'; publicId: string };
+type InteractionContext = { type: 'deal' | 'contact' | 'lead' | 'organisation'; publicId: string };
 
 /**
  * Facade managing the interaction timeline for a deal, contact, or lead.
@@ -54,7 +54,9 @@ export class InteractionFacade {
       ? this.timelineApi.getTimelineByDeal(ctx.publicId)
       : ctx.type === 'contact'
         ? this.timelineApi.getTimelineByContact(ctx.publicId)
-        : this.timelineApi.getTimelineByLead(ctx.publicId);
+        : ctx.type === 'organisation'
+          ? this.timelineApi.getTimelineByOrganisation(ctx.publicId)
+          : this.timelineApi.getTimelineByLead(ctx.publicId);
 
     obs$.subscribe({
       next:  items => { this._entries.set(items); this._loading.set(false); },

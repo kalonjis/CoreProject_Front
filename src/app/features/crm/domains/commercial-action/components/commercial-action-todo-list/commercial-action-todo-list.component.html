@@ -1,0 +1,58 @@
+@if (isEmpty()) {
+  <app-crm-empty-state
+    icon="✅"
+    title="Vous êtes à jour !"
+    subtitle="Aucune action en attente pour l'instant."
+  />
+}
+
+@if (todayActions().length > 0) {
+  <div class="todo-group">
+    <div class="todo-group__header todo-group__header--today">
+      <span class="todo-group__title">Aujourd'hui</span>
+      <span class="todo-group__count todo-group__count--today">{{ todayActions().length }}</span>
+    </div>
+    @for (action of todayActions(); track action.publicId) {
+      <app-commercial-action-card
+        [action]="action"
+        (completed)="completed.emit($event)"
+        (cancelled)="cancelled.emit($event)"
+        (edited)="edited.emit()"
+      />
+    }
+  </div>
+}
+
+@if (thisWeekActions().length > 0) {
+  <div class="todo-group">
+    <div class="todo-group__header">
+      <span class="todo-group__title">Cette semaine</span>
+      <span class="todo-group__count">{{ thisWeekActions().length }}</span>
+    </div>
+    @for (action of thisWeekActions(); track action.publicId) {
+      <app-commercial-action-card
+        [action]="action"
+        (completed)="completed.emit($event)"
+        (cancelled)="cancelled.emit($event)"
+        (edited)="edited.emit()"
+      />
+    }
+  </div>
+}
+
+@if (laterActions().length > 0) {
+  <div class="todo-group">
+    <div class="todo-group__header">
+      <span class="todo-group__title">Plus tard</span>
+      <span class="todo-group__count">{{ laterActions().length }}</span>
+    </div>
+    @for (action of laterActions(); track action.publicId) {
+      <app-commercial-action-card
+        [action]="action"
+        (completed)="completed.emit($event)"
+        (cancelled)="cancelled.emit($event)"
+        (edited)="edited.emit()"
+      />
+    }
+  </div>
+}

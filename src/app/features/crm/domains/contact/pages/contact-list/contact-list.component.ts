@@ -42,14 +42,23 @@ export class ContactListComponent implements OnInit {
   private readonly destroyRef  = inject(DestroyRef);
   private readonly keywordSubject = new Subject<void>();
 
+  /** True while the paginated list is loading. */
   readonly loading       = this.facade.listLoading;
+  /** Last load error message, or null. */
   readonly error         = signal<string | null>(null);
+  /** Current page of contact summaries. */
   readonly contacts      = this.facade.contacts;
+  /** Total number of contacts matching the current filter. */
   readonly totalElements = this.facade.totalElements;
+  /** Total number of pages for the current filter. */
   readonly totalPages    = this.facade.totalPages;
+  /** All available tags for the tag filter dropdown. */
   readonly allTags              = signal<Tag[]>([]);
+  /** Available commercials for the quick-assign popover. */
   readonly commercials          = signal<CommercialSummary[]>([]);
+  /** Controls visibility of the inline contact creation form. */
   readonly showCreate           = signal(false);
+  /** Public ID of the contact awaiting an organisation link, or null. */
   readonly pendingLinkContactId = signal<string | null>(null);
 
   readonly statuses     = Object.values(ContactStatus);
@@ -75,6 +84,7 @@ export class ContactListComponent implements OnInit {
     this.load();
   }
 
+  /** Loads the current page of contacts with the active filters applied. */
   load(): void {
     const f: ContactFilter = {};
     if (this.keyword.trim())       f.keyword    = this.keyword;
@@ -83,10 +93,14 @@ export class ContactListComponent implements OnInit {
     this.facade.loadList(f, this.currentPage, this.pageSize, this.sortField(), this.sortDir());
   }
 
+  /** Resets to page 0 and reloads when a filter changes. */
   onFilterChange(): void { this.currentPage = 0; this.load(); }
+  /** Pushes a keyword change through the debounced subject. */
   onKeywordChange(): void { this.keywordSubject.next(); }
+  /** Navigates to the given page number. */
   goToPage(page: number): void { this.currentPage = page; this.load(); }
 
+  /** Toggles sort direction if the same field is clicked, or switches to a new sort field. */
   toggleSort(field: string): void {
     if (this.sortField() === field) {
       this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
@@ -98,6 +112,7 @@ export class ContactListComponent implements OnInit {
     this.load();
   }
 
+  /** True when the given field is the active sort column. */
   isSorted(field: string): boolean { return this.sortField() === field; }
 
   onContactAssigned(contact: ContactSummary, commercial: CommercialSummary): void {

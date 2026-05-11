@@ -15,88 +15,120 @@
       <!-- ─── Main content ────────────────────────────────────────────────── -->
       <div class="org-detail__main">
 
-        <!-- ─── Tabs ───────────────────────────────────────────────────────── -->
         <nav class="org-detail__tabs">
-          <button
-            class="org-detail__tab"
-            [class.org-detail__tab--active]="activeTab() === 'infos'"
-            (click)="activeTab.set('infos')">
-            Informations
+          <button class="org-detail__tab"
+                  [class.org-detail__tab--active]="activeTab() === 'interactions'"
+                  (click)="activeTab.set('interactions')">
+            Interactions
+            @if (interactionFacade.entries().length > 0) {
+              <span class="org-detail__tab-count">{{ interactionFacade.entries().length }}</span>
+            }
           </button>
-          <button
-            class="org-detail__tab"
-            [class.org-detail__tab--active]="activeTab() === 'contacts'"
-            (click)="activeTab.set('contacts')">
+          <button class="org-detail__tab"
+                  [class.org-detail__tab--active]="activeTab() === 'contacts'"
+                  (click)="activeTab.set('contacts')">
             Contacts
             @if (contacts().length > 0) {
               <span class="org-detail__tab-count">{{ contacts().length }}</span>
             }
           </button>
-          <button
-            class="org-detail__tab"
-            [class.org-detail__tab--active]="activeTab() === 'tickets'"
-            (click)="activeTab.set('tickets')">
+          <button class="org-detail__tab"
+                  [class.org-detail__tab--active]="activeTab() === 'deals'"
+                  (click)="activeTab.set('deals')">
+            Deals
+            @if (deals().length > 0) {
+              <span class="org-detail__tab-count">{{ deals().length }}</span>
+            }
+          </button>
+          <button class="org-detail__tab"
+                  [class.org-detail__tab--active]="activeTab() === 'tickets'"
+                  (click)="activeTab.set('tickets')">
             Tickets
             @if (tickets().length > 0) {
               <span class="org-detail__tab-count">{{ tickets().length }}</span>
             }
           </button>
-          <button
-            class="org-detail__tab"
-            [class.org-detail__tab--active]="activeTab() === 'modifications'"
-            (click)="activeTab.set('modifications')">
+          <button class="org-detail__tab"
+                  [class.org-detail__tab--active]="activeTab() === 'modifications'"
+                  (click)="activeTab.set('modifications')">
             Modifications
           </button>
         </nav>
 
-        @if (activeTab() === 'infos') {
-          <div class="org-detail__tab-panel">
-            <app-organisation-info-card [organisation]="org" />
+        <!-- ─── Quick-action bar ─────────────────────────────────────────── -->
+        <div class="org-detail__quick-bar">
+          <button class="org-detail__quick-btn org-detail__quick-btn--note"
+                  (click)="openQuickAction('note')">
+            <span class="org-detail__quick-icon">📝</span>
+            <span class="org-detail__quick-label">Note</span>
+          </button>
+          <button class="org-detail__quick-btn org-detail__quick-btn--call"
+                  (click)="openQuickAction('call')">
+            <span class="org-detail__quick-icon">📞</span>
+            <span class="org-detail__quick-label">Appel</span>
+          </button>
+          <button class="org-detail__quick-btn org-detail__quick-btn--email"
+                  (click)="openQuickAction('email')">
+            <span class="org-detail__quick-icon">📧</span>
+            <span class="org-detail__quick-label">Email</span>
+          </button>
+          <button class="org-detail__quick-btn org-detail__quick-btn--meeting"
+                  (click)="openQuickAction('meeting')">
+            <span class="org-detail__quick-icon">📅</span>
+            <span class="org-detail__quick-label">RDV</span>
+          </button>
+        </div>
 
-            <!-- ─── Deals section ────────────────────────────────────────────── -->
-            <div class="org-detail__deals">
-              <div class="org-detail__deals-header">
-                <h3 class="org-detail__deals-title">Deals</h3>
-                @if (!dealsLoading()) {
-                  <span class="org-detail__deals-count">
-                    {{ deals().length }} deal{{ deals().length !== 1 ? 's' : '' }}
-                  </span>
-                }
-                <button class="org-detail__btn org-detail__btn--outline" (click)="showCreateDeal.set(true)">
-                  + Nouveau deal
+        <!-- ─── Contact picker (organisations multi-contacts) ─────────────── -->
+        @if (showContactPicker()) {
+          <div class="org-detail__contact-picker">
+            <p class="org-detail__contact-picker-title">Pour quel contact ?</p>
+            <div class="org-detail__contact-picker-list">
+              @for (contact of contacts(); track contact.publicId) {
+                <button class="org-detail__contact-picker-item"
+                        (click)="selectContactForAction(contact)">
+                  <div class="org-detail__contact-avatar">{{ contactInitials(contact) }}</div>
+                  <div class="org-detail__contact-picker-info">
+                    <span class="org-detail__contact-name">{{ contact.firstName }} {{ contact.lastName }}</span>
+                    @if (contact.jobTitle) {
+                      <span class="org-detail__contact-meta">{{ contact.jobTitle }}</span>
+                    }
+                  </div>
                 </button>
-              </div>
-
-              @if (dealsLoading()) {
-                <p class="org-detail__state">Chargement…</p>
-              } @else if (deals().length === 0) {
-                <app-crm-empty-state
-                  icon="💼"
-                  title="Aucun deal"
-                  subtitle="Aucun deal lié à cette organisation pour l'instant."
-                  ctaLabel="+ Créer un deal"
-                  (ctaClick)="showCreateDeal.set(true)"
-                />
-              } @else {
-                <div class="org-detail__deals-grid">
-                  @for (deal of deals(); track deal.publicId) {
-                    <app-deal-mini-card [deal]="deal" />
-                  }
-                </div>
               }
             </div>
+            <button class="btn btn--ghost btn--sm org-detail__contact-picker-cancel"
+                    (click)="showContactPicker.set(false)">Annuler</button>
           </div>
         }
 
+        <!-- ─── Interactions ──────────────────────────────────────────────── -->
+        @if (activeTab() === 'interactions') {
+          <div class="org-detail__tab-panel">
+            @if (interactionFacade.entries().length === 0 && !interactionFacade.loading()) {
+              <app-crm-empty-state
+                icon="💬"
+                title="Aucune activité"
+                subtitle="Les interactions des contacts de cette organisation apparaîtront ici."
+              />
+            } @else {
+              <app-interaction-timeline
+                [entries]="interactionFacade.entries()"
+                [loading]="interactionFacade.loading()"
+                (deleteRequested)="onInteractionDelete($event)"
+              />
+            }
+          </div>
+        }
+
+        <!-- ─── Contacts ──────────────────────────────────────────────────── -->
         @if (activeTab() === 'contacts') {
           <div class="org-detail__tab-panel">
-            <div class="org-detail__contacts-header">
-              <h3 class="org-detail__section-title">Contacts</h3>
-              <button class="org-detail__btn org-detail__btn--outline" (click)="showCreateContact.set(true)">
+            <div class="org-detail__section-header">
+              <button class="btn btn--secondary btn--sm" (click)="showCreateContact.set(true)">
                 + Nouveau contact
               </button>
             </div>
-
             @if (contactsLoading()) {
               <p class="org-detail__state">Chargement…</p>
             } @else if (contacts().length === 0) {
@@ -108,34 +140,64 @@
                 (ctaClick)="showCreateContact.set(true)"
               />
             } @else {
-              <table class="org-detail__contacts-table">
-                <thead>
-                  <tr>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Poste</th>
-                    <th>Statut</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (contact of contacts(); track contact.publicId) {
-                    <tr class="org-detail__contact-row" [routerLink]="['/crm/contacts', contact.publicId]">
-                      <td>{{ contact.firstName }} {{ contact.lastName }}</td>
-                      <td>{{ contact.email }}</td>
-                      <td>{{ contact.jobTitle ?? '—' }}</td>
-                      <td><app-contact-status-badge [status]="contact.status" /></td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+              <div class="org-detail__contact-list">
+                @for (contact of contacts(); track contact.publicId) {
+                  <a class="org-detail__contact-row"
+                     [routerLink]="['/crm/contacts', contact.publicId]">
+                    <div class="org-detail__contact-avatar">
+                      {{ contactInitials(contact) }}
+                    </div>
+                    <div class="org-detail__contact-info">
+                      <span class="org-detail__contact-name">
+                        {{ contact.firstName }} {{ contact.lastName }}
+                      </span>
+                      <span class="org-detail__contact-meta">
+                        {{ contact.jobTitle ?? '—' }}
+                        @if (contact.email) {
+                          <span class="org-detail__contact-email"> · {{ contact.email }}</span>
+                        }
+                      </span>
+                    </div>
+                    <app-contact-status-badge [status]="contact.status" />
+                    <span class="org-detail__contact-chevron">›</span>
+                  </a>
+                }
+              </div>
             }
           </div>
         }
 
+        <!-- ─── Deals ─────────────────────────────────────────────────────── -->
+        @if (activeTab() === 'deals') {
+          <div class="org-detail__tab-panel">
+            <div class="org-detail__section-header">
+              <button class="btn btn--secondary btn--sm" (click)="showCreateDeal.set(true)">
+                + Nouveau deal
+              </button>
+            </div>
+            @if (dealsLoading()) {
+              <p class="org-detail__state">Chargement…</p>
+            } @else if (deals().length === 0) {
+              <app-crm-empty-state
+                icon="💼"
+                title="Aucun deal"
+                subtitle="Aucun deal lié à cette organisation pour l'instant."
+                ctaLabel="+ Créer un deal"
+                (ctaClick)="showCreateDeal.set(true)"
+              />
+            } @else {
+              <div class="org-detail__deals-grid">
+                @for (deal of deals(); track deal.publicId) {
+                  <app-deal-mini-card [deal]="deal" />
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ─── Tickets ───────────────────────────────────────────────────── -->
         @if (activeTab() === 'tickets') {
           <div class="org-detail__tab-panel">
-            <h3 class="org-detail__section-title">Tickets de support</h3>
-
             @if (ticketsLoading()) {
               <p class="org-detail__state">Chargement…</p>
             } @else if (tickets().length === 0) {
@@ -145,30 +207,27 @@
                 subtitle="Aucun ticket de support lié aux contacts de cette organisation."
               />
             } @else {
-              <table class="org-detail__contacts-table">
-                <thead>
-                  <tr>
-                    <th>Sujet</th>
-                    <th>Contact</th>
-                    <th>Statut</th>
-                    <th>Créé le</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (ticket of tickets(); track ticket.publicId) {
-                    <tr class="org-detail__contact-row" [routerLink]="['/crm/support-tickets', ticket.publicId]">
-                      <td>{{ ticket.subject }}</td>
-                      <td>{{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}</td>
-                      <td><app-support-ticket-status-badge [status]="ticket.status" /></td>
-                      <td>{{ ticket.createdAt | date:'dd/MM/yyyy' }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+              <div class="org-detail__contact-list">
+                @for (ticket of tickets(); track ticket.publicId) {
+                  <a class="org-detail__contact-row org-detail__contact-row--ticket"
+                     [routerLink]="['/crm/support-tickets', ticket.publicId]">
+                    <div class="org-detail__contact-info">
+                      <span class="org-detail__contact-name">{{ ticket.subject }}</span>
+                      <span class="org-detail__contact-meta">
+                        {{ ticket.contactFullName ?? ticket.reporterName ?? '—' }}
+                        · {{ ticket.createdAt | date:'dd/MM/yyyy' }}
+                      </span>
+                    </div>
+                    <app-support-ticket-status-badge [status]="ticket.status" />
+                    <span class="org-detail__contact-chevron">›</span>
+                  </a>
+                }
+              </div>
             }
           </div>
         }
 
+        <!-- ─── Modifications ─────────────────────────────────────────────── -->
         @if (activeTab() === 'modifications') {
           <div class="org-detail__tab-panel">
             <app-change-log-list entityType="ORGANISATION" [entityPublicId]="org.publicId" />
@@ -179,33 +238,86 @@
 
       <!-- ─── Sidebar ────────────────────────────────────────────────────── -->
       <aside class="org-detail__sidebar">
+
+        <app-organisation-info-card [organisation]="org" />
+
         <div class="org-detail__actions">
-          <button class="btn btn--primary btn--sm" (click)="showCreateContact.set(true)">+ Contact</button>
-          <button class="btn btn--primary btn--sm" (click)="showCreateDeal.set(true)">+ Deal</button>
-          <div class="org-detail__actions__divider"></div>
-          <button class="btn btn--ghost btn--sm" (click)="goEdit()">Modifier</button>
-          <button
-            class="btn btn--ghost btn--sm"
-            [class.btn--active]="activeAction() === 'status'"
-            (click)="setAction('status')">
-            Changer statut
-          </button>
-          <button
-            class="btn btn--danger-outline btn--sm"
-            [class.btn--active]="activeAction() === 'merge'"
-            (click)="setAction('merge')">
+          <div class="org-detail__actions-group">
+            <button class="btn btn--primary btn--sm" (click)="showCreateContact.set(true)">+ Contact</button>
+            <button class="btn btn--primary btn--sm" (click)="showCreateDeal.set(true)">+ Deal</button>
+          </div>
+          <div class="org-detail__actions-divider"></div>
+          <div class="org-detail__actions-group">
+            <button class="btn btn--ghost btn--sm" (click)="goEdit()">Modifier</button>
+            <button class="btn btn--ghost btn--sm"
+                    [class.btn--active]="activeAction() === 'status'"
+                    (click)="setAction('status')">
+              Changer statut
+            </button>
+          </div>
+          <div class="org-detail__actions-divider"></div>
+          <button class="btn btn--danger-outline btn--sm"
+                  [class.btn--active]="activeAction() === 'merge'"
+                  (click)="setAction('merge')">
             Fusionner
           </button>
         </div>
 
-        <!-- ─── Tags ──────────────────────────────────────────────────────── -->
         <div class="org-detail__sidebar-tags">
           <span class="org-detail__sidebar-tags-title">Tags</span>
-          <app-tag-input
-            [entityTags]="tags()"
-            (tagAdded)="onTagAdded($event)"
-            (tagRemoved)="onTagRemoved($event)"
-          />
+
+          @if (tags().length > 0) {
+            <div class="org-detail__tags-zone">
+              @for (tag of tags(); track tag.publicId) {
+                <span class="org-detail__tag-chip">
+                  <span class="org-detail__tag-dot" [style.background]="tag.color"></span>
+                  {{ tag.name }}
+                  <button class="org-detail__tag-remove" (click)="removeTag(tag)">×</button>
+                </span>
+              }
+            </div>
+          }
+
+          <div class="org-detail__tag-wrapper">
+            <button class="btn org-detail__btn-tag"
+                    (click)="$event.stopPropagation(); showTagPopover.set(!showTagPopover())">
+              <span class="org-detail__tag-icon">🏷️</span> Ajouter un tag
+            </button>
+            @if (showTagPopover()) {
+              <div class="org-detail__tag-popover" (click)="$event.stopPropagation()">
+                <input
+                  type="text"
+                  class="org-detail__tag-search"
+                  placeholder="Rechercher un tag…"
+                  [value]="tagQuery()"
+                  (input)="tagQuery.set($any($event.target).value)"
+                  autofocus
+                />
+                <ul class="org-detail__tag-options">
+                  @if (!tagQuery() && filteredTags().length > 0) {
+                    <li class="org-detail__tag-section-header">Suggestions</li>
+                  }
+                  @for (tag of displayedTags(); track tag.publicId) {
+                    <li class="org-detail__tag-option" (click)="selectTag(tag)">
+                      <span class="org-detail__tag-option-icon">🏷️</span>
+                      <span class="org-detail__tag-swatch" [style.background]="tag.color"></span>
+                      {{ tag.name }}
+                    </li>
+                  } @empty {
+                    @if (!tagQuery()) {
+                      <li class="org-detail__tag-hint">Saisissez un nom pour créer un nouveau tag</li>
+                    }
+                  }
+                  @if (canCreateTag()) {
+                    <li class="org-detail__tag-create" (click)="createAndAddTag()">
+                      <span class="org-detail__tag-create-icon">＋</span>
+                      Créer le tag <strong>« {{ tagQuery() }} »</strong>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
         </div>
 
         @switch (activeAction()) {
@@ -225,6 +337,7 @@
             />
           }
         }
+
       </aside>
 
     </div>
@@ -243,6 +356,35 @@
         [organisationPublicId]="org.publicId"
         (created)="onDealCreated()"
         (cancelled)="showCreateDeal.set(false)"
+      />
+    }
+
+    @if (showLogNoteModal() && selectedContact()) {
+      <app-log-note-modal
+        [contactPublicId]="selectedContact()!.publicId"
+        (logged)="onLogged()"
+        (cancelled)="onLogged()"
+      />
+    }
+    @if (showLogCallModal() && selectedContact()) {
+      <app-log-call-modal
+        [contactPublicId]="selectedContact()!.publicId"
+        (logged)="onLogged()"
+        (cancelled)="onLogged()"
+      />
+    }
+    @if (showLogEmailModal() && selectedContact()) {
+      <app-log-email-modal
+        [contactPublicId]="selectedContact()!.publicId"
+        (logged)="onLogged()"
+        (cancelled)="onLogged()"
+      />
+    }
+    @if (showLogMeetingModal() && selectedContact()) {
+      <app-log-meeting-modal
+        [contactPublicId]="selectedContact()!.publicId"
+        (logged)="onLogged()"
+        (cancelled)="onLogged()"
       />
     }
   }

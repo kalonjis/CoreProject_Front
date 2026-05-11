@@ -25,6 +25,7 @@ export class CrmLeadApiService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/crm/leads';
 
+  /** Returns a paginated list of leads filtered by the given criteria. */
   findAll(
     filter: LeadFilter,
     page: number,
@@ -49,34 +50,42 @@ export class CrmLeadApiService {
     return this.http.get<Page<LeadSummary>>(this.base, { params });
   }
 
+  /** Returns the full detail of a single lead by its public UUID. */
   getByPublicId(publicId: string): Observable<LeadDetail> {
     return this.http.get<LeadDetail>(`${this.base}/${publicId}`);
   }
 
+  /** Enriches a lead with additional contact and qualification data. */
   enrich(publicId: string, body: EnrichLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/enrich`, body);
   }
 
+  /** Assigns a lead to a commercial. */
   assign(publicId: string, body: AssignLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/assign`, body);
   }
 
+  /** Moves a lead to the IN_REVIEW status. */
   markInReview(publicId: string): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/review`, {});
   }
 
+  /** Creates a new lead manually. */
   create(body: CreateLeadRequest): Observable<LeadDetail> {
     return this.http.post<LeadDetail>(this.base, body);
   }
 
+  /** Converts a lead into a contact (and optionally an organisation). */
   convert(publicId: string, body: ConvertLeadRequest): Observable<LeadDetail> {
     return this.http.post<LeadDetail>(`${this.base}/${publicId}/convert`, body);
   }
 
+  /** Rejects a lead with a mandatory rejection reason. */
   reject(publicId: string, body: RejectLeadRequest): Observable<LeadDetail> {
     return this.http.patch<LeadDetail>(`${this.base}/${publicId}/reject`, body);
   }
 
+  /** Sends an email directly to the lead's email address. */
   sendEmail(publicId: string, body: { subject: string; body: string }): Observable<void> {
     return this.http.post<void>(`${this.base}/${publicId}/email`, body);
   }

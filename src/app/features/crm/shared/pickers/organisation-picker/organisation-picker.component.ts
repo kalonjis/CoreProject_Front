@@ -26,17 +26,24 @@ export interface OrganisationPickerValue {
   styleUrl: './organisation-picker.component.scss'
 })
 export class OrganisationPickerComponent implements OnInit, OnDestroy {
+  /** Placeholder text shown in the search input when empty. */
   @Input() placeholder = 'Rechercher une organisation…';
+  /** Display label to show immediately without triggering a search (e.g. pre-existing value). */
   @Input() prefilledLabel = '';
+  /** Emits the selected organisation value, or null when cleared. */
   @Output() selected = new EventEmitter<OrganisationPickerValue | null>();
 
   private readonly api      = inject(CrmOrganisationApiService);
   private readonly search$  = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
+  /** Current text in the search input. */
   query         = '';
+  /** Display label of the currently selected organisation; shown in place of the input. */
   selectedLabel = '';
+  /** Organisation results for the current search query (capped at 8). */
   results       = signal<OrganisationSummary[]>([]);
+  /** Whether a search request is in flight. */
   searching     = signal(false);
 
   ngOnInit(): void {
@@ -64,15 +71,18 @@ export class OrganisationPickerComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /** Pushes the current query into the debounced search stream; clears results for empty input. */
   onInput(): void {
     if (!this.query.trim()) { this.results.set([]); return; }
     this.search$.next(this.query);
   }
 
+  /** Collapses the dropdown after a short delay to allow mousedown selection to fire first. */
   onBlur(): void {
     setTimeout(() => this.results.set([]), 150);
   }
 
+  /** Selects an organisation, updates the display label, and emits the value. */
   select(o: OrganisationSummary): void {
     this.selectedLabel = o.name;
     this.query = '';
@@ -80,6 +90,7 @@ export class OrganisationPickerComponent implements OnInit, OnDestroy {
     this.selected.emit({ publicId: o.publicId, label: o.name });
   }
 
+  /** Clears the selection and emits null. */
   clear(): void {
     this.selectedLabel = '';
     this.query = '';

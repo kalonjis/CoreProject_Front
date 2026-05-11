@@ -24,8 +24,10 @@ import { LeadType, LEAD_TYPE_LABELS } from '../../models/lead.model';
   `]
 })
 export class LeadTypeBadgeComponent {
+  /** Lead type to render. */
   @Input({ required: true }) type!: LeadType;
 
+  /** Human-readable label for the current type, falling back to the raw enum value. */
   get label(): string {
     return LEAD_TYPE_LABELS[this.type] ?? this.type;
   }

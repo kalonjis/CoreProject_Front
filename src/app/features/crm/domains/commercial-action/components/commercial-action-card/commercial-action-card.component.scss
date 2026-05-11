@@ -1,31 +1,72 @@
 @use 'variables';
 
 .action-card {
+  --type-color: #475569;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
   background: #fff;
   border: 1px solid variables.$border-color;
+  border-left: 3px solid var(--type-color);
   border-radius: variables.$border-radius-lg;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  padding: 0.875rem 1rem;
+  transition: box-shadow 0.18s, transform 0.12s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--type-color) 4%, #fff);
+  }
 
   &--overdue {
-    border-left: 3px solid #ef4444;
+    border-left-color: #ef4444;
+  }
+
+  &--today {
+    border-left-width: 4px;
+    background: color-mix(in srgb, var(--type-color) 5%, #fff);
   }
 
   &--done {
     opacity: 0.6;
+    &:hover { transform: none; box-shadow: none; }
+  }
+
+  // ─── Left column — type icon ──────────────────────────────────────────────
+
+  &__type-col {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--type-color) 12%, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__type-icon { font-size: 1rem; line-height: 1; }
+
+  // ─── Right content ────────────────────────────────────────────────────────
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   &__header {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
   }
 
   &__overdue-label {
-    font-size: 0.7rem;
+    font-size: 0.6875rem;
     font-weight: 600;
     color: #ef4444;
     background: #fee2e2;
@@ -38,6 +79,8 @@
     color: #9ca3af;
     margin-left: auto;
   }
+
+  // ─── Kebab menu ───────────────────────────────────────────────────────────
 
   &__menu-wrapper {
     position: relative;
@@ -54,11 +97,7 @@
     padding: 0 0.25rem;
     border-radius: variables.$border-radius;
     transition: variables.$transition-fast;
-
-    &:hover {
-      background: variables.$gray-light;
-      color: variables.$dark-color;
-    }
+    &:hover { background: variables.$gray-light; color: variables.$dark-color; }
   }
 
   &__menu-backdrop {
@@ -92,64 +131,67 @@
     color: variables.$text-color;
     cursor: pointer;
     transition: background variables.$transition-fast;
-
     &:hover { background: variables.$gray-light; }
-
-    &--danger {
-      color: variables.$danger-color;
-      &:hover { background: #fee2e2; }
-    }
+    &--danger { color: variables.$danger-color; &:hover { background: #fee2e2; } }
   }
+
+  // ─── Text content ─────────────────────────────────────────────────────────
 
   &__title {
     font-weight: 600;
-    font-size: 0.875rem;
-    color: variables.$dark-color;
+    font-size: 0.9375rem;
+    color: #1e293b;
     margin: 0;
     text-decoration: none;
     display: block;
     &:hover { color: variables.$primary-color; }
   }
 
-  &__description {
-    font-size: 0.8125rem;
-    color: #4b5563;
-    margin: 0;
-  }
-
-  &__due {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  &__location {
-    font-size: 0.8rem;
-    color: #6b7280;
+  &__meta {
+    font-size: 0.75rem;
+    color: #9ca3af;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
+  &__meta-sep { color: variables.$border-color; }
+  &__meta-loc { color: #6b7280; }
+
+  &__due {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  &__due-icon { font-size: 0.85rem; }
+
+  // ─── Actions ──────────────────────────────────────────────────────────────
+
   &__actions {
     display: flex;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 0.5rem;
+    margin-top: 0.375rem;
   }
-}
 
-.btn {
-  padding: 0.4rem 0.875rem;
-  border-radius: variables.$border-radius;
-  border: 1px solid transparent;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: variables.$transition-fast;
+  &__complete-btn {
+    padding: 0.3rem 0.875rem;
+    border-radius: variables.$border-radius;
+    border: 1.5px solid var(--type-color);
+    background: transparent;
+    color: var(--type-color);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
 
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
-  &--sm { padding: 0.3rem 0.75rem; font-size: 0.75rem; }
-  &--primary { background: variables.$primary-color; color: #fff; border-color: variables.$primary-color; &:hover { opacity: 0.88; } }
-  &--ghost   { background: transparent; color: variables.$gray-dark; border-color: variables.$border-color; &:hover { color: variables.$text-color; } }
+    &:hover {
+      background: var(--type-color);
+      color: #fff;
+    }
+  }
 }

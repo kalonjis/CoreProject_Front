@@ -12,8 +12,11 @@ import { DealStatusBadgeComponent } from '../deal-status-badge/deal-status-badge
 })
 /** Read-only card displaying a deal's core fields, pipeline position, status badge, and linked contacts with their roles. */
 export class DealInfoCardComponent {
+  /** Full deal details to display. */
   @Input({ required: true }) deal!: DealDetail;
 
+  /** Label lookup table for contact roles. */
   readonly roleLabels = CONTACT_ROLE_LABELS;
+  /** All available contact role values for iteration in the template. */
   readonly roleKeys   = Object.values(ContactRole);
 }

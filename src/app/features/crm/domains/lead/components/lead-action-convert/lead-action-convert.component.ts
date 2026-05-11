@@ -28,9 +28,13 @@ type Step = 'convert' | 'deal';
   styleUrl: './lead-action-convert.component.scss'
 })
 export class LeadActionConvertComponent implements OnInit {
+  /** Public ID of the lead to convert. */
   @Input({ required: true }) publicId!: string;
+  /** Current lead data used to pre-fill the conversion form. */
   @Input() lead: LeadDetail | null = null;
+  /** Emitted when the conversion flow is fully complete (contact created, deal optionally created). */
   @Output() converted  = new EventEmitter<void>();
+  /** Emitted when the user dismisses the flow without completing it. */
   @Output() cancelled  = new EventEmitter<void>();
 
   private readonly leadApi     = inject(CrmLeadApiService);

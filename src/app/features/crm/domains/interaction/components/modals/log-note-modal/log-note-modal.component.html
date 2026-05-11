@@ -1,0 +1,32 @@
+<app-modal-layout
+  title="Ajouter une note"
+  icon="📝"
+  [accentColor]="accentColor"
+  (closed)="cancelled.emit()">
+
+  <form class="modal-form" (ngSubmit)="submit()">
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Date &amp; heure <span class="modal-form__label-required">*</span></label>
+      <input class="modal-form__input" type="datetime-local" [(ngModel)]="occurredAt" name="occurredAt" required />
+    </div>
+
+    <div class="modal-form__field">
+      <label class="modal-form__label">Note <span class="modal-form__label-required">*</span></label>
+      <textarea class="modal-form__textarea"
+                [(ngModel)]="text" name="text"
+                rows="5"
+                placeholder="Écrivez votre note ici…"
+                required></textarea>
+    </div>
+
+    <div class="modal-form__actions">
+      <button type="button" class="modal-form__btn-cancel" (click)="cancelled.emit()">Annuler</button>
+      <button type="submit" class="modal-form__btn-submit" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer la note' }}
+      </button>
+    </div>
+
+  </form>
+
+</app-modal-layout>

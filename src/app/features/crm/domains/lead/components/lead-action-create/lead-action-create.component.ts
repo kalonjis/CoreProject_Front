@@ -22,12 +22,15 @@ import {
   styleUrl: './lead-action-create.component.scss'
 })
 export class LeadActionCreateComponent {
+  /** Emitted with the newly created {@link LeadDetail} after a successful API call. */
   @Output() created   = new EventEmitter<LeadDetail>();
+  /** Emitted when the user dismisses the form without submitting. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api      = inject(CrmLeadApiService);
   private readonly feedback = inject(FeedbackService);
 
+  /** True while the creation request is in flight. */
   readonly loading = signal(false);
 
   // ── Form fields ────────────────────────────────────────────────────────────
@@ -51,6 +54,7 @@ export class LeadActionCreateComponent {
 
   // ── Validation ─────────────────────────────────────────────────────────────
 
+  /** True when the minimum required fields (email, subject, leadType) are filled. */
   get isValid(): boolean {
     return this.email.trim().length > 0
       && this.subject.trim().length >= 2
@@ -59,6 +63,7 @@ export class LeadActionCreateComponent {
 
   // ── Submit ─────────────────────────────────────────────────────────────────
 
+  /** Validates the form, posts the new lead, and emits {@link created} on success. */
   submit(): void {
     if (!this.isValid) return;
 

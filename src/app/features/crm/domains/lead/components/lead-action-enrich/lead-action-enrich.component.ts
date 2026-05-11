@@ -17,9 +17,13 @@ import { Civility, CIVILITY_LABELS, LeadDetail, LeadSource, LEAD_SOURCE_LABELS, 
   styleUrl: './lead-action-enrich.component.scss'
 })
 export class LeadActionEnrichComponent implements OnInit {
+  /** Public ID of the lead to enrich. */
   @Input({ required: true }) publicId!: string;
+  /** Current lead data used to pre-fill the form fields. */
   @Input() lead: LeadDetail | null = null;
+  /** Emitted after the lead has been successfully enriched. */
   @Output() enriched  = new EventEmitter<void>();
+  /** Emitted when the user dismisses the form without submitting. */
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly api      = inject(CrmLeadApiService);
@@ -55,6 +59,7 @@ export class LeadActionEnrichComponent implements OnInit {
     }
   }
 
+  /** Submits enrichment data to the API and emits {@link enriched} on success. */
   submit(): void {
     this.loading.set(true);
     this.api.enrich(this.publicId, {

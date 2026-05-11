@@ -1,0 +1,11 @@
+@use '../../../../../shared/styles/modal-form' as *;
+
+.log-note-modal {
+  &__text { min-height: 120px; }
+
+  &__submit {
+    background: #d97706;
+    border-color: #d97706;
+    &:hover:not(:disabled) { background: #b45309; border-color: #b45309; }
+  }
+}

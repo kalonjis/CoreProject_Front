@@ -1,0 +1,9 @@
+@use '../../../../../shared/styles/modal-form' as *;
+
+.log-email-modal {
+  &__submit {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    &:hover:not(:disabled) { background: #0284c7; border-color: #0284c7; }
+  }
+}

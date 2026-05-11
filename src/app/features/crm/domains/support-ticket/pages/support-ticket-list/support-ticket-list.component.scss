@@ -1,6 +1,8 @@
 @use 'variables';
 @use '../../../../shared/styles/action-panel';
 
+$grid: 1fr 140px 170px 80px;
+
 .ticket-list {
 
   // ─── Header ────────────────────────────────────────────────────────────────
@@ -33,6 +35,42 @@
     color: variables.$gray-dark;
   }
 
+  // ─── Stats bar ─────────────────────────────────────────────────────────────
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border: 1px solid variables.$border-color;
+    border-radius: variables.$border-radius-lg;
+    border-top: 3px solid transparent;
+
+    &--open     { border-top-color: #2563eb; }
+    &--progress { border-top-color: #d97706; }
+    &--overdue  { border-top-color: #dc2626; }
+  }
+
+  &__stat-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+  }
+
+  &__stat-label {
+    font-size: 0.75rem;
+    color: variables.$gray-dark;
+  }
+
   // ─── Filters ───────────────────────────────────────────────────────────────
 
   &__filters {
@@ -46,7 +84,7 @@
     border: 1px solid variables.$border-color;
     border-radius: variables.$border-radius-lg;
 
-    > input, > select { width: auto; }
+    > input, > select { width: auto; border-radius: 10px; }
 
     &--pickers {
       align-items: flex-end;
@@ -57,11 +95,7 @@
   &__search {
     flex: 1;
     min-width: 180px;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid variables.$border-color;
-    border-radius: variables.$border-radius;
-    font-size: 0.875rem;
-    &:focus { outline: none; border-color: variables.$primary-color; }
+    border-radius: 10px;
   }
 
   &__checkbox {
@@ -101,58 +135,72 @@
     letter-spacing: 0.07em;
   }
 
-  // ─── Table ─────────────────────────────────────────────────────────────────
+  // ─── Rows ──────────────────────────────────────────────────────────────────
 
-  &__table-wrapper {
+  &__rows {
     background: #fff;
     border: 1px solid variables.$border-color;
     border-radius: variables.$border-radius-lg;
     overflow: hidden;
   }
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-
-    thead tr {
-      background: variables.$gray-medium;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: variables.$gray-dark;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 0.75rem 1rem;
-      border-top: 1px solid variables.$border-color;
-      vertical-align: middle;
-    }
+  &__col-headers {
+    display: grid;
+    grid-template-columns: $grid;
+    padding: 0.5rem 1.25rem;
+    background: variables.$gray-medium;
+    border-bottom: 1px solid variables.$border-color;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: variables.$gray-dark;
   }
 
   &__row {
+    display: grid;
+    grid-template-columns: $grid;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid variables.$border-color;
     cursor: pointer;
-    transition: variables.$transition-fast;
-    &:hover td { background: #f8faff; }
+    transition: background 0.12s;
+
+    &:hover { background: #f8faff; }
+  }
+
+  // ─── Cells ─────────────────────────────────────────────────────────────────
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    font-size: 0.875rem;
+    color: #334155;
+
+    &--subject { flex-direction: column; align-items: flex-start; gap: 0.125rem; }
+    &--date    { font-size: 0.8125rem; color: variables.$gray-dark; }
   }
 
   &__subject {
+    font-size: 0.9rem;
     font-weight: 600;
-    color: variables.$dark-color;
-    max-width: 320px;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
-  &__secondary { color: variables.$gray-dark; }
+  &__contact-sub {
+    font-size: 0.75rem;
+    color: variables.$gray-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
 
   &__source-chip {
     display: inline-block;
@@ -168,32 +216,11 @@
     white-space: nowrap;
   }
 
-  &__date-col {
-    text-align: right;
-    white-space: nowrap;
-  }
+  // ─── Assignee ──────────────────────────────────────────────────────────────
 
-  // ─── Assignee avatar ───────────────────────────────────────────────────────
-
-  &__assignee {
+  &__assign-cell {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-  }
-
-  &__avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.65rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    text-transform: uppercase;
   }
 
   // ─── States ────────────────────────────────────────────────────────────────
@@ -223,4 +250,14 @@
   }
 
   &__page-info { font-size: 0.875rem; color: variables.$gray-dark; }
+
+  // ─── Responsive ────────────────────────────────────────────────────────────
+
+  @media (max-width: 768px) {
+    &__stats { grid-template-columns: 1fr 1fr; }
+    &__col-headers { display: none; }
+    &__row { grid-template-columns: 1fr auto; }
+    &__cell:nth-child(3),
+    &__cell:nth-child(4) { display: none; }
+  }
 }

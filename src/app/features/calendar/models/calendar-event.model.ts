@@ -108,6 +108,12 @@ export interface CalendarEvent {
 
   /** Last update timestamp in ISO 8601 format (UTC) */
   updatedAt: string;
+
+  /** Origin domain that created this event (e.g. "COMMERCIAL_ACTION"), null for manual events */
+  sourceType: string | null;
+
+  /** Public ID of the source entity in the origin domain */
+  sourcePublicId: string | null;
 }
 
 /**
