@@ -284,11 +284,14 @@
 
       <!-- ─── Sidebar (droite) ───────────────────────────────────────────── -->
       <aside class="lead-detail__sidebar">
+
+        <app-lead-info-card [lead]="l" [publicId]="l.publicId" (assigned)="onActionDone()" />
+
         @if (l.existingContactPublicId) {
           <div class="lead-detail__contact-banner">
             <span class="lead-detail__contact-banner-icon">👤</span>
             <div>
-              <p class="lead-detail__contact-banner-label">Contact existant</p>
+              <p class="lead-detail__contact-banner-label">Contact associé</p>
               <a class="lead-detail__contact-banner-link"
                  [routerLink]="['/crm/contacts', l.existingContactPublicId]">
                 Voir le contact →
@@ -296,8 +299,6 @@
             </div>
           </div>
         }
-
-        <app-lead-info-card [lead]="l" [publicId]="l.publicId" (assigned)="onActionDone()" />
 
         @if (!facade.isTerminal()) {
 
