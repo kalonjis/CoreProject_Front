@@ -120,6 +120,11 @@ export class NotificationStore {
     this._state().sseStatus === SseConnectionStatus.RECONNECTING
   );
 
+  /** SSE circuit is open (max retries exhausted, polling takes over) */
+  readonly isCircuitOpen = computed(() =>
+    this._state().sseStatus === SseConnectionStatus.CIRCUIT_OPEN
+  );
+
   /** Has pending toasts */
   readonly hasToasts = computed(() =>
     this._state().toastQueue.length > 0 || this._state().currentToast !== null

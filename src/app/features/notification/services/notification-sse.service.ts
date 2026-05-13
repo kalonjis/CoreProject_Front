@@ -43,8 +43,10 @@ export class NotificationSseService {
   private readonly maxReconnectAttempts = 10;
   private readonly baseReconnectDelay = 1000;  // 1 second
   private readonly maxReconnectDelay = 30000;  // 30 seconds
+  private readonly probeDelay = 120000;         // 2 min between half-open probes
   private reconnectAttempts = 0;
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+  private probeTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Event subjects
   private readonly _statusChange = new Subject<SseConnectionStatus>();
@@ -67,6 +69,10 @@ export class NotificationSseService {
 
   get isConnected(): boolean {
     return this._currentStatus === SseConnectionStatus.CONNECTED;
+  }
+
+  get isCircuitOpen(): boolean {
+    return this._currentStatus === SseConnectionStatus.CIRCUIT_OPEN;
   }
 
   // ===========================================================================
@@ -103,6 +109,7 @@ export class NotificationSseService {
     console.log('[SSE] Disconnecting');
 
     this.clearReconnectTimeout();
+    this.clearProbeTimeout();
 
     if (this.eventSource) {
       this.eventSource.close();
@@ -205,8 +212,8 @@ export class NotificationSseService {
 
   private scheduleReconnect(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('[SSE] Max reconnection attempts reached');
-      this.updateStatus(SseConnectionStatus.ERROR);
+      console.warn('[SSE] Max reconnect attempts reached — opening circuit');
+      this.openCircuit();
       return;
     }
 
@@ -227,10 +234,35 @@ export class NotificationSseService {
     }, delay);
   }
 
+  private openCircuit(): void {
+    this.updateStatus(SseConnectionStatus.CIRCUIT_OPEN);
+    this.scheduleProbe();
+  }
+
+  private scheduleProbe(): void {
+    this.clearProbeTimeout();
+    console.log(`[SSE] Circuit open — probing in ${this.probeDelay / 1000}s`);
+
+    this.probeTimeout = setTimeout(() => {
+      if (this._currentStatus === SseConnectionStatus.CIRCUIT_OPEN) {
+        console.log('[SSE] Half-open probe attempt');
+        this.reconnectAttempts = 0;
+        this.connect();
+      }
+    }, this.probeDelay);
+  }
+
   private clearReconnectTimeout(): void {
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
+    }
+  }
+
+  private clearProbeTimeout(): void {
+    if (this.probeTimeout) {
+      clearTimeout(this.probeTimeout);
+      this.probeTimeout = null;
     }
   }
 
