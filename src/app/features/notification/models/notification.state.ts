@@ -15,7 +15,9 @@ export enum SseConnectionStatus {
   CONNECTING = 'CONNECTING',
   CONNECTED = 'CONNECTED',
   RECONNECTING = 'RECONNECTING',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
+  /** Circuit open: max reconnect attempts reached. Polling takes over; SSE probed every 2 min. */
+  CIRCUIT_OPEN = 'CIRCUIT_OPEN'
 }
 
 // =============================================================================
