@@ -1,0 +1,79 @@
+@if (facade.isCallActive()) {
+  <div class="call-widget">
+
+    <!-- ─── Main bar ──────────────────────────────────────────────────────── -->
+    <div class="call-widget__bar">
+      <div class="call-widget__indicator"></div>
+      <div class="call-widget__info">
+        <span class="call-widget__phone">{{ facade.activeCall()?.phoneNumber }}</span>
+        <span class="call-widget__timer">{{ elapsedLabel() }}</span>
+      </div>
+      <button
+        class="call-widget__end-btn"
+        (click)="openEndPanel()"
+        [disabled]="facade.isTerminating()"
+        type="button">
+        Raccrocher
+      </button>
+    </div>
+
+    <!-- ─── End-call panel ────────────────────────────────────────────────── -->
+    @if (showEndPanel()) {
+      <div class="call-widget__panel">
+        <p class="call-widget__panel-title">Clôturer l'appel</p>
+
+        <div class="call-widget__panel-row">
+          <label class="call-widget__panel-label">Résultat</label>
+          <div class="call-widget__status-group">
+            <button
+              class="call-widget__status-btn"
+              [class.call-widget__status-btn--active]="selectedStatus() === 'ENDED'"
+              (click)="selectedStatus.set('ENDED')"
+              type="button">
+              ✅ Répondu
+            </button>
+            <button
+              class="call-widget__status-btn"
+              [class.call-widget__status-btn--active]="selectedStatus() === 'MISSED'"
+              (click)="selectedStatus.set('MISSED')"
+              type="button">
+              📵 Non répondu
+            </button>
+          </div>
+        </div>
+
+        @if (selectedStatus() === 'ENDED') {
+          <div class="call-widget__panel-row">
+            <label class="call-widget__panel-label" for="cw-duration">Durée (secondes)</label>
+            <input
+              id="cw-duration"
+              class="call-widget__panel-input"
+              type="number"
+              min="0"
+              [ngModel]="durationSeconds()"
+              (ngModelChange)="durationSeconds.set($event)"
+            />
+          </div>
+        }
+
+        <div class="call-widget__panel-actions">
+          <button
+            class="call-widget__panel-cancel"
+            (click)="cancelEnd()"
+            type="button">
+            Annuler
+          </button>
+          <button
+            class="call-widget__panel-confirm"
+            (click)="confirmEnd()"
+            [disabled]="facade.isTerminating()"
+            type="button">
+            @if (facade.isTerminating()) { Enregistrement… }
+            @else { Confirmer }
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+}

@@ -34,6 +34,7 @@ import { LogMeetingModalComponent }      from '../../../interaction/components/m
 import { ScheduleCallModalComponent }    from '../../../commercial-action/components/modals/schedule-call-modal/schedule-call-modal.component';
 import { ScheduleMeetingModalComponent } from '../../../commercial-action/components/modals/schedule-meeting-modal/schedule-meeting-modal.component';
 import { CreateTaskModalComponent }      from '../../../commercial-action/components/modals/create-task-modal/create-task-modal.component';
+import { PhoneLinkComponent }            from '../../../../../../shared/phone-link/phone-link.component';
 
 type ActiveAction = 'enrich' | 'convert' | 'reject' | null;
 type LeadTab      = 'interactions' | 'afaire' | 'calendrier' | 'deals' | 'tickets';
@@ -60,7 +61,8 @@ type LeadTab      = 'interactions' | 'afaire' | 'calendrier' | 'deals' | 'ticket
     LogMeetingModalComponent,
     ScheduleCallModalComponent,
     ScheduleMeetingModalComponent,
-    CreateTaskModalComponent
+    CreateTaskModalComponent,
+    PhoneLinkComponent
   ],
   templateUrl: './lead-detail.component.html',
   styleUrl: './lead-detail.component.scss'

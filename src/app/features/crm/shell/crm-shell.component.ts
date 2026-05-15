@@ -9,10 +9,11 @@ import { RouterOutlet } from '@angular/router';
 import { CrmSidebarComponent } from './crm-sidebar.component';
 import { CrmSearchModalComponent } from '../domains/search/components/crm-search-modal/crm-search-modal.component';
 import { AgendaDayPanelComponent } from '../shared/components/agenda-day-panel/agenda-day-panel.component';
+import { CallWidgetComponent } from '../../../shared/call-widget/call-widget.component';
 
 @Component({
   selector: 'app-crm-shell',
-  imports: [RouterOutlet, CrmSidebarComponent, CrmSearchModalComponent, AgendaDayPanelComponent],
+  imports: [RouterOutlet, CrmSidebarComponent, CrmSearchModalComponent, AgendaDayPanelComponent, CallWidgetComponent],
   templateUrl: './crm-shell.component.html',
   styleUrl: './crm-shell.component.scss'
 })
