@@ -2,7 +2,7 @@
   <div class="account-confirmation-card">
     <h1 class="title">Confirmation de compte</h1>
 
-    @if (isProcessing) {
+    @if (isProcessing()) {
       <div class="loading-indicator">
         <div class="spinner"></div>
         <p>Traitement en cours, veuillez patienter...</p>
@@ -22,7 +22,7 @@
             Cette page vous permet de confirmer votre compte.
           </p>
 
-          @if (showConfirmationButton) {
+          @if (showConfirmationButton()) {
             <p>
               Veuillez cliquer sur le bouton ci-dessous pour finaliser l'activation de votre compte.
             </p>
