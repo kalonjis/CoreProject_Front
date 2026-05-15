@@ -160,7 +160,9 @@ export class DeviceFacade {
    * Confirm device with token (from email link).
    */
   confirmDevice(token: string): Observable<DeviceOperationResponse> {
-    return this.deviceApi.confirmDevice(token);
+    return this.deviceApi.confirmDevice(token).pipe(
+      tap(() => this.loadSession())
+    );
   }
 
   /**
