@@ -1,0 +1,220 @@
+.call-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  // ── Main bar ──────────────────────────────────────────────────────────────
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #111827;
+    color: #fff;
+  }
+
+  &__indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+
+    &--ringing {
+      background: #f59e0b;
+      animation: pulse-dot-ringing 0.8s ease-in-out infinite;
+    }
+  }
+
+  &__status {
+    font-size: 0.75rem;
+    color: #f59e0b;
+    font-style: italic;
+  }
+
+  &__mute-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255,255,255,0.22); }
+
+    &--active {
+      background: #ef4444;
+      &:hover { background: #dc2626; }
+    }
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__phone {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__timer {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__end-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover:not(:disabled) { background: #dc2626; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  // ── End-call panel ────────────────────────────────────────────────────────
+
+  &__panel {
+    padding: 16px;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__panel-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  &__panel-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__panel-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__status-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__status-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover { border-color: #2563eb; }
+
+    &--active {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+  }
+
+  &__panel-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: #2563eb; }
+  }
+
+  &__panel-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  &__panel-cancel {
+    padding: 7px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.8rem;
+    color: #6b7280;
+    cursor: pointer;
+
+    &:hover { background: #f9fafb; }
+  }
+
+  &__panel-confirm {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover:not(:disabled) { background: #1d4ed8; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes pulse-dot-ringing {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.6; }
+}

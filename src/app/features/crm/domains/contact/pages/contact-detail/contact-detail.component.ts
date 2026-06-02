@@ -29,6 +29,7 @@ import { LogMeetingModalComponent }      from '../../../interaction/components/m
 import { ScheduleCallModalComponent }    from '../../../commercial-action/components/modals/schedule-call-modal/schedule-call-modal.component';
 import { ScheduleMeetingModalComponent } from '../../../commercial-action/components/modals/schedule-meeting-modal/schedule-meeting-modal.component';
 import { CreateTaskModalComponent }      from '../../../commercial-action/components/modals/create-task-modal/create-task-modal.component';
+import { PhoneLinkComponent }            from '../../../../../../shared/phone-link/phone-link.component';
 
 /** Union of inline action panels that can be shown on the contact detail page. */
 type ActiveAction = 'merge' | null;
@@ -57,6 +58,7 @@ type ContactTab   = 'interactions' | 'afaire' | 'calendrier' | 'deals' | 'ticket
     ScheduleCallModalComponent,
     ScheduleMeetingModalComponent,
     CreateTaskModalComponent,
+    PhoneLinkComponent,
     DatePipe
   ],
   templateUrl: './contact-detail.component.html',

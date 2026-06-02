@@ -39,7 +39,7 @@
             <span class="lead-detail__email" (click)="showEmailCompose.set(true)"><span class="lead-detail__email-icon">📧</span> {{ l.email }}</span>
             @if (l.phone) {
               <span class="lead-detail__contact-sep">•</span>
-              <span class="lead-detail__phone">📞 {{ l.phone }}</span>
+              <app-phone-link [phoneNumber]="l.phone" [leadPublicId]="l.publicId" />
             }
           </div>
         }

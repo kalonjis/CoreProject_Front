@@ -19,15 +19,16 @@ import { UserPermissionsTabComponent } from '../components/tabs/user-permissions
 import { AdminDeactivateModalComponent } from '../components/admin-deactivate-modal/admin-deactivate-modal.component';
 import {AdminUserFacade} from '../../services/admin-user-facade.service';
 import {UserLogsComponent} from '../../../../activity-logs';
+import { UserTelephonyTabComponent } from '../components/tabs/user-telephony-tab/user-telephony-tab.component';
 
 // =============================================================================
 // Types
 // =============================================================================
 
 /** Tabs available in the user detail view. */
-export type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions';
+export type UserDetailTab = 'info' | 'devices' | 'activity' | 'permissions' | 'telephony';
 
-const VALID_TABS: UserDetailTab[] = ['info', 'devices', 'activity', 'permissions'];
+const VALID_TABS: UserDetailTab[] = ['info', 'devices', 'activity', 'permissions', 'telephony'];
 
 // =============================================================================
 // Component
@@ -64,6 +65,7 @@ const VALID_TABS: UserDetailTab[] = ['info', 'devices', 'activity', 'permissions
         UserPermissionsTabComponent,
         AdminDeactivateModalComponent,
         UserLogsComponent,
+        UserTelephonyTabComponent,
     ],
     templateUrl: './user-detail-container.component.html',
     styleUrl: './user-detail-container.component.scss'

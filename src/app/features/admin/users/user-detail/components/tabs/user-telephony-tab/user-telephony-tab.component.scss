@@ -1,0 +1,369 @@
+@use "sass:color";
+// src/app/features/admin/users/user-detail/components/tabs/user-telephony-tab/user-telephony-tab.component.scss
+
+$primary:  #6366f1;
+$success:  #10b981;
+$warning:  #f59e0b;
+$danger:   #ef4444;
+$info:     #3b82f6;
+$twilio:   #f22f46;
+
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+
+$radius-sm: 6px;
+$radius-md: 10px;
+
+// ============================================================================
+// LAYOUT
+// ============================================================================
+
+.telephony-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ============================================================================
+// LOADING / ERROR
+// ============================================================================
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: $gray-500;
+  font-size: 0.875rem;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $gray-200;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: rgba($danger, 0.07);
+  border: 1px solid rgba($danger, 0.25);
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  color: color.adjust($danger, $lightness: -10%);
+
+  svg { flex-shrink: 0; }
+}
+
+.btn-retry {
+  margin-left: auto;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba($danger, 0.35);
+  background: transparent;
+  border-radius: $radius-sm;
+  color: color.adjust($danger, $lightness: -10%);
+  cursor: pointer;
+  &:hover { background: rgba($danger, 0.07); }
+}
+
+// ============================================================================
+// SECTIONS
+// ============================================================================
+
+.tel-section {
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 1.125rem 1.5rem 1.375rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $primary;
+
+  svg { flex-shrink: 0; }
+}
+
+// ============================================================================
+// PROVIDER BADGE
+// ============================================================================
+
+.provider-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  &--sip    { background: rgba($primary, 0.1); color: color.adjust($primary, $lightness: -8%); border: 1px solid rgba($primary, 0.3); }
+  &--twilio { background: rgba($twilio, 0.09); color: color.adjust($twilio, $lightness: -8%); border: 1px solid rgba($twilio, 0.3); }
+  &--none   { background: $gray-100; color: $gray-500; border: 1px solid $gray-200; }
+}
+
+.global-info {
+  font-size: 0.8rem;
+  color: $gray-400;
+}
+
+// ============================================================================
+// SIP CARD
+// ============================================================================
+
+.sip-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid $gray-200;
+  border-left: 3px solid $primary;
+  border-radius: $radius-md;
+  background: #fafafe;
+}
+
+.sip-card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sip-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sip-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.sip-field__label {
+  color: $gray-500;
+  font-size: 0.78rem;
+  min-width: 80px;
+}
+
+.sip-field__value {
+  font-weight: 600;
+  color: $gray-700;
+}
+
+.sip-field__code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  background: $gray-100;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: $gray-600;
+}
+
+// ============================================================================
+// SIP EMPTY STATE
+// ============================================================================
+
+.sip-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: $gray-400;
+
+  p { margin: 0; font-size: 0.875rem; }
+}
+
+// ============================================================================
+// SIP FORM
+// ============================================================================
+
+.sip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $gray-600;
+}
+
+.form-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $gray-300;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  color: $gray-700;
+  outline: none;
+  transition: border-color 0.15s;
+
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px rgba($primary, 0.1); }
+  &--error { border-color: $danger; }
+  &::placeholder { color: $gray-400; }
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: $gray-400;
+
+  &--error { color: $danger; }
+}
+
+.form-error-banner {
+  padding: 0.625rem 0.875rem;
+  background: rgba($danger, 0.07);
+  border: 1px solid rgba($danger, 0.25);
+  border-radius: $radius-sm;
+  font-size: 0.82rem;
+  color: color.adjust($danger, $lightness: -10%);
+
+  &--standalone { margin-top: 0.5rem; }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  padding-top: 0.25rem;
+}
+
+// ============================================================================
+// TWILIO INFO
+// ============================================================================
+
+.twilio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.twilio-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: $gray-400;
+  line-height: 1.5;
+}
+
+// ============================================================================
+// BUTTONS
+// ============================================================================
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1.125rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) { background: color.adjust($primary, $lightness: -6%); }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.btn-cancel {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: transparent;
+  color: $gray-500;
+  border: 1px solid $gray-300;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover { background: $gray-100; }
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba($primary, 0.35);
+  background: rgba($primary, 0.07);
+  border-radius: $radius-sm;
+  color: color.adjust($primary, $lightness: -8%);
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover:not(:disabled) { background: rgba($primary, 0.14); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba($danger, 0.3);
+  background: rgba($danger, 0.06);
+  border-radius: $radius-sm;
+  color: $danger;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover:not(:disabled) { background: rgba($danger, 0.13); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.btn-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}

@@ -1,0 +1,37 @@
+.phone-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #2563eb;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  &--busy {
+    color: #6b7280;
+  }
+
+  &__icon {
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  &__number {
+    font-weight: 500;
+  }
+}

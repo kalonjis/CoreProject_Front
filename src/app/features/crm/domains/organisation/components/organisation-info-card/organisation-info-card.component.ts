@@ -3,10 +3,11 @@ import { DatePipe } from '@angular/common';
 import { OrganisationDetail } from '../../models/organisation.model';
 import { OrganisationSizeBadgeComponent } from '../organisation-size-badge/organisation-size-badge.component';
 import { OrganisationStatusBadgeComponent } from '../organisation-status-badge/organisation-status-badge.component';
+import { PhoneLinkComponent } from '../../../../../../shared/phone-link/phone-link.component';
 
 @Component({
   selector: 'app-organisation-info-card',
-  imports: [DatePipe, OrganisationSizeBadgeComponent, OrganisationStatusBadgeComponent],
+  imports: [DatePipe, OrganisationSizeBadgeComponent, OrganisationStatusBadgeComponent, PhoneLinkComponent],
   templateUrl: './organisation-info-card.component.html',
   styleUrl: './organisation-info-card.component.scss'
 })
