@@ -27,6 +27,40 @@
     background: #22c55e;
     flex-shrink: 0;
     animation: pulse-dot 1.5s ease-in-out infinite;
+
+    &--ringing {
+      background: #f59e0b;
+      animation: pulse-dot-ringing 0.8s ease-in-out infinite;
+    }
+  }
+
+  &__status {
+    font-size: 0.75rem;
+    color: #f59e0b;
+    font-style: italic;
+  }
+
+  &__mute-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255,255,255,0.22); }
+
+    &--active {
+      background: #ef4444;
+      &:hover { background: #dc2626; }
+    }
   }
 
   &__info {
@@ -173,9 +207,14 @@
   }
 }
 
-// ── Pulsing indicator animation ────────────────────────────────────────────────
+// ── Animations ────────────────────────────────────────────────────────────────
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
+}
+
+@keyframes pulse-dot-ringing {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.6; }
 }

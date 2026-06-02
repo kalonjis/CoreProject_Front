@@ -9,17 +9,16 @@ import { TerminalCallStatus } from '../../core/telephony/models/call-session.mod
 /**
  * Floating overlay shown while a call session is active.
  *
- * Displays:
- * - The phone number being called
- * - An elapsed-time counter (ticking every second)
- * - A button to open the end-call panel
+ * Adapts its UI based on the active call's provider:
  *
- * End-call panel lets the user declare:
- * - ENDED (answered) with an optional duration in seconds
- * - MISSED (no answer) — duration not required
+ * SIP calls:
+ *  - RINGING phase → orange dot + "Sonnerie..." + Annuler button
+ *  - ACTIVE phase  → green dot + elapsed timer + Mute + Raccrocher (sends BYE via SipService)
+ *  - Termination is automatic (driven by SIP.js Terminated event)
  *
- * The widget is mounted once in {@link CrmShellComponent} and reacts
- * reactively to the {@link CallStore} signals via {@link CallFacade}.
+ * TEL_URI calls (fallback):
+ *  - Always ACTIVE phase → green dot + elapsed timer + Raccrocher
+ *  - End panel: user declares ENDED (+ duration) or MISSED
  */
 @Component({
   selector: 'app-call-widget',
@@ -37,25 +36,37 @@ export class CallWidgetComponent implements OnDestroy {
   private _timerId: ReturnType<typeof setInterval> | null = null;
 
   readonly elapsedLabel = computed(() => {
-    const s = this._elapsedSeconds();
+    const s  = this._elapsedSeconds();
     const mm = String(Math.floor(s / 60)).padStart(2, '0');
     const ss = String(s % 60).padStart(2, '0');
     return `${mm}:${ss}`;
   });
 
-  // ── End-call panel state ──────────────────────────────────────────────────
+  // ── TEL_URI end-call panel state ──────────────────────────────────────────
 
-  readonly showEndPanel     = signal(false);
-  readonly selectedStatus   = signal<TerminalCallStatus>('ENDED');
-  readonly durationSeconds  = signal<number | null>(null);
+  readonly showEndPanel    = signal(false);
+  readonly selectedStatus  = signal<TerminalCallStatus>('ENDED');
+  readonly durationSeconds = signal<number | null>(null);
+
+  // ── Derived ───────────────────────────────────────────────────────────────
+
+  /** True for any in-browser WebRTC provider (SIP or Twilio). */
+  readonly isWebRtc   = computed(() => {
+    const p = this.facade.activeCall()?.provider;
+    return p === 'SIP' || p === 'TWILIO';
+  });
+  readonly isRinging  = this.facade.isRinging;
+  readonly isMuted    = this.facade.isMuted;
 
   // ── Timer management ──────────────────────────────────────────────────────
 
   constructor() {
     effect(() => {
-      if (this.facade.isCallActive()) {
-        this._elapsedSeconds.set(0);
-        this._timerId = setInterval(() => this._elapsedSeconds.update(v => v + 1), 1000);
+      if (this.facade.activeCall()?.phase === 'ACTIVE') {
+        if (this._timerId === null) {
+          this._elapsedSeconds.set(0);
+          this._timerId = setInterval(() => this._elapsedSeconds.update(v => v + 1), 1000);
+        }
       } else {
         this._stopTimer();
       }
@@ -75,10 +86,21 @@ export class CallWidgetComponent implements OnDestroy {
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
+  /** SIP / Twilio: sends BYE / disconnects via the active service — no manual panel needed. */
+  hangupWebRtc(): void {
+    this.facade.hangup();
+  }
+
+  toggleMute(): void {
+    this.facade.toggleMute();
+  }
+
+  /** TEL_URI: freezes the timer and opens the manual end-call panel. */
   openEndPanel(): void {
-    this.showEndPanel.set(true);
-    this.selectedStatus.set('ENDED');
+    this._stopTimer();
     this.durationSeconds.set(this._elapsedSeconds());
+    this.selectedStatus.set('ENDED');
+    this.showEndPanel.set(true);
   }
 
   confirmEnd(): void {
@@ -90,5 +112,8 @@ export class CallWidgetComponent implements OnDestroy {
 
   cancelEnd(): void {
     this.showEndPanel.set(false);
+    if (this.facade.activeCall()?.phase === 'ACTIVE' && this._timerId === null) {
+      this._timerId = setInterval(() => this._elapsedSeconds.update(v => v + 1), 1000);
+    }
   }
 }
