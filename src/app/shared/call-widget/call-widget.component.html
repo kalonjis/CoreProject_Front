@@ -1,110 +1,142 @@
 @if (facade.isCallActive()) {
   <div class="call-widget">
 
-    <!-- ─── Main bar ──────────────────────────────────────────────────────── -->
-    <div class="call-widget__bar">
-
-      <!-- Indicator: orange pulsing = ringing, green pulsing = active -->
-      <div class="call-widget__indicator"
-           [class.call-widget__indicator--ringing]="isRinging()">
-      </div>
-
-      <div class="call-widget__info">
-        <span class="call-widget__phone">{{ facade.activeCall()?.phoneNumber }}</span>
-        @if (isRinging()) {
-          <span class="call-widget__status">Sonnerie...</span>
-        } @else {
-          <span class="call-widget__timer">{{ elapsedLabel() }}</span>
-        }
-      </div>
-
-      <!-- ── SIP actions ── -->
-      @if (isWebRtc()) {
-        @if (!isRinging()) {
-          <button
-            class="call-widget__mute-btn"
-            [class.call-widget__mute-btn--active]="isMuted()"
-            (click)="toggleMute()"
-            [title]="isMuted() ? 'Réactiver le micro' : 'Couper le micro'"
-            type="button">
-            {{ isMuted() ? '🔇' : '🎙️' }}
+    <!-- ─── Incoming call panel ──────────────────────────────────────────── -->
+    @if (isIncoming()) {
+      <div class="call-widget__incoming">
+        <div class="call-widget__incoming-header">
+          <div class="call-widget__indicator call-widget__indicator--incoming"></div>
+          <span class="call-widget__incoming-label">Appel entrant</span>
+        </div>
+        <div class="call-widget__info">
+          @if (facade.activeCall()?.displayName) {
+            <span class="call-widget__name">{{ facade.activeCall()!.displayName }}</span>
+            <span class="call-widget__phone">{{ facade.activeCall()?.phoneNumber }}</span>
+          } @else {
+            <span class="call-widget__name">{{ facade.activeCall()?.phoneNumber }}</span>
+          }
+        </div>
+        <div class="call-widget__incoming-actions">
+          <button class="call-widget__reject-btn" (click)="reject()" type="button">
+            Rejeter
           </button>
-        }
-        <button
-          class="call-widget__end-btn"
-          (click)="hangupWebRtc()"
-          [disabled]="facade.isTerminating()"
-          type="button">
-          @if (isRinging()) { Annuler } @else { Raccrocher }
-        </button>
+          <button class="call-widget__answer-btn" (click)="answer()" type="button">
+            Décrocher
+          </button>
+        </div>
+      </div>
 
-      <!-- ── TEL_URI actions ── -->
-      } @else {
-        @if (!showEndPanel()) {
+    <!-- ─── Active / ringing bar ─────────────────────────────────────────── -->
+    } @else {
+      <div class="call-widget__bar">
+
+        <!-- Indicator: orange pulsing = ringing, green pulsing = active -->
+        <div class="call-widget__indicator"
+             [class.call-widget__indicator--ringing]="isRinging()">
+        </div>
+
+        <div class="call-widget__info">
+          @if (facade.activeCall()?.displayName) {
+            <span class="call-widget__name">{{ facade.activeCall()!.displayName }}</span>
+            <span class="call-widget__phone">{{ facade.activeCall()?.phoneNumber }}</span>
+          } @else {
+            <span class="call-widget__name">{{ facade.activeCall()?.phoneNumber }}</span>
+          }
+          @if (isRinging()) {
+            <span class="call-widget__status">Sonnerie...</span>
+          } @else {
+            <span class="call-widget__timer">{{ elapsedLabel() }}</span>
+          }
+        </div>
+
+        <!-- ── SIP actions ── -->
+        @if (isWebRtc()) {
+          @if (!isRinging()) {
+            <button
+              class="call-widget__mute-btn"
+              [class.call-widget__mute-btn--active]="isMuted()"
+              (click)="toggleMute()"
+              [title]="isMuted() ? 'Réactiver le micro' : 'Couper le micro'"
+              type="button">
+              {{ isMuted() ? '🔇' : '🎙️' }}
+            </button>
+          }
           <button
             class="call-widget__end-btn"
-            (click)="openEndPanel()"
+            (click)="hangupWebRtc()"
             [disabled]="facade.isTerminating()"
             type="button">
-            Raccrocher
+            @if (isRinging()) { Annuler } @else { Raccrocher }
           </button>
-        }
-      }
 
-    </div>
-
-    <!-- ─── TEL_URI end-call panel ───────────────────────────────────────── -->
-    @if (!isWebRtc() && showEndPanel()) {
-      <div class="call-widget__panel">
-        <p class="call-widget__panel-title">Clôturer l'appel</p>
-
-        <div class="call-widget__panel-row">
-          <label class="call-widget__panel-label">Résultat</label>
-          <div class="call-widget__status-group">
+        <!-- ── TEL_URI actions ── -->
+        } @else {
+          @if (!showEndPanel()) {
             <button
-              class="call-widget__status-btn"
-              [class.call-widget__status-btn--active]="selectedStatus() === 'ENDED'"
-              (click)="selectedStatus.set('ENDED')"
+              class="call-widget__end-btn"
+              (click)="openEndPanel()"
+              [disabled]="facade.isTerminating()"
               type="button">
-              Répondu
+              Raccrocher
             </button>
-            <button
-              class="call-widget__status-btn"
-              [class.call-widget__status-btn--active]="selectedStatus() === 'MISSED'"
-              (click)="selectedStatus.set('MISSED')"
-              type="button">
-              Non répondu
-            </button>
-          </div>
-        </div>
-
-        @if (selectedStatus() === 'ENDED') {
-          <div class="call-widget__panel-row">
-            <label class="call-widget__panel-label" for="cw-duration">Durée (secondes)</label>
-            <input
-              id="cw-duration"
-              class="call-widget__panel-input"
-              type="number"
-              min="0"
-              [ngModel]="durationSeconds()"
-              (ngModelChange)="durationSeconds.set($event)"
-            />
-          </div>
+          }
         }
 
-        <div class="call-widget__panel-actions">
-          <button class="call-widget__panel-cancel" (click)="cancelEnd()" type="button">
-            Annuler
-          </button>
-          <button
-            class="call-widget__panel-confirm"
-            (click)="confirmEnd()"
-            [disabled]="facade.isTerminating()"
-            type="button">
-            @if (facade.isTerminating()) { Enregistrement… } @else { Confirmer }
-          </button>
-        </div>
       </div>
+
+      <!-- ─── TEL_URI end-call panel ─────────────────────────────────────── -->
+      @if (!isWebRtc() && showEndPanel()) {
+        <div class="call-widget__panel">
+          <p class="call-widget__panel-title">Clôturer l'appel</p>
+
+          <div class="call-widget__panel-row">
+            <label class="call-widget__panel-label">Résultat</label>
+            <div class="call-widget__status-group">
+              <button
+                class="call-widget__status-btn"
+                [class.call-widget__status-btn--active]="selectedStatus() === 'ENDED'"
+                (click)="selectedStatus.set('ENDED')"
+                type="button">
+                Répondu
+              </button>
+              <button
+                class="call-widget__status-btn"
+                [class.call-widget__status-btn--active]="selectedStatus() === 'MISSED'"
+                (click)="selectedStatus.set('MISSED')"
+                type="button">
+                Non répondu
+              </button>
+            </div>
+          </div>
+
+          @if (selectedStatus() === 'ENDED') {
+            <div class="call-widget__panel-row">
+              <label class="call-widget__panel-label" for="cw-duration">Durée (secondes)</label>
+              <input
+                id="cw-duration"
+                class="call-widget__panel-input"
+                type="number"
+                min="0"
+                [ngModel]="durationSeconds()"
+                (ngModelChange)="durationSeconds.set($event)"
+              />
+            </div>
+          }
+
+          <div class="call-widget__panel-actions">
+            <button class="call-widget__panel-cancel" (click)="cancelEnd()" type="button">
+              Annuler
+            </button>
+            <button
+              class="call-widget__panel-confirm"
+              (click)="confirmEnd()"
+              [disabled]="facade.isTerminating()"
+              type="button">
+              @if (facade.isTerminating()) { Enregistrement… } @else { Confirmer }
+            </button>
+          </div>
+        </div>
+      }
     }
 
   </div>

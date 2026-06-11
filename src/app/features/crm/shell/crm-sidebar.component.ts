@@ -5,11 +5,12 @@
  * today's work). Supports collapse/expand with localStorage persistence.
  * Badge counts are loaded once from the dashboard stats API on init.
  */
-import { Component, OnInit, inject, signal, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CrmDashboardApiService } from '../domains/dashboard/services/crm-dashboard-api.service';
 import { AuthStore } from '../../../core/auth/state/auth.store';
+import { CallStore } from '../../../core/telephony/state/call.store';
 
 const STORAGE_KEY = 'crm-sidebar-collapsed';
 
@@ -32,9 +33,34 @@ export class CrmSidebarComponent implements OnInit {
 
   private readonly dashboardApi = inject(CrmDashboardApiService);
   private readonly authStore    = inject(AuthStore);
+  private readonly callStore    = inject(CallStore);
 
   /** Whether the current user has the ADMIN role. */
   readonly isAdmin = this.authStore.isAdmin;
+
+  /** Telephony connection status — null means TEL_URI/NONE (no indicator). */
+  readonly telephonyStatus = computed((): 'registered' | 'registering' | 'failed' | null => {
+    if (this.callStore.sipHasConfig()) {
+      const s = this.callStore.sipStatus();
+      if (s === 'REGISTERED')  return 'registered';
+      if (s === 'REGISTERING') return 'registering';
+      return 'failed';
+    }
+    const t = this.callStore.twilioStatus();
+    if (t === 'REGISTERED')  return 'registered';
+    if (t === 'REGISTERING') return 'registering';
+    if (t === 'UNREGISTERED') return null;
+    return null;
+  });
+
+  readonly telephonyLabel = computed(() => {
+    switch (this.telephonyStatus()) {
+      case 'registered':  return 'Téléphonie OK';
+      case 'registering': return 'Connexion…';
+      case 'failed':      return 'Téléphonie HS';
+      default:            return '';
+    }
+  });
 
   /** Whether the sidebar is currently collapsed. Persisted to localStorage. */
   readonly collapsed    = signal(localStorage.getItem(STORAGE_KEY) === 'true');

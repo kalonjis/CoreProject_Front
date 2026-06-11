@@ -23,7 +23,7 @@
           <span class="contact-detail__email" (click)="showEmailCompose.set(true)"><span class="contact-detail__email-icon">📧</span> {{ c.email }}</span>
           @if (c.phone) {
             <span class="contact-detail__contact-sep">•</span>
-            <app-phone-link [phoneNumber]="c.phone" [contactPublicId]="c.publicId" />
+            <app-phone-link [phoneNumber]="c.phone" [contactPublicId]="c.publicId" [displayName]="c.firstName + ' ' + c.lastName" />
           }
         </div>
       </div>

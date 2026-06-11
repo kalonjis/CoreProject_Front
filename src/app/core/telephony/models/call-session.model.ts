@@ -28,6 +28,7 @@ export interface InitiateCallRequest {
   phoneNumber: string;
   contactPublicId?: string;
   leadPublicId?: string;
+  direction?: 'INBOUND' | 'OUTBOUND';
 }
 
 /** Request body for PATCH /api/crm/calls/:id/terminate. */

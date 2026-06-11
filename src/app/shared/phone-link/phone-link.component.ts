@@ -43,9 +43,12 @@ export class PhoneLinkComponent {
   /** Public ID of the CRM lead to link the session to. */
   @Input() leadPublicId?: string;
 
+  /** Display name shown in the call widget (e.g. "Jean Dupont"). Falls back to the phone number. */
+  @Input() displayName?: string;
+
   readonly facade = inject(CallFacade);
 
   call(): void {
-    this.facade.initiate(this.phoneNumber, this.contactPublicId, this.leadPublicId);
+    this.facade.initiate(this.phoneNumber, this.contactPublicId, this.leadPublicId, this.displayName);
   }
 }
