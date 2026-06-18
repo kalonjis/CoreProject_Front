@@ -320,6 +320,19 @@ export class SipService implements OnDestroy {
 
     this._startRinging();
 
+    // Async caller identity lookup — updates widget name once resolved
+    this.api.getCallerInfo(callerNumber).subscribe(info => {
+      if (!info.displayName) return;
+      const current = this.store.activeCall();
+      if (current && current.phase === 'INCOMING') {
+        this.store.setActiveCall({
+          ...current,
+          displayName:     info.displayName,
+          contactPublicId: info.contactPublicId ?? current.contactPublicId,
+        });
+      }
+    });
+
     // Caller hangs up before we answer
     invitation.stateChange.addListener(state => {
       if (state === SessionState.Terminated && this._pendingInvitation === invitation) {

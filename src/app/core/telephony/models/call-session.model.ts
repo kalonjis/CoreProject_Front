@@ -36,3 +36,10 @@ export interface TerminateCallRequest {
   status: TerminalCallStatus;
   durationSeconds?: number;
 }
+
+/** Response for GET /api/crm/calls/caller-info?number= */
+export interface CallerInfoResponse {
+  displayName: string | null;
+  contactPublicId: string | null;
+  isInternalUser: boolean;
+}
