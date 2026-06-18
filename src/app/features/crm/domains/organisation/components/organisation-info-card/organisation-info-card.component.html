@@ -23,7 +23,7 @@
     @if (organisation.phone) {
       <div class="info-card__field">
         <dt>Téléphone</dt>
-        <dd><app-phone-link [phoneNumber]="organisation.phone!" /></dd>
+        <dd><app-phone-link [phoneNumber]="organisation.phone!" [displayName]="organisation.name" /></dd>
       </div>
     }
     @if (organisation.notes) {

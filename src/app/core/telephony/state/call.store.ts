@@ -7,13 +7,15 @@ export type SipStatus = 'UNREGISTERED' | 'REGISTERING' | 'REGISTERED';
 /** Registration state of the Twilio Voice Device. */
 export type TwilioStatus = 'UNREGISTERED' | 'REGISTERING' | 'REGISTERED';
 
-/** Phase within an active call (RINGING = SIP 180, ACTIVE = SIP 200 OK). */
-export type CallPhase = 'RINGING' | 'ACTIVE';
+/** Phase within an active call. INCOMING = inbound invite not yet answered. */
+export type CallPhase = 'INCOMING' | 'RINGING' | 'ACTIVE';
 
 /** Snapshot of an active call kept in client-side state. */
 export interface ActiveCallState {
   sessionPublicId: string;
   phoneNumber: string;
+  /** Display name of the contact or lead (e.g. "Jean Dupont"). Shown in the widget. */
+  displayName?: string;
   /** ISO timestamp when the call was initiated. */
   startedAt: string;
   contactPublicId: string | null;
@@ -22,6 +24,7 @@ export interface ActiveCallState {
   provider: CallProvider;
   /** Granular phase for SIP calls. TEL_URI always stays ACTIVE. */
   phase: CallPhase;
+  direction?: 'INBOUND' | 'OUTBOUND';
 }
 
 /**
@@ -61,6 +64,7 @@ export class CallStore {
   readonly isSipReady     = computed(() => this._sipStatus() === 'REGISTERED');
   readonly isTwilioReady  = computed(() => this._twilioStatus() === 'REGISTERED');
   readonly isRinging      = computed(() => this._activeCall()?.phase === 'RINGING');
+  readonly isIncoming     = computed(() => this._activeCall()?.phase === 'INCOMING');
 
   // =========================================================================
   // Mutations

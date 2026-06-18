@@ -43,26 +43,27 @@ export class CallFacade {
   readonly isTerminating = this.store.isTerminating;
   readonly isMuted       = this.store.isMuted;
   readonly isRinging     = this.store.isRinging;
+  readonly isIncoming    = this.store.isIncoming;
   readonly sipHasConfig  = this.store.sipHasConfig;
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
-  initiate(phoneNumber: string, contactPublicId?: string, leadPublicId?: string): void {
+  initiate(phoneNumber: string, contactPublicId?: string, leadPublicId?: string, displayName?: string): void {
     if (this.store.isCallActive()) {
       this.feedback.showWarning('Un appel est déjà en cours.');
       return;
     }
 
     if (this._isMobile()) {
-      this._initiateViaTelUri(phoneNumber, contactPublicId, leadPublicId);
+      this._initiateViaTelUri(phoneNumber, contactPublicId, leadPublicId, displayName);
     } else if (this.sip.isRegistered()) {
-      this._initiateViaSip(phoneNumber, contactPublicId, leadPublicId);
+      this._initiateViaSip(phoneNumber, contactPublicId, leadPublicId, displayName);
     } else if (this.store.sipHasConfig()) {
       this.feedback.showError('SIP non disponible — vérifiez la connexion Asterisk.');
     } else if (this.twilio.isRegistered()) {
-      this._initiateViaTwilio(phoneNumber, contactPublicId, leadPublicId);
+      this._initiateViaTwilio(phoneNumber, contactPublicId, leadPublicId, displayName);
     } else {
-      this._initiateViaTelUri(phoneNumber, contactPublicId, leadPublicId);
+      this._initiateViaTelUri(phoneNumber, contactPublicId, leadPublicId, displayName);
     }
   }
 
@@ -91,6 +92,16 @@ export class CallFacade {
     });
   }
 
+  /** Accepts a pending inbound SIP call. */
+  answer(): void {
+    this.sip.answer();
+  }
+
+  /** Rejects a pending inbound SIP call (sends 486 Busy Here). */
+  reject(): void {
+    this.sip.reject();
+  }
+
   /** Hangs up a SIP or Twilio call (the respective service handles the rest). */
   hangup(): void {
     const provider = this.store.activeCall()?.provider;
@@ -116,7 +127,8 @@ export class CallFacade {
   private _initiateViaTelUri(
     phoneNumber: string,
     contactPublicId?: string,
-    leadPublicId?: string
+    leadPublicId?: string,
+    displayName?: string,
   ): void {
     this.store.setInitiating(true);
 
@@ -129,6 +141,7 @@ export class CallFacade {
         this.store.setActiveCall({
           sessionPublicId: session.publicId,
           phoneNumber:     session.phoneNumber,
+          displayName,
           startedAt:       session.startedAt,
           contactPublicId: session.contactPublicId,
           leadPublicId:    session.leadPublicId,
@@ -147,7 +160,8 @@ export class CallFacade {
   private _initiateViaTwilio(
     phoneNumber: string,
     contactPublicId?: string,
-    leadPublicId?: string
+    leadPublicId?: string,
+    displayName?: string,
   ): void {
     this.store.setInitiating(true);
 
@@ -160,6 +174,7 @@ export class CallFacade {
         this.store.setActiveCall({
           sessionPublicId: session.publicId,
           phoneNumber:     session.phoneNumber,
+          displayName,
           startedAt:       session.startedAt,
           contactPublicId: session.contactPublicId,
           leadPublicId:    session.leadPublicId,
@@ -184,7 +199,8 @@ export class CallFacade {
   private _initiateViaSip(
     phoneNumber: string,
     contactPublicId?: string,
-    leadPublicId?: string
+    leadPublicId?: string,
+    displayName?: string,
   ): void {
     this.store.setInitiating(true);
 
@@ -197,6 +213,7 @@ export class CallFacade {
         this.store.setActiveCall({
           sessionPublicId: session.publicId,
           phoneNumber:     session.phoneNumber,
+          displayName,
           startedAt:       session.startedAt,
           contactPublicId: session.contactPublicId,
           leadPublicId:    session.leadPublicId,

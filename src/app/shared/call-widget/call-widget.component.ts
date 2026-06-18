@@ -56,18 +56,21 @@ export class CallWidgetComponent implements OnDestroy {
     return p === 'SIP' || p === 'TWILIO';
   });
   readonly isRinging  = this.facade.isRinging;
+  readonly isIncoming = this.facade.isIncoming;
   readonly isMuted    = this.facade.isMuted;
 
   // ── Timer management ──────────────────────────────────────────────────────
 
   constructor() {
     effect(() => {
-      if (this.facade.activeCall()?.phase === 'ACTIVE') {
+      const phase = this.facade.activeCall()?.phase;
+      if (phase === 'ACTIVE') {
         if (this._timerId === null) {
           this._elapsedSeconds.set(0);
           this._timerId = setInterval(() => this._elapsedSeconds.update(v => v + 1), 1000);
         }
-      } else {
+      } else if (phase !== 'RINGING') {
+        // INCOMING and null/undefined: don't run the timer
         this._stopTimer();
       }
     });
@@ -85,6 +88,16 @@ export class CallWidgetComponent implements OnDestroy {
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
+
+  /** Accepts the pending inbound SIP call. */
+  answer(): void {
+    this.facade.answer();
+  }
+
+  /** Rejects the pending inbound SIP call. */
+  reject(): void {
+    this.facade.reject();
+  }
 
   /** SIP / Twilio: sends BYE / disconnects via the active service — no manual panel needed. */
   hangupWebRtc(): void {

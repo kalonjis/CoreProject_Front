@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpUtilService } from '../../http/http-util.service';
 import {
+  CallerInfoResponse,
   CallSessionResponse,
   InitiateCallRequest,
   TerminateCallRequest
@@ -65,5 +66,13 @@ export class CallApiService {
    */
   getMyProvider(): Observable<{ provider: string }> {
     return this.http.get<{ provider: string }>('/api/crm/telephony/my-provider');
+  }
+
+  /**
+   * Resolves the display name and CRM identity of an inbound caller.
+   * Checks SIP extensions first, then CRM contacts by phone number.
+   */
+  getCallerInfo(number: string): Observable<CallerInfoResponse> {
+    return this.http.get<CallerInfoResponse>(`${this.base}/caller-info?number=${encodeURIComponent(number)}`);
   }
 }

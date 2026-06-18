@@ -28,10 +28,18 @@ export interface InitiateCallRequest {
   phoneNumber: string;
   contactPublicId?: string;
   leadPublicId?: string;
+  direction?: 'INBOUND' | 'OUTBOUND';
 }
 
 /** Request body for PATCH /api/crm/calls/:id/terminate. */
 export interface TerminateCallRequest {
   status: TerminalCallStatus;
   durationSeconds?: number;
+}
+
+/** Response for GET /api/crm/calls/caller-info?number= */
+export interface CallerInfoResponse {
+  displayName: string | null;
+  contactPublicId: string | null;
+  isInternalUser: boolean;
 }

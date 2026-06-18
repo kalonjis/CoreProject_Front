@@ -37,6 +37,16 @@
   </ul>
 
   <div class="crm-sidebar__footer">
+
+    @if (telephonyStatus()) {
+      <div class="crm-sidebar__tel-status" [title]="telephonyLabel()">
+        <span class="crm-sidebar__icon">
+          <span class="crm-sidebar__tel-dot crm-sidebar__tel-dot--{{ telephonyStatus() }}"></span>
+        </span>
+        <span class="crm-sidebar__label">{{ telephonyLabel() }}</span>
+      </div>
+    }
+
     <a routerLink="/crm/settings/tags" routerLinkActive="active" class="crm-sidebar__link crm-sidebar__settings" [title]="collapsed() ? 'Tags' : ''">
       <span class="crm-sidebar__icon">🏷️</span>
       <span class="crm-sidebar__label">Tags</span>
