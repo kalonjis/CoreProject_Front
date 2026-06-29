@@ -235,19 +235,20 @@ export class BackupCodesModalComponent implements OnInit {
     try {
       const printContent = this.formatCodesForPrint();
 
-      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      const blob = new Blob([printContent], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const printWindow = window.open(blobUrl, '_blank', 'width=800,height=600');
       if (!printWindow) {
+        URL.revokeObjectURL(blobUrl);
         throw new Error('Failed to open print window. Please check your popup blocker.');
       }
 
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-
-      // Wait for content to load then print
       printWindow.onload = () => {
         printWindow.print();
         printWindow.onafterprint = () => {
           printWindow.close();
+          URL.revokeObjectURL(blobUrl);
         };
       };
 

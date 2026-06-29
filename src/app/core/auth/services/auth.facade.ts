@@ -332,12 +332,13 @@ export class AuthFacade {
    * Handles mustChangePassword redirect.
    */
   private navigateAfterLogin(returnUrl: string): void {
+    const safeUrl = returnUrl.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/';
     if (this.authStore.mustChangePassword()) {
       this.router.navigate(['/password/change'], {
-        queryParams: { forced: 'true', returnUrl }
+        queryParams: { forced: 'true', returnUrl: safeUrl }
       });
     } else {
-      this.router.navigateByUrl(returnUrl);
+      this.router.navigateByUrl(safeUrl);
     }
   }
 
